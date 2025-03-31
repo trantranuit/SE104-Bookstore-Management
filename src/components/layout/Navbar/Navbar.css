@@ -1,3 +1,25 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Add this to push content away from sidebar */
+.container {
+    margin-left: 15vw; 
+    padding: 20px;
+}
+
+/* Style specific page containers */
+.trangchu,
+.tatcasach,
+.nhapsach,
+.thanhtoan,
+.khachhang,
+.baocao {
+    padding: 20px;
+}
 .navbar {
     background-color: #9fd7f9;  
     height: 70px;
@@ -14,7 +36,7 @@
 
 .nav-menu {
     background: #9fd7f9;  
-    width: 14vw;
+    width: 15vw;
     height: 100vh;
     display: flex;
     justify-content: start; 
@@ -28,6 +50,7 @@
     width: 100%;
     padding: 0;
     margin-top: 90px;
+    
 }
 
 .nav-text {
@@ -74,4 +97,15 @@ span {
     width: 55px;
     height: 55px;
     object-fit: contain;
+}
+
+.bottom-items {
+    margin-top: auto; 
+    padding: 16px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    position: absolute; 
+    bottom: 0; 
+    left: 0;
+    background: #9fd7f9; 
 }

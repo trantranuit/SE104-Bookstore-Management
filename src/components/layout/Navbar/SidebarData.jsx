@@ -59,13 +59,13 @@ export const bottomMenuItems = [
     {
         title: 'Thay Đổi Quy Định',
         path: '/quydinh',
-        icon: <FaIcons.FaCog />, // Changed from FaUniversalAccesst to FaCog
+        icon: <FaIcons.FaCog />, 
         cName: 'nav-text'
     },
     {
         title: 'Đăng Xuất',
         path: '/logout',
-        icon: <FaIcons.FaSignOutAlt />, // Changed to a more appropriate logout icon
+        icon: <FaIcons.FaSignOutAlt />, 
         cName: 'nav-text'
     }
 ]
