@@ -1,0 +1,48 @@
+import React from 'react'
+import * as FaIcons from "react-icons/fa";
+import * as AiIcons from "react-icons/ai";
+import * as TbIcons from "react-icons/tb";
+
+export const sidebarData = [
+    {
+        title: 'Trang Chủ',
+        path: '/',
+        icon: <AiIcons.AiFillHome />,
+        cName: 'nav-text'
+    },
+
+    {
+        title: 'Tất cả sách',
+        path: '/tatcasach',
+        icon: <FaIcons.FaBook />,
+        cName: 'nav-text'
+    },
+
+    {
+        title: 'Nhập Sách',
+        path: '/nhapsach',
+        icon: <FaIcons.FaBookMedical />,
+        cName: 'nav-text'
+    },
+
+    {
+        title: 'Thanh Toán',
+        path: '/thanhtoan',
+        icon: <FaIcons.FaCcAmazonPay  />,
+        cName: 'nav-text'
+    },
+
+    {
+        title: 'Khách Hàng',
+        path: '/khachhang',
+        icon: <FaIcons.FaUserFriends  />,
+        cName: 'nav-text'
+    },
+
+    {
+        title: 'Báo Cáo',
+        path: '/baocao',
+        icon: <TbIcons.TbReportAnalytics />,
+        cName: 'nav-text'
+    },
+]
