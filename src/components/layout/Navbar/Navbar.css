@@ -25,15 +25,19 @@
     background-color: #9fd7f9;  
     height: 70px;
     display: flex;
-    justify-content: start;
+    justify-content: flex-end;
     align-items: center;
+}
+
+.profile-card {
+    display: flex;
 }
 
 .navbar-title {
     color: #000;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 500;
-    margin-right: 20px;
+    margin-right: 30px;
 }
 
 .menu-bars {
@@ -50,21 +54,13 @@
     justify-content: start; 
     position: fixed;
     top: 0;
-    left: -100%; /* Start hidden */
-    transition: 850ms;
+    left: 0; /* Always show sidebar */
 }
-
-.nav-menu.active {
-    left: 0; /* Show when active */
-    transition: 350ms;
-}
-
 
 .nav-menu-items {
     width: 100%;
     padding: 0;
-    margin-top: 120px;
-    
+    margin-top: 120px; /* Reduced since we removed the toggle button */
 }
 
 .nav-text {

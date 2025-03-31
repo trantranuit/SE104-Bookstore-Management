@@ -1,36 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
-import * as AiIcons from 'react-icons/ai'; // Add this import
+import * as AiIcons from 'react-icons/ai';
 import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import logo from '../../../assets/imgs/logo.svg';
 
-
 function Navbar() {
-    const [sidebar, setSidebar] = useState(false);
-
-    const showSidebar = () => setSidebar(!sidebar);
-
     return (
         <>
             <IconContext.Provider value={{ color: '#000' }}>
                 <div className="navbar">
-                    <Link to="#" className="menu-bars">
-                        <FaIcons.FaBars onClick={showSidebar} />
-                    </Link>
-                    <div class="navbar-title">Trịnh Trân Trân</div>
+                    <div className="profile-card">
+                        <div className="avatar">
+                            <img src="../../../assets/imgs/avt.svg" alt="Avatar" />
+                        </div>
+                        <div className="info">
+                            <h1 className="name">Ngọc Bích</h1>
+                            <h2 className="position">Nhân Viên</h2>
+                        </div>
+                    </div>
                 </div>
-                <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-                    <ul className='nav-menu-items'>
-                        <li className='navbar-toggle'>
-                            <Link to="#" className='menu-bars' onClick={showSidebar}>
-                                <AiIcons.AiOutlineClose />
-                            </Link>
-                        </li>
-                        <li className='logo-container'>
-                            <img src={logo} alt="Logo" className='sidebar-logo' />
+                <nav className="nav-menu">
+                    <ul className="nav-menu-items">
+                        <li className="logo-container">
+                            <img src={logo} alt="Logo" className="sidebar-logo" />
                         </li>
                         {mainMenuItems.map((item, index) => (
                             <li key={index} className={item.cName}>
