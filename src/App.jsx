@@ -8,22 +8,26 @@ import ThanhToan from './pages/ThanhToan/ThanhToan';
 import KhachHang from './pages/KhachHang/KhachHang';  
 import BaoCao from './pages/BaoCao/BaoCao';  
 
+
 function App() {
   return (
     <>
       <Router>
         <Navbar />
-        <Routes>
-          <Route path='/' element={<TrangChu />} />
-          <Route path='/tatcasach' element={<TatCaSach />} />
-          <Route path='/nhapsach' element={<NhapSach />} />
-          <Route path='/thanhtoan' element={<ThanhToan />} />
-          <Route path='/khachhang' element={<KhachHang />} />
-          <Route path='/baocao' element={<BaoCao />} />
-        </Routes>
+        <div className="container">
+          <Routes>
+            <Route path='/' element={<TrangChu />} />
+            <Route path='/tatcasach' element={<TatCaSach />} />
+            <Route path='/nhapsach' element={<NhapSach />} />
+            <Route path='/thanhtoan' element={<ThanhToan />} />
+            <Route path='/khachhang' element={<KhachHang />} />
+            <Route path='/baocao' element={<BaoCao />} />
+          </Routes>
+        </div>
       </Router>
     </>
   );
 }
+
 
 export default App;

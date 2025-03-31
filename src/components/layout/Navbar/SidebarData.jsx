@@ -1,7 +1,7 @@
 import React from 'react'
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import * as TbIcons from "react-icons/tb";
+import * as HiIcons from "react-icons/hi";
 
 export const sidebarData = [
     {
@@ -42,7 +42,15 @@ export const sidebarData = [
     {
         title: 'Báo Cáo',
         path: '/baocao',
-        icon: <TbIcons.TbReportAnalytics />,
+        icon: <HiIcons.HiDocumentReport />,
+        cName: 'nav-text'
+    },
+
+
+    {
+        title: 'Phân Quyền',
+        path: '/phanquyen',
+        icon: <FaIcons.FaUniversalAccess />,
         cName: 'nav-text'
     },
 ]
