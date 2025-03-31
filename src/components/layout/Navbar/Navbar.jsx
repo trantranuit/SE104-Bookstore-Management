@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
+import * as AiIcons from 'react-icons/ai'; // Add this import
 import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import logo from '../../../assets/imgs/logo.svg';
+
 
 function Navbar() {
     const [sidebar, setSidebar] = useState(false);
@@ -18,9 +20,15 @@ function Navbar() {
                     <Link to="#" className="menu-bars">
                         <FaIcons.FaBars onClick={showSidebar} />
                     </Link>
+                    <div class="navbar-title">Trịnh Trân Trân</div>
                 </div>
-                <nav className="nav-menu">
+                <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
                     <ul className='nav-menu-items'>
+                        <li className='navbar-toggle'>
+                            <Link to="#" className='menu-bars' onClick={showSidebar}>
+                                <AiIcons.AiOutlineClose />
+                            </Link>
+                        </li>
                         <li className='logo-container'>
                             <img src={logo} alt="Logo" className='sidebar-logo' />
                         </li>
