@@ -1,9 +1,10 @@
 import React from 'react'
+import '../../styles/PathStyles.css'
 
 function KhachHang() {
     return (
-        <div className="KhachHang">
-            <h1>Khách Hàng</h1>
+        <div className="page-container">
+            <h1 className="page-title">Khách Hàng</h1>
         </div>
     )
 }

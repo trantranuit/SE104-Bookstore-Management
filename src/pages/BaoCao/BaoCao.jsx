@@ -1,9 +1,10 @@
 import React from 'react'
+import '../../styles/PathStyles.css'
 
 function BaoCao() {
     return (
-        <div className="BaoCao">
-            <h1>Báo Cáo</h1>
+        <div className="page-container">
+            <h1 className="page-title">Báo Cáo</h1>
         </div>
     )
 }

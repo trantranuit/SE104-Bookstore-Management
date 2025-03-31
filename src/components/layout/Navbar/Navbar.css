@@ -22,15 +22,42 @@
 }
 
 .navbar {
-    background-color: #9fd7f9;  
-    height: 70px;
+    background-color: white;  
+    height: 4vh; /* Change from 5vh to fixed height */
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    padding: 15px 0; /* Add vertical padding */
 }
 
 .profile-card {
     display: flex;
+    font-size: 6px;
+    align-items: center;
+    padding: 10px 40px;
+    gap: 15px;
+    height: 100%; /* Take full height of navbar */
+    margin-top: 10px; /* Add space from top */
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.info {
+    line-height: 1.4;
+}
+
+.position {
+    color: #666;
 }
 
 .navbar-title {
@@ -40,6 +67,8 @@
     margin-right: 30px;
 }
 
+
+
 .menu-bars {
     margin-left: 2rem;
     font-size: 2rem;
@@ -47,14 +76,14 @@
 }
 
 .nav-menu {
-    background: #9fd7f9;  
+    background: white;  
     width: 15vw;
     height: 100vh;
     display: flex;
     justify-content: start; 
     position: fixed;
     top: 0;
-    left: 0; /* Always show sidebar */
+    left: 0; 
 }
 
 .nav-menu-items {
@@ -84,8 +113,15 @@
     border-radius: 4px;
 }
 
+.nav-text a.active,
 .nav-text a:hover {
     background-color: #1a83ff;
+    color: white;
+}
+
+.nav-text a.active svg,
+.nav-text a:hover svg {
+    color: white !important;
 }
 
 span {
@@ -93,7 +129,7 @@ span {
 }
 
 .navbar-toggle {
-    background-color: #9fd7f9;
+    background-color: white;
     width: 100%;
     height: 80px;
     display: flex;
@@ -128,5 +164,5 @@ span {
     position: absolute; 
     bottom: 0; 
     left: 0;
-    background: #9fd7f9; 
+    background: white; 
 }

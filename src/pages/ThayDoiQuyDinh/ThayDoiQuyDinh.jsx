@@ -1,12 +1,12 @@
 import React from 'react'
 import '../../styles/PathStyles.css'
 
-function NhapSach() {
+function ThayDoiQuyDinh() {
     return (
         <div className="page-container">
-            <h1 className="page-title">Nhập Sách</h1>
+            <h1 className="page-title">Thay Đổi Quy Định</h1>
         </div>
     )
 }
 
-export default NhapSach;
+export default ThayDoiQuyDinh;

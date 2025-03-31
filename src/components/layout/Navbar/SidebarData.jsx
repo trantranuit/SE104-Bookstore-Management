@@ -58,13 +58,13 @@ export const mainMenuItems = [
 export const bottomMenuItems = [
     {
         title: 'Thay Đổi Quy Định',
-        path: '/quydinh',
+        path: '/thaydoiquydinh',
         icon: <FaIcons.FaCog />, 
         cName: 'nav-text'
     },
     {
         title: 'Đăng Xuất',
-        path: '/logout',
+        path: '/dangxuat',
         icon: <FaIcons.FaSignOutAlt />, 
         cName: 'nav-text'
     }
