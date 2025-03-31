@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
-import { sidebarData } from './SidebarData.jsx';
+import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import logo from '../../../assets/imgs/logo.svg';
@@ -19,12 +19,12 @@ function Navbar() {
                         <FaIcons.FaBars onClick={showSidebar} />
                     </Link>
                 </div>
-                <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
+                <nav className="nav-menu">
                     <ul className='nav-menu-items'>
                         <li className='logo-container'>
                             <img src={logo} alt="Logo" className='sidebar-logo' />
                         </li>
-                        {sidebarData.map((item, index) => (
+                        {mainMenuItems.map((item, index) => (
                             <li key={index} className={item.cName}>
                                 <Link to={item.path}>
                                     {item.icon}
@@ -32,6 +32,16 @@ function Navbar() {
                                 </Link>
                             </li>
                         ))}
+                        <div className="bottom-items">
+                            {bottomMenuItems.map((item, index) => (
+                                <li key={`bottom-${index}`} className={item.cName}>
+                                    <Link to={item.path}>
+                                        {item.icon}
+                                        <span>{item.title}</span>
+                                    </Link>
+                                </li>
+                            ))}
+                        </div>
                     </ul>
                 </nav>
             </IconContext.Provider>

@@ -3,7 +3,7 @@ import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import * as HiIcons from "react-icons/hi";
 
-export const sidebarData = [
+export const mainMenuItems = [
     {
         title: 'Trang Chủ',
         path: '/',
@@ -53,4 +53,19 @@ export const sidebarData = [
         icon: <FaIcons.FaUniversalAccess />,
         cName: 'nav-text'
     },
+]
+
+export const bottomMenuItems = [
+    {
+        title: 'Thay Đổi Quy Định',
+        path: '/quydinh',
+        icon: <FaIcons.FaCog />, // Changed from FaUniversalAccesst to FaCog
+        cName: 'nav-text'
+    },
+    {
+        title: 'Đăng Xuất',
+        path: '/logout',
+        icon: <FaIcons.FaSignOutAlt />, // Changed to a more appropriate logout icon
+        cName: 'nav-text'
+    }
 ]
