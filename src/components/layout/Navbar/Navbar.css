@@ -149,6 +149,22 @@ span {
     z-index: 2;
 }
 
+.subnav-items {
+    display: none;
+    padding-left: 20px;
+}
+
+.subnav-items.active {
+    display: block;
+}
+
+.subnav-item span {
+    font-size: 12px !important; 
+}
+.nav-text.active + .subnav-items {
+    display: block;
+}
+
 .sidebar-logo {
     width: 55px;
     height: 55px;

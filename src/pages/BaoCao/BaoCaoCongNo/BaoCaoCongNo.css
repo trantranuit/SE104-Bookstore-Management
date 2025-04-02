@@ -1,0 +1,56 @@
+.content-day {
+    display: flex;
+    justify-content: center;
+    gap: 300px;
+    padding: 0 40px;
+    margin: 20px 0;
+    align-items: center;
+}
+.content-day h2 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.content-day .date-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content-day select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+    background-color: white;
+}
+
+.report-table {
+    width: 90%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 50px auto 20px auto; 
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.report-table th, .report-table td {
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.report-table th {
+    background-color: #73adef;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+}
+
+.report-table tr {
+    background-color: white;
+}
+
+.report-table tr:hover {
+    background-color: #f8f9fa;
+}

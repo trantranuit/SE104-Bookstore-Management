@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-const baoCaoData = [
+const baoCaoTonData = [
     {
         id: 'KH001',
         name: 'Nguyễn Văn A',
@@ -75,4 +75,4 @@ const baoCaoData = [
     }
 ];
 
-export default baoCaoData;
+export default baoCaoTonData;

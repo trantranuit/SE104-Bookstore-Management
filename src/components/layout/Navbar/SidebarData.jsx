@@ -43,7 +43,21 @@ export const mainMenuItems = [
         title: 'Báo Cáo',
         path: '/baocao',
         icon: <HiIcons.HiDocumentReport />,
-        cName: 'nav-text'
+        cName: 'nav-text',
+        subNav: [
+            {
+                title: 'Báo Cáo Tồn',
+                path: '/baocao/ton',
+                icon: <HiIcons.HiDocumentText />,
+                cName: 'nav-text subnav-item'
+            },
+            {
+                title: 'Báo Cáo Công Nợ',
+                path: '/baocao/congno',
+                icon: <HiIcons.HiDocumentDuplicate />,
+                cName: 'nav-text subnav-item'
+            }
+        ]
     },
 
 

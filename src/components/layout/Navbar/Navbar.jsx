@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
@@ -8,6 +8,8 @@ import avata from '../../../assets/imgs/avt.svg';
 
 function Navbar() {
     const location = useLocation();
+    const [subnav, setSubnav] = useState(false);
+    const showSubnav = () => setSubnav(!subnav);
 
     return (
         <>
@@ -29,16 +31,34 @@ function Navbar() {
                             <img src={logo} alt="Logo" className="sidebar-logo" />
                         </li>
                         {mainMenuItems.map((item, index) => (
-                            <li key={index} className={item.cName}>
-                                <Link 
-                                    to={item.path}
-                                    className={location.pathname === item.path ? 'active' : ''}
-                                >
-                                    {item.icon}
-                                    <span>{item.title}</span>
-                                </Link>
-                            </li>
-                        ))}
+                    <React.Fragment key={index}>
+                        <li className={item.cName}>
+                            <Link 
+                                to={item.path}
+                                className={location.pathname === item.path ? 'active' : ''}
+                                onClick={() => item.subNav && showSubnav()}
+                            >
+                                {item.icon}
+                                <span>{item.title}</span>
+                            </Link>
+                        </li>
+                        {item.subNav && subnav && (
+                            <div className={`subnav-items ${subnav ? 'active' : ''}`}>
+                                {item.subNav.map((subItem, subIndex) => (
+                                    <li key={subIndex} className={subItem.cName}>
+                                        <Link 
+                                            to={subItem.path}
+                                            className={location.pathname === subItem.path ? 'active' : ''}
+                                        >
+                                            {subItem.icon}
+                                            <span>{subItem.title}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </div>
+                        )}
+                    </React.Fragment>
+                ))}
                         <div className="bottom-items">
                             {bottomMenuItems.map((item, index) => (
                                 <li key={`bottom-${index}`} className={item.cName}>
