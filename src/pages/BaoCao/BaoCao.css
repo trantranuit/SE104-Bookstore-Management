@@ -1,14 +1,28 @@
 .content-day {
     display: flex;
-    font-size: 12px;
-    justify-content: space-between; 
-    padding: 0 40px; 
-    margin: 20px 0; 
+    justify-content: center;
+    gap: 300px;
+    padding: 0 40px;
+    margin: 20px 0;
+    align-items: center;
 }
-
 .content-day h2 {
     font-size: 16px;
     font-weight: 500;
+}
+
+.content-day .date-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content-day select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+    background-color: white;
 }
 
 .report-table {
