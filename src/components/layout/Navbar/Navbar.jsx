@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import * as FaIcons from 'react-icons/fa';
-import * as AiIcons from 'react-icons/ai';
 import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
