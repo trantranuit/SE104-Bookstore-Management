@@ -91,6 +91,29 @@
     margin-top: 120px; /* Reduced since we removed the toggle button */
 }
 
+.nav-menu-link {
+    text-decoration: none;
+    color: #000; 
+    font-size: 15px;
+    width: 95%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-radius: 4px;
+}
+
+.nav-menu-link.active,
+.nav-menu-link:hover {
+    background-color: #1a83ff;
+    color: white;
+}
+
+.nav-menu-link.active svg,
+.nav-menu-link:hover svg {
+    color: white !important;
+}
+
 .nav-text {
     display: flex;
     justify-content: flex-end;

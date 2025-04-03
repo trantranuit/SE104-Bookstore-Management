@@ -28,10 +28,24 @@ export const mainMenuItems = [
     {
         title: 'Thanh Toán',
         path: '/thanhtoan',
-        icon: <FaIcons.FaCcAmazonPay  />,
-        cName: 'nav-text'
+        icon: <FaIcons.FaCcAmazonPay />,
+        cName: 'nav-text',
+        subNav: [
+            {
+                title: 'Thanh Toán Mới',
+                path: '/thanhtoan/moi',
+                icon: <HiIcons.HiDocumentText />,
+                cName: 'nav-text subnav-item'
+            },
+            {
+                title: 'Thanh Toán Cũ',
+                path: '/thanhtoan/cu',
+                icon: <HiIcons.HiDocumentDuplicate />,
+                cName: 'nav-text subnav-item'
+            }
+        ]
     },
-
+    
     {
         title: 'Khách Hàng',
         path: '/khachhang',

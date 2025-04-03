@@ -8,8 +8,22 @@ import avata from '../../../assets/imgs/avt.svg';
 
 function Navbar() {
     const location = useLocation();
-    const [subnav, setSubnav] = useState(false);
-    const showSubnav = () => setSubnav(!subnav);
+    const [activeSubNav, setActiveSubNav] = useState('');
+    
+    const handleItemClick = (item, e) => {
+        if (item.subNav) {
+            e.preventDefault();
+            setActiveSubNav(activeSubNav === item.path ? '' : item.path);
+        } else {
+            setActiveSubNav('');
+        }
+    };
+
+    React.useEffect(() => {
+        if (!location.pathname.includes('/baocao') && !location.pathname.includes('/thanhtoan')) {
+            setActiveSubNav('');
+        }
+    }, [location.pathname]);
 
     return (
         <>
@@ -31,34 +45,45 @@ function Navbar() {
                             <img src={logo} alt="Logo" className="sidebar-logo" />
                         </li>
                         {mainMenuItems.map((item, index) => (
-                    <React.Fragment key={index}>
-                        <li className={item.cName}>
-                            <Link 
-                                to={item.path}
-                                className={location.pathname === item.path ? 'active' : ''}
-                                onClick={() => item.subNav && showSubnav()}
-                            >
-                                {item.icon}
-                                <span>{item.title}</span>
-                            </Link>
-                        </li>
-                        {item.subNav && subnav && (
-                            <div className={`subnav-items ${subnav ? 'active' : ''}`}>
-                                {item.subNav.map((subItem, subIndex) => (
-                                    <li key={subIndex} className={subItem.cName}>
-                                        <Link 
-                                            to={subItem.path}
-                                            className={location.pathname === subItem.path ? 'active' : ''}
+                            <React.Fragment key={index}>
+                                <li className={item.cName}>
+                                    {item.subNav ? (
+                                        <div 
+                                            className={`nav-menu-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
+                                            onClick={(e) => handleItemClick(item, e)}
+                                            style={{ cursor: 'pointer' }}
                                         >
-                                            {subItem.icon}
-                                            <span>{subItem.title}</span>
+                                            {item.icon}
+                                            <span>{item.title}</span>
+                                        </div>
+                                    ) : (
+                                        <Link 
+                                            to={item.path}
+                                            className={location.pathname === item.path ? 'active' : ''}
+                                            onClick={() => handleItemClick(item)}
+                                        >
+                                            {item.icon}
+                                            <span>{item.title}</span>
                                         </Link>
-                                    </li>
-                                ))}
-                            </div>
-                        )}
-                    </React.Fragment>
-                ))}
+                                    )}
+                                </li>
+                                {item.subNav && activeSubNav === item.path && (
+                                    <div className={`subnav-items ${activeSubNav === item.path ? 'active' : ''}`}>
+                                        {item.subNav.map((subItem, subIndex) => (
+                                            <li key={subIndex} className={subItem.cName}>
+                                                <Link 
+                                                    to={subItem.path}
+                                                    className={location.pathname === subItem.path ? 'active' : ''}
+                                                >
+                                                    {subItem.icon}
+                                                    <span>{subItem.title}</span>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </div>
+                                )}
+                            </React.Fragment>
+                        ))}
                         <div className="bottom-items">
                             {bottomMenuItems.map((item, index) => (
                                 <li key={`bottom-${index}`} className={item.cName}>
