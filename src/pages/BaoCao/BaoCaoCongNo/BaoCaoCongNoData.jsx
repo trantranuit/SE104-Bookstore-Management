@@ -187,6 +187,96 @@ const baoCaoCongNoData = [
         change: 45,
         endDebt: 50,
         note: ''
+    },
+    {
+        id: 'KH022',
+        name: 'Trần Minh V',
+        phone: '09837281963',
+        startDebt: 5,
+        change: 38,
+        endDebt: 40,
+        note: ''
+    },
+    {
+        id: 'KH023',
+        name: 'Lê Thị W',
+        phone: '09837281964',
+        startDebt: 3,
+        change: 22,
+        endDebt: 25,
+        note: ''
+    },
+    {
+        id: 'KH024',
+        name: 'Nguyễn Thị X',
+        phone: '09837281965',
+        startDebt: 2,
+        change: 25,
+        endDebt: 27,
+        note: ''
+    },
+    {
+        id: 'KH025',
+        name: 'Phan Minh Y',
+        phone: '09837281966',
+        startDebt: 6,
+        change: 50,
+        endDebt: 55,
+        note: ''
+    },
+    {
+        id: 'KH026',
+        name: 'Lý Minh Z',
+        phone: '09837281967',
+        startDebt: 4,
+        change: 40,
+        endDebt: 45,
+        note: ''
+    },
+    {
+        id: 'KH027',
+        name: 'Trần Thị AA',
+        phone: '09837281968',
+        startDebt: 5,
+        change: 30,
+        endDebt: 35,
+        note: ''
+    },
+    {
+        id: 'KH028',
+        name: 'Hồ Minh BB',
+        phone: '09837281969',
+        startDebt: 3,
+        change: 35,
+        endDebt: 38,
+        note: ''
+    },
+    {
+        id: 'KH029',
+        name: 'Đỗ Thị CC',
+        phone: '09837281970',
+        startDebt: 4,
+        change: 30,
+        endDebt: 32,
+        note: ''
+    },
+    {
+        id: 'KH030',
+        name: 'Nguyễn Hoàng DD',
+        phone: '09837281971',
+        startDebt: 5,
+        change: 15,
+        endDebt: 10,
+        note: ''
+    },
+    {
+        id: 'KH031',
+        name: 'Vũ Minh EE',
+        phone: '09837281972',
+        startDebt: 6,
+        change: 40,
+        endDebt: 42,
+        note: ''
     }
 ];
 

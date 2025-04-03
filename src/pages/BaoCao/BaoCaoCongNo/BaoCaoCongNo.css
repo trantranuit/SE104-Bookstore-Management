@@ -3,9 +3,10 @@
     justify-content: center;
     gap: 300px;
     padding: 0 40px;
-    margin: 20px 0;
+    margin: 10px 0;
     align-items: center;
 }
+
 .content-day h2 {
     font-size: 16px;
     font-weight: 500;
@@ -29,7 +30,7 @@
     width: 90%;
     border-collapse: separate;
     border-spacing: 0;
-    margin: 50px auto 20px auto;
+    margin: 40px auto 60px auto;
     font-size: 14px;
     border-radius: 8px;
     overflow: hidden;
@@ -106,5 +107,5 @@
 .pagination span {
     font-size: 14px;
     color: #666;
-    margin: 0 10px;
+    margin: 0 10px; 
 }

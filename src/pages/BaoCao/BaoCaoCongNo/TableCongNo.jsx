@@ -45,7 +45,7 @@ function TableCongNo() {
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
             pagination: {
-                pageSize: 12,
+                pageSize: 10,
             },
         },
     });
