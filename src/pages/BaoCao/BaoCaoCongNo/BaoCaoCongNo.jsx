@@ -1,8 +1,7 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import '../../../styles/PathStyles.css';
 import './BaoCaoCongNo.css';
-import baoCaoCongNoData from './BaoCaoCongNoData';
+import TableCongNo from './TableCongNo';
 
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');
@@ -38,33 +37,7 @@ function BaoCaoCongNo() {
                         </select>
                     </div>
                 </div>
-                <table className="report-table">
-                    <thead>
-                        <tr>
-                            <th>Mã KH</th>
-                            <th>Tên KH</th>
-                            <th>SĐT</th>
-                            <th>Nợ đầu</th>
-                            <th>Phát sinh</th>
-                            <th>Nợ cuối</th>
-                            <th>Ghi chú</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                    {baoCaoCongNoData.map((customer, index) => ( // Changed from baoCaoData to baoCaoCongNoData
-                        <tr key={index}>
-                            <td>{customer.id}</td>
-                            <td>{customer.name}</td>
-                            <td>{customer.phone}</td>
-                            <td>{customer.startDebt}</td>
-                            <td>{customer.change}</td>
-                            <td>{customer.endDebt}</td>
-                            <td>{customer.note}</td>
-                        </tr>
-                    ))}
-                </tbody>
-                </table>
+                <TableCongNo />
             </div>
         </div>
     );

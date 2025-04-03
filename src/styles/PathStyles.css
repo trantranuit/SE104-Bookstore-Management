@@ -1,6 +1,6 @@
 .page-container {
     background-color: #F5F6FA;
-    height: 90vh;
+    height: 95vh;
     display: flex;
     flex-direction: column; 
     padding: 20px;
@@ -17,6 +17,7 @@
 
 .content-wrapper {
     background-color: #fff;
+    position: relative;
     width: 97%; 
     height: 97%;
     border-radius: 8px;
