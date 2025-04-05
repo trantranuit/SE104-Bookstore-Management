@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
 import './BaoCaoCongNo.css';
 import TableCongNo from './TableCongNo';
@@ -6,8 +6,30 @@ import TableCongNo from './TableCongNo';
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');
     const [selectedYear, setSelectedYear] = useState('2025');
+    const [pageSize, setPageSize] = useState(calculatePageSize()); // State cho page size
+
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const years = Array.from({ length: 10 }, (_, i) => 2025 - i);
+    function calculatePageSize() {
+        const windowHeight = window.innerHeight;
+        const headerHeight = 250; // Increased to account for all header elements
+        const rowHeight = 60; // Increased row height for better spacing
+        const maxRows = 8; // Maximum number of rows to display
+        
+        const calculatedRows = Math.floor((windowHeight - headerHeight) / rowHeight);
+        return Math.min(calculatedRows, maxRows);    
+    }
+
+    useEffect(() => {
+        const handleResize = () => {
+            setPageSize(calculatePageSize());
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <div className="page-container">
@@ -37,7 +59,8 @@ function BaoCaoCongNo() {
                         </select>
                     </div>
                 </div>
-                <TableCongNo />
+                {/* Truyền pageSize vào TableCongNo */}
+                <TableCongNo pageSize={pageSize} />
             </div>
         </div>
     );

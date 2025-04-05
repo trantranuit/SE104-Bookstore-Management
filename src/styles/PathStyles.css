@@ -1,16 +1,20 @@
+:root {
+    --base-font-size: 16px;
+}
+
 .page-container {
     background-color: #F5F6FA;
-    height: 95vh;
+    min-height: 98vh;
     display: flex;
-    flex-direction: column; 
-    padding: 20px;
-    margin-left: 3vw; 
+    flex-direction: column;
+    padding: 1.25rem; /* 20px / var(--base-font-size) */
+    margin-left: 3vw;
 }
 
 .page-container h1 {
-    font-size: 30px;
-    margin: 0 0 0 20px; 
-    padding-bottom: 10px;
+    font-size: 1.875rem; /* 30px / var(--base-font-size) */
+    margin: 1rem 0 0 1.25rem; /* 20px / var(--base-font-size) */
+    padding-bottom: 0.625rem; /* 10px / var(--base-font-size) */
     color: #333;
     width: 100%;
 }
@@ -18,16 +22,40 @@
 .content-wrapper {
     background-color: #fff;
     position: relative;
-    width: 97%; 
-    height: 97%;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 0 0 30px 20px; 
-    padding: 10px;
+    width: calc(100% - 3vw);
+    min-height: calc(95vh - 6rem);
+    border-radius: 0.5rem; /* 8px / var(--base-font-size) */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px / var(--base-font-size) */
+    margin: 0 0 1.875rem 1.875rem; /* 30px 20px / var(--base-font-size) */
+    padding: 0.625rem; /* 10px / var(--base-font-size) */
 }
 
 .page-body {
-    font-size: 16px;
-    color:#000;
-    padding: 20px;
+    font-size: 1rem; /* 16px / var(--base-font-size) */
+    color: #000;
+    padding: 1.25rem; /* 20px / var(--base-font-size) */
+}
+
+/* Media queries for smaller screens */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 1rem;
+        margin-left: 1vw;
+    }
+
+    .page-container h1 {
+        font-size: 1.5rem;
+        margin: 0 0 0 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .content-wrapper {
+        margin: 0 0 1rem 1rem;
+        padding: 0.5rem;
+    }
+
+    .page-body {
+        font-size: 0.875rem;
+        padding: 1rem;
+    }
 }
