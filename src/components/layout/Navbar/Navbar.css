@@ -88,7 +88,7 @@
 .nav-menu-items {
     width: 100%;
     padding: 0;
-    margin-top: 120px; /* Reduced since we removed the toggle button */
+    margin-top: 130px; /* Reduced since we removed the toggle button */
 }
 
 .nav-menu-link {
@@ -120,7 +120,7 @@
     align-items: center;
     padding: 4px 16px 8px 0px;
     list-style: none;
-    height: 60px;
+    height: 50px;
 }
 
 .nav-text a {
@@ -182,7 +182,7 @@ span {
 }
 
 .subnav-item span {
-    font-size: 12px !important; 
+    font-size: 13px !important; 
 }
 .nav-text.active + .subnav-items {
     display: block;
