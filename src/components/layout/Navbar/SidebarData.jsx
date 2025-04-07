@@ -28,10 +28,24 @@ export const mainMenuItems = [
     {
         title: 'Thanh Toán',
         path: '/thanhtoan',
-        icon: <FaIcons.FaCcAmazonPay  />,
-        cName: 'nav-text'
+        icon: <FaIcons.FaCcAmazonPay />,
+        cName: 'nav-text',
+        subNav: [
+            {
+                title: 'Thanh Toán Mới',
+                path: '/thanhtoan/moi',
+                icon: <HiIcons.HiDocumentText />,
+                cName: 'nav-text subnav-item'
+            },
+            {
+                title: 'Thanh Toán Cũ',
+                path: '/thanhtoan/cu',
+                icon: <HiIcons.HiDocumentDuplicate />,
+                cName: 'nav-text subnav-item'
+            }
+        ]
     },
-
+    
     {
         title: 'Khách Hàng',
         path: '/khachhang',
@@ -43,7 +57,21 @@ export const mainMenuItems = [
         title: 'Báo Cáo',
         path: '/baocao',
         icon: <HiIcons.HiDocumentReport />,
-        cName: 'nav-text'
+        cName: 'nav-text',
+        subNav: [
+            {
+                title: 'Báo Cáo Tồn',
+                path: '/baocao/ton',
+                icon: <HiIcons.HiDocumentText />,
+                cName: 'nav-text subnav-item'
+            },
+            {
+                title: 'Báo Cáo Công Nợ',
+                path: '/baocao/congno',
+                icon: <HiIcons.HiDocumentDuplicate />,
+                cName: 'nav-text subnav-item'
+            }
+        ]
     },
 
 
@@ -58,13 +86,13 @@ export const mainMenuItems = [
 export const bottomMenuItems = [
     {
         title: 'Thay Đổi Quy Định',
-        path: '/quydinh',
+        path: '/thaydoiquydinh',
         icon: <FaIcons.FaCog />, 
         cName: 'nav-text'
     },
     {
         title: 'Đăng Xuất',
-        path: '/logout',
+        path: '/dangxuat',
         icon: <FaIcons.FaSignOutAlt />, 
         cName: 'nav-text'
     }

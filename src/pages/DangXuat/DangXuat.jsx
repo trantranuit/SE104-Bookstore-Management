@@ -1,12 +1,12 @@
 import React from 'react'
 import '../../styles/PathStyles.css'
 
-function NhapSach() {
+function DangXuat() {
     return (
         <div className="page-container">
-            <h1 className="page-title">Nhập Sách</h1>
+            <h1 className="page-title">Đăng Xuất</h1>
         </div>
     )
 }
 
-export default NhapSach;
+export default DangXuat;
