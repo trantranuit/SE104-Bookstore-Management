@@ -58,9 +58,9 @@
 
 .pagination {
     position: absolute;
-    bottom: 1em; 
+    bottom: 0 rem; 
     left: 0;
-    right: 1rem;
+    right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -91,4 +91,3 @@
     color: #666;
     margin: 0 0.6rem;
 }
-
