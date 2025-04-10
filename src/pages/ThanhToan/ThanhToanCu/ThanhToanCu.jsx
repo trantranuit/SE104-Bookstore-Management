@@ -4,7 +4,7 @@ import '../../../styles/PathStyles.css'
 function ThanhToanCu() {
     return (
         <div className="page-container">
-            <h1 className="page-title">Thanh Toán Cũ</h1>
+            <h1 className="page-title">Phiếu Thu Tiền</h1>
         </div>
     )
 }
