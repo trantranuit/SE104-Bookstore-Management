@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+.thanhtoan {
+    font-family: 'Roboto', sans-serif !important;
+    flex: 1;
+    font-size: 1rem;
+}
+
+.two-columns {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
+.thanhtoan-left {
+    flex: 2.5;
+    min-width: 200px;
+}
+
+.thanhtoan-right {
+    flex: 3;
+    min-width: 300px;
+}
+
+.line {
+    display: grid;
+    grid-template-columns: 160px 10px 1fr;
+    align-items: center;
+    margin: 0.7rem 0;
+    line-height: 1.8rem;
+}
+
+.label-name {
+    font-weight: bold;
+    text-align: left;
+}
+
+.colon {
+    text-align: center;
+}
+
+.value {
+    text-align: left;
+    padding-left: 0.8rem;
+}
+
+.financial-info {
+    margin-top: 1.5rem;
+    border-top: 1px dashed #ccc;
+    padding-top: 1rem;
+}
+
+.receipt-subtitle {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    color: #333;
+    letter-spacing: 0.03em;
+}
+
+/* --- Input chung --- */
+.input-field,
+.input-custom {
+    background-color: #f5f5f5;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.input-field:placeholder-shown {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #555;
+}
+
+.input-custom:focus {
+    background-color: #eaeaea;
+}
+
+.input-ma::placeholder {
+    color: #aaa;
+}
+.input-as-text {
+    font-size: 16px; /* hoặc bằng font chữ dùng ở các dòng value */
+    font-weight: 400;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    color: #000;
+}
+.btn-thanh-toan {
+    background-color: #1a83ff; /* Màu nền */
+    color: white; /* Màu chữ */
+    border: none; /* Loại bỏ viền */
+    border-radius: 6px; /* Bo góc */
+    padding: 10px 20px; /* Khoảng cách bên trong */
+    font-size: 1rem; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    cursor: pointer; /* Con trỏ chuột */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển đổi */
+    position: absolute;
+    bottom: 20px; /* Cách đáy 20px */
+    right: 20px; /* Cách phải 20px */
+}
+
+.btn-thanh-toan:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+    transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+.btn-thanh-toan:active {
+    background-color: #004494; /* Màu nền khi nhấn */
+    transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
+}
+
+.btn-thanh-toan:disabled {
+    background-color: #8b8888; /* Màu nền khi bị vô hiệu hóa */
+    color: #666; /* Màu chữ khi bị vô hiệu hóa */
+    cursor: not-allowed; /* Con trỏ chuột khi bị vô hiệu hóa */
+}
+/* Tùy chỉnh chung cho tất cả các ô input */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="date"] {
+    background-color: #f0f8ff; /* Màu nền xanh nhạt */
+    color: #333; /* Màu chữ */
+    border: 1px solid #f0f8ff;  /*Viền xanh */
+    border-radius: 4px; /* Bo góc */
+    padding: 5px 10px; /* Khoảng cách bên trong */
+    font-size: 14px; /* Kích thước chữ */
+    outline: none; /* Loại bỏ viền mặc định khi focus */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Hiệu ứng chuyển đổi */
+}
+
+/* Hiệu ứng khi hover vào các ô input */
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="email"]:hover,
+input[type="date"]:hover {
+    background-color: #e6f2ff; /* Màu nền xanh nhạt hơn khi hover */
+    border-color: #0056b3; /* Viền xanh đậm hơn */
+}
+
+/* Hiệu ứng khi focus vào các ô input */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus {
+    background-color: #e6f2ff; /* Màu nền xanh nhạt hơn khi focus */
+    border-color: #0056b3; /* Viền xanh đậm hơn */
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5); /* Hiệu ứng đổ bóng */
+}
+
+/* Tùy chỉnh mũi tên xổ xuống của lịch (chỉ áp dụng cho input[type="date"]) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: #f0f8ff; /* Màu nền của mũi tên */
+    border-radius: 50%; /* Bo tròn mũi tên */
+    padding: 5px; /* Khoảng cách bên trong */
+    cursor: pointer; /* Con trỏ chuột */
+}
+
+/* Hiệu ứng khi hover vào mũi tên xổ xuống */
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: #73adef; /* Màu nền khi hover */
+}
+/* Đảm bảo ô nhập ngày có cùng độ dài với ô nhập mã nhân viên */
+input[type="date"] {
+    width: 92%; /* Đặt chiều rộng bằng 100% để phù hợp với các ô khác */
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến kích thước */
+}
