@@ -32,15 +32,15 @@ export const mainMenuItems = [
         cName: 'nav-text',
         subNav: [
             {
-                title: 'Thanh Toán Mới',
+                title: 'Tạo Hóa Đơn Sách',
                 path: '/thanhtoan/moi',
                 icon: <HiIcons.HiDocumentText />,
                 cName: 'nav-text subnav-item'
             },
             {
-                title: 'Thanh Toán Cũ',
+                title: 'Phiếu Thu Tiền',
                 path: '/thanhtoan/cu',
-                icon: <HiIcons.HiDocumentDuplicate />,
+                icon: <HiIcons.HiCalculator />,
                 cName: 'nav-text subnav-item'
             }
         ]
