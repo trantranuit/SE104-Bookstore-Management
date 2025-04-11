@@ -8,15 +8,15 @@ import {
 function TableCongNo({ data, pageSize }) {
     const columns = [
         {
-            header: 'Mã KH',
+            header: 'Mã Khách Hàng',
             accessorKey: 'id',
         },
         {
-            header: 'Tên KH',
+            header: 'Tên Khách Hàng',
             accessorKey: 'name',
         },
         {
-            header: 'SĐT',
+            header: 'Số Điện Thoại',
             accessorKey: 'phone',
         },
         {
@@ -30,11 +30,7 @@ function TableCongNo({ data, pageSize }) {
         {
             header: 'Nợ cuối',
             accessorKey: 'endDebt',
-        },
-        {
-            header: 'Ghi chú',
-            accessorKey: 'note',
-        },
+        }
     ];
 
     const table = useReactTable({

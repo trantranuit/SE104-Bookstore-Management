@@ -6,7 +6,6 @@ const baoCaoCongNoData = [
         startDebt: 2,
         change: 20,
         endDebt: 13,
-        note: '',
         month: 1,
         year: 2025
     },
@@ -17,7 +16,6 @@ const baoCaoCongNoData = [
         startDebt: 2,
         change: 50,
         endDebt: 43,
-        note: '',
         month: 2,
         year: 2025
     },
@@ -28,7 +26,6 @@ const baoCaoCongNoData = [
         startDebt: 5,
         change: 40,
         endDebt: 34,
-        note: '',
         month: 3,
         year: 2025
     },
@@ -39,7 +36,6 @@ const baoCaoCongNoData = [
         startDebt: 4,
         change: 12,
         endDebt: 12,
-        note: '',
         month: 1,
         year: 2024
     },
@@ -50,7 +46,6 @@ const baoCaoCongNoData = [
         startDebt: 2,
         change: 43,
         endDebt: 43,
-        note: '',
         month: 2,
         year: 2024
     },
@@ -61,7 +56,6 @@ const baoCaoCongNoData = [
         startDebt: 2,
         change: 53,
         endDebt: 23,
-        note: '',
         month: 3,
         year: 2024
     },
@@ -72,7 +66,6 @@ const baoCaoCongNoData = [
         startDebt: 5,
         change: 23,
         endDebt: 25,
-        note: '',
         month: 1,
         year: 2023
     },
@@ -83,7 +76,6 @@ const baoCaoCongNoData = [
         startDebt: 4,
         change: 45,
         endDebt: 40,
-        note: '',
         month: 2,
         year: 2023
     },
@@ -94,7 +86,6 @@ const baoCaoCongNoData = [
         startDebt: 4,
         change: 45,
         endDebt: 40,
-        note: '',
         month: 3,
         year: 2023
     },
@@ -105,7 +96,6 @@ const baoCaoCongNoData = [
         startDebt: 2,
         change: 30,
         endDebt: 20,
-        note: '',
         month: 1,
         year: 2022
     },
@@ -116,7 +106,6 @@ const baoCaoCongNoData = [
         startDebt: 3,
         change: 25,
         endDebt: 15,
-        note: '',
         month: 2,
         year: 2022
     },
@@ -127,7 +116,6 @@ const baoCaoCongNoData = [
         startDebt: 7,
         change: 15,
         endDebt: 20,
-        note: '',
         month: 3,
         year: 2022
     }
