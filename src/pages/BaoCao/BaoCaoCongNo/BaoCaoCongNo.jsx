@@ -1,59 +1,48 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../../../styles/PathStyles.css';
 import './BaoCaoCongNo.css';
 import TableCongNo from './TableCongNo';
+import baoCaoCongNoData from './BaoCaoCongNoData'; // Import the data
 
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [pageSize, setPageSize] = useState(8); // Initial page size
+    const [pageSize, setPageSize] = useState(8); 
+    const [filteredData, setFilteredData] = useState([]); // State for filtered data
 
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const years = Array.from({ length: 10 }, (_, i) => 2025 - i);
 
-    // Use useCallback to memoize calculatePageSize
     const calculatePageSize = useCallback(() => {
         const contentWrapper = document.querySelector('.content-wrapper');
         if (!contentWrapper) {
-            return 8; // Default page size if content-wrapper is not available
+            return 8; 
         }
 
         const wrapperWidth = contentWrapper.offsetWidth;
         const wrapperHeight = contentWrapper.offsetHeight;
-        const headerHeight = 100; // Adjust as needed
-        const rowHeight = 60; // Adjust as needed
+        const headerHeight = 100; 
+        const rowHeight = 60; 
 
         let maxRowsBasedOnWidth;
-        if (wrapperWidth < 640) { // Small screens (phones)
+        if (wrapperWidth < 640) { 
             maxRowsBasedOnWidth = 3;
-        } else if (wrapperWidth < 1024) { // Medium screens (tablets)
+        } else if (wrapperWidth < 1024) { 
             maxRowsBasedOnWidth = 5;
         } else { // Large screens (desktops)
             maxRowsBasedOnWidth = 8;
         }
 
         const calculatedRowsBasedOnHeight = Math.floor((wrapperHeight - headerHeight) / rowHeight);
-        
-        // Use the smaller value between width and height calculations
-        const finalMaxRows = Math.min(maxRowsBasedOnWidth, calculatedRowsBasedOnHeight);
-        
-        return finalMaxRows;
+        return Math.min(maxRowsBasedOnWidth, calculatedRowsBasedOnHeight);
     }, []);
 
-    // Use useEffect to update pageSize when the component mounts and when the window resizes
-    useEffect(() => {
-        const handleResize = () => {
-            setPageSize(calculatePageSize());
-        };
-
-        // Set initial page size
-        setPageSize(calculatePageSize());
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [calculatePageSize]); // Dependency array includes calculatePageSize
+    const handleSubmit = () => {
+        const filtered = baoCaoCongNoData.filter(item => {
+            return item.month === parseInt(selectedMonth) && item.year === parseInt(selectedYear);
+        });
+        setFilteredData(filtered);
+    };
 
     return (
         <div className="page-container">
@@ -82,9 +71,12 @@ function BaoCaoCongNo() {
                             ))}
                         </select>
                     </div>
+                    <button className="submit-button" onClick={handleSubmit}>
+                        Submit
+                    </button>
                 </div>
-                {/* Truyền pageSize vào TableCongNo */}
-                <TableCongNo pageSize={pageSize} />
+                {/* Pass filtered data and pageSize to TableCongNo */}
+                <TableCongNo data={filteredData} pageSize={pageSize} />
             </div>
         </div>
     );
