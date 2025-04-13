@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { push } from "connected-react-router";
-import * as actions from "../../store/actions";
-import './Login.css';
+import './DangNhap.css';
+import { ROUTES } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -29,9 +27,17 @@ class Login extends Component {
     }
 
     handleLogin = () => {
-        console.log('email:', this.state.email, 'password:', this.state.password)
-        console.log('all state', this.state)
+        // Lưu trạng thái đăng nhập
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('user', JSON.stringify({ 
+            email: this.state.email, 
+            role: 'admin' 
+        }));
+        
+        // Chuyển hướng đến trang chủ
+        window.location.href = ROUTES.HOME;
     }
+    
 
     toggleShowPassword = () => {
         this.setState({
@@ -80,18 +86,4 @@ class Login extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        language: state.app.language
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        navigate: (path) => dispatch(push(path)),
-        adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
-        adminLoginFail: () => dispatch(actions.adminLoginFail()),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
