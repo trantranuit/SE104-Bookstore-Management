@@ -5,8 +5,13 @@ import {
     getPaginationRowModel 
 } from '@tanstack/react-table';
 
-function TableCongNo({ data, pageSize }) {
+function TableCongNo({ data }) {
     const columns = [
+        {
+            header: 'STT',
+            accessorFn: (row, index) => index + 1,
+            cell: info => <div className="stt-cell">{info.getValue()}</div>
+        },
         {
             header: 'Mã Khách Hàng',
             accessorKey: 'id',
@@ -40,57 +45,61 @@ function TableCongNo({ data, pageSize }) {
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
             pagination: {
-                pageSize,
+                pageSize: 10, 
             },
         },
     });
 
     return (
-        <div>
-            <table className="report-table">
-                <thead>
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                <th key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : header.column.columnDef.header}
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map(row => (
-                        <tr key={row.id}>
-                            {row.getVisibleCells().map(cell => (
-                                <td key={cell.id}>
-                                    {cell.getValue()}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <>
+            <div className="table-container">
+                <table className="report-table">
+                    <thead>
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    <th key={header.id} className={header.id === 'stt' ? 'stt-header' : ''}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : header.column.columnDef.header}
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
+                    <tbody>
+                        {table.getRowModel().rows.map(row => (
+                            <tr key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id} className={cell.column.id === 'stt' ? 'stt-cell' : ''}>
+                                        {cell.getValue()}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             <div className="pagination">
                 <button
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
+                    className="pagination-button"
                 >
                     ←
                 </button>
-                <span>
+                <span className="pagination-info">
                     Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
                 </span>
                 <button
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
+                    className="pagination-button"
                 >
                     →
                 </button>
             </div>
-        </div>
+        </>
     );
 }
 

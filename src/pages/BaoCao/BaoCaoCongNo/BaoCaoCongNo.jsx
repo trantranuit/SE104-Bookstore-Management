@@ -1,47 +1,32 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
 import './BaoCaoCongNo.css';
 import TableCongNo from './TableCongNo';
-import baoCaoCongNoData from './BaoCaoCongNoData'; // Import the data
+import baoCaoCongNoData from './BaoCaoCongNoData'; 
 
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [pageSize, setPageSize] = useState(8); 
     const [filteredData, setFilteredData] = useState([]); // State for filtered data
 
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
-    const years = Array.from({ length: 10 }, (_, i) => 2025 - i);
+    const years = Array.from({ length: 2 }, (_, i) => 2025 - i);
 
-    const calculatePageSize = useCallback(() => {
-        const contentWrapper = document.querySelector('.content-wrapper');
-        if (!contentWrapper) {
-            return 8; 
-        }
+    // Hàm lọc dữ liệu
+    const filterData = (month, year) => {
+        const filtered = baoCaoCongNoData.filter(item => {
+            return item.month === parseInt(month) && item.year === parseInt(year);
+        });
+        setFilteredData(filtered);
+    };
 
-        const wrapperWidth = contentWrapper.offsetWidth;
-        const wrapperHeight = contentWrapper.offsetHeight;
-        const headerHeight = 100; 
-        const rowHeight = 60; 
-
-        let maxRowsBasedOnWidth;
-        if (wrapperWidth < 640) { 
-            maxRowsBasedOnWidth = 3;
-        } else if (wrapperWidth < 1024) { 
-            maxRowsBasedOnWidth = 5;
-        } else { // Large screens (desktops)
-            maxRowsBasedOnWidth = 8;
-        }
-
-        const calculatedRowsBasedOnHeight = Math.floor((wrapperHeight - headerHeight) / rowHeight);
-        return Math.min(maxRowsBasedOnWidth, calculatedRowsBasedOnHeight);
+    // Tự động lọc dữ liệu khi component được tải
+    useEffect(() => {
+        filterData(selectedMonth, selectedYear);
     }, []);
 
     const handleSubmit = () => {
-        const filtered = baoCaoCongNoData.filter(item => {
-            return item.month === parseInt(selectedMonth) && item.year === parseInt(selectedYear);
-        });
-        setFilteredData(filtered);
+        filterData(selectedMonth, selectedYear);
     };
 
     return (
@@ -72,11 +57,11 @@ function BaoCaoCongNo() {
                         </select>
                     </div>
                     <button className="submit-button" onClick={handleSubmit}>
-                        Submit
+                        Hiển Thị
                     </button>
                 </div>
-                {/* Pass filtered data and pageSize to TableCongNo */}
-                <TableCongNo data={filteredData} pageSize={pageSize} />
+                {/* Pass filtered data to TableCongNo */}
+                <TableCongNo data={filteredData} />
             </div>
         </div>
     );
