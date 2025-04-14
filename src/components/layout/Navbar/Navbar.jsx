@@ -40,51 +40,56 @@ function Navbar() {
                     </div>
                 </div>
                 <nav className="nav-menu">
-                    <ul className="nav-menu-items">
-                        <li className="logo-container">
-                            <img src={logo} alt="Logo" className="sidebar-logo" />
-                        </li>
-                        {mainMenuItems.map((item, index) => (
-                            <React.Fragment key={index}>
-                                <li className={item.cName}>
-                                    {item.subNav ? (
-                                        <div 
-                                            className={`nav-menu-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
-                                            onClick={(e) => handleItemClick(item, e)}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            {item.icon}
-                                            <span>{item.title}</span>
-                                        </div>
-                                    ) : (
-                                        <Link 
-                                            to={item.path}
-                                            className={location.pathname === item.path ? 'active' : ''}
-                                            onClick={() => handleItemClick(item)}
-                                        >
-                                            {item.icon}
-                                            <span>{item.title}</span>
-                                        </Link>
+                    <div className="logo-container">
+                        <img src={logo} alt="Logo" className="sidebar-logo" />
+                    </div>
+
+                    {/* Tách riêng phần menu chính và bottom items */}
+                    <div className="menu-content">
+                        <ul className="nav-menu-items">
+                            {mainMenuItems.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <li className={item.cName}>
+                                        {item.subNav ? (
+                                            <div 
+                                                className={`nav-menu-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
+                                                onClick={(e) => handleItemClick(item, e)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                {item.icon}
+                                                <span>{item.title}</span>
+                                            </div>
+                                        ) : (
+                                            <Link 
+                                                to={item.path}
+                                                className={location.pathname === item.path ? 'active' : ''}
+                                                onClick={() => handleItemClick(item)}
+                                            >
+                                                {item.icon}
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        )}
+                                    </li>
+                                    {item.subNav && activeSubNav === item.path && (
+                                        <ul className={`subnav-items ${activeSubNav === item.path ? 'active' : ''}`}>
+                                            {item.subNav.map((subItem, subIndex) => (
+                                                <li key={subIndex} className={subItem.cName}>
+                                                    <Link 
+                                                        to={subItem.path}
+                                                        className={location.pathname === subItem.path ? 'active' : ''}
+                                                    >
+                                                        {subItem.icon}
+                                                        <span>{subItem.title}</span>
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     )}
-                                </li>
-                                {item.subNav && activeSubNav === item.path && (
-                                    <div className={`subnav-items ${activeSubNav === item.path ? 'active' : ''}`}>
-                                        {item.subNav.map((subItem, subIndex) => (
-                                            <li key={subIndex} className={subItem.cName}>
-                                                <Link 
-                                                    to={subItem.path}
-                                                    className={location.pathname === subItem.path ? 'active' : ''}
-                                                >
-                                                    {subItem.icon}
-                                                    <span>{subItem.title}</span>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </div>
-                                )}
-                            </React.Fragment>
-                        ))}
-                        <div className="bottom-items">
+                                </React.Fragment>
+                            ))}
+                        </ul>
+
+                        <ul className="bottom-items">
                             {bottomMenuItems.map((item, index) => (
                                 <li key={`bottom-${index}`} className={item.cName}>
                                     <Link 
@@ -96,8 +101,8 @@ function Navbar() {
                                     </Link>
                                 </li>
                             ))}
-                        </div>
-                    </ul>
+                        </ul>
+                    </div>
                 </nav>
             </IconContext.Provider>
         </>

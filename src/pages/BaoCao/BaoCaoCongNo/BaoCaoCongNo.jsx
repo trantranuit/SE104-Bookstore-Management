@@ -7,7 +7,7 @@ import baoCaoCongNoData from './BaoCaoCongNoData';
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [filteredData, setFilteredData] = useState([]); // State for filtered data
+    const [filteredData, setFilteredData] = useState([]); 
 
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const years = Array.from({ length: 2 }, (_, i) => 2025 - i);

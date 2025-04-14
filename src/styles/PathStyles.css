@@ -3,20 +3,18 @@
 }
 
 
-
 .page-container {
     background-color: #F5F6FA;
     min-height: 98vh;
     display: flex;
     flex-direction: column;
     padding: 1.25rem; /* 20px / var(--base-font-size) */
-    margin-left: 3vw;
     overflow-x: auto;
 }
 
 .page-container h1 {
-    font-size: 1.875rem; /* 30px / var(--base-font-size) */
-    margin: 1rem 0 0 1.25rem; /* 20px / var(--base-font-size) */
+    font-size: 1.875rem; 
+    margin: 1rem 0 0 1.25rem; 
     padding-bottom: 0.625rem; /* 10px / var(--base-font-size) */
     color: #333;
     width: 100%;

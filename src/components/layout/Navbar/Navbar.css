@@ -89,16 +89,18 @@
 
 .nav-menu {
     background: white;
-    width: var(--sidebar-width);
+    width: 13rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
-    overflow-y: auto; /* Enable scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 4rem; /* Add padding to prevent content from being hidden */
+    padding: 0;
+    margin: 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
 
