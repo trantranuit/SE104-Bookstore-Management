@@ -2,20 +2,19 @@
     --base-font-size: 16px;
 }
 
-
 .page-container {
     background-color: #F5F6FA;
     min-height: 98vh;
     display: flex;
     flex-direction: column;
-    padding: 1.25rem; /* 20px / var(--base-font-size) */
+    padding: 1.25rem;
     overflow-x: auto;
 }
 
 .page-container h1 {
-    font-size: 1.875rem; 
-    margin: 1rem 0 0 1.25rem; 
-    padding-bottom: 0.625rem; /* 10px / var(--base-font-size) */
+    font-size: 1.875rem;
+    margin: 1rem 0 0 1.25rem;
+    padding-bottom: 0.625rem;
     color: #333;
     width: 100%;
 }
@@ -25,16 +24,17 @@
     position: relative;
     width: calc(100% - 3vw);
     min-height: calc(95vh - 6rem);
-    border-radius: 0.5rem; /* 8px / var(--base-font-size) */
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px / var(--base-font-size) */
-    margin: 0 0 1.875rem 1.875rem; /* 30px 20px / var(--base-font-size) */
-    padding: 0.625rem; /* 10px / var(--base-font-size) */
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin: 0 0 1.875rem 1.875rem;
+    padding: 0.625rem;
+    overflow: hidden; /*  ADD THIS LINE */
 }
 
 .page-body {
-    font-size: 1rem; /* 16px / var(--base-font-size) */
+    font-size: 1rem;
     color: #000;
-    padding: 1.25rem; /* 20px / var(--base-font-size) */
+    padding: 1.25rem;
 }
 
 /* Media queries for smaller screens */

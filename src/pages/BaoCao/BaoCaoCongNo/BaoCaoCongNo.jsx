@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
-import './BaoCaoCongNo.css';
+import './BaoCaoCongNo.css'; // Ensure this line exists and is correct
 import TableCongNo from './TableCongNo';
-import baoCaoCongNoData from './BaoCaoCongNoData'; 
+import baoCaoCongNoData from './BaoCaoCongNoData';
 
 function BaoCaoCongNo() {
     const [selectedMonth, setSelectedMonth] = useState('1');

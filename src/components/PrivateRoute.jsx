@@ -3,16 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants';
 
 const PrivateRoute = ({ children }) => {
-  // Kiểm tra xem người dùng đã đăng nhập chưa
-const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-  // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-if (!isLoggedIn) {
+    if (!isLoggedIn) {
     return <Navigate to={ROUTES.LOGIN} replace />;
-}
+    }
 
-  // Nếu đã đăng nhập, hiển thị component con
-return children;
+    return children;
 };
 
-export default PrivateRoute; 
+export default PrivateRoute;

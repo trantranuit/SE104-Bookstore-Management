@@ -3,11 +3,12 @@
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
-    padding: 1.5rem;
-    margin: 1rem auto;
+    padding: 0.7rem;
+    margin: 0.5rem auto;
     background-color: white;
     border-radius: 0.5rem;
     max-width: 600px;
+    
 }
 
 .content-day h2 {
