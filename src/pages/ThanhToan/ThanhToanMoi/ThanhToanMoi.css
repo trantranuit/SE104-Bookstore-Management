@@ -1,0 +1,551 @@
+.book-search-section {
+    position: relative; /* Ensure the pagination section is positioned relative to this div */
+    margin-bottom: 2rem;
+    padding: 0.5rem;
+    background-color: white; /* Add white background */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+    margin-left: 1rem; /* Add margin to the left */
+    margin-right: 1rem; /* Add margin to the right */
+}
+
+.cart-section {
+    position: relative; /* Ensure the "Thanh toán" button is positioned relative to this div */
+    margin-top: 1rem; /* Further reduce spacing between book list and cart sections */
+    padding: 0.5rem;
+    background-color: white; /* Add white background */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+    margin-left: 1rem; /* Add margin to the left */
+    margin-right: 1rem; /* Add margin to the right */
+}
+
+.section::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.section::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+}
+
+.section::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; /* Darker color on hover */
+}
+
+.section::-webkit-scrollbar-track {
+    background-color: #f9f9f9; /* Background of the scrollbar track */
+}
+
+.search-bar {
+    width: 80%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.book-table-wrapper {
+    max-height: 300px; /* Set a maximum height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.book-table-wrapper::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.book-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+}
+
+.book-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; /* Darker color on hover */
+}
+
+.book-table-wrapper::-webkit-scrollbar-track {
+    background-color: #f9f9f9; /* Background of the scrollbar track */
+}
+
+.book-table, .cart-table, .invoice-table, .final-invoice-section .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: transparent; /* Remove background */
+}
+
+.book-table th, .cart-table th, .invoice-table th, .final-invoice-section .invoice-table th {
+    font-weight: bold;
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #ddd; /* Only horizontal borders */
+}
+
+.book-table td, .cart-table td, .invoice-table td, .final-invoice-section .invoice-table td {
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #ddd; /* Only horizontal borders */
+    font-size: 0.9rem; /* Adjust font size for consistency */
+}
+
+.book-table-wrapper, .invoice-table-wrapper, .final-invoice-section .invoice-table-wrapper {
+    max-height: 300px; /* Set a maximum height for scrollable areas */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.book-table-wrapper::-webkit-scrollbar, 
+.invoice-table-wrapper::-webkit-scrollbar, 
+.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.book-table-wrapper::-webkit-scrollbar-thumb, 
+.invoice-table-wrapper::-webkit-scrollbar-thumb, 
+.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+}
+
+.book-table-wrapper::-webkit-scrollbar-thumb:hover, 
+.invoice-table-wrapper::-webkit-scrollbar-thumb:hover, 
+.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; /* Darker color on hover */
+}
+
+.book-table-wrapper::-webkit-scrollbar-track, 
+.invoice-table-wrapper::-webkit-scrollbar-track, 
+.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-track {
+    background-color: #f9f9f9; /* Background of the scrollbar track */
+}
+
+.book-table, .cart-table {
+    width: 95%; /* Increase table width */
+    margin: 0 auto; /* Center the table */
+    border-collapse: collapse;
+}
+
+.book-table th, .book-table td,
+.cart-table th, .cart-table td {
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem; /* Reduce font size */
+}
+
+.cart-section h2 {
+    margin-bottom: 0.5rem;
+    text-align: center; /* Center-align the "Giỏ hàng" title */
+}
+
+.quantity {
+    margin: 0 0.5rem;
+    display: inline-block;
+    text-align: center;
+    width: 30px; /* Adjust width for better alignment */
+}
+
+.summary-bar {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.summary-bar span:first-child {
+    margin-left: auto; /* Move total number of books to the right */
+}
+
+.summary-bar span:last-child {
+    text-align: center; /* Center-align the total price */
+    flex: 1; /* Ensure it takes up space to center properly */
+    font-size: 0.85rem; /* Adjust font size for better visibility */
+}
+
+.summary-bar span:last-child::after {
+    content: " VND"; /* Append "VND" to the total price */
+}
+
+.next-button-wrapper {
+    display: none; /* Remove the old "Tiếp tục thanh toán" button wrapper */
+}
+
+.next-button {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.next-button:hover {
+    background-color: #45a049;
+}
+
+.icon-button {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    color: darkred;
+}
+
+.icon-button:disabled {
+    color: #ccc; /* Gray color for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled */
+    opacity: 0.6; /* Make disabled button appear faded */
+}
+
+.quantity-button {
+    background-color: transparent;
+    border: none;
+    color: black;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease; /* Smooth hover effect */
+}
+
+.quantity-button:hover {
+}
+
+quantity-button:disabled {
+    color: #ccc; /* Gray color for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled */
+}
+
+body {
+    font-family: inherit; /* Use the global font family of the web */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.85rem; /* Reduced font size */
+    border-color: white; /* Set border color to white */
+    font-family: inherit; /* Ensure table uses the global font family */
+}
+
+table th, table td {
+    text-align: left;
+    padding: 16px 8px; /* Increased padding for more spacing */
+    border: none; /* Remove all borders */
+}
+
+table thead tr {
+    border-bottom: 1px solid #ddd; /* Lighter bottom border for header row */
+}
+
+table tbody tr {
+    border-bottom: 1px solid #eee; /* Lighter bottom border for body rows */
+}
+
+.quantity-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Space between buttons and input */
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    font-size: 1rem;
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -moz-appearance: textfield; /* Remove spinner for Firefox */
+}
+
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Remove spinner for Chrome, Safari, Edge */
+    margin: 0;
+}
+
+.quantity-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.toggle-books-button-wrapper {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.toggle-books-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.toggle-books-button:hover {
+    background-color: #0056b3;
+}
+
+.pagination-info-wrapper {
+    margin-top: 0.5rem; /* Add spacing above the pagination section */
+    display: flex;
+    justify-content: flex-end; /* Align to the right */
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-info {
+    font-size: 0.1rem; /* Extremely small font size */
+    color: #555;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pagination-button {
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    color: #007bff; /* Blue color */
+    font-size: 1rem; /* Adjust size for better visibility */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-button:disabled {
+    color: #ccc; /* Gray color for disabled state */
+    cursor: not-allowed;
+}
+
+.pagination-button:hover:not(:disabled) {
+    color: #0056b3; /* Darker blue on hover */
+}
+
+.pagination-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+.pagination-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.pagination-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.pagination-info {
+    font-size: 1rem;
+    color: #333;
+}
+
+.invoice-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-section, .final-invoice-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 95%; /* Match the width of the above sections */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.invoice-table, .final-invoice-section .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.invoice-table th, .invoice-table td {
+    padding: 0.75rem; /* Adjust padding for consistent spacing */
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Only horizontal borders */
+}
+
+.invoice-table th {
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+
+.invoice-table td {
+    font-size: 0.9rem; /* Adjust font size for better readability */
+}
+
+.customer-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.customer-info h3 {
+    margin-bottom: 0.5rem;
+}
+
+.customer-info label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.customer-info input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.finalize-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.finalize-button:hover {
+    background-color: #45a049;
+}
+
+.customer-info, .customer-details {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Increase spacing between customer information fields */
+}
+
+.customer-info h3, .final-invoice-section h2 {
+    margin-bottom: 0.5rem;
+}
+
+.customer-info label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.customer-info input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.finalize-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.finalize-button:hover {
+    background-color: #45a049;
+}
+
+.book-search-section, .cart-section, .invoice-section, .final-invoice-section {
+    width: 95%; /* Ensure all sections have the same width */
+    margin: 0 auto;
+    background-color: white; /* Set background color to white */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.two-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.thanhtoan {
+    flex: 1;
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.label-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.colon {
+    margin: 0 0.5rem;
+}
+
+.value {
+    flex: 2;
+}
+
+.input-ma {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-vnd-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.vnd-label {
+    margin-left: 0.5rem;
+    font-weight: bold;
+}
