@@ -1,0 +1,335 @@
+.invoice-section {
+    background-color: #ffffff; /* White background */
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
+}
+
+.search-section {
+    width: 90%; /* Match the width of the table in ThanhToanMoi */
+    margin: 0 auto 2rem; /* Center the search bar and add 2rem spacing below */
+    display: block; /* Ensure it behaves as a block element */
+    margin-top: 1rem;
+}
+
+.search-bar {
+    width: 100%; /* Match the width of the table */
+    padding: 0.75rem; /* Add padding for better usability */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Adjust font size for readability */
+    margin-top: 1rem; /* Add spacing above */
+    margin-bottom: 1rem; /* Add spacing below */
+    display: block; /* Ensure it spans the full width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.search-bar:focus {
+    outline: none; /* Remove default outline */
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue glow on focus */
+}
+
+.search-bar::placeholder {
+    color: #888; /* Light gray placeholder text */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+.invoice-table {
+    width: 90%; /* Match the width of the table in ThanhToanMoi */
+    margin: 0 auto; /* Center the table */
+    border-collapse: collapse;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: transparent; /* Remove background */
+}
+
+.invoice-table th {
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    text-align: center; /* Center-align header text */
+    padding: 0.75rem; /* Add padding for spacing */
+    font-weight: bold; /* Make text bold */
+    border-bottom: 1px solid #ddd; /* Add a border below the header */
+}
+
+.view-button {
+    background-color: #007bff; /* Blue background */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.view-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.modal-content {
+    width: 80%; /* Increase modal width */
+    max-width: 900px; /* Set a maximum width */
+    margin: 0 auto; /* Center the modal */
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left; /* Align text to the left */
+}
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+    
+
+}
+
+.modal-content p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-align: right;
+    
+}
+
+.modal-content h3 {
+    text-align: center; /* Center the heading */
+    font-size: 1.2rem; /* Adjust font size for better visibility */
+    font-weight: bold; /* Make the heading bold */
+    margin-bottom: 1rem; /* Add spacing below the heading */
+}
+
+.close-button {
+    background-color: #dc3545; /* Red background */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1.5rem; /* Adjust spacing above */
+    display: inline-block; /* Ensure the button is visible */
+}
+
+.close-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.modal-table {
+    width: calc(100% - 2rem); /* Adjust width to align with modal content */
+    margin: 0 auto; /* Center the table */
+    border-collapse: collapse;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.modal-table th, .modal-table td {
+    border-top: none; /* Remove top border */
+    border-left: none; /* Remove left border */
+    border-right: none; /* Remove right border */
+    border-bottom: 1px solid #ddd; /* Only horizontal borders */
+    padding: 0.75rem;
+    text-align: center; /* Align text to the center */
+}
+
+.modal-table th {
+    background-color: #4CAF50; /* Green background for table headers */
+    color: white; /* White text */
+    font-weight: bold;
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #ddd; /* Add a border below the header */
+}
+
+.modal-totals {
+    text-align: right; /* Align totals to the right */
+    margin-right: 0.9rem;
+     /* Match the right margin of the table */
+    font-size: 1rem; /* Adjust font size for better readability */
+    font-weight: bold; /* Make totals bold */
+    margin-top: 1rem; /* Add spacing above totals */
+}
+
+.modal-columns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.modal-left, .modal-right {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.modal-right {
+    flex: 1;
+    padding-right: 2rem; /* Add padding to align with the table */
+}
+
+.modal-left p, .modal-right p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-align: left; /* Align text to the left */
+}
+
+.modal-title {
+    text-align: center; /* Center the title */
+    margin-bottom: 2rem !important; /* Add 1rem margin below the title */
+    font-size: 1.5rem; /* Adjust font size for better visibility */
+    font-weight: bold; /* Make the title bold */
+}
+
+.section-header {
+    background-color:  #007bff; /* Light green background */
+    color: #ffffff; /* Dark green text */
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 1rem; /* Add spacing below the header */
+    text-align: center; /* Center-align the text */
+}
+
+.modal-navigation {
+    display: none; /* Remove navigation buttons */
+}
+
+.nav-button, .close-button, .edit-button, .delete-button {
+    display: none; /* Remove button styles */
+}
+
+.icon-button {
+    background-color: transparent; /* No background color */
+    border: none; /* Remove border */
+    color: #007bff; /* Blue color for the icon */
+    cursor: pointer;
+    font-size: 1.2rem; /* Adjust icon size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    color: #0056b3; /* Darker blue on hover */
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 1rem;
+    border: 1px solid #ffffff; /* Light gray border */
+    background: transparent;
+    border-radius: 50%; /* Make the button circular */
+    font-size: 1.5rem; /* Adjust size */
+    cursor: pointer;
+    color: #333; /* Dark gray color */
+    width: 2rem; /* Set width */
+    height: 2rem; /* Set height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 15rem; /* Position it to the right */
+    margin-top:1.5rem;
+   
+}
+
+.modal-close-button:hover {
+    background-color: #f5f5f5; /* Slightly darker white on hover */
+    color: #000; /* Darker color on hover */
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.edit-button, .delete-button {
+    background-color: #007bff; /* Blue for edit button */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.edit-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.delete-button {
+    background-color: #dc3545; /* Red for delete button */
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirmation-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.confirm-button, .cancel-button {
+    background-color: #007bff; /* Blue for confirm button */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.confirm-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.cancel-button {
+    background-color: #6c757d; /* Gray for cancel button */
+}
+
+.cancel-button:hover {
+    background-color: #5a6268; /* Darker gray on hover */
+}

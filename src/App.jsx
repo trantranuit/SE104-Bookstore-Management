@@ -11,7 +11,8 @@ import BaoCaoTon from './pages/BaoCao/BaoCaoTon/BaoCaoTon';
 import BaoCaoCongNo from './pages/BaoCao/BaoCaoCongNo/BaoCaoCongNo';
 import PhanQuyen from './pages/PhanQuyen/PhanQuyen';  
 import DangXuat from './pages/DangXuat/DangXuat';  
-import ThayDoiQuyDinh from './pages/ThayDoiQuyDinh/ThayDoiQuyDinh';  
+import ThayDoiQuyDinh from './pages/ThayDoiQuyDinh/ThayDoiQuyDinh'; 
+import HoaDon from './pages/ThanhToan/HoaDon/HoaDon'; 
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path='/phanquyen' element={<PhanQuyen />} />
             <Route path='/dangxuat' element={<DangXuat />} />
             <Route path='/thaydoiquydinh' element={<ThayDoiQuyDinh />} />
+            <Route path='/thanhtoan/hoadon' element={<HoaDon />} />
           </Routes>
         </div>
       </Router>

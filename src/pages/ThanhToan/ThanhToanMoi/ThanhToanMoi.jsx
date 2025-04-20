@@ -137,6 +137,36 @@ function ThanhToanMoi() {
 
     const handleCustomerInfoSubmit = (e) => {
         e.preventDefault();
+        const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
+        const newInvoice = {
+            maHoaDon: `HD${Math.floor(Math.random() * 100000)}`,
+            nhanVien: employeeInfo.name,
+            maKhachHang: customerInfo.id,
+            tenKhachHang: customerInfo.name,
+            sdt: customerInfo.phone,
+            email: customerInfo.email,
+            soNo: customerInfo.debt + totalInvoiceAmount, // Updated debt
+            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+            danhSachSach: cart.map(item => ({
+                maSach: item.maSach,
+                tenSach: item.tenSach,
+                soLuong: item.soLuongMua,
+                donGia: item.donGia,
+            })),
+        };
+
+        // Update invoices in localStorage
+        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        localStorage.setItem('invoices', JSON.stringify([...existingInvoices, newInvoice]));
+
+        // Update customer debt in localStorage
+        const updatedCustomers = customerData.map(customer =>
+            customer.id === customerInfo.id
+                ? { ...customer, debt: customer.debt + totalInvoiceAmount }
+                : customer
+        );
+        localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+
         setFinalInvoice(true); // Show the final invoice
         setTimeout(() => {
             finalInvoiceRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll to the final invoice
@@ -162,8 +192,8 @@ function ThanhToanMoi() {
                 <div className="search-header">
                     <button
                         className="invoice-list-button"
-                        style={{marginTop: '1rem', marginBottom: '1rem', marginRight: '1.4rem'}}
-                        onClick={() => navigate('/hoadon')} // Navigate to the HoaDon page
+                        style={{ marginTop: '1rem', marginBottom: '1rem', marginRight: '1.4rem' }}
+                        onClick={() => navigate('/thanhToan/hoaDon')} // Corrected path to match the route for HoaDon.jsx
                     >
                         Danh sách các hóa đơn
                     </button>

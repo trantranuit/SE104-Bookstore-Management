@@ -64,11 +64,12 @@
 /* Invoice Section */
 .invoice-section {
     background-color: #ffffff; /* White background */
-    padding: 2rem; /* Set padding to 2rem in all directions */
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
-    margin-top: 1rem; /* Add spacing above the "THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG" header */
+    padding: 2rem; /* Padding for content */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 95%; /* Match width of ThanhToanMoi sections */
+    margin: 0 auto; /* Center align */
+    margin-top: 1rem; /* Add spacing above */
 }
 
 .invoice-section .header {
