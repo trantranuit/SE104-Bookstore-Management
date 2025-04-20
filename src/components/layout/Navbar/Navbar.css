@@ -17,6 +17,7 @@
     padding: 1.25rem 0 0 0;
     min-height: 100vh;
     width: calc(100% - var(--sidebar-width));
+    overflow-x: auto; /* Enable horizontal scrolling */
 }
 
 
@@ -88,16 +89,18 @@
 
 .nav-menu {
     background: white;
-    width: var(--sidebar-width);
+    width: 13rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
-    overflow-y: auto; /* Enable scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 4rem; /* Add padding to prevent content from being hidden */
+    padding: 0;
+    margin: 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
 }
 
 
@@ -222,7 +225,7 @@ span {
 
 @media screen and (max-width: 768px) {
     :root {
-        --sidebar-width: 4rem;
+        --sidebar-width: 4rem; /* Adjust sidebar width */
         --header-height: 3rem;
     }
 
@@ -233,12 +236,12 @@ span {
     }
 
     .nav-menu {
-        width: var(--sidebar-width);
+        width: var(--sidebar-width); /* Use CSS variable */
     }
 
     .container {
-        margin-left: var(--sidebar-width);
-        width: calc(100% - var(--sidebar-width));
+        margin-left: var(--sidebar-width); /* Use CSS variable */
+        width: calc(100% - var(--sidebar-width)); /* Use CSS variable */
     }
 
     .profile-card {
@@ -251,14 +254,8 @@ span {
         height: 1.5rem;
     }
 
-        .bottom-items {
+    .bottom-items {
         position: relative; /* Change to relative */
         margin-top: 0; /* Reset margin-top */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .profile-card {
-        padding: 0.25rem;
     }
 }
