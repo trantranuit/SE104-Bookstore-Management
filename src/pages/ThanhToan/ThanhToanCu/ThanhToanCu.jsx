@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
-import { khachHangData, nhanVienData, danhSachPhieuThu } from './ThanhToanCuData';
+import employeeData from '../ThanhToanMoi/EmployeeData'; // Use employee data from ThanhToan folder
+import customerData from '../ThanhToanMoi/CustomerData'; // Use customer data from ThanhToan folder
 import './ThanhToanCu.css';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 
 function ThanhToanCu() {
+    const navigate = useNavigate();
+    const location = useLocation(); // Access passed state
+    const receipt = location.state?.receipt; // Retrieve receipt data if available
+    const isEditing = location.state?.isEditing || false; // Check if editing
     const [maKhachHang, setMaKhachHang] = useState('');
     const [tienKhachTra, setTienKhachTra] = useState('');
     const [maNhanVien, setMaNhanVien] = useState('');
@@ -14,18 +20,33 @@ function ThanhToanCu() {
     const [isFocused, setIsFocused] = useState({ tien: false });
     const [maPhieuThu, setMaPhieuThu] = useState('');
 
-    const customerInfo = khachHangData[maKhachHang];
-    const nguoiLapPhieu = nhanVienData[maNhanVien];
+    const customerInfo = customerData.find(customer => customer.id === maKhachHang);
+    const employeeInfo = employeeData.find(employee => employee.id === maNhanVien);
 
     useEffect(() => {
-        const getNewMaPhieu = () => {
-            if (danhSachPhieuThu.length === 0) return 'PT000001';
-            const lastMaPhieu = danhSachPhieuThu[danhSachPhieuThu.length - 1].maPhieuThu;
-            const numberPart = parseInt(lastMaPhieu.slice(2)) + 1;
-            return 'PT' + numberPart.toString().padStart(6, '0');
-        };
-        setMaPhieuThu(getNewMaPhieu());
-    }, []);
+        if (isEditing && receipt) {
+            setMaPhieuThu(receipt.maPhieuThu); // Use existing maPhieuThu when editing
+            setMaKhachHang(receipt.maKhachHang || '');
+            setTienKhachTra(receipt.soTienTra?.toString() || '');
+            setMaNhanVien(receipt.maNhanVien || '');
+            setNgayLap(receipt.ngayLap || '');
+            setHighlightMaKH(false);
+            setHighlightTien(false);
+            setHighlightMaNV(false);
+        } else {
+            // Generate a new maPhieuThu for new receipts
+            const getNewMaPhieu = () => {
+                const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
+                if (existingReceipts.length === 0) return 'PT000001';
+                const lastMaPhieu = existingReceipts.reduce((max, receipt) => {
+                    const numberPart = parseInt(receipt.maPhieuThu.slice(2));
+                    return Math.max(max, numberPart);
+                }, 0);
+                return 'PT' + (lastMaPhieu + 1).toString().padStart(6, '0');
+            };
+            setMaPhieuThu(getNewMaPhieu());
+        }
+    }, [isEditing, receipt]);
 
     const handleMaKhachHangChange = (e) => {
         const value = e.target.value;
@@ -49,10 +70,47 @@ function ThanhToanCu() {
         setNgayLap(e.target.value);
     };
 
-    const parseNumber = (str) => Number(str.replace(/\./g, ''));
+    const handleSavePayment = () => {
+        if (!maKhachHang || !tienKhachTra || !maNhanVien || !ngayLap) {
+            alert('Vui lòng nhập đầy đủ thông tin trước khi lưu.');
+            return;
+        }
 
-    const tienNo = customerInfo ? parseNumber(customerInfo.tienNo) : '';
-    const tienConLai = tienNo && tienKhachTra ? tienNo - parseInt(tienKhachTra) : '';
+        const newPayment = {
+            maPhieuThu,
+            maKhachHang,
+            tenKhachHang: customerInfo?.name || '',
+            soDienThoai: customerInfo?.phone || '',
+            diaChiEmail: customerInfo?.email || '',
+            soTienNo: customerInfo?.debt || 0,
+            soTienTra: parseInt(tienKhachTra),
+            soTienConLai: customerInfo?.debt - parseInt(tienKhachTra),
+            maNhanVien,
+            nguoiLapPhieu: employeeInfo?.name || '',
+            ngayLap,
+        };
+
+        const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
+        if (isEditing) {
+            // Update the existing receipt
+            const updatedReceipts = existingReceipts.map(receipt =>
+                receipt.maPhieuThu === maPhieuThu ? newPayment : receipt
+            );
+            localStorage.setItem('receipts', JSON.stringify(updatedReceipts));
+        } else {
+            // Add a new receipt
+            localStorage.setItem('receipts', JSON.stringify([...existingReceipts, newPayment]));
+        }
+
+        alert(isEditing ? 'Phiếu thu tiền đã được cập nhật thành công!' : 'Phiếu thu tiền đã được lưu thành công!');
+        setMaKhachHang('');
+        setTienKhachTra('');
+        setMaNhanVien('');
+        setNgayLap('');
+        setHighlightMaKH(true);
+        setHighlightTien(true);
+        setHighlightMaNV(true);
+    };
 
     const getInputClass = (value, highlight) => {
         return `input-ma custom-input ${highlight && value.trim() === '' ? 'highlight' : ''}`;
@@ -62,6 +120,14 @@ function ThanhToanCu() {
         <div className="page-container">
             <h1 className="page-title">Phiếu Thu Tiền</h1>
             <div className="content-wrapper">
+                <div className="button-wrapper">
+                    <button
+                        className="invoice-list-button"
+                        onClick={() => navigate('/thanhtoan/phieuthutien')}
+                    >
+                        Danh Sách Các Hóa Đơn
+                    </button>
+                </div>
                 <h2 className="receipt-subtitle">PHIẾU THU TIỀN TIỆM SÁCH TRÂN TRÂN</h2>
 
                 <div className="two-columns">
@@ -82,7 +148,7 @@ function ThanhToanCu() {
                         <div className="line">
                             <span className="label-name">Người lập phiếu</span>
                             <span className="colon">:</span>
-                            <span className="value">{nguoiLapPhieu || ''}</span>
+                            <span className="value">{employeeInfo?.name || ''}</span>
                         </div>
                         <div className="line">
                             <span className="label-name">Mã phiếu thu</span>
@@ -115,17 +181,17 @@ function ThanhToanCu() {
                         <div className="line">
                             <span className="label-name">Tên khách hàng</span>
                             <span className="colon">:</span>
-                            <span className="value">{customerInfo?.tenKhachHang || ''}</span>
+                            <span className="value">{customerInfo?.name || ''}</span>
                         </div>
                         <div className="line">
                             <span className="label-name">Số điện thoại</span>
                             <span className="colon">:</span>
-                            <span className="value">{customerInfo?.soDienThoai || ''}</span>
+                            <span className="value">{customerInfo?.phone || ''}</span>
                         </div>
                         <div className="line">
                             <span className="label-name">Địa chỉ email</span>
                             <span className="colon">:</span>
-                            <span className="value">{customerInfo?.diaChiEmail || ''}</span>
+                            <span className="value">{customerInfo?.email || ''}</span>
                         </div>
                     </div>
                 </div>
@@ -135,7 +201,7 @@ function ThanhToanCu() {
                         <span className="label-name">Số tiền khách nợ</span>
                         <span className="colon">:</span>
                         <span className="value">
-                            {tienNo ? tienNo.toLocaleString() + ' VNĐ' : ''}
+                            {customerInfo?.debt ? customerInfo.debt.toLocaleString() + ' VNĐ' : ''}
                         </span>
                     </div>
                     <div className="line">
@@ -166,35 +232,17 @@ function ThanhToanCu() {
                         <span className="label-name">Còn nợ</span>
                         <span className="colon">:</span>
                         <span className="value">
-                            {tienConLai >= 0 ? tienConLai.toLocaleString() + ' VNĐ' : ''}
+                            {customerInfo?.debt && tienKhachTra
+                                ? (customerInfo.debt - parseInt(tienKhachTra)).toLocaleString() + ' VNĐ'
+                                : ''}
                         </span>
                     </div>
                 </div>
-                <button
-                    className="btn-thanh-toan"
-                    onClick={() => {
-                        const userChoice = window.confirm(
-                            "Bạn muốn làm gì tiếp theo?\nNhấn OK để về trang chủ, Cancel để tạo phiếu thanh toán mới."
-                        );
-                        if (userChoice) {
-                            // Điều hướng về trang chủ
-                            window.location.href = "/"; // Thay "/" bằng đường dẫn trang chủ của bạn
-                        } else {
-                            // Tạo phiếu thanh toán mới
-                            setMaKhachHang('');
-                            setTienKhachTra('');
-                            setMaNhanVien('');
-                            setNgayLap('');
-                            setHighlightMaKH(true);
-                            setHighlightTien(true);
-                            setHighlightMaNV(true);
-                            setIsFocused({ tien: false });
-                            alert("Đã tạo phiếu thanh toán mới!");
-                        }
-                    }}
-                >
-                    Thanh toán
-                </button>
+                <div className="save-button-wrapper">
+                    <button className="save-button" onClick={handleSavePayment}>
+                        Lưu
+                    </button>
+                </div>
             </div>
         </div>
     );

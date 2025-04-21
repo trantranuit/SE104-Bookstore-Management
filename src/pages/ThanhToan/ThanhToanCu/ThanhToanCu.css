@@ -179,3 +179,24 @@ input[type="date"] {
     width: 92%; /* Đặt chiều rộng bằng 100% để phù hợp với các ô khác */
     box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến kích thước */
 }
+
+.save-button-wrapper {
+    display: flex;
+    justify-content: flex-end; /* Align the button to the right */
+    margin-top: 2rem; /* Add spacing above the button */
+}
+
+.save-button {
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.save-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}

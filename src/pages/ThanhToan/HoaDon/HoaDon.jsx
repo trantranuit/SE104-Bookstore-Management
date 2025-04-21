@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PiNotePencil } from "react-icons/pi"; // Import the icon
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../../../styles/PathStyles.css';
 import './HoaDon.css'; // Ensure this CSS file is imported
 
@@ -8,6 +9,7 @@ function HoaDon() {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoiceIndex, setSelectedInvoiceIndex] = useState(null);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         const storedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
@@ -46,6 +48,10 @@ function HoaDon() {
         setInvoices(updatedInvoices);
         setShowDeleteConfirmation(false);
         handleCloseModal();
+    };
+
+    const handleEditInvoice = (invoice) => {
+        navigate('/thanhToan/moi', { state: { invoice: { ...invoice, maNhanVien: invoice.maNhanVien } } }); // Include maNhanVien
     };
 
     const selectedInvoice = selectedInvoiceIndex !== null ? filteredInvoices[selectedInvoiceIndex] : null;
@@ -97,17 +103,17 @@ function HoaDon() {
             {selectedInvoice && (
                 <div className="modal">
                     <div className="modal-content">
-                        <button className="modal-close-button" onClick={handleCloseModal}>×</button>
                         <h2 className="modal-title">CHI TIẾT HÓA ĐƠN</h2>
                         <div className="modal-columns">
-                            <div className="modal-left">
+                            <div className="modal-left" style={{ textAlign: 'left' }}>
                                 <h3 className="section-header">Thông Tin Hóa Đơn</h3>
                                 <p><strong>Ngày Lập:</strong> {selectedInvoice.ngayLap}</p>
-                                <p><strong>Mã Nhân Viên:</strong> {selectedInvoice.maHoaDon}</p>
+                                <p><strong>Mã Hóa Đơn:</strong> {selectedInvoice.maHoaDon}</p>
+                                <p><strong>Mã Nhân Viên:</strong> {selectedInvoice.maNhanVien || 'Không có'}</p> {/* Correctly display Mã Nhân Viên */}
                                 <p><strong>Tên Nhân Viên:</strong> {selectedInvoice.nhanVien}</p>
                             </div>
                             <div className="modal-right">
-                                <h3 className="section-header">Thông Tin Khách Hàng</h3>
+                                <h3 className="section-header" style={{marginRight: "1.8rem"}}>Thông Tin Khách Hàng</h3>
                                 <p><strong>Mã Khách Hàng:</strong> {selectedInvoice.maKhachHang}</p>
                                 <p><strong>Tên Khách Hàng:</strong> {selectedInvoice.tenKhachHang}</p>
                                 <p><strong>Số Điện Thoại:</strong> {selectedInvoice.sdt}</p>
@@ -138,9 +144,15 @@ function HoaDon() {
                                 ))}
                             </tbody>
                         </table>
+                        <div className="modal-totals">
+                            <p><strong>Tổng Số Sách:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong, 0)}</p>
+                            <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()}đ</p>
+                            <p><strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {(selectedInvoice.soNo + selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)).toLocaleString()}đ</p>
+                        </div>
                         <div className="modal-actions">
-                            <button className="edit-button" onClick={() => alert('Sửa hóa đơn')}>Sửa</button>
+                            <button className="edit-button" onClick={() => handleEditInvoice(selectedInvoice)}>Sửa</button>
                             <button className="delete-button" onClick={() => setShowDeleteConfirmation(true)}>Xóa</button>
+                            <button className="close-button" onClick={handleCloseModal}>Đóng</button>
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaCartPlus } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useNavigate and useLocation for navigation
 import bookData from './ThanhToanMoiData';
 import customerData from './CustomerData'; // Mock customer data
 import employeeData from './EmployeeData'; // Mock employee data
@@ -11,18 +11,72 @@ import './ThanhToanMoi.css';
 
 function ThanhToanMoi() {
     const navigate = useNavigate(); // Initialize useNavigate
+    const location = useLocation(); // Access passed state
+    const invoice = location.state?.invoice; // Retrieve invoice data if available
+
     const [searchTerm, setSearchTerm] = useState('');
     const [books] = useState(bookData);
     const [cart, setCart] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const booksPerPage = 5;
     const [showInvoice, setShowInvoice] = useState(false);
-    const [customerInfo, setCustomerInfo] = useState({ id: '', name: '', phone: '', email: '', debt: 0 });
-    const [employeeInfo, setEmployeeInfo] = useState({ id: '', name: '' });
+    const [customerInfo, setCustomerInfo] = useState({
+        id: '',
+        name: '',
+        phone: '',
+        email: '',
+        debt: 0,
+    });
+    const [employeeInfo, setEmployeeInfo] = useState({
+        id: '', // Employee ID is not passed in the invoice
+        name: '',
+    });
     const [finalInvoice, setFinalInvoice] = useState(false);
     const invoiceRef = useRef(null);
     const finalInvoiceRef = useRef(null);
     const [showNotification, setShowNotification] = useState(false);
+    const [showSaveNotification, setShowSaveNotification] = useState(false); // State for save notification modal
+
+    useEffect(() => {
+        // If an invoice is passed, pre-fill the form
+        if (invoice) {
+            setCart(
+                invoice.danhSachSach.map(sach => ({
+                    maSach: sach.maSach,
+                    tenSach: sach.tenSach,
+                    soLuongMua: sach.soLuong,
+                    donGia: sach.donGia,
+                }))
+            );
+            setCustomerInfo({
+                id: invoice.maKhachHang,
+                name: invoice.tenKhachHang,
+                phone: invoice.sdt,
+                email: invoice.email,
+                debt: invoice.soNo,
+            });
+            setEmployeeInfo({
+                id: invoice.maNhanVien || '', // Include maNhanVien
+                name: invoice.nhanVien,
+            });
+        } else {
+            // Reset form for a new invoice
+            setCart([]);
+            setCustomerInfo({
+                id: '',
+                name: '',
+                phone: '',
+                email: '',
+                debt: 0,
+            });
+            setEmployeeInfo({
+                id: '',
+                name: '',
+            });
+            setShowInvoice(false);
+            setFinalInvoice(false);
+        }
+    }, [invoice]);
 
     const handleAddToCart = (book) => {
         const existing = cart.find(item => item.maSach === book.maSach);
@@ -88,17 +142,6 @@ function ThanhToanMoi() {
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.soLuongMua, 0);
     const totalPrice = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
-
-    const handleThanhToan = () => {
-        if (cart.length > 0) {
-            setShowInvoice(true); // Show the invoice
-            setTimeout(() => {
-                invoiceRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll to the invoice
-            }, 100);
-        } else {
-            alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
-        }
-    };
 
     const handleCustomerIdChange = (e) => {
         const customerId = e.target.value;
@@ -173,6 +216,74 @@ function ThanhToanMoi() {
         }, 100);
     };
 
+    const handleCreateNewInvoice = () => {
+        navigate('/thanhtoan/moi', { state: null }); // Navigate to /thanhtoan/moi with no pre-filled data
+    };
+
+    const handleSaveInvoice = () => {
+        const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
+        const newInvoice = {
+            maHoaDon: `HD${Math.floor(Math.random() * 100000)}`,
+            nhanVien: employeeInfo.name,
+            maKhachHang: customerInfo.id,
+            tenKhachHang: customerInfo.name,
+            sdt: customerInfo.phone,
+            email: customerInfo.email,
+            soNo: customerInfo.debt + totalInvoiceAmount, // Updated debt
+            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+            danhSachSach: cart.map(item => ({
+                maSach: item.maSach,
+                tenSach: item.tenSach,
+                soLuong: item.soLuongMua,
+                donGia: item.donGia,
+            })),
+        };
+
+        // Save the invoice to localStorage
+        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        localStorage.setItem('invoices', JSON.stringify([...existingInvoices, newInvoice]));
+
+        // Save the receipt to localStorage for "Danh Sách Phiếu Thu Tiền"
+        const newReceipt = {
+            maPhieuThu: `PT${Math.floor(Math.random() * 100000)}`,
+            nguoiLap: employeeInfo.name,
+            maKhachHang: customerInfo.id,
+            tenKhachHang: customerInfo.name,
+            soTienThu: totalInvoiceAmount,
+            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+        };
+        const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
+        localStorage.setItem('receipts', JSON.stringify([...existingReceipts, newReceipt]));
+
+        // Update customer debt in localStorage
+        const updatedCustomers = customerData.map(customer =>
+            customer.id === customerInfo.id
+                ? { ...customer, debt: customer.debt + totalInvoiceAmount }
+                : customer
+        );
+        localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+
+        setShowSaveNotification(true); // Show the save notification modal
+    };
+
+    const handleCloseNotification = () => {
+        setCart([]); // Clear the cart
+        setCustomerInfo({
+            id: '',
+            name: '',
+            phone: '',
+            email: '',
+            debt: 0,
+        }); // Reset customer info
+        setEmployeeInfo({
+            id: '',
+            name: '',
+        }); // Reset employee info
+        setShowSaveNotification(false); // Close the notification modal
+        setShowInvoice(false); // Reset the invoice view
+        setFinalInvoice(false); // Reset the final invoice state
+    };
+
     return (
         <div className="page-container">
             {/* Notification Modal */}
@@ -181,6 +292,22 @@ function ThanhToanMoi() {
                     <div className="notification-content">
                         <p>Không thể thêm quá số lượng sách hiện có.</p>
                         <button onClick={() => setShowNotification(false)}>Đóng</button>
+                    </div>
+                </div>
+            )}
+
+            {showSaveNotification && (
+                <div className="notification-modal">
+                    <div className="notification-content">
+                        <p>Thanh toán thành công!</p>
+                        <div className="notification-actions">
+                            <button
+                                className="close-button"
+                                onClick={handleCloseNotification} // Reset and return to an empty cart
+                            >
+                                Đóng
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -451,8 +578,8 @@ function ThanhToanMoi() {
                         <button
                             type="button"
                             className="finalize-button"
-                            style={{ backgroundColor: '#007bff', margin: '0 auto', display: 'block', color: 'white', marginBottom: '1rem', marginTop: '2rem' }} // Dark pink background
-                            onClick={() => alert('Hóa đơn đã được lưu!')}
+                            style={{ backgroundColor: '#007bff', margin: '0 auto', display: 'block', color: 'white', marginBottom: '1rem', marginTop: '2rem' }}
+                            onClick={handleSaveInvoice}
                         >
                             Lưu hóa đơn
                         </button>

@@ -13,6 +13,7 @@ import PhanQuyen from './pages/PhanQuyen/PhanQuyen';
 import DangXuat from './pages/DangXuat/DangXuat';  
 import ThayDoiQuyDinh from './pages/ThayDoiQuyDinh/ThayDoiQuyDinh'; 
 import HoaDon from './pages/ThanhToan/HoaDon/HoaDon'; 
+import PhieuThuTien from './pages/ThanhToan/PhieuThuTien/PhieuThuTien';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path='/dangxuat' element={<DangXuat />} />
             <Route path='/thaydoiquydinh' element={<ThayDoiQuyDinh />} />
             <Route path='/thanhtoan/hoadon' element={<HoaDon />} />
+            <Route path='/thanhtoan/phieuthutien' element={<PhieuThuTien />} />
           </Routes>
         </div>
       </Router>
