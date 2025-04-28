@@ -1,55 +1,51 @@
 import React from 'react';
-import { 
-    useReactTable, 
+import {
+    useReactTable,
     getCoreRowModel,
-    getPaginationRowModel 
+    getPaginationRowModel,
 } from '@tanstack/react-table';
+import customerData from './KhachHangData';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-function TableTon({ data }) {
+function TableKhachHang() {
     const columns = [
         {
-            header: 'STT',
-            accessorFn: (row, index) => index + 1,
-            cell: info => <div className="stt-cell">{info.getValue()}</div>
-        },
-        {
-            header: 'Mã Sách',
+            header: 'Mã khách hàng',
             accessorKey: 'id',
         },
         {
-            header: 'Tên Sách',
+            header: 'Tên khách hàng',
             accessorKey: 'name',
         },
         {
-            header: 'Tác Giả',
-            accessorKey: 'author',
+            header: 'Mã hoá đơn',
+            accessorKey: 'invoiceId',
         },
         {
-            header: 'Thể Loại',
-            accessorKey: 'category',
+            header: 'Số lượng',
+            accessorKey: 'quantity',
         },
         {
-            header: 'Tồn đầu',
-            accessorKey: 'startStock',
+            header: 'Ghi chú',
+            accessorKey: 'note',
+            cell: (info) => (
+                <div>
+                    <FontAwesomeIcon icon={faEdit} style={{ marginLeft: '0.5rem', cursor: 'pointer' }} />
+                    <FontAwesomeIcon icon={faTrash} style={{ marginLeft: '0.5rem', cursor: 'pointer' }} />
+                </div>
+            ),
         },
-        {
-            header: 'Phát sinh',
-            accessorKey: 'change',
-        },
-        {
-            header: 'Tồn cuối',
-            accessorKey: 'endStock',
-        }
     ];
 
     const table = useReactTable({
-        data,
+        data: customerData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
             pagination: {
-                pageSize: 10, 
+                pageSize: 10,
             },
         },
     });
@@ -62,7 +58,7 @@ function TableTon({ data }) {
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map(header => (
-                                    <th key={header.id} className={header.id === 'stt' ? 'stt-header' : ''}>
+                                    <th key={header.id}>
                                         {header.isPlaceholder
                                             ? null
                                             : header.column.columnDef.header}
@@ -75,7 +71,7 @@ function TableTon({ data }) {
                         {table.getRowModel().rows.map(row => (
                             <tr key={row.id}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id} className={cell.column.id === 'stt' ? 'stt-cell' : ''}>
+                                    <td key={cell.id}>
                                         {cell.getValue()}
                                     </td>
                                 ))}
@@ -84,27 +80,20 @@ function TableTon({ data }) {
                     </tbody>
                 </table>
             </div>
+
             <div className="pagination">
-                <button
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    className="pagination-button"
-                >
-                    ←
+                <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                    {'<'}
                 </button>
-                <span className="pagination-info">
-                    Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+                <span>
+                    Trang {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                 </span>
-                <button
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    className="pagination-button"
-                >
-                    →
+                <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                    {'>'}
                 </button>
             </div>
         </>
     );
 }
 
-export default TableTon;
+export default TableKhachHang;
