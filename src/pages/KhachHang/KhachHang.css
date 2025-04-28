@@ -1,34 +1,193 @@
-.customer-table-container {
-    overflow-x: auto;
-  }
-  
-  .customer-table {
-    width: 92%;
-    border-collapse: collapse;
-    margin: 1.25rem auto;
-    font-size: 0.8rem;
-    border-radius: 0.5rem;
-    overflow: hidden; 
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); 
-    table-layout: fixed;
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 
-  }
+.search-input {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  outline: none;
+  transition: border-color 0.2s;
+  margin: 1.5rem -2rem 1.5rem 2.7rem;
+}
 
-  
-  .customer-table th,
-  .customer-table td {
-    padding: 8px;
+.search-input:focus {
+  border-color: #73adef;
+  box-shadow: 0 0 5px rgba(115, 173, 239, 0.5);
+}
+
+.add-customer-button {
+  background-color: #73adef;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(115, 173, 239, 0.12);
+  margin: 1rem 2.6rem;
+}
+
+.add-customer-button:hover {
+  background-color: #5a92d6;
+}
+
+.khachhang-report-table {
+  width: 92%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 1.25rem auto;
+  font-size: 0.9rem; 
+  border-radius: 0.5rem; 
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); 
+  table-layout: fixed;
+}
+
+.khachhang-report-table th,
+.khachhang-report-table td {
+  border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+
+.khachhang-report-table th{
+  background-color: #73adef;
+  color: white;
+  font-weight: bold;
+  padding: 1rem; 
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-top: 0.06rem solid #e0e0e0;
+}
+
+.khachhang-report-table th:nth-child(1),
+.khachhang-report-table td:nth-child(1) {
+  width: 6rem;
+  text-align: center;
+}
+
+.khachhang-report-table th:nth-child(2),
+.khachhang-report-table td:nth-child(2) {
+  width: 7rem;
+  text-align: center;
+  padding-left: 1rem;
+}
+
+.khachhang-report-table th:nth-child(3),
+.khachhang-report-table td:nth-child(3) {
+    width: 7rem;
     text-align: center;
-  }
+}
+
+.khachhang-report-table th:nth-child(4),
+.khachhang-report-table td:nth-child(4) {
+  width: 6rem;
+  text-align: center;
+}
+
+.khachhang-report-table th:nth-child(5),
+.khachhang-report-table td:nth-child(5) {
+  width: 4rem;
+  text-align: center;
+}
+
+.khachhang-report-table th:nth-child(6),
+.khachhang-report-table td:nth-child(6) {
+  width: 5rem;
+  text-align: center;
+}
+
+.khachhang-report-table tr:nth-child(odd) {
+  background-color: white;
+}
+
+.khachhang-report-table tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+.khachhang-report-table tr:hover {
+  background-color: #e6f2ff;
+}
+
+.khachhang-action-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
   
-  .customer-table th {
-    background-color: #73adef;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  .customer-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-    
-  }
+}
+
+.khachhang-edit-icon,
+.khachhang-delete-icon {
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem;
+}
+
+.khachhang-edit-icon:hover {
+  color: #357abd;
+}
+.khachhang-delete-icon:hover {
+  color: #d9534f;
+}
+
+.khachhang-pagination {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
+}
+
+.khachhang-pagination-info {
+  margin: 0; 
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px; 
+  text-align: center;
+}
+
+.khachhang-pagination-button {
+  background-color: #73adef;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem; 
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem; 
+  min-width: 32px; 
+  height: 28px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0; 
+  line-height: 1; 
+}
+
+.khachhang-pagination-button:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
+}
+
+.khachhang-pagination-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
