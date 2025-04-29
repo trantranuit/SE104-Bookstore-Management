@@ -49,7 +49,8 @@ function TableKhachHang({searchTerm}) {
             const searchTermLower = searchTerm.toLowerCase();
             return (
                 customer.id.toLowerCase().includes(searchTermLower) ||
-                customer.name.toLowerCase().includes(searchTermLower)
+                customer.name.toLowerCase().includes(searchTermLower)||
+                customer.invoiceId.toLowerCase().includes(searchTermLower)
             );
         });
     }, [searchTerm]);

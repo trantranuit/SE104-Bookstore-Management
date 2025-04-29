@@ -17,7 +17,7 @@ function KhachHang() {
                 <div className="action-bar">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo mã hoặc tên khách hàng..."
+                        placeholder="Tìm kiếm theo mã, tên khách hàng hoặc mã hoá đơn..."
                         className="search-input"
                         value={searchTerm}
                         onChange={handleSearchChange}
