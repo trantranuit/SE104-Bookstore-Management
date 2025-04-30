@@ -1,0 +1,527 @@
+.page-container {
+    /* ...existing styles... */
+}
+
+.page-title {
+    /* ...existing styles... */
+}
+
+.content-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 95%; /* Adjust this value to match the width of the "phiếu thu tiền" page */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+.search-filter-block {
+    margin-bottom: 20px;
+}
+
+.search-filter-block input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.filter-title {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.filter-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+    background-color: #0056b3;
+}
+
+.filter-button.active-filter {
+    background-color: #28a745; /* Green background for active filter */
+    color: white;
+    font-weight: bold;
+    border: 2px solid #1e7e34;
+}
+
+.filter-button.active-filter:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.filter-button.active-publisher-filter {
+    background-color: #ffc107; /* Yellow background for active filter */
+    color: black; /* Black text for better contrast */
+    font-weight: bold;
+    border: 2px solid #e0a800; /* Darker yellow border */
+}
+
+.filter-button.active-publisher-filter:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.filter-button.active-author-filter {
+    background-color: #ffc107; /* Yellow background for active filter */
+    color: black; /* Black text for better contrast */
+    font-weight: bold;
+    border: 2px solid #e0a800; /* Darker yellow border */
+}
+
+.filter-button.active-author-filter:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.filter-button.active-genre-filter {
+    background-color: #ffc107; /* Yellow background for active filter */
+    color: black; /* Black text for better contrast */
+    font-weight: bold;
+    border: 2px solid #e0a800; /* Darker yellow border */
+}
+
+.filter-button.active-genre-filter:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.filters select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.book-table-block {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* Center-align all content */
+    max-height: none; /* Remove height restriction and scrolling */
+    overflow-y: visible; /* Remove height restriction and scrolling */
+}
+
+.book-table-block table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* Center-align all content */
+    table-layout: fixed; /* Enable fixed column widths */
+    font-size: 80%; /* Reduce font size to 80% */
+}
+
+.book-table-block th,
+.book-table-block td {
+    padding: 18px; /* Increase padding for better height */
+    border-bottom: 1px solid #ccc; /* Only horizontal borders */
+    text-align: center; /* Center-align cell content */
+}
+
+.book-table-block th {
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    font-weight: bold;
+    font-size: 90%; /* Increase font size for header to 90% */
+}
+
+.book-table-block th:nth-child(1),
+.book-table-block td:nth-child(1) {
+    width: 5%; /* Fixed width for No. column */
+}
+
+.book-table-block th:nth-child(2),
+.book-table-block td:nth-child(2) {
+    width: 10%; /* Fixed width for Mã sách column */
+}
+
+.book-table-block th:nth-child(3),
+.book-table-block td:nth-child(3) {
+    width: 20%; /* Adjusted width for Tên sách column */
+}
+
+.book-table-block th:nth-child(4),
+.book-table-block td:nth-child(4) {
+    width: 15%; /* Fixed width for Tác giả column */
+}
+
+.book-table-block th:nth-child(5),
+.book-table-block td:nth-child(5) {
+    width: 15%; /* Fixed width for Thể loại column */
+}
+
+.book-table-block th:nth-child(6),
+.book-table-block td:nth-child(6) {
+    width: 10%; /* Fixed width for Năm xuất bản column */
+}
+
+.book-table-block th:nth-child(7),
+.book-table-block td:nth-child(7) {
+    width: 15%; /* Adjusted width for Nhà xuất bản column */
+}
+
+.book-table-block th:nth-child(8),
+.book-table-block td:nth-child(8) {
+    width: 10%; /* Fixed width for Số lượng tồn column */
+}
+
+.pagination-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.pagination-buttons button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pagination-buttons button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.book-table-block td {
+    font-size: 90%; /* Reduce font size for table cells to 80% */
+}
+
+/* Remove modal-related styles */
+.modal-top {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Add spacing below the title */
+    position: relative; /* Ensure proper stacking with other elements */
+    margin-top: 0.2rem; /* Move the title down by 0.2rem */
+}
+
+.publisher-search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.publisher-list {
+    display: grid; /* Use grid layout for two items per row */
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Add spacing between items */
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.publisher-item {
+    font-size: 95%; /* Reduce font size to 95% */
+    padding: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.publisher-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.publisher-item.selected {
+    background-color: #28a745; /* Green background for selected publishers */
+    color: white;
+    font-weight: bold;
+}
+
+.author-search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-top: 0; /* Align with publisher search bar */
+    margin-bottom: 20px; /* Match spacing with publisher modal */
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    display: block;
+    margin-left: auto; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+}
+
+.author-list {
+    display: grid; /* Use grid layout for two items per row */
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Add spacing between items */
+    max-height: 200px;
+    overflow-y: auto;
+    justify-content: center; /* Center the grid horizontally */
+    margin-top: 0; /* Align with publisher list */
+}
+
+.author-item {
+    font-size: 95%; /* Reduce font size to 95% */
+    padding: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.author-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.author-item.selected {
+    background-color: #28a745; /* Green background for selected authors */
+    color: white;
+    font-weight: bold;
+}
+
+.genre-search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.genre-list {
+    display: grid; /* Use grid layout for two items per row */
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Add spacing between items */
+    max-height: 200px;
+    overflow-y: auto;
+    justify-content: center; /* Center the grid horizontally */
+}
+
+.genre-item {
+    font-size: 95%; /* Reduce font size to 95% */
+    padding: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.genre-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.genre-item.selected {
+    background-color: #28a745; /* Green background for selected genres */
+    color: white;
+    font-weight: bold;
+}
+
+.modal-bottom {
+    margin-top: auto; /* Push the bottom block to the bottom of the modal */
+    display: flex;
+    flex-direction: row; /* Arrange buttons in a row */
+    justify-content: space-between; /* Add space between buttons */
+    gap: 10px; /* Add spacing between buttons */
+    margin-bottom: 0.2rem; /* Move the buttons up by 0.2rem */
+}
+
+/* Remove the modal-note styles */
+.modal-note {
+    display: none;
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: row; /* Arrange buttons in a row */
+    justify-content: space-between; /* Add space between buttons */
+    gap: 10px; /* Add spacing between buttons */
+}
+
+.apply-button {
+    background-color: #28a745; /* Green for Apply */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.apply-button:hover {
+    background-color: #218838;
+}
+
+.cancel-button {
+    background-color: #dc3545; /* Red for Cancel */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
+}
+
+.close-button {
+    background-color: #6c757d; /* Gray for Close */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.close-button:hover {
+    background-color: #5a6268;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for modal's own dimensions */
+    display: flex;
+    flex-direction: column; /* Ensure content stacks vertically */
+    justify-content: space-between; /* Push the bottom block to the bottom */
+}
+
+.modal-middle {
+    display: flex;
+    flex-direction: column; /* Stack search bar and list vertically */
+    gap: 10px; /* Add spacing between search bar and list */
+    margin-bottom: 20px; /* Add spacing below the middle block */
+    flex: 1; /* Allow the middle block to take up available space */
+}
+
+.year-range {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.year-range label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.year-range input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100px;
+}
+
+.year-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns */
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    justify-content: center;
+}
+
+.year-item {
+    font-size: 95%;
+    padding: 10px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.year-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.year-item.selected {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+.stock-range {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stock-range label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.stock-range input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100px;
+}
+
+.sort-button {
+    background-color: #17a2b8; /* Light blue for sort buttons */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.sort-button:hover {
+    background-color: #138496; /* Darker blue on hover */
+}
+
+.sort-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Add spacing below sort buttons */
+}
