@@ -8,8 +8,15 @@ import './KhachHang.css';
 import customerData from './KhachHangData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import CustomerModal from './CustomerModal'; // Add this import
+
 
 function TableKhachHang({searchTerm}) {
+    // State for managing customers
+    const [customers, setCustomers] = React.useState(customerData);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [editingCustomer, setEditingCustomer] = React.useState(null);
+
     const columns = [
         {
             header: 'Mã khách hàng',
@@ -35,25 +42,67 @@ function TableKhachHang({searchTerm}) {
         {
             header: 'Thao tác',
             accessorKey: 'actions',
-            cell: () => (
+            cell: ({row}) => (
                 <div className="khachhang-action-buttons">
-                    <FontAwesomeIcon icon={faEdit} className="khachhang-edit-icon" />
-                    <FontAwesomeIcon icon={faTrash} className="khachhang-delete-icon" />
+                    <FontAwesomeIcon 
+                        icon={faEdit} 
+                        className="khachhang-edit-icon" 
+                        onClick={() => {
+                            setEditingCustomer(row.original);
+                            setIsModalOpen(true);
+                        }}
+                    />
+                    <FontAwesomeIcon 
+                        icon={faTrash} 
+                        className="khachhang-delete-icon"
+                        onClick={() => handleDeleteCustomer(row.original.id)}
+                    />
                 </div>
             ),
         },
     ];
 
+    // Handle add customer
+    const handleAddCustomer = (newCustomer) => {
+        const lastId = customers[customers.length - 1].id;
+        const newId = 'KH' + String(parseInt(lastId.substring(2)) + 1).padStart(3, '0');
+        
+        setCustomers([...customers, {
+            ...newCustomer,
+            id: newId
+        }]);
+        setIsModalOpen(false);
+    };
+
+    // Handle edit customer
+    const handleEditCustomer = (editedCustomer) => {
+        setCustomers(customers.map(customer => 
+            customer.id === editedCustomer.id ? editedCustomer : customer
+        ));
+        setIsModalOpen(false);
+        setEditingCustomer(null);
+    };
+
+    // Handle delete customer
+    const handleDeleteCustomer = (customerId) => {
+        if (window.confirm('Bạn có chắc muốn xóa khách hàng này?')) {
+            setCustomers(customers.filter(customer => customer.id !== customerId));
+        }
+    };
+
+    // Filter data based on search term
     const filteredData = React.useMemo(() => {
-        return customerData.filter(customer => {
-            const searchTermLower = searchTerm.toLowerCase();
+        if (!searchTerm) return customers;
+        
+        const searchTermLower = searchTerm.toLowerCase();
+        return customers.filter(customer => {
             return (
                 customer.id.toLowerCase().includes(searchTermLower) ||
-                customer.name.toLowerCase().includes(searchTermLower)||
+                customer.name.toLowerCase().includes(searchTermLower) ||
                 customer.invoiceId.toLowerCase().includes(searchTermLower)
             );
         });
-    }, [searchTerm]);
+    }, [searchTerm, customers]);
 
     const table = useReactTable({
         data: filteredData,
@@ -97,6 +146,18 @@ function TableKhachHang({searchTerm}) {
                     ))}
                 </tbody>
             </table>
+            
+            {isModalOpen && (
+                <CustomerModal
+                    customer={editingCustomer}
+                    onSave={editingCustomer ? handleEditCustomer : handleAddCustomer}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setEditingCustomer(null);
+                    }}
+                />
+            )}
+
             <div className="khachhang-pagination">
                 <button
                     onClick={() => table.previousPage()}
