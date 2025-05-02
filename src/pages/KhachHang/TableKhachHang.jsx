@@ -8,13 +8,11 @@ import './KhachHang.css';
 import customerData from './KhachHangData';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import CustomerModal from './CustomerModal'; // Add this import
+import CustomerModal from './CustomerModal';
 
-
-function TableKhachHang({searchTerm}) {
+function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // State for managing customers
     const [customers, setCustomers] = React.useState(customerData);
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [editingCustomer, setEditingCustomer] = React.useState(null);
 
     const columns = [

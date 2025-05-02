@@ -5,9 +5,14 @@ import TableKhachHang from './TableKhachHang';
 
 function KhachHang() {
     const [searchTerm, setSearchTerm] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
     };
 
     return (
@@ -22,12 +27,21 @@ function KhachHang() {
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
-                    <button className="add-customer-button">+ Thêm khách hàng</button>
+                    <button 
+                        className="add-customer-button"
+                        onClick={handleOpenModal}
+                    >
+                        + Thêm khách hàng
+                    </button>
                 </div>
-                <TableKhachHang searchTerm={searchTerm} />
+                <TableKhachHang 
+                    searchTerm={searchTerm} 
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                />
             </div>
         </div>
     );
 }
 
-export default KhachHang;
+export default KhachHang; 
