@@ -7,6 +7,8 @@ function CustomerModal({ customer, onSave, onClose }) {
         invoiceId: '',
         quantity: ''
     });
+    const [phoneError, setPhoneError] = useState('');
+    const [quantityError, setQuantityError] = useState('');
 
     useEffect(() => {
         if (customer) {
@@ -16,6 +18,25 @@ function CustomerModal({ customer, onSave, onClose }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        
+        if (name === 'phone') {
+            // Only allow numbers
+            if (!/^\d*$/.test(value)) {
+                setPhoneError('Số điện thoại chỉ được chứa số');
+                return;
+            }
+            setPhoneError('');
+        }
+
+        if (name === 'quantity') {
+            // Only allow numbers
+            if (!/^\d*$/.test(value)) {
+                setQuantityError('Số lượng chỉ được chứa số');
+                return;
+            }
+            setQuantityError('');
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -24,6 +45,9 @@ function CustomerModal({ customer, onSave, onClose }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (phoneError || quantityError) {
+            return;
+        }
         onSave(formData);
     };
 
@@ -50,7 +74,10 @@ function CustomerModal({ customer, onSave, onClose }) {
                             value={formData.phone}
                             onChange={handleChange}
                             required
+                            pattern="\d*"
+                            inputMode="numeric"
                         />
+                        {phoneError && <span className="error-message">{phoneError}</span>}
                     </div>
                     <div className="form-group">
                         <label>Mã hoá đơn:</label>
@@ -65,15 +92,18 @@ function CustomerModal({ customer, onSave, onClose }) {
                     <div className="form-group">
                         <label>Số lượng:</label>
                         <input
-                            type="number"
+                            type="text"
                             name="quantity"
                             value={formData.quantity}
                             onChange={handleChange}
                             required
+                            pattern="\d*"
+                            inputMode="numeric"
                         />
+                        {quantityError && <span className="error-message">{quantityError}</span>}
                     </div>
                     <div className="modal-buttons">
-                        <button type="submit">
+                        <button type="submit" disabled={!!phoneError || !!quantityError}>
                             {customer ? 'Cập nhật' : 'Thêm'}
                         </button>
                         <button type="button" onClick={onClose}>

@@ -259,3 +259,17 @@
 .modal-buttons button:hover {
   opacity: 0.9;
 }
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    display: block;
+    margin-top: 4px;
+    position: absolute;
+    width: 100%;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}

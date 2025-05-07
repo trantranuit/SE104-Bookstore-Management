@@ -14,6 +14,11 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // State for managing customers
     const [customers, setCustomers] = React.useState(customerData);
     const [editingCustomer, setEditingCustomer] = React.useState(null);
+    // Add pagination state
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize: 9,
+    });
 
     const columns = [
         {
@@ -65,18 +70,20 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         const lastId = customers[customers.length - 1].id;
         const newId = 'KH' + String(parseInt(lastId.substring(2)) + 1).padStart(3, '0');
         
-        setCustomers([...customers, {
+        const newCustomers = [...customers, {
             ...newCustomer,
             id: newId
-        }]);
+        }];
+        setCustomers(newCustomers);
         setIsModalOpen(false);
     };
 
     // Handle edit customer
     const handleEditCustomer = (editedCustomer) => {
-        setCustomers(customers.map(customer => 
+        const updatedCustomers = customers.map(customer => 
             customer.id === editedCustomer.id ? editedCustomer : customer
-        ));
+        );
+        setCustomers(updatedCustomers);
         setIsModalOpen(false);
         setEditingCustomer(null);
     };
@@ -84,7 +91,18 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // Handle delete customer
     const handleDeleteCustomer = (customerId) => {
         if (window.confirm('Bạn có chắc muốn xóa khách hàng này?')) {
-            setCustomers(customers.filter(customer => customer.id !== customerId));
+            const currentPage = pagination.pageIndex;
+            const updatedCustomers = customers.filter(customer => customer.id !== customerId);
+            setCustomers(updatedCustomers);
+            
+            // Calculate if we need to adjust the page number
+            const totalPages = Math.ceil(updatedCustomers.length / pagination.pageSize);
+            if (currentPage >= totalPages && totalPages > 0) {
+                setPagination(prev => ({
+                    ...prev,
+                    pageIndex: totalPages - 1
+                }));
+            }
         }
     };
 
@@ -107,11 +125,12 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        initialState: {
-            pagination: {
-                pageSize: 9,
-            },
+        state: {
+            pagination,
         },
+        onPaginationChange: setPagination,
+        manualPagination: false,
+        autoResetPageIndex: false, // Prevent page reset on data changes
     });
 
     return (
