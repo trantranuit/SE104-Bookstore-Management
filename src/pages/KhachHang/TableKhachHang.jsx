@@ -17,7 +17,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // Add pagination state
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
-        pageSize: 9,
+        pageSize: 10,
     });
 
     const columns = [

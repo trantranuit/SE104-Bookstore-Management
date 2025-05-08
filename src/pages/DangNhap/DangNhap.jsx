@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './DangNhap.css';
 import { ROUTES } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
+// Wrap the Login component with withRouter HOC
+const withRouter = (Component) => {
+    return (props) => {
+        const navigate = useNavigate();
+        return <Component {...props} navigate={navigate} />;
+    };
+};
 
 class Login extends Component {
     constructor(props) {
@@ -10,7 +19,8 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            showPassword: false
+            showPassword: false,
+            role: 'staff' // Default role
         }
     }
 
@@ -26,19 +36,24 @@ class Login extends Component {
         })
     }
 
+    handleRoleChange = (event) => {
+        this.setState({
+            role: event.target.value
+        })
+    }
+
     handleLogin = () => {
         // Lưu trạng thái đăng nhập
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify({ 
             email: this.state.email, 
-            role: 'admin' 
+            role: this.state.role 
         }));
         
-        // Chuyển hướng đến trang chủ
-        window.location.href = ROUTES.HOME;
+        // Chuyển hướng đến trang chủ sử dụng React Router
+        this.props.navigate(ROUTES.HOME);
     }
     
-
     toggleShowPassword = () => {
         this.setState({
             showPassword: !this.state.showPassword
@@ -76,6 +91,19 @@ class Login extends Component {
                                 </span>
                             </div>
                         </div>
+
+                        <div className="col-12 form-group login-input">
+                            <label>Vai trò:</label>
+                            <select 
+                                className="form-control"
+                                value={this.state.role}
+                                onChange={this.handleRoleChange}
+                            >
+                                <option value="staff">Nhân viên</option>
+                                <option value="manager">Quản lý</option>
+                            </select>
+                        </div>
+
                         <div className="col-12">
                             <button className="btn-login" onClick={() => { this.handleLogin()}} >Đăng Nhập</button>
                         </div>
@@ -86,4 +114,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

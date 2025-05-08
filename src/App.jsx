@@ -17,6 +17,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { ROUTES } from './constants';
 
 function App() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('user');
   return (
     <>
       <Router>
