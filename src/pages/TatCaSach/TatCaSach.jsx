@@ -6,74 +6,97 @@ import bookData from './BookData';
 function TatCaSach() {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isPublisherModalOpen, setIsPublisherModalOpen] = useState(false);
-    const [selectedPublishers, setSelectedPublishers] = useState([]);
-    const [tempSelectedPublishers, setTempSelectedPublishers] = useState([]); // Temporary selection for the modal
-    const [publisherSearchTerm, setPublisherSearchTerm] = useState('');
     const [isAuthorModalOpen, setIsAuthorModalOpen] = useState(false);
-    const [selectedAuthors, setSelectedAuthors] = useState([]);
-    const [tempSelectedAuthors, setTempSelectedAuthors] = useState([]); // Temporary selection for the modal
-    const [authorSearchTerm, setAuthorSearchTerm] = useState('');
     const [isGenreModalOpen, setIsGenreModalOpen] = useState(false);
-    const [selectedGenres, setSelectedGenres] = useState([]);
-    const [tempSelectedGenres, setTempSelectedGenres] = useState([]); // Temporary selection for the modal
+    const [isPublisherModalOpen, setIsPublisherModalOpen] = useState(false);
+    const [isYearModalOpen, setIsYearModalOpen] = useState(false); // New modal state for year
+    const [isStockModalOpen, setIsStockModalOpen] = useState(false); // New modal state for stock
+    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false); // New modal state for price
+    const [authorSearchTerm, setAuthorSearchTerm] = useState('');
     const [genreSearchTerm, setGenreSearchTerm] = useState('');
-    const [isYearModalOpen, setIsYearModalOpen] = useState(false);
-    const [yearRange, setYearRange] = useState({ from: '', to: '' });
-    const [selectedYears, setSelectedYears] = useState([]);
-    const [tempSelectedYears, setTempSelectedYears] = useState([]); // Temporary selection for the modal
-    const [isStockModalOpen, setIsStockModalOpen] = useState(false);
-    const [stockRange, setStockRange] = useState({ from: '', to: '' });
-    const [sortOrder, setSortOrder] = useState({ field: '', order: '' }); // Sorting state
-    const booksPerPage = 10; // Number of books to display per page
+    const [publisherSearchTerm, setPublisherSearchTerm] = useState('');
+    const [yearStart, setYearStart] = useState(''); // Start year for range
+    const [yearEnd, setYearEnd] = useState(''); // End year for range
+    const [specificYears, setSpecificYears] = useState(''); // Specific years separated by commas
+    const [stockMin, setStockMin] = useState(''); // Minimum stock
+    const [stockMax, setStockMax] = useState(''); // Maximum stock
+    const [priceMin, setPriceMin] = useState(''); // Minimum price
+    const [priceMax, setPriceMax] = useState(''); // Maximum price
+    const [specificPrices, setSpecificPrices] = useState(''); // Specific prices separated by commas
+    const [tempSelectedYears, setTempSelectedYears] = useState([]); // Temporary selection for year
+    const [selectedYears, setSelectedYears] = useState([]); // Final selection for year
+    const [selectedStocks, setSelectedStocks] = useState([]); // Final selection for stock
+    const [selectedPrices, setSelectedPrices] = useState([]); // Final selection for price
+    const [yearSearchTerm, setYearSearchTerm] = useState('');
+    const [tempSelectedAuthors, setTempSelectedAuthors] = useState([]); // Define missing variable
+    const [tempSelectedGenres, setTempSelectedGenres] = useState([]); // Define missing variable
+    const [tempSelectedPublishers, setTempSelectedPublishers] = useState([]); // Define missing variable
+    const [selectedAuthors, setSelectedAuthors] = useState([]); // Define missing variable
+    const [selectedGenres, setSelectedGenres] = useState([]); // Define missing variable
+    const [selectedPublishers, setSelectedPublishers] = useState([]); // Define missing variable
+    const [specificStocks, setSpecificStocks] = useState(''); // Specific stock values separated by commas
+    const booksPerPage = 10;
 
-    const publishers = [...new Set(bookData.map((book) => book.nhaXuatBan))]; // Unique publishers
-    const filteredPublishers = publishers.filter((publisher) =>
-        publisher.toLowerCase().includes(publisherSearchTerm.toLowerCase())
-    );
+    const authors = [...new Set(bookData.map((book) => book.tacGia))];
+    const genres = [...new Set(bookData.map((book) => book.theLoai))];
+    const publishers = [...new Set(bookData.map((book) => book.nhaXuatBan))];
+    const years = [...new Set(bookData.map((book) => book.namXuatBan))]; // Extract unique years
 
-    const authors = [...new Set(bookData.map((book) => book.tacGia))]; // Unique authors
-    const filteredAuthors = authors.filter((author) =>
-        author.toLowerCase().includes(authorSearchTerm.toLowerCase())
-    );
+    const filteredAuthors = authors
+        .filter((author) => author.toLowerCase().includes(authorSearchTerm.toLowerCase()))
+        .sort((a, b) => {
+            const isSelectedA = tempSelectedAuthors.includes(a);
+            const isSelectedB = tempSelectedAuthors.includes(b);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return a.localeCompare(b);
+        });
 
-    const genres = [...new Set(bookData.map((book) => book.theLoai))]; // Unique genres
-    const filteredGenres = genres.filter((genre) =>
-        genre.toLowerCase().includes(genreSearchTerm.toLowerCase())
-    );
+    const filteredGenres = genres
+        .filter((genre) => genre.toLowerCase().includes(genreSearchTerm.toLowerCase()))
+        .sort((a, b) => {
+            const isSelectedA = tempSelectedGenres.includes(a);
+            const isSelectedB = tempSelectedGenres.includes(b);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return a.localeCompare(b);
+        });
 
-    const years = [...new Set(bookData.map((book) => book.namXuatBan))].sort((a, b) => a - b); // Unique years sorted
+    const filteredPublishers = publishers
+        .filter((publisher) => publisher.toLowerCase().includes(publisherSearchTerm.toLowerCase()))
+        .sort((a, b) => {
+            const isSelectedA = tempSelectedPublishers.includes(a);
+            const isSelectedB = tempSelectedPublishers.includes(b);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return a.localeCompare(b);
+        });
+
+    const filteredYears = years
+        .filter((year) => year.toString().includes(yearSearchTerm))
+        .sort((a, b) => {
+            const isSelectedA = tempSelectedYears.includes(a);
+            const isSelectedB = tempSelectedYears.includes(b);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return a - b; // Sort numerically
+        });
 
     const filteredBooks = bookData.filter(
         (book) =>
             (book.maSach.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 book.tenSach.toLowerCase().includes(searchTerm.toLowerCase())) &&
-            (selectedPublishers.length === 0 || selectedPublishers.includes(book.nhaXuatBan)) &&
             (selectedAuthors.length === 0 || selectedAuthors.includes(book.tacGia)) &&
             (selectedGenres.length === 0 || selectedGenres.includes(book.theLoai)) &&
-            (
-                (yearRange.from && yearRange.to && book.namXuatBan >= yearRange.from && book.namXuatBan <= yearRange.to) || // Filter by range
-                (selectedYears.length > 0 && selectedYears.includes(book.namXuatBan)) || // Filter by selected years
-                (yearRange.from === '' && yearRange.to === '' && selectedYears.length === 0) // No filter applied
-            ) &&
-            (
-                (stockRange.from && stockRange.to && book.soLuongTon >= stockRange.from && book.soLuongTon <= stockRange.to) || // Filter by stock range
-                (stockRange.from === '' && stockRange.to === '') // No stock filter applied
-            )
+            (selectedPublishers.length === 0 || selectedPublishers.includes(book.nhaXuatBan)) &&
+            (selectedYears.length === 0 || selectedYears.includes(book.namXuatBan)) &&
+            (selectedStocks.length === 0 || selectedStocks.includes(book.soLuongTon)) &&
+            (selectedPrices.length === 0 || selectedPrices.includes(book.donGiaBan))
     );
 
-    const sortedBooks = [...filteredBooks].sort((a, b) => {
-        if (sortOrder.field && sortOrder.order) {
-            if (sortOrder.order === 'asc') {
-                return a[sortOrder.field] > b[sortOrder.field] ? 1 : -1;
-            } else {
-                return a[sortOrder.field] < b[sortOrder.field] ? 1 : -1;
-            }
-        }
-        return 0;
-    });
-
-    const totalPages = Math.ceil(sortedBooks.length / booksPerPage);
+    const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+    const startIndex = (currentPage - 1) * booksPerPage;
+    const currentBooks = filteredBooks.slice(startIndex, startIndex + booksPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -87,52 +110,106 @@ function TatCaSach() {
         }
     };
 
-    const handlePublisherSelection = (publisher) => {
-        setTempSelectedPublishers((prev) =>
-            prev.includes(publisher) ? prev.filter((p) => p !== publisher) : [...prev, publisher]
+    const handleSelection = (item, setTempSelected) => {
+        setTempSelected((prev) =>
+            prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
         );
     };
 
-    const handleAuthorSelection = (author) => {
-        setTempSelectedAuthors((prev) =>
-            prev.includes(author) ? prev.filter((a) => a !== author) : [...prev, author]
-        );
+    const applyFilter = (setSelected, tempSelected, setModalOpen) => {
+        setSelected(tempSelected);
+        setModalOpen(false);
     };
 
-    const handleGenreSelection = (genre) => {
-        setTempSelectedGenres((prev) =>
-            prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
-        );
+    const cancelFilter = (setTempSelected, setSelected, setModalOpen) => {
+        setTempSelected([]);
+        setSelected([]);
+        setModalOpen(false);
     };
 
-    const handleYearRangeChange = (field, value) => {
-        setYearRange((prev) => ({ ...prev, [field]: value }));
-        if (value) {
-            setTempSelectedYears([]); // Clear selected years if a range is being entered
+    const applyYearFilter = () => {
+        const rangeYears = [];
+        if (yearStart && yearEnd) {
+            for (let year = parseInt(yearStart); year <= parseInt(yearEnd); year++) {
+                rangeYears.push(year);
+            }
         }
+
+        const specificYearList = specificYears
+            .split(',')
+            .map((year) => parseInt(year.trim()))
+            .filter((year) => !isNaN(year));
+
+        const combinedYears = [...new Set([...rangeYears, ...specificYearList])];
+        setSelectedYears(combinedYears);
+        setIsYearModalOpen(false);
     };
 
-    const handleYearSelection = (year) => {
-        setTempSelectedYears((prev) =>
-            prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
-        );
-        if (tempSelectedYears.length === 0) {
-            setYearRange({ from: '', to: '' }); // Clear the range if years are being selected
+    const cancelYearFilter = () => {
+        setYearStart('');
+        setYearEnd('');
+        setSpecificYears('');
+        setSelectedYears([]);
+        setIsYearModalOpen(false);
+    };
+
+    const applyStockFilter = () => {
+        const stockRange = [];
+        if (stockMin && stockMax) {
+            for (let stock = parseInt(stockMin); stock <= parseInt(stockMax); stock++) {
+                stockRange.push(stock);
+            }
         }
+
+        const specificStockList = specificStocks
+            .split(',')
+            .map((stock) => parseInt(stock.trim()))
+            .filter((stock) => !isNaN(stock));
+
+        const combinedStocks = [...new Set([...stockRange, ...specificStockList])];
+        setSelectedStocks(combinedStocks);
+        setIsStockModalOpen(false);
     };
 
-    const handleSort = (field, order) => {
-        setSortOrder({ field, order });
+    const cancelStockFilter = () => {
+        setStockMin('');
+        setStockMax('');
+        setSpecificStocks(''); // Clear specific stock input
+        setSelectedStocks([]);
+        setIsStockModalOpen(false);
     };
 
-    const startIndex = (currentPage - 1) * booksPerPage;
-    const currentBooks = sortedBooks.slice(startIndex, startIndex + booksPerPage);
+    const applyPriceFilter = () => {
+        const priceRange = [];
+        if (priceMin && priceMax) {
+            for (let price = parseInt(priceMin); price <= parseInt(priceMax); price++) {
+                priceRange.push(price);
+            }
+        }
+
+        const specificPriceList = specificPrices
+            .split(',')
+            .map((price) => parseInt(price.trim()))
+            .filter((price) => !isNaN(price));
+
+        const combinedPrices = [...new Set([...priceRange, ...specificPriceList])];
+        setSelectedPrices(combinedPrices);
+        setIsPriceModalOpen(false);
+    };
+
+    const cancelPriceFilter = () => {
+        setPriceMin('');
+        setPriceMax('');
+        setSpecificPrices('');
+        setSelectedPrices([]);
+        setIsPriceModalOpen(false);
+    };
 
     return (
         <div className="page-container">
             <h1 className="page-title">Tất Cả Sách</h1>
             <div className="content-container">
-                {/* Search and Filters */}
+                {/* Search Bar */}
                 <div className="search-filter-block">
                     <input
                         type="text"
@@ -144,227 +221,100 @@ function TatCaSach() {
                             setCurrentPage(1); // Reset to the first page when searching
                         }}
                     />
-                    <div className="filters">
-                        <span className="filter-title">Bộ lọc:</span>
-                        <button
-                            className={`filter-button ${
-                                selectedYears.length > 0 || (yearRange.from && yearRange.to) ? 'active-year-filter' : ''
-                            }`}
-                            onClick={() => setIsYearModalOpen(true)}
-                        >
-                            Theo năm xuất bản
-                        </button>
-                        <button
-                            className={`filter-button ${
-                                selectedGenres.length > 0 ? 'active-genre-filter' : ''
-                            }`}
-                            onClick={() => {
-                                setTempSelectedGenres(selectedGenres); // Preserve current selection
-                                setIsGenreModalOpen(true);
-                            }}
-                        >
-                            Theo thể loại
-                        </button>
-                        <button
-                            className={`filter-button ${
-                                selectedAuthors.length > 0 ? 'active-author-filter' : ''
-                            }`}
-                            onClick={() => {
-                                setTempSelectedAuthors(selectedAuthors); // Preserve current selection
-                                setIsAuthorModalOpen(true);
-                            }}
-                        >
-                            Theo tác giả
-                        </button>
-                        <button
-                            className={`filter-button ${
-                                selectedPublishers.length > 0 ? 'active-publisher-filter' : ''
-                            }`}
-                            onClick={() => {
-                                setTempSelectedPublishers(selectedPublishers); // Preserve current selection
-                                setIsPublisherModalOpen(true);
-                            }}
-                        >
-                            Theo nhà xuất bản
-                        </button>
-                        <button
-                            className="filter-button"
-                            onClick={() => setIsStockModalOpen(true)}
-                        >
-                            Theo số lượng tồn
-                        </button>
-                    </div>
+                    <button
+                        className={`filter-button ${
+                            selectedAuthors.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsAuthorModalOpen(true)}
+                    >
+                        Lọc theo tác giả
+                    </button>
+                    <button
+                        className={`filter-button ${
+                            selectedGenres.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsGenreModalOpen(true)}
+                    >
+                        Lọc theo thể loại
+                    </button>
+                    <button
+                        className={`filter-button ${
+                            selectedPublishers.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsPublisherModalOpen(true)}
+                    >
+                        Lọc theo nhà xuất bản
+                    </button>
+                    <button
+                        className={`filter-button ${
+                            selectedYears.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsYearModalOpen(true)}
+                    >
+                        Lọc theo năm xuất bản
+                    </button>
+                    <button
+                        className={`filter-button ${
+                            selectedStocks.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsStockModalOpen(true)}
+                    >
+                        Lọc theo số lượng tồn
+                    </button>
+                    <button
+                        className={`filter-button ${
+                            selectedPrices.length > 0 ? 'active-filter' : ''
+                        }`}
+                        onClick={() => setIsPriceModalOpen(true)}
+                    >
+                        Lọc theo đơn giá bán
+                    </button>
                 </div>
-
-                {/* Publisher Modal */}
-                {isPublisherModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal">
-                            {/* Block 1: Title */}
-                            <div className="modal-top">
-                                <h2>Chọn theo nhà xuất bản</h2>
-                            </div>
-
-                            {/* Block 2: Search and Publisher List */}
-                            <div className="modal-middle">
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm nhà xuất bản"
-                                    className="publisher-search-bar"
-                                    value={publisherSearchTerm}
-                                    onChange={(e) => setPublisherSearchTerm(e.target.value)}
-                                />
-                                <div className="sort-buttons">
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('nhaXuatBan', 'asc')}
-                                    >
-                                        Sắp xếp tăng dần
-                                    </button>
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('nhaXuatBan', 'desc')}
-                                    >
-                                        Sắp xếp giảm dần
-                                    </button>
-                                </div>
-                                <div className="publisher-list">
-                                    {/* Display selected publishers at the top */}
-                                    {tempSelectedPublishers.map((publisher) => (
-                                        <div
-                                            key={publisher}
-                                            className="publisher-item selected"
-                                            onClick={() => handlePublisherSelection(publisher)}
-                                        >
-                                            {publisher}
-                                        </div>
-                                    ))}
-                                    {/* Display unselected publishers below */}
-                                    {filteredPublishers
-                                        .filter((publisher) => !tempSelectedPublishers.includes(publisher))
-                                        .map((publisher) => (
-                                            <div
-                                                key={publisher}
-                                                className="publisher-item"
-                                                onClick={() => handlePublisherSelection(publisher)}
-                                            >
-                                                {publisher}
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
-
-                            {/* Block 3: Buttons */}
-                            <div className="modal-bottom">
-                                <button
-                                    className="apply-button"
-                                    onClick={() => {
-                                        setSelectedPublishers(tempSelectedPublishers); // Apply the selected publishers
-                                        setIsPublisherModalOpen(false);
-                                    }}
-                                >
-                                    Áp dụng
-                                </button>
-                                <button
-                                    className="cancel-button"
-                                    onClick={() => {
-                                        setSelectedPublishers([]); // Clear the filter
-                                        setIsPublisherModalOpen(false);
-                                    }}
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    className="close-button"
-                                    onClick={() => setIsPublisherModalOpen(false)}
-                                >
-                                    Đóng
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {/* Author Modal */}
                 {isAuthorModalOpen && (
                     <div className="modal-overlay">
-                        <div className="modal">
-                            {/* Block 1: Title */}
-                            <div className="modal-top">
-                                <h2>Chọn theo tác giả</h2>
-                            </div>
-
-                            {/* Block 2: Search and Author List */}
-                            <div className="modal-middle">
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm tác giả"
-                                    className="author-search-bar"
-                                    value={authorSearchTerm}
-                                    onChange={(e) => setAuthorSearchTerm(e.target.value)}
-                                />
-                                <div className="sort-buttons">
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('tacGia', 'asc')}
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo tác giả</h2>
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm tác giả"
+                                className="author-search-bar"
+                                value={authorSearchTerm}
+                                onChange={(e) => setAuthorSearchTerm(e.target.value)}
+                            />
+                            <div className="author-list">
+                                {filteredAuthors.map((author) => (
+                                    <div
+                                        key={author}
+                                        className={`author-item ${
+                                            tempSelectedAuthors.includes(author) ? 'selected' : ''
+                                        }`}
+                                        onClick={() => handleSelection(author, setTempSelectedAuthors)}
                                     >
-                                        Sắp xếp tăng dần
-                                    </button>
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('tacGia', 'desc')}
-                                    >
-                                        Sắp xếp giảm dần
-                                    </button>
-                                </div>
-                                <div className="author-list">
-                                    {/* Display selected authors at the top */}
-                                    {tempSelectedAuthors.map((author) => (
-                                        <div
-                                            key={author}
-                                            className="author-item selected"
-                                            onClick={() => handleAuthorSelection(author)}
-                                        >
-                                            {author}
-                                        </div>
-                                    ))}
-                                    {/* Display unselected authors below */}
-                                    {filteredAuthors
-                                        .filter((author) => !tempSelectedAuthors.includes(author))
-                                        .map((author) => (
-                                            <div
-                                                key={author}
-                                                className="author-item"
-                                                onClick={() => handleAuthorSelection(author)}
-                                            >
-                                                {author}
-                                            </div>
-                                        ))}
-                                </div>
+                                        {author}
+                                    </div>
+                                ))}
                             </div>
-
-                            {/* Block 3: Buttons */}
-                            <div className="modal-bottom">
+                            <div className="modal-buttons">
                                 <button
                                     className="apply-button"
-                                    onClick={() => {
-                                        setSelectedAuthors(tempSelectedAuthors); // Apply the selected authors
-                                        setIsAuthorModalOpen(false);
-                                    }}
+                                    onClick={() =>
+                                        applyFilter(setSelectedAuthors, tempSelectedAuthors, setIsAuthorModalOpen)
+                                    }
                                 >
-                                    Áp dụng
+                                    Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button"
-                                    onClick={() => {
-                                        setSelectedAuthors([]); // Clear the filter
-                                        setIsAuthorModalOpen(false);
-                                    }}
+                                    className="cancel-button-new"
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedAuthors, setSelectedAuthors, setIsAuthorModalOpen)
+                                    }
                                 >
-                                    Hủy
+                                    Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button"
+                                    className="close-button-new"
                                     onClick={() => setIsAuthorModalOpen(false)}
                                 >
                                     Đóng
@@ -377,84 +327,101 @@ function TatCaSach() {
                 {/* Genre Modal */}
                 {isGenreModalOpen && (
                     <div className="modal-overlay">
-                        <div className="modal">
-                            {/* Block 1: Title */}
-                            <div className="modal-top">
-                                <h2>Chọn theo thể loại</h2>
-                            </div>
-
-                            {/* Block 2: Search and Genre List */}
-                            <div className="modal-middle">
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm thể loại"
-                                    className="genre-search-bar"
-                                    value={genreSearchTerm}
-                                    onChange={(e) => setGenreSearchTerm(e.target.value)}
-                                />
-                                <div className="sort-buttons">
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('theLoai', 'asc')}
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo thể loại</h2>
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm thể loại"
+                                className="author-search-bar"
+                                value={genreSearchTerm}
+                                onChange={(e) => setGenreSearchTerm(e.target.value)}
+                            />
+                            <div className="author-list">
+                                {filteredGenres.map((genre) => (
+                                    <div
+                                        key={genre}
+                                        className={`author-item ${
+                                            tempSelectedGenres.includes(genre) ? 'selected' : ''
+                                        }`}
+                                        onClick={() => handleSelection(genre, setTempSelectedGenres)}
                                     >
-                                        Sắp xếp tăng dần
-                                    </button>
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('theLoai', 'desc')}
-                                    >
-                                        Sắp xếp giảm dần
-                                    </button>
-                                </div>
-                                <div className="genre-list">
-                                    {/* Display selected genres at the top */}
-                                    {tempSelectedGenres.map((genre) => (
-                                        <div
-                                            key={genre}
-                                            className="genre-item selected"
-                                            onClick={() => handleGenreSelection(genre)}
-                                        >
-                                            {genre}
-                                        </div>
-                                    ))}
-                                    {/* Display unselected genres below */}
-                                    {filteredGenres
-                                        .filter((genre) => !tempSelectedGenres.includes(genre))
-                                        .map((genre) => (
-                                            <div
-                                                key={genre}
-                                                className="genre-item"
-                                                onClick={() => handleGenreSelection(genre)}
-                                            >
-                                                {genre}
-                                            </div>
-                                        ))}
-                                </div>
+                                        {genre}
+                                    </div>
+                                ))}
                             </div>
-
-                            {/* Block 3: Buttons */}
-                            <div className="modal-bottom">
+                            <div className="modal-buttons">
                                 <button
                                     className="apply-button"
-                                    onClick={() => {
-                                        setSelectedGenres(tempSelectedGenres); // Apply the selected genres
-                                        setIsGenreModalOpen(false);
-                                    }}
+                                    onClick={() =>
+                                        applyFilter(setSelectedGenres, tempSelectedGenres, setIsGenreModalOpen)
+                                    }
                                 >
-                                    Áp dụng
+                                    Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button"
-                                    onClick={() => {
-                                        setSelectedGenres([]); // Clear the filter
-                                        setIsGenreModalOpen(false);
-                                    }}
+                                    className="cancel-button-new"
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedGenres, setSelectedGenres, setIsGenreModalOpen)
+                                    }
                                 >
-                                    Hủy
+                                    Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button"
+                                    className="close-button-new"
                                     onClick={() => setIsGenreModalOpen(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Publisher Modal */}
+                {isPublisherModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo nhà xuất bản</h2>
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm nhà xuất bản"
+                                className="author-search-bar"
+                                value={publisherSearchTerm}
+                                onChange={(e) => setPublisherSearchTerm(e.target.value)}
+                            />
+                            <div className="author-list">
+                                {filteredPublishers.map((publisher) => (
+                                    <div
+                                        key={publisher}
+                                        className={`author-item ${
+                                            tempSelectedPublishers.includes(publisher) ? 'selected' : ''
+                                        }`}
+                                        onClick={() => handleSelection(publisher, setTempSelectedPublishers)}
+                                    >
+                                        {publisher}
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="modal-buttons">
+                                <button
+                                    className="apply-button"
+                                    onClick={() =>
+                                        applyFilter(setSelectedPublishers, tempSelectedPublishers, setIsPublisherModalOpen)
+                                    }
+                                >
+                                    Áp Dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new"
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedPublishers, setSelectedPublishers, setIsPublisherModalOpen)
+                                    }
+                                >
+                                    Hủy Áp Dụng
+                                </button>
+                                <button
+                                    className="close-button-new"
+                                    onClick={() => setIsPublisherModalOpen(false)}
                                 >
                                     Đóng
                                 </button>
@@ -466,111 +433,41 @@ function TatCaSach() {
                 {/* Year Modal */}
                 {isYearModalOpen && (
                     <div className="modal-overlay">
-                        <div className="modal">
-                            {/* Block 1: Title */}
-                            <div class="modal-top">
-                                <h2>Chọn theo năm xuất bản</h2>
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo năm xuất bản</h2>
+                            <div className="year-filter-inputs">
+                                <h3>Nhập khoảng năm:</h3>
+                                <div className="year-range-inputs">
+                                    <input
+                                        type="number"
+                                        placeholder="Năm bắt đầu"
+                                        value={yearStart}
+                                        onChange={(e) => setYearStart(e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Năm kết thúc"
+                                        value={yearEnd}
+                                        onChange={(e) => setYearEnd(e.target.value)}
+                                    />
+                                </div>
+                                <h3>Nhập từng năm riêng lẻ:</h3>
+                                <input
+                                    type="text"
+                                    placeholder="Các năm cách nhau bởi dấu phẩy"
+                                    value={specificYears}
+                                    onChange={(e) => setSpecificYears(e.target.value)}
+                                />
                             </div>
-
-                            {/* Block 2: Year Range and Year List */}
-                            <div className="modal-middle">
-                                <div className="year-range">
-                                    <label>
-                                        Từ năm:
-                                        <input
-                                            type="number"
-                                            value={yearRange.from}
-                                            onChange={(e) =>
-                                                handleYearRangeChange('from', e.target.value)
-                                            }
-                                            disabled={tempSelectedYears.length > 0} // Disable if years are selected
-                                        />
-                                    </label>
-                                    <label>
-                                        Đến năm:
-                                        <input
-                                            type="number"
-                                            value={yearRange.to}
-                                            onChange={(e) =>
-                                                handleYearRangeChange('to', e.target.value)
-                                            }
-                                            disabled={tempSelectedYears.length > 0} // Disable if years are selected
-                                        />
-                                    </label>
-                                </div>
-                                <div className="sort-buttons">
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('namXuatBan', 'asc')}
-                                    >
-                                        Sắp xếp tăng dần
-                                    </button>
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('namXuatBan', 'desc')}
-                                    >
-                                        Sắp xếp giảm dần
-                                    </button>
-                                </div>
-                                <div className="year-list">
-                                    {/* Display selected years at the top */}
-                                    {tempSelectedYears.map((year) => (
-                                        <div
-                                            key={year}
-                                            className="year-item selected"
-                                            onClick={() => handleYearSelection(year)}
-                                        >
-                                            {year}
-                                        </div>
-                                    ))}
-                                    {/* Display unselected years below */}
-                                    {years
-                                        .filter((year) => !tempSelectedYears.includes(year))
-                                        .map((year) => (
-                                            <div
-                                                key={year}
-                                                className="year-item"
-                                                onClick={() => handleYearSelection(year)}
-                                                style={{
-                                                    pointerEvents:
-                                                        yearRange.from || yearRange.to
-                                                            ? 'none'
-                                                            : 'auto', // Disable if a range is entered
-                                                    opacity:
-                                                        yearRange.from || yearRange.to
-                                                            ? 0.5
-                                                            : 1, // Dim if disabled
-                                                }}
-                                            >
-                                                {year}
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
-
-                            {/* Block 3: Buttons */}
-                            <div className="modal-bottom">
-                                <button
-                                    className="apply-button"
-                                    onClick={() => {
-                                        setSelectedYears(tempSelectedYears); // Apply the selected years
-                                        setIsYearModalOpen(false);
-                                    }}
-                                >
-                                    Áp dụng
+                            <div className="modal-buttons">
+                                <button className="apply-button" onClick={applyYearFilter}>
+                                    Áp Dụng
+                                </button>
+                                <button className="cancel-button-new" onClick={cancelYearFilter}>
+                                    Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button"
-                                    onClick={() => {
-                                        setSelectedYears([]); // Clear the filter
-                                        setYearRange({ from: '', to: '' }); // Clear the range
-                                        setIsYearModalOpen(false);
-                                    }}
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    className="close-button"
+                                    className="close-button-new"
                                     onClick={() => setIsYearModalOpen(false)}
                                 >
                                     Đóng
@@ -583,72 +480,89 @@ function TatCaSach() {
                 {/* Stock Modal */}
                 {isStockModalOpen && (
                     <div className="modal-overlay">
-                        <div className="modal">
-                            {/* Block 1: Title */}
-                            <div className="modal-top">
-                                <h2>Chọn theo số lượng tồn</h2>
-                            </div>
-
-                            {/* Block 2: Stock Range */}
-                            <div className="modal-middle">
-                                <div className="stock-range">
-                                    <label>
-                                        Từ:
-                                        <input
-                                            type="number"
-                                            value={stockRange.from}
-                                            onChange={(e) =>
-                                                setStockRange({ ...stockRange, from: e.target.value })
-                                            }
-                                        />
-                                    </label>
-                                    <label>
-                                        Đến:
-                                        <input
-                                            type="number"
-                                            value={stockRange.to}
-                                            onChange={(e) =>
-                                                setStockRange({ ...stockRange, to: e.target.value })
-                                            }
-                                        />
-                                    </label>
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo số lượng tồn</h2>
+                            <div className="year-filter-inputs">
+                                <h3>Nhập khoảng số lượng:</h3>
+                                <div className="year-range-inputs">
+                                    <input
+                                        type="number"
+                                        placeholder="Số lượng tối thiểu"
+                                        value={stockMin}
+                                        onChange={(e) => setStockMin(e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Số lượng tối đa"
+                                        value={stockMax}
+                                        onChange={(e) => setStockMax(e.target.value)}
+                                    />
                                 </div>
-                                <div className="sort-buttons">
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('soLuongTon', 'asc')}
-                                    >
-                                        Sắp xếp tăng dần
-                                    </button>
-                                    <button
-                                        className="sort-button"
-                                        onClick={() => handleSort('soLuongTon', 'desc')}
-                                    >
-                                        Sắp xếp giảm dần
-                                    </button>
-                                </div>
+                                <h3>Nhập từng số lượng riêng lẻ:</h3>
+                                <input
+                                    type="text"
+                                    placeholder="Các số lượng cách nhau bởi dấu phẩy"
+                                    value={specificStocks}
+                                    onChange={(e) => setSpecificStocks(e.target.value)}
+                                />
                             </div>
-
-                            {/* Block 3: Buttons */}
-                            <div className="modal-bottom">
-                                <button
-                                    className="apply-button"
-                                    onClick={() => setIsStockModalOpen(false)}
-                                >
-                                    Áp dụng
+                            <div className="modal-buttons">
+                                <button className="apply-button" onClick={applyStockFilter}>
+                                    Áp Dụng
+                                </button>
+                                <button className="cancel-button-new" onClick={cancelStockFilter}>
+                                    Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button"
-                                    onClick={() => {
-                                        setStockRange({ from: '', to: '' }); // Clear the stock range
-                                        setIsStockModalOpen(false);
-                                    }}
+                                    className="close-button-new"
+                                    onClick={() => setIsStockModalOpen(false)}
                                 >
-                                    Hủy
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Price Modal */}
+                {isPriceModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal-new">
+                            <h2 className="modal-title-new">Lọc theo đơn giá bán</h2>
+                            <div className="price-filter-inputs">
+                                <h3>Nhập khoảng giá:</h3>
+                                <div className="price-range-inputs">
+                                    <input
+                                        type="number"
+                                        placeholder="Giá tối thiểu"
+                                        value={priceMin}
+                                        onChange={(e) => setPriceMin(e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Giá tối đa"
+                                        value={priceMax}
+                                        onChange={(e) => setPriceMax(e.target.value)}
+                                    />
+                                </div>
+                                <h3>Nhập từng giá riêng lẻ:</h3>
+                                <input
+                                    type="text"
+                                    placeholder="Các giá cách nhau bởi dấu phẩy"
+                                    value={specificPrices}
+                                    onChange={(e) => setSpecificPrices(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-buttons">
+                                <button className="apply-button" onClick={applyPriceFilter}>
+                                    Áp Dụng
+                                </button>
+                                <button className="cancel-button-new" onClick={cancelPriceFilter}>
+                                    Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button"
-                                    onClick={() => setIsStockModalOpen(false)}
+                                    className="close-button-new"
+                                    onClick={() => setIsPriceModalOpen(false)}
                                 >
                                     Đóng
                                 </button>
@@ -663,13 +577,14 @@ function TatCaSach() {
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Mã sách</th>
+                                <th>Mã</th>
                                 <th>Tên sách</th>
                                 <th>Tác giả</th>
                                 <th>Thể loại</th>
-                                <th>Năm XB</th>
+                                <th>NămXB</th>
                                 <th>Nhà xuất bản</th>
-                                <th>Tồn</th> {/* New column */}
+                                <th>Tồn</th>
+                                <th>Đơn giá bán</th> {/* New column */}
                             </tr>
                         </thead>
                         <tbody>
@@ -682,7 +597,13 @@ function TatCaSach() {
                                     <td>{book.theLoai}</td>
                                     <td>{book.namXuatBan}</td>
                                     <td>{book.nhaXuatBan}</td>
-                                    <td>{book.soLuongTon}</td> {/* New data */}
+                                    <td>{book.soLuongTon}</td>
+                                    <td>
+                                        {new Intl.NumberFormat('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        }).format(book.donGiaBan).replace('₫', 'VNĐ')} {/* Format price */}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -692,10 +613,10 @@ function TatCaSach() {
                 {/* Pagination Buttons */}
                 <div className="pagination-buttons">
                     <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                        Previous
+                        Trước
                     </button>
                     <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-                        Next
+                        Sau
                     </button>
                 </div>
             </div>

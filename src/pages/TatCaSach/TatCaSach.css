@@ -1,107 +1,24 @@
-.page-container {
-    /* ...existing styles... */
-}
-
-.page-title {
-    /* ...existing styles... */
-}
-
 .content-container {
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 95%; /* Adjust this value to match the width of the "phiếu thu tiền" page */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    width: 95%;
     margin: 0 auto; /* Center the container horizontally */
 }
 
 .search-filter-block {
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+    display: flex; /* Arrange buttons horizontally */
+    gap: 1rem; /* Add spacing between buttons */
+    flex-wrap: wrap; /* Allow wrapping if buttons overflow */
 }
 
 .search-filter-block input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.filters {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.filter-title {
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.filter-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.filter-button:hover {
-    background-color: #0056b3;
-}
-
-.filter-button.active-filter {
-    background-color: #28a745; /* Green background for active filter */
-    color: white;
-    font-weight: bold;
-    border: 2px solid #1e7e34;
-}
-
-.filter-button.active-filter:hover {
-    background-color: #218838; /* Darker green on hover */
-}
-
-.filter-button.active-publisher-filter {
-    background-color: #ffc107; /* Yellow background for active filter */
-    color: black; /* Black text for better contrast */
-    font-weight: bold;
-    border: 2px solid #e0a800; /* Darker yellow border */
-}
-
-.filter-button.active-publisher-filter:hover {
-    background-color: #e0a800; /* Darker yellow on hover */
-}
-
-.filter-button.active-author-filter {
-    background-color: #ffc107; /* Yellow background for active filter */
-    color: black; /* Black text for better contrast */
-    font-weight: bold;
-    border: 2px solid #e0a800; /* Darker yellow border */
-}
-
-.filter-button.active-author-filter:hover {
-    background-color: #e0a800; /* Darker yellow on hover */
-}
-
-.filter-button.active-genre-filter {
-    background-color: #ffc107; /* Yellow background for active filter */
-    color: black; /* Black text for better contrast */
-    font-weight: bold;
-    border: 2px solid #e0a800; /* Darker yellow border */
-}
-
-.filter-button.active-genre-filter:hover {
-    background-color: #e0a800; /* Darker yellow on hover */
-}
-
-.filters select {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
 }
 
 .book-table-block {
@@ -117,21 +34,26 @@
     border-collapse: collapse;
     text-align: center; /* Center-align all content */
     table-layout: fixed; /* Enable fixed column widths */
-    font-size: 80%; /* Reduce font size to 80% */
+    font-size: 0.8rem; /* Reduce font size to 80% */
 }
 
 .book-table-block th,
 .book-table-block td {
-    padding: 18px; /* Increase padding for better height */
-    border-bottom: 1px solid #ccc; /* Only horizontal borders */
+
     text-align: center; /* Center-align cell content */
+}
+
+.book-table-block td {
+    font-size: 0.8rem; /* Reduce font size for table cells to 80% */
+    padding: 1.2rem; /* Increase padding for better height */
+    border-bottom: 0.1rem solid #ccc; /* Only horizontal borders */
 }
 
 .book-table-block th {
     background-color: #007bff; /* Blue background */
     color: white; /* White text */
     font-weight: bold;
-    font-size: 90%; /* Increase font size for header to 90% */
+    font-size: 0.8rem; /* Increase font size for header to 90% */
 }
 
 .book-table-block th:nth-child(1),
@@ -146,49 +68,55 @@
 
 .book-table-block th:nth-child(3),
 .book-table-block td:nth-child(3) {
-    width: 20%; /* Adjusted width for Tên sách column */
+    width: 18%; /* Adjusted width for Tên sách column */
 }
 
 .book-table-block th:nth-child(4),
 .book-table-block td:nth-child(4) {
-    width: 15%; /* Fixed width for Tác giả column */
+    width: 12%; /* Adjusted width for Tác giả column */
 }
 
 .book-table-block th:nth-child(5),
 .book-table-block td:nth-child(5) {
-    width: 15%; /* Fixed width for Thể loại column */
+    width: 12%; /* Adjusted width for Thể loại column */
 }
 
 .book-table-block th:nth-child(6),
 .book-table-block td:nth-child(6) {
-    width: 10%; /* Fixed width for Năm xuất bản column */
+    width: 8%; /* Fixed width for Năm xuất bản column */
 }
 
 .book-table-block th:nth-child(7),
 .book-table-block td:nth-child(7) {
-    width: 15%; /* Adjusted width for Nhà xuất bản column */
+    width: 12%; /* Adjusted width for Nhà xuất bản column */
 }
 
 .book-table-block th:nth-child(8),
 .book-table-block td:nth-child(8) {
-    width: 10%; /* Fixed width for Số lượng tồn column */
+    width: 8%; /* Fixed width for Số lượng tồn column */
+}
+
+.book-table-block th:nth-child(9),
+.book-table-block td:nth-child(9) {
+    width: 10%; /* Fixed width for Đơn giá bán column */
 }
 
 .pagination-buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
-    gap: 10px;
+    margin-top: 1rem;
 }
 
 .pagination-buttons button {
-    padding: 10px 20px;
+    padding: 0.5rem 1rem;
+    width: 4rem;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.5rem;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 .pagination-buttons button:disabled {
@@ -196,202 +124,18 @@
     cursor: not-allowed;
 }
 
-.book-table-block td {
-    font-size: 90%; /* Reduce font size for table cells to 80% */
-}
-
-/* Remove modal-related styles */
-.modal-top {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px; /* Add spacing below the title */
-    position: relative; /* Ensure proper stacking with other elements */
-    margin-top: 0.2rem; /* Move the title down by 0.2rem */
-}
-
-.publisher-search-bar {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.publisher-list {
-    display: grid; /* Use grid layout for two items per row */
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 10px; /* Add spacing between items */
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.publisher-item {
-    font-size: 95%; /* Reduce font size to 95% */
-    padding: 10px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.publisher-item:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-.publisher-item.selected {
-    background-color: #28a745; /* Green background for selected publishers */
-    color: white;
-    font-weight: bold;
-}
-
-.author-search-bar {
-    width: 100%;
-    padding: 10px;
-    margin-top: 0; /* Align with publisher search bar */
-    margin-bottom: 20px; /* Match spacing with publisher modal */
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    display: block;
-    margin-left: auto; /* Center horizontally */
-    margin-right: auto; /* Center horizontally */
-}
-
-.author-list {
-    display: grid; /* Use grid layout for two items per row */
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 10px; /* Add spacing between items */
-    max-height: 200px;
-    overflow-y: auto;
-    justify-content: center; /* Center the grid horizontally */
-    margin-top: 0; /* Align with publisher list */
-}
-
-.author-item {
-    font-size: 95%; /* Reduce font size to 95% */
-    padding: 10px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.author-item:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-.author-item.selected {
-    background-color: #28a745; /* Green background for selected authors */
-    color: white;
-    font-weight: bold;
-}
-
-.genre-search-bar {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.genre-list {
-    display: grid; /* Use grid layout for two items per row */
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 10px; /* Add spacing between items */
-    max-height: 200px;
-    overflow-y: auto;
-    justify-content: center; /* Center the grid horizontally */
-}
-
-.genre-item {
-    font-size: 95%; /* Reduce font size to 95% */
-    padding: 10px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.genre-item:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-.genre-item.selected {
-    background-color: #28a745; /* Green background for selected genres */
-    color: white;
-    font-weight: bold;
-}
-
-.modal-bottom {
-    margin-top: auto; /* Push the bottom block to the bottom of the modal */
+/* Modal Styles */
+.modal-new {
+    background-color: white; /* White background for the modal */
+    padding: 2rem; /* Add padding inside the modal */
+    border-radius: 0.5rem; /* Rounded corners */
+    width: 30rem; /* Set modal width */
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     display: flex;
-    flex-direction: row; /* Arrange buttons in a row */
-    justify-content: space-between; /* Add space between buttons */
-    gap: 10px; /* Add spacing between buttons */
-    margin-bottom: 0.2rem; /* Move the buttons up by 0.2rem */
-}
-
-/* Remove the modal-note styles */
-.modal-note {
-    display: none;
-}
-
-.modal-buttons {
-    display: flex;
-    flex-direction: row; /* Arrange buttons in a row */
-    justify-content: space-between; /* Add space between buttons */
-    gap: 10px; /* Add spacing between buttons */
-}
-
-.apply-button {
-    background-color: #28a745; /* Green for Apply */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.apply-button:hover {
-    background-color: #218838;
-}
-
-.cancel-button {
-    background-color: #dc3545; /* Red for Cancel */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.cancel-button:hover {
-    background-color: #c82333;
-}
-
-.close-button {
-    background-color: #6c757d; /* Gray for Close */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.close-button:hover {
-    background-color: #5a6268;
+    flex-direction: column; /* Stack content vertically */
+    gap: 1.5rem; /* Add spacing between elements */
+    text-align: center;
+    position: relative; /* Ensure proper positioning */
 }
 
 .modal-overlay {
@@ -402,126 +146,165 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1000; /* Ensure it appears above other elements */
 }
 
-.modal {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    max-height: 80%;
-    overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust for modal's own dimensions */
-    display: flex;
-    flex-direction: column; /* Ensure content stacks vertically */
-    justify-content: space-between; /* Push the bottom block to the bottom */
-}
-
-.modal-middle {
-    display: flex;
-    flex-direction: column; /* Stack search bar and list vertically */
-    gap: 10px; /* Add spacing between search bar and list */
-    margin-bottom: 20px; /* Add spacing below the middle block */
-    flex: 1; /* Allow the middle block to take up available space */
-}
-
-.year-range {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.year-range label {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
+.modal-title-new {
+    font-size: 1.5rem; /* Adjust font size */
     font-weight: bold;
-}
-
-.year-range input {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100px;
-}
-
-.year-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Three columns */
-    gap: 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    justify-content: center;
-}
-
-.year-item {
-    font-size: 95%;
-    padding: 10px;
+    color: #333; /* Dark text color */
     text-align: center;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    /* Remove margin */
+    margin: 0;
+}
+
+.author-search-bar {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+}
+
+.author-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+    gap: 1rem; /* Add spacing between items */
+    max-height: 20rem; /* Limit height with scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    width: 100%;
+    padding: 1rem; /* Add padding inside the list */
+    /*border: 0.1rem solid #ccc;  Light border */
+    border-radius: 0.5rem; /* Rounded corners */
+}
+
+.author-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: #333;
+    background-color: white;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.year-item:hover {
+.author-item.selected {
     background-color: #007bff;
     color: white;
-}
-
-.year-item.selected {
-    background-color: #28a745;
-    color: white;
     font-weight: bold;
 }
 
-.stock-range {
+.author-item:hover {
+    background-color: #f1f1f1;
+}
+
+.modal-buttons {
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 20px;
+    justify-content: space-between; /* Space buttons evenly */
 }
 
-.stock-range label {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.stock-range input {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100px;
-}
-
-.sort-button {
-    background-color: #17a2b8; /* Light blue for sort buttons */
-    color: white;
-    padding: 10px 15px;
+.apply-button,
+.cancel-button-new,
+.close-button-new {
+    padding: 1rem 1rem; /* Add padding for buttons */
     border: none;
-    border-radius: 4px;
+    border-radius: 0.5rem; /* Rounded corners */
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.8rem; /* Adjust font size */
+}
+
+.apply-button {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+}
+
+.apply-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.cancel-button-new {
+    background-color: #ffc107; /* Yellow background */
+    color: black; /* Black text */
+}
+
+.cancel-button-new:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.close-button-new {
+    background-color: #dc3545; /* Red background */
+    color: white; /* White text */
+}
+
+.close-button-new:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.filter-button {
+    padding: 0.8rem 1rem;
+    background-color: #4296f0;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
     transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
-.sort-button:hover {
-    background-color: #138496; /* Darker blue on hover */
+.filter-button.active-filter {
+    background-color: #28a745; /* Green background for active filter */
+    color: white;
+    font-weight: bold;
 }
 
-.sort-buttons {
+.filter-button:hover {
+    background-color: #0056b3;
+}
+
+.year-filter-inputs {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px; /* Add spacing below sort buttons */
+    flex-direction: column; /* Stack elements vertically */
+    gap: 1rem; /* Add spacing between sections */
 }
+
+.year-range-inputs {
+    display: flex;
+    gap: 0.5rem; /* Add spacing between the two input fields */
+}
+
+.year-filter-inputs input[type="text"],
+.year-range-inputs input[type="number"] {
+    width: 100%; /* Full width for text input */
+    height: 2rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    font-size: 0.8rem;
+}
+
+.price-filter-inputs {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    gap: 1rem; /* Add spacing between sections */
+}
+
+.price-range-inputs {
+    display: flex;
+    gap: 0.5rem; /* Add spacing between the two input fields */
+}
+
+.price-filter-inputs input[type="number"],
+.price-filter-inputs input[type="text"] {
+    width: 100%; /* Full width for inputs */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    font-size: 0.8rem;
+}
+

@@ -8,6 +8,7 @@ const bookData = [
         namXuatBan: 2023,
         nhaXuatBan: 'Nhà xuất bản mẫu',
         soLuongTon: 10, // Quantity in stock
+        donGiaBan: 150000 // Added price
     },
     {
         id: 'B002',
@@ -18,6 +19,7 @@ const bookData = [
         namXuatBan: 2022,
         nhaXuatBan: 'Nhà xuất bản khác',
         soLuongTon: 15, // Quantity in stock
+        donGiaBan: 120000 // Added price
     },
     {
         id: 'B003',
@@ -28,6 +30,7 @@ const bookData = [
         namXuatBan: 2021,
         nhaXuatBan: 'NXB Khoa Học',
         soLuongTon: 20, // Quantity in stock
+        donGiaBan: 90000 // Added price
     },
     {
         id: 'B004',
@@ -38,6 +41,7 @@ const bookData = [
         namXuatBan: 2020,
         nhaXuatBan: 'NXB Giáo Dục',
         soLuongTon: 25, // Quantity in stock
+        donGiaBan: 200000 // Added price
     },
     {
         id: 'B005',
@@ -48,6 +52,7 @@ const bookData = [
         namXuatBan: 2019,
         nhaXuatBan: 'NXB Trẻ',
         soLuongTon: 30, // Quantity in stock
+        donGiaBan: 180000 // Added price
     },
     {
         id: 'B006',
@@ -58,6 +63,7 @@ const bookData = [
         namXuatBan: 2018,
         nhaXuatBan: 'NXB Lao Động',
         soLuongTon: 12, // Quantity in stock
+        donGiaBan: 150000 // Added price
     },
     {
         id: 'B007',
@@ -68,6 +74,7 @@ const bookData = [
         namXuatBan: 2017,
         nhaXuatBan: 'NXB Văn Hóa',
         soLuongTon: 8, // Quantity in stock
+        donGiaBan: 120000 // Added price
     },
     {
         id: 'B008',
@@ -78,6 +85,7 @@ const bookData = [
         namXuatBan: 2016,
         nhaXuatBan: 'NXB Văn Học',
         soLuongTon: 18, // Quantity in stock
+        donGiaBan: 90000 // Added price
     },
     {
         id: 'B009',
@@ -88,6 +96,7 @@ const bookData = [
         namXuatBan: 2015,
         nhaXuatBan: 'NXB Đại Học Quốc Gia',
         soLuongTon: 22, // Quantity in stock
+        donGiaBan: 200000 // Added price
     },
     {
         id: 'B010',
@@ -98,6 +107,7 @@ const bookData = [
         namXuatBan: 2014,
         nhaXuatBan: 'NXB Giáo Dục',
         soLuongTon: 16, // Quantity in stock
+        donGiaBan: 180000 // Added price
     },
     {
         id: 'B011',
@@ -108,6 +118,7 @@ const bookData = [
         namXuatBan: 2013,
         nhaXuatBan: 'NXB Giáo Dục',
         soLuongTon: 14, // Quantity in stock
+        donGiaBan: 150000 // Added price
     },
     {
         id: 'B012',
@@ -118,6 +129,7 @@ const bookData = [
         namXuatBan: 2012,
         nhaXuatBan: 'NXB Trẻ',
         soLuongTon: 19, // Quantity in stock
+        donGiaBan: 120000 // Added price
     },
     {
         id: 'B013',
@@ -128,6 +140,7 @@ const bookData = [
         namXuatBan: 2011,
         nhaXuatBan: 'NXB Khoa Học',
         soLuongTon: 11, // Quantity in stock
+        donGiaBan: 90000 // Added price
     },
     {
         id: 'B014',
@@ -138,6 +151,7 @@ const bookData = [
         namXuatBan: 2010,
         nhaXuatBan: 'NXB Lao Động',
         soLuongTon: 13, // Quantity in stock
+        donGiaBan: 200000 // Added price
     },
     {
         id: 'B015',
@@ -148,6 +162,7 @@ const bookData = [
         namXuatBan: 2009,
         nhaXuatBan: 'NXB Văn Hóa',
         soLuongTon: 9, // Quantity in stock
+        donGiaBan: 180000 // Added price
     },
     {
         id: 'B016',
@@ -158,6 +173,7 @@ const bookData = [
         namXuatBan: 2008,
         nhaXuatBan: 'NXB Giáo Dục',
         soLuongTon: 17, // Quantity in stock
+        donGiaBan: 150000 // Added price
     },
     {
         id: 'B017',
@@ -168,6 +184,7 @@ const bookData = [
         namXuatBan: 2007,
         nhaXuatBan: 'NXB Khoa Học',
         soLuongTon: 21, // Quantity in stock
+        donGiaBan: 120000 // Added price
     },
     // Add more book entries as needed
 ];
