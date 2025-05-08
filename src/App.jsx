@@ -6,6 +6,8 @@ import TatCaSach from './pages/TatCaSach/TatCaSach';
 import NhapSach from './pages/NhapSach/NhapSach';  
 import ThanhToanCu from './pages/ThanhToan/ThanhToanCu/ThanhToanCu';   
 import ThanhToanMoi from './pages/ThanhToan/ThanhToanMoi/ThanhToanMoi';  
+import HoaDon from './pages/ThanhToan/HoaDon/HoaDon'; 
+import PhieuThuTien from './pages/ThanhToan/PhieuThuTien/PhieuThuTien';
 import KhachHang from './pages/KhachHang/KhachHang';  
 import BaoCaoTon from './pages/BaoCao/BaoCaoTon/BaoCaoTon';
 import BaoCaoCongNo from './pages/BaoCao/BaoCaoCongNo/BaoCaoCongNo';
@@ -17,8 +19,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { ROUTES } from './constants';
 
 function App() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('user');
+  // localStorage.removeItem('isLoggedIn');
+  // localStorage.removeItem('user');
   return (
     <>
       <Router>
@@ -77,6 +79,28 @@ function App() {
                 <Navbar />
                 <div className="container">
                   <ThanhToanMoi />
+                </div>
+              </>
+            </PrivateRoute>
+          } />
+
+          <Route path={ROUTES.INVOICE} element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="container">
+                  <HoaDon />
+                </div>
+              </>
+            </PrivateRoute>
+          } />  
+
+          <Route path={ROUTES.RECEIPT} element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="container">
+                  <PhieuThuTien />
                 </div>
               </>
             </PrivateRoute>
