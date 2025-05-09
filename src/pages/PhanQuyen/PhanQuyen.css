@@ -1,0 +1,164 @@
+.page-title-new {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+
+.user-list-block,
+.role-config-block {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.user-list-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+    /* Align items vertically */
+}
+
+.user-list-filters input,
+.user-list-filters select {
+    padding: 0.8rem;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    flex: 1;
+}
+
+.add-user-button {
+    padding: 0.8rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.add-user-button:hover {
+    background-color: #218838;
+}
+
+.user-table,
+.role-config-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.user-table th,
+.user-table td,
+.role-config-table th,
+.role-config-table td {
+    border: 0.1rem solid #ccc;
+    padding: 0.8rem;
+    text-align: center;
+}
+
+.user-table th,
+.role-config-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.password-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    /* Add spacing between buttons */
+    justify-content: center;
+    /* Center align buttons */
+    align-items: center;
+    /* Vertically align buttons */
+}
+
+.icon-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.icon-button:hover {
+    color: #0056b3;
+}
+
+.role-config-table select {
+    padding: 0.5rem;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.modal-title-pq {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    /* Add spacing below the title */
+    text-align: center;
+    /* Center the title */
+}
+
+.modal-content-pq input,
+.modal-content-pq select {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    font-size: 1rem;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    /* Center the buttons horizontally */
+    gap: 1rem;
+    margin-top: 1rem;
+    /* Add spacing above the buttons */
+}
+
+.apply-button,
+.cancel-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.apply-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.apply-button:hover {
+    background-color: #218838;
+}
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
+}
