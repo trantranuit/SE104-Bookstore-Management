@@ -178,12 +178,34 @@ function ThanhToanMoi() {
         }
     };
 
+    const generateInvoiceId = () => {
+        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        if (existingInvoices.length === 0) {
+            return 'HD001'; // Start with HD001 if no invoices exist
+        }
+        const lastInvoiceId = existingInvoices[existingInvoices.length - 1].maHoaDon;
+        const nextIdNumber = parseInt(lastInvoiceId.replace('HD', '')) + 1;
+        return `HD${String(nextIdNumber).padStart(3, '0')}`; // Ensure 3-digit format
+    };
+
     const handleCustomerInfoSubmit = (e) => {
         e.preventDefault();
+
+        // Validate required fields
+        if (!employeeInfo.id || !employeeInfo.name) {
+            alert('Vui lòng nhập đầy đủ thông tin nhân viên.');
+            return;
+        }
+        if (!customerInfo.id || !customerInfo.name || !customerInfo.phone || !customerInfo.email) {
+            alert('Vui lòng nhập đầy đủ thông tin khách hàng.');
+            return;
+        }
+
         const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
         const newInvoice = {
-            maHoaDon: `HD${Math.floor(Math.random() * 100000)}`,
+            maHoaDon: generateInvoiceId(), // Generate sequential invoice ID
             nhanVien: employeeInfo.name,
+            maNhanVien: employeeInfo.id, // Include employee ID
             maKhachHang: customerInfo.id,
             tenKhachHang: customerInfo.name,
             sdt: customerInfo.phone,
@@ -222,15 +244,17 @@ function ThanhToanMoi() {
 
     const handleSaveInvoice = () => {
         const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
-        const newInvoice = {
-            maHoaDon: `HD${Math.floor(Math.random() * 100000)}`,
+        const updatedInvoice = {
+            ...invoice, // Use existing invoice details if editing
+            maHoaDon: invoice?.maHoaDon || generateInvoiceId(), // Use existing ID or generate a new one
             nhanVien: employeeInfo.name,
+            maNhanVien: employeeInfo.id,
             maKhachHang: customerInfo.id,
             tenKhachHang: customerInfo.name,
             sdt: customerInfo.phone,
             email: customerInfo.email,
-            soNo: customerInfo.debt + totalInvoiceAmount, // Updated debt
-            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+            soNo: customerInfo.debt + totalInvoiceAmount,
+            ngayLap: new Date().toISOString().split('T')[0],
             danhSachSach: cart.map(item => ({
                 maSach: item.maSach,
                 tenSach: item.tenSach,
@@ -239,21 +263,15 @@ function ThanhToanMoi() {
             })),
         };
 
-        // Save the invoice to localStorage
+        // Update the invoice in localStorage
         const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-        localStorage.setItem('invoices', JSON.stringify([...existingInvoices, newInvoice]));
-
-        // Save the receipt to localStorage for "Danh Sách Phiếu Thu Tiền"
-        const newReceipt = {
-            maPhieuThu: `PT${Math.floor(Math.random() * 100000)}`,
-            nguoiLap: employeeInfo.name,
-            maKhachHang: customerInfo.id,
-            tenKhachHang: customerInfo.name,
-            soTienThu: totalInvoiceAmount,
-            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-        };
-        const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
-        localStorage.setItem('receipts', JSON.stringify([...existingReceipts, newReceipt]));
+        const updatedInvoices = existingInvoices.map((inv) =>
+            inv.maHoaDon === updatedInvoice.maHoaDon ? updatedInvoice : inv
+        );
+        if (!existingInvoices.some(inv => inv.maHoaDon === updatedInvoice.maHoaDon)) {
+            updatedInvoices.push(updatedInvoice); // Add new invoice if it doesn't exist
+        }
+        localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
 
         // Update customer debt in localStorage
         const updatedCustomers = customerData.map(customer =>

@@ -51,7 +51,7 @@ function HoaDon() {
     };
 
     const handleEditInvoice = (invoice) => {
-        navigate('/thanhToan/moi', { state: { invoice: { ...invoice, maNhanVien: invoice.maNhanVien } } }); // Include maNhanVien
+        navigate('/thanhToan/moi', { state: { invoice } }); // Pass the invoice details via state
     };
 
     const selectedInvoice = selectedInvoiceIndex !== null ? filteredInvoices[selectedInvoiceIndex] : null;
