@@ -53,7 +53,7 @@ function CustomerModal({ customer, onSave, onClose }) {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content">
+            <div className="kh-modal-content">
                 <h2>{customer ? 'Sửa Khách Hàng' : 'Thêm Khách Hàng'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">

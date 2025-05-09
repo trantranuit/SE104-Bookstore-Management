@@ -1,4 +1,4 @@
-.customer-table-container {
+.bccn-table-container {
     overflow-x: auto;
 }
 
@@ -36,20 +36,19 @@
     cursor: pointer;
 }
 
-.report-table {
+.bccn-report-table {
     width: 92%;
-    border-collapse: collapse;
+    border-collapse: seperate;
     border-spacing: 0;
     margin: 1.25rem auto;
     font-size: 0.8rem;
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
     table-layout: fixed;
 }
 
-.report-table th,
-.report-table td {
+.bccn-report-table th,
+.bccn-report-table td {
     border: 0.06rem solid #e0e0e0;
     border-left: none;
     border-right: none;
@@ -61,7 +60,7 @@
     min-width: 120px;
 }
 
-.report-table th {
+.bccn-report-table th {
     background-color: #73adef;
     color: white;
     font-weight: bold;
@@ -71,31 +70,67 @@
     border-top: 0.06rem solid #e0e0e0;
 }
 
-.report-table tr:last-child td {
-    border-bottom: 0.06rem solid #e0e0e0;
+.bccn-report-table th:nth-child(1),
+.bccn-report-table td:nth-child(1) {
+    width: 3rem;   /* STT */
+    min-width: 3rem;
+    max-width: 4rem;
 }
 
-.report-table th:first-child,
-.report-table td:first-child {
-    border-left: 0.06rem solid #e0e0e0;
+.bccn-report-table th:nth-child(2),
+.bccn-report-table td:nth-child(2) {
+    width: 7rem;   /* Mã Khách Hàng */
+    min-width: 6rem;
+    max-width: 8rem;
 }
 
-.report-table th:last-child,
-.report-table td:last-child {
-    border-right: 0.06rem solid #e0e0e0;
+.bccn-report-table th:nth-child(3),
+.bccn-report-table td:nth-child(3) {
+    width: 12rem;  /* Tên Khách Hàng */
+    min-width: 10rem;
+    max-width: 14rem;
 }
+
+.bccn-report-table th:nth-child(4),
+.bccn-report-table td:nth-child(4) {
+    width: 9rem;   /* Số Điện Thoại */
+    min-width: 8rem;
+    max-width: 11rem;
+}
+
+.bccn-report-table th:nth-child(5),
+.bccn-report-table td:nth-child(5) {
+    width: 5rem;   /* Nợ đầu */
+    min-width: 4rem;
+    max-width: 6rem;
+}
+
+.bccn-report-table th:nth-child(6),
+.bccn-report-table td:nth-child(6) {
+    width: 6rem;   /* Phát sinh */
+    min-width: 5rem;
+    max-width: 7rem;
+}
+
+.bccn-report-table th:nth-child(7),
+.bccn-report-table td:nth-child(7) {
+    width: 6rem;   /* Nợ cuối */
+    min-width: 5rem;
+    max-width: 7rem;
+}
+
 
 /* Màu cách hàng */
-.report-table tr:nth-child(odd) {
+.bccn-report-table tr:nth-child(odd) {
     background-color: white;
 }
 
-.report-table tr:nth-child(even) {
+.bccn-report-table tr:nth-child(even) {
     background-color: #f5f5f5;
 }
 /* -----------------*/
 
-.report-table tr:hover {
+.bccn-report-table tr:hover {
     background-color: #e6f2ff;
 }
 

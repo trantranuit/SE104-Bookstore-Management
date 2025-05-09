@@ -19,11 +19,11 @@ function KhachHang() {
         <div className="page-container">
             <h1 className="page-title">Khách Hàng</h1>
             <div className="content-wrapper">
-                <div className="action-bar">
+                <div className="kh-action-bar">
                     <input
                         type="text"
                         placeholder="Tìm kiếm theo mã, tên khách hàng hoặc mã hoá đơn..."
-                        className="search-input"
+                        className="kh-search-input"
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />

@@ -52,8 +52,8 @@ function TableCongNo({ data }) {
 
     return (
         <>
-            <div className="table-container">
-                <table className="report-table">
+            <div className="bccn-table-container">
+                <table className="bccn-report-table">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>

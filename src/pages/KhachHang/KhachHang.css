@@ -1,11 +1,11 @@
-.action-bar {
+.kh-action-bar {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.4rem;
 }
 
-.search-input {
+.kh-search-input {
   flex-grow: 1;
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -16,7 +16,7 @@
   margin: 1.5rem -2rem 1.5rem 2.7rem;
 }
 
-.search-input:focus {
+.kh-search-input:focus {
   border-color: #73adef;
   box-shadow: 0 0 5px rgba(115, 173, 239, 0.5);
 }
@@ -207,7 +207,7 @@
   z-index: 1000;
 }
 
-.modal-content {
+.kh-modal-content {
   background-color: white;
   padding: 2rem;
   border-radius: 0.5rem;

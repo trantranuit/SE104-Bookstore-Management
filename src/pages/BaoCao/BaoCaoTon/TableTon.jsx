@@ -56,8 +56,8 @@ function TableTon({ data }) {
 
     return (
         <>
-            <div className="table-container">
-                <table className="report-table">
+            <div className="bct-table-container">
+                <table className="bct-report-table">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
