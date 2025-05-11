@@ -222,49 +222,43 @@ function TatCaSach() {
                         }}
                     />
                     <button
-                        className={`filter-button ${
-                            selectedAuthors.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedAuthors.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsAuthorModalOpen(true)}
                     >
                         Lọc theo tác giả
                     </button>
                     <button
-                        className={`filter-button ${
-                            selectedGenres.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedGenres.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsGenreModalOpen(true)}
                     >
                         Lọc theo thể loại
                     </button>
                     <button
-                        className={`filter-button ${
-                            selectedPublishers.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedPublishers.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsPublisherModalOpen(true)}
                     >
                         Lọc theo nhà xuất bản
                     </button>
                     <button
-                        className={`filter-button ${
-                            selectedYears.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedYears.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsYearModalOpen(true)}
                     >
                         Lọc theo năm xuất bản
                     </button>
                     <button
-                        className={`filter-button ${
-                            selectedStocks.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedStocks.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsStockModalOpen(true)}
                     >
                         Lọc theo số lượng tồn
                     </button>
                     <button
-                        className={`filter-button ${
-                            selectedPrices.length > 0 ? 'active-filter' : ''
-                        }`}
+                        className={`filter-button ${selectedPrices.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsPriceModalOpen(true)}
                     >
                         Lọc theo đơn giá bán
@@ -287,9 +281,8 @@ function TatCaSach() {
                                 {filteredAuthors.map((author) => (
                                     <div
                                         key={author}
-                                        className={`author-item ${
-                                            tempSelectedAuthors.includes(author) ? 'selected' : ''
-                                        }`}
+                                        className={`author-item ${tempSelectedAuthors.includes(author) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(author, setTempSelectedAuthors)}
                                     >
                                         {author}
@@ -340,9 +333,8 @@ function TatCaSach() {
                                 {filteredGenres.map((genre) => (
                                     <div
                                         key={genre}
-                                        className={`author-item ${
-                                            tempSelectedGenres.includes(genre) ? 'selected' : ''
-                                        }`}
+                                        className={`author-item ${tempSelectedGenres.includes(genre) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(genre, setTempSelectedGenres)}
                                     >
                                         {genre}
@@ -393,9 +385,8 @@ function TatCaSach() {
                                 {filteredPublishers.map((publisher) => (
                                     <div
                                         key={publisher}
-                                        className={`author-item ${
-                                            tempSelectedPublishers.includes(publisher) ? 'selected' : ''
-                                        }`}
+                                        className={`author-item ${tempSelectedPublishers.includes(publisher) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(publisher, setTempSelectedPublishers)}
                                     >
                                         {publisher}

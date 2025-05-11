@@ -1,68 +1,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-.thanhtoan {
+.thanhtoan-ttc {
     font-family: 'Roboto', sans-serif !important;
     flex: 1;
     font-size: 1rem;
 }
 
-.two-columns {
+.two-columns-ttc {
     display: flex;
     flex-wrap: nowrap;
     gap: 1rem;
 }
 
-.thanhtoan-left {
+.thanhtoan-left-ttc {
     flex: 2.5;
     min-width: 200px;
+    margin-left: 2rem;
 }
 
-.thanhtoan-right {
+.thanhtoan-right-ttc {
     flex: 3;
     min-width: 300px;
+    margin-right: 2rem;
 }
 
-.line {
+.line-ttc {
     display: grid;
-    grid-template-columns: 160px 10px 1fr;
+    grid-template-columns: 200px 10px 1fr;
+    /* Adjust column widths for alignment */
     align-items: center;
     margin: 0.7rem 0;
     line-height: 1.8rem;
 }
 
-.label-name {
+.label-name-ttc {
     font-weight: bold;
     text-align: left;
+    padding-left: 0.5rem;
+    /* Add padding for alignment */
 }
 
-.colon {
+.colon-ttc {
     text-align: center;
 }
 
-.value {
+.value-ttc {
     text-align: left;
-    padding-left: 0.8rem;
+    padding-left: 0.5rem;
+    /* Add padding for alignment */
 }
 
-.financial-info {
+.financial-info-ttc {
     margin-top: 1.5rem;
     border-top: 1px dashed #ccc;
     padding-top: 1rem;
 }
 
-.receipt-subtitle {
-    font-family: 'Roboto', sans-serif;
+.receipt-subtitle-ttc {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     margin-top: 2rem;
+    margin-bottom: 1rem;
     color: #333;
     letter-spacing: 0.03em;
 }
 
-/* --- Input chung --- */
-.input-field,
-.input-custom {
+.input-field-ttc {
     background-color: #f5f5f5;
     border: none;
     outline: none;
@@ -76,21 +80,18 @@
     transition: background-color 0.2s ease;
 }
 
-.input-field:placeholder-shown {
+.input-field-ttc:placeholder-shown {
     font-size: 0.85rem;
     font-style: italic;
     color: #555;
 }
 
-.input-custom:focus {
+.input-custom-ttc:focus {
     background-color: #eaeaea;
 }
 
-.input-ma::placeholder {
-    color: #aaa;
-}
-.input-as-text {
-    font-size: 16px; /* hoặc bằng font chữ dùng ở các dòng value */
+.input-as-text-ttc {
+    font-size: 16px;
     font-weight: 400;
     border: none;
     background: transparent;
@@ -98,96 +99,146 @@
     margin: 0;
     color: #000;
 }
-.btn-thanh-toan {
-    background-color: #1a83ff; /* Màu nền */
-    color: white; /* Màu chữ */
-    border: none; /* Loại bỏ viền */
-    border-radius: 6px; /* Bo góc */
-    padding: 10px 20px; /* Khoảng cách bên trong */
-    font-size: 1rem; /* Kích thước chữ */
-    font-weight: bold; /* Đậm chữ */
-    cursor: pointer; /* Con trỏ chuột */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển đổi */
+
+.btn-thanh-toan-ttc {
+    background-color: #1a83ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     position: absolute;
-    bottom: 20px; /* Cách đáy 20px */
-    right: 20px; /* Cách phải 20px */
+    bottom: 20px;
+    right: 20px;
 }
 
-.btn-thanh-toan:hover {
-    background-color: #0056b3; /* Màu nền khi hover */
-    transform: scale(1.05); /* Phóng to nhẹ khi hover */
+.btn-thanh-toan-ttc:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
-.btn-thanh-toan:active {
-    background-color: #004494; /* Màu nền khi nhấn */
-    transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
+.btn-thanh-toan-ttc:active {
+    background-color: #004494;
+    transform: scale(0.95);
 }
 
-.btn-thanh-toan:disabled {
-    background-color: #8b8888; /* Màu nền khi bị vô hiệu hóa */
-    color: #666; /* Màu chữ khi bị vô hiệu hóa */
-    cursor: not-allowed; /* Con trỏ chuột khi bị vô hiệu hóa */
-}
-/* Tùy chỉnh chung cho tất cả các ô input */
-input[type="text"],
-input[type="number"],
-input[type="email"],
-input[type="date"] {
-    background-color: #f0f8ff; /* Màu nền xanh nhạt */
-    color: #333; /* Màu chữ */
-    border: 1px solid #f0f8ff;  /*Viền xanh */
-    border-radius: 4px; /* Bo góc */
-    padding: 5px 10px; /* Khoảng cách bên trong */
-    font-size: 14px; /* Kích thước chữ */
-    outline: none; /* Loại bỏ viền mặc định khi focus */
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Hiệu ứng chuyển đổi */
+.btn-thanh-toan-ttc:disabled {
+    background-color: #8b8888;
+    color: #666;
+    cursor: not-allowed;
 }
 
-/* Hiệu ứng khi hover vào các ô input */
-input[type="text"]:hover,
-input[type="number"]:hover,
-input[type="email"]:hover,
-input[type="date"]:hover {
-    background-color: #e6f2ff; /* Màu nền xanh nhạt hơn khi hover */
-    border-color: #0056b3; /* Viền xanh đậm hơn */
+input[type="text"].input-ttc,
+input[type="number"].input-ttc,
+input[type="email"].input-ttc,
+input[type="date"].input-ttc {
+    background-color: #f9f9f9;
+    /* Light background */
+    color: #333;
+    /* Dark text */
+    border: 2px solid #ddd;
+    /* Default border */
+    border-style: solid;
+    /* Ensure solid border style */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 8px 12px;
+    /* Adjusted padding for smaller height */
+    font-size: 1rem;
+    /* Font size for readability */
+    outline: none;
+    /* Remove default focus outline */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus effects */
+    height: 38px;
+    /* Reduced height for all inputs */
+    width: 100%;
+    /* Ensure full width for consistency */
+    box-sizing: border-box;
+    /* Include padding and border in width/height */
 }
 
-/* Hiệu ứng khi focus vào các ô input */
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="date"]:focus {
-    background-color: #e6f2ff; /* Màu nền xanh nhạt hơn khi focus */
-    border-color: #0056b3; /* Viền xanh đậm hơn */
-    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5); /* Hiệu ứng đổ bóng */
+input[type="text"].input-ttc:hover,
+input[type="number"].input-ttc:hover,
+input[type="email"].input-ttc:hover,
+input[type="date"].input-ttc:hover {
+    background-color: #f0f8ff;
+    /* Slightly brighter background on hover */
+    border-color: #007bff;
+    /* Blue border on hover */
+    border-style: solid;
+    /* Ensure solid border style */
 }
 
-/* Tùy chỉnh mũi tên xổ xuống của lịch (chỉ áp dụng cho input[type="date"]) */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    background-color: #f0f8ff; /* Màu nền của mũi tên */
-    border-radius: 50%; /* Bo tròn mũi tên */
-    padding: 5px; /* Khoảng cách bên trong */
-    cursor: pointer; /* Con trỏ chuột */
+input[type="text"].input-ttc:focus,
+input[type="number"].input-ttc:focus,
+input[type="email"].input-ttc:focus,
+input[type="date"].input-ttc:focus {
+    background-color: #e6f2ff;
+    /* Light blue background on focus */
+    border-color: #0056b3;
+    /* Darker blue border on focus */
+    border-style: solid;
+    /* Ensure solid border style */
 }
 
-/* Hiệu ứng khi hover vào mũi tên xổ xuống */
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-    background-color: #73adef; /* Màu nền khi hover */
-}
-/* Đảm bảo ô nhập ngày có cùng độ dài với ô nhập mã nhân viên */
-input[type="date"] {
-    width: 92%; /* Đặt chiều rộng bằng 100% để phù hợp với các ô khác */
-    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến kích thước */
+input[type="text"].input-ttc.error,
+input[type="number"].input-ttc.error,
+input[type="email"].input-ttc.error,
+input[type="date"].input-ttc.error {
+    border-color: #ff4d4d;
+    /* Red border for validation error */
+    border-style: solid;
+    /* Ensure solid border style */
 }
 
-.save-button-wrapper {
+input[type="date"].input-ttc::-webkit-calendar-picker-indicator {
+    background-color: #f9f9f9;
+    /* Match input background */
+    border-radius: 50%;
+    /* Circular indicator */
+    padding: 5px;
+    /* Add padding for better spacing */
+    cursor: pointer;
+    /* Pointer cursor for better UX */
+    transition: background-color 0.3s ease;
+    /* Smooth transition */
+}
+
+input[type="date"].input-ttc::-webkit-calendar-picker-indicator:hover {
+    background-color: #007bff;
+    /* Blue background on hover */
+}
+
+input[type="date"].input-ttc {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-vnd-wrapper-ttc {
     display: flex;
-    justify-content: flex-end; /* Align the button to the right */
-    margin-top: 2rem; /* Add spacing above the button */
+    align-items: center;
+    gap: 0.5rem;
+    /* Add spacing between the input and the VNĐ label */
 }
 
-.save-button {
-    background-color: #4CAF50; /* Green background */
+.vnd-label-ttc {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.save-button-wrapper-ttc {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.save-button-ttc {
+    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -197,6 +248,281 @@ input[type="date"] {
     font-weight: bold;
 }
 
-.save-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+.save-button-ttc:hover {
+    background-color: #45a049;
+}
+
+.input-ma {
+    width: 100%;
+    /* Full width */
+    padding: 8px 12px;
+    /* Adjusted padding for smaller height */
+    font-size: 1rem;
+    /* Font size for readability */
+    border: 2px solid #ddd;
+    /* Default border */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus effects */
+    height: 38px;
+    /* Reduced height for all inputs */
+    box-sizing: border-box;
+    /* Include padding and border in width/height */
+}
+
+.input-ma {
+    border: 2px solid #007bff;
+    /* Default blue border */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus effects */
+}
+
+.input-ma:hover,
+.input-ma:focus {
+    border-color: #0056b3;
+    /* Darker blue border on hover and focus */
+}
+
+.custom-input {
+    outline: none;
+    /* Remove default focus outline */
+}
+
+.custom-input:hover {
+    border-color: #007bff;
+    /* Blue border on hover */
+    background-color: #f0f8ff;
+    /* Slightly brighter background on hover */
+}
+
+.custom-input:focus {
+    border-color: #0056b3;
+    /* Darker blue border on focus */
+    background-color: #e6f2ff;
+    /* Light blue background on focus */
+}
+
+.input-ma,
+.custom-input,
+input[type="date"].custom-input-ttc {
+    background-color: #f9f9f9;
+    /* Light background */
+    color: #333;
+    /* Dark text */
+    border: 2px solid #ddd;
+    /* Default border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 8px 12px;
+    /* Adjusted padding for smaller height */
+    font-size: 1rem;
+    /* Font size for readability */
+    outline: none;
+    /* Remove default focus outline */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus effects */
+    height: 38px;
+    /* Reduced height for all inputs */
+    width: 100%;
+    /* Ensure full width for consistency */
+    box-sizing: border-box;
+    /* Include padding and border in width/height */
+}
+
+.input-ma:hover,
+.custom-input:hover,
+input[type="date"].custom-input-ttc:hover {
+    border-color: #007bff;
+    /* Blue border on hover */
+    background-color: #f0f8ff;
+    /* Slightly brighter background on hover */
+}
+
+.input-ma:focus,
+.custom-input:focus,
+input[type="date"].custom-input-ttc:focus {
+    border-color: #0056b3;
+    /* Darker blue border on focus */
+    background-color: #e6f2ff;
+    /* Light blue background on focus */
+}
+
+input[type="date"].custom-input-ttc {
+    background-color: #f9f9f9;
+    /* Light background */
+    color: #333;
+    /* Dark text */
+    border: 2px solid #ddd;
+    /* Subtle border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 8px 12px;
+    /* Adjusted padding for smaller height */
+    font-size: 1rem;
+    /* Font size for readability */
+    outline: none;
+    /* Remove default focus outline */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus effects */
+    height: 38px;
+    /* Reduced height for consistency */
+    width: 100%;
+    /* Full width for alignment */
+    box-sizing: border-box;
+    /* Include padding and border in width/height */
+    cursor: pointer;
+    /* Pointer cursor for better UX */
+}
+
+input[type="date"].custom-input-ttc:hover {
+    border-color: #007bff;
+    /* Blue border on hover */
+    background-color: #f0f8ff;
+    /* Slightly brighter background on hover */
+}
+
+input[type="date"].custom-input-ttc:focus {
+    border-color: #0056b3;
+    /* Darker blue border on focus */
+    background-color: #e6f2ff;
+    /* Light blue background on focus */
+}
+
+input[type="date"].custom-input-ttc::-webkit-calendar-picker-indicator {
+    background-color: transparent;
+    /* Transparent background for the calendar icon */
+    border-radius: 50%;
+    /* Circular indicator */
+    padding: 5px;
+    /* Add padding for better spacing */
+    cursor: pointer;
+    /* Pointer cursor for better UX */
+    transition: background-color 0.3s ease;
+    /* Smooth transition */
+}
+
+input[type="date"].custom-input-ttc::-webkit-calendar-picker-indicator:hover {
+    background-color: #0056b3;
+    /* Darker blue background on hover */
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    /* Subtle glow on hover */
+}
+
+.validation-modal-ttc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it appears above other elements */
+}
+
+.validation-modal-content-ttc {
+    background-color: #fff;
+    /* White background */
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow */
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    /* Responsive width */
+}
+
+.validation-modal-content-ttc p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.close-modal-button-ttc {
+    background-color: #007bff;
+    /* Blue background */
+    color: #fff;
+    /* White text */
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-modal-button-ttc:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.close-modal-button-ttc:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Glow effect on focus */
+}
+
+.success-modal-ttc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it appears above other elements */
+}
+
+.success-modal-content-ttc {
+    background-color: #fff;
+    /* White background */
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow */
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    /* Responsive width */
+}
+
+.success-modal-content-ttc p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.close-modal-button-ttc {
+    background-color: #007bff;
+    /* Blue background */
+    color: #fff;
+    /* White text */
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-modal-button-ttc:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.close-modal-button-ttc:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Glow effect on focus */
 }

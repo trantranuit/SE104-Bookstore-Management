@@ -9,21 +9,25 @@
     margin-bottom: 2rem;
 }
 
-.receipt-section {
-    background-color: #ffffff; /* White background */
+.receipt-section-ptt {
+    background-color: #ffffff;
+    /* White background */
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    width: 90%; /* Match the width of the "Danh Sách Các Hóa Đơn" page */
-    margin: 0 auto; /* Center the section */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    width: 90%;
+    /* Match the width of the "Danh Sách Các Hóa Đơn" page */
+    margin: 0 auto;
+    /* Center the section */
 }
 
-.search-section {
-    width: 90%;
+.search-section-ptt {
+    width: 100%;
     margin: 0 auto 1.5rem;
 }
 
-.search-bar {
+.search-bar-ptt {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ccc;
@@ -32,23 +36,24 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search-bar:focus {
+.search-bar-ptt:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.receipt-table-container {
-    overflow-x: auto; /* Enable horizontal scrolling if needed */
+.receipt-table-container-ptt {
+    overflow-x: auto;
+    /* Enable horizontal scrolling if needed */
 }
 
-.receipt-table {
+.receipt-table-ptt {
     width: 100%;
     border-collapse: collapse;
     background-color: transparent;
 }
 
-.receipt-table th {
+.receipt-table-ptt th {
     background-color: #007bff;
     color: white;
     text-align: center;
@@ -57,13 +62,13 @@
     border-bottom: 1px solid #ddd;
 }
 
-.receipt-table td {
+.receipt-table-ptt td {
     text-align: center;
     padding: 0.75rem;
     border-bottom: 1px solid #ddd;
 }
 
-.icon-button {
+.icon-button-ptt {
     background-color: #007bff;
     color: white;
     border: none;
@@ -72,11 +77,11 @@
     cursor: pointer;
 }
 
-.icon-button:hover {
+.icon-button-ptt:hover {
     background-color: #0056b3;
 }
 
-.modal {
+.modal-ptt {
     position: fixed;
     top: 0;
     left: 0;
@@ -89,66 +94,114 @@
     z-index: 1000;
 }
 
-.modal-content {
-    width: 90%; /* Increase modal width */
-    max-width: 1200px; /* Set a larger maximum width */
-    margin: 0 auto; /* Center the modal */
+.modal-content-ptt {
+    width: 90%;
+    /* Increase modal width */
+    max-width: 1200px;
+    /* Set a larger maximum width */
+    margin: 0 auto;
+    /* Center the modal */
     padding: 2rem;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: left; /* Align text to the left */
+    text-align: left;
+    /* Align text to the left */
 }
 
-.modal-title {
+.modal-title-ptt {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
 }
 
-.modal-columns {
+.modal-columns-ptt {
     display: flex;
     justify-content: space-between;
     gap: 2rem;
 }
 
-.modal-left, .modal-right {
+.modal-left-ptt,
+.modal-right-ptt {
     flex: 1;
+    text-align: left;
+    /* Align text to the left */
+    padding: 1rem;
+    /* Add padding for spacing */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: transparent;
+    /* Remove background color */
+    color: #333;
+    /* Default text color */
 }
 
-.modal-left p, .modal-right p {
+.modal-left-ptt p,
+.modal-right-ptt p {
     margin-bottom: 1rem;
+    font-size: 1rem;
+    /* Adjust font size for readability */
+    font-weight: normal;
+    /* Normal text weight */
 }
 
-.modal-table {
-    width: 100%; /* Use full width of the modal */
-    margin: 0 auto; /* Center the table */
+.section-header-ptt {
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White text */
+    text-align: center;
+    /* Center-align text */
+    padding: 0.5rem;
+    /* Add padding for spacing */
+    border-radius: 8px;
+    /* Rounded corners */
+    font-size: 1.2rem;
+    /* Slightly larger font size */
+    font-weight: bold;
+    /* Bold text */
+    margin-bottom: 1rem;
+    /* Add spacing below the header */
+}
+
+.modal-table-ptt {
+    width: 100%;
+    /* Use full width of the modal */
+    margin: 0 auto;
+    /* Center the table */
     border-collapse: collapse;
     margin-top: 1rem;
     margin-bottom: 2rem;
-    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    overflow-x: auto;
+    /* Enable horizontal scrolling if needed */
 }
 
-.modal-table th, .modal-table td {
+.modal-table-ptt th,
+.modal-table-ptt td {
     padding: 0.75rem;
-    text-align: center; /* Center-align text */
-    border-bottom: 1px solid #ddd; /* Add horizontal borders */
-    font-size: 1rem; /* Adjust font size for better readability */
+    text-align: center;
+    /* Center-align text */
+    border-bottom: 1px solid #ddd;
+    /* Add horizontal borders */
+    font-size: 1rem;
+    /* Adjust font size for better readability */
 }
 
-.modal-table th {
-    background-color: #4CAF50; /* Green background for table headers */
-    color: white; /* White text */
+.modal-table-ptt th {
+    background-color: #4CAF50;
+    /* Green background for table headers */
+    color: white;
+    /* White text */
     font-weight: bold;
 }
 
-.modal-actions {
+.modal-actions-ptt {
     text-align: center;
     margin-top: 2rem;
 }
 
-.close-button {
+.close-button-ptt {
     background-color: #6c757d;
     color: white;
     border: none;
@@ -158,19 +211,20 @@
     font-size: 1rem;
 }
 
-.close-button:hover {
+.close-button-ptt:hover {
     background-color: #5a6268;
 }
 
-.modal-header {
+.modal-header-ptt {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
 
-.save-button {
-    background-color: #4CAF50; /* Green background */
+.save-button-ptt {
+    background-color: #4CAF50;
+    /* Green background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -180,12 +234,14 @@
     font-weight: bold;
 }
 
-.save-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+.save-button-ptt:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
-.edit-button {
-    background-color: #007bff; /* Blue background */
+.edit-button-ptt {
+    background-color: #007bff;
+    /* Blue background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -194,69 +250,84 @@
     font-size: 1rem;
 }
 
-.edit-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.edit-button-ptt:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
-.delete-button {
-    background-color: #dc3545; /* Red background */
+.delete-button-ptt {
+    background-color: #dc3545;
+    /* Red background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
-.delete-button:hover {
-    background-color: #c82333; /* Darker red on hover */
+.delete-button-ptt:hover {
+    background-color: #c82333;
+    /* Darker red on hover */
 }
 
-.modal-actions button {
-    width: 100px; /* Set equal width for all buttons */
-    height: 40px; /* Set equal height for all buttons */
-    padding: 0.5rem; /* Ensure consistent padding */
-    font-size: 1rem; /* Ensure consistent font size */
-    border-radius: 4px; /* Rounded corners */
+.modal-actions-ptt button {
+    width: 100px;
+    /* Set equal width for all buttons */
+    height: 40px;
+    /* Set equal height for all buttons */
+    padding: 0.5rem;
+    /* Ensure consistent padding */
+    font-size: 1rem;
+    /* Ensure consistent font size */
+    border-radius: 4px;
+    /* Rounded corners */
     cursor: pointer;
     text-align: center;
 }
 
-.confirmation-modal {
+.confirmation-modal-ptt {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it appears above other elements */
+    z-index: 1000;
+    /* Ensure it appears above other elements */
 }
 
-.confirmation-content {
+.confirmation-content-ptt {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px; /* Fixed width for the modal */
+    width: 400px;
+    /* Fixed width for the modal */
 }
 
-.confirmation-content p {
+.confirmation-content-ptt p {
     font-size: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
-confirmation-actions {
+confirmation-actions-ptt {
     display: flex;
     justify-content: center;
     gap: 1rem;
 }
 
-.confirm-button, .cancel-button {
-    background-color: #007bff; /* Blue for confirm button */
+.confirm-button-ptt,
+.cancel-button-ptt {
+    background-color: #007bff;
+    /* Blue for confirm button */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -265,51 +336,59 @@ confirmation-actions {
     font-size: 1rem;
 }
 
-.confirm-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.confirm-button-ptt:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
-.cancel-button {
-    background-color: #6c757d; /* Gray for cancel button */
+.cancel-button-ptt {
+    background-color: #6c757d;
+    /* Gray for cancel button */
 }
 
-.cancel-button:hover {
-    background-color: #5a6268; /* Darker gray on hover */
+.cancel-button-ptt:hover {
+    background-color: #5a6268;
+    /* Darker gray on hover */
 }
 
-.notification-modal {
+.notification-modal-ptt {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it appears above other elements */
+    z-index: 1000;
+    /* Ensure it appears above other elements */
 }
 
-.notification-content {
+.notification-content-ptt {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px; /* Fixed width for the modal */
+    width: 400px;
+    /* Fixed width for the modal */
 }
 
-.notification-content p {
+.notification-content-ptt p {
     font-size: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
-.notification-content strong {
-    color: #007bff; /* Highlight the receipt ID in blue */
+.notification-content-ptt strong {
+    color: #007bff;
+    /* Highlight the receipt ID in blue */
 }
 
-.notification-content .close-button {
-    background-color: #007bff; /* Blue background */
+.notification-content-ptt .close-button-ptt {
+    background-color: #007bff;
+    /* Blue background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -318,6 +397,7 @@ confirmation-actions {
     font-size: 1rem;
 }
 
-.notification-content .close-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.notification-content-ptt .close-button-ptt:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
