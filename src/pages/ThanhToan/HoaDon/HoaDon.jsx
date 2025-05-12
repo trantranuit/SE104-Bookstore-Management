@@ -59,17 +59,17 @@ function HoaDon() {
     return (
         <div className="page-container">
             <h1 className="page-title">Danh Sách Các Hóa Đơn</h1>
-            <div className="invoice-section">
-                <div className="search-section">
+            <div className="invoice-section-thd">
+                <div className="search-section-thd">
                     <input
                         type="text"
-                        className="search-bar"
+                        className="search-bar-thd"
                         placeholder="Tìm kiếm hóa đơn theo mã hoặc ngày lập..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <table className="invoice-table">
+                <table className="invoice-table-thd">
                     <thead>
                         <tr>
                             <th>Mã Hóa Đơn</th>
@@ -88,7 +88,7 @@ function HoaDon() {
                                 <td>{invoice.ngayLap}</td>
                                 <td>
                                     <button
-                                        className="icon-button"
+                                        className="icon-button-thd"
                                         onClick={() => handleViewInvoice(index)}
                                     >
                                         <PiNotePencil />
@@ -101,19 +101,19 @@ function HoaDon() {
             </div>
 
             {selectedInvoice && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2 className="modal-title">CHI TIẾT HÓA ĐƠN</h2>
-                        <div className="modal-columns">
-                            <div className="modal-left" style={{ textAlign: 'left' }}>
-                                <h3 className="section-header">Thông Tin Hóa Đơn</h3>
+                <div className="modal-thd">
+                    <div className="modal-content-thd">
+                        <h2 className="modal-title-thd">CHI TIẾT HÓA ĐƠN</h2>
+                        <div className="modal-columns-thd">
+                            <div className="modal-left-thd" style={{ textAlign: 'left' }}>
+                                <h3 className="section-header-thd">Thông Tin Hóa Đơn</h3>
                                 <p><strong>Ngày Lập:</strong> {selectedInvoice.ngayLap}</p>
                                 <p><strong>Mã Hóa Đơn:</strong> {selectedInvoice.maHoaDon}</p>
                                 <p><strong>Mã Nhân Viên:</strong> {selectedInvoice.maNhanVien || 'Không có'}</p> {/* Correctly display Mã Nhân Viên */}
                                 <p><strong>Tên Nhân Viên:</strong> {selectedInvoice.nhanVien}</p>
                             </div>
-                            <div className="modal-right">
-                                <h3 className="section-header" style={{marginRight: "1.8rem"}}>Thông Tin Khách Hàng</h3>
+                            <div className="modal-right-thd">
+                                <h3 className="section-header-thd" style={{ marginRight: "1.8rem" }}>Thông Tin Khách Hàng</h3>
                                 <p><strong>Mã Khách Hàng:</strong> {selectedInvoice.maKhachHang}</p>
                                 <p><strong>Tên Khách Hàng:</strong> {selectedInvoice.tenKhachHang}</p>
                                 <p><strong>Số Điện Thoại:</strong> {selectedInvoice.sdt}</p>
@@ -121,8 +121,8 @@ function HoaDon() {
                                 <p><strong>Số Nợ:</strong> {selectedInvoice.soNo.toLocaleString()}đ</p>
                             </div>
                         </div>
-                        <h3>Danh Sách Sách</h3>
-                        <table className="modal-table">
+                        <h3 className="section-header-thd">Danh Sách Sách Đã Mua</h3>
+                        <table className="modal-table-thd">
                             <thead>
                                 <tr>
                                     <th>Mã Sách</th>
@@ -144,15 +144,15 @@ function HoaDon() {
                                 ))}
                             </tbody>
                         </table>
-                        <div className="modal-totals">
+                        <div className="modal-totals-thd">
                             <p><strong>Tổng Số Sách:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong, 0)}</p>
                             <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()}đ</p>
-                            <p><strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {(selectedInvoice.soNo + selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)).toLocaleString()}đ</p>
+                            <p><strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {(selectedInvoice.soNo + selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)).toLocaleString()}VNĐ</p>
                         </div>
-                        <div className="modal-actions">
-                            <button className="edit-button" onClick={() => handleEditInvoice(selectedInvoice)}>Sửa</button>
-                            <button className="delete-button" onClick={() => setShowDeleteConfirmation(true)}>Xóa</button>
-                            <button className="close-button" onClick={handleCloseModal}>Đóng</button>
+                        <div className="modal-actions-thd">
+                            <button className="edit-button-thd" onClick={() => handleEditInvoice(selectedInvoice)}>Sửa</button>
+                            <button className="delete-button-thd" onClick={() => setShowDeleteConfirmation(true)}>Xóa</button>
+                            <button className="close-button-thd" onClick={handleCloseModal}>Đóng</button>
                         </div>
                     </div>
                 </div>

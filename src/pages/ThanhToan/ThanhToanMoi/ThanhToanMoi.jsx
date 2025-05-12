@@ -306,8 +306,8 @@ function ThanhToanMoi() {
         <div className="page-container">
             {/* Notification Modal */}
             {showNotification && (
-                <div className="notification-modal">
-                    <div className="notification-content">
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm">
                         <p>Không thể thêm quá số lượng sách hiện có.</p>
                         <button onClick={() => setShowNotification(false)}>Đóng</button>
                     </div>
@@ -315,12 +315,12 @@ function ThanhToanMoi() {
             )}
 
             {showSaveNotification && (
-                <div className="notification-modal">
-                    <div className="notification-content">
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm">
                         <p>Thanh toán thành công!</p>
-                        <div className="notification-actions">
+                        <div className="notification-actions-ttm">
                             <button
-                                className="close-button"
+                                className="close-button-ttm"
                                 onClick={handleCloseNotification} // Reset and return to an empty cart
                             >
                                 Đóng
@@ -330,13 +330,13 @@ function ThanhToanMoi() {
                 </div>
             )}
 
-            <h1 className="page-title">Tạo Hóa Đơn Mua Sách</h1>
+            <h1 className="page-title-ttm">Tạo Hóa Đơn Mua Sách</h1>
 
             {/* Book Search Section */}
-            <div className="book-search-section">
-                <div className="search-header">
+            <div className="book-search-section-ttm">
+                <div className="search-header-ttm">
                     <button
-                        className="invoice-list-button"
+                        className="invoice-list-button-ttm"
                         style={{ marginTop: '1rem', marginBottom: '1rem', marginRight: '1.4rem' }}
                         onClick={() => navigate('/thanhToan/hoaDon')} // Corrected path to match the route for HoaDon.jsx
                     >
@@ -345,12 +345,12 @@ function ThanhToanMoi() {
                 </div>
                 <input
                     type="text"
-                    className="search-bar"
+                    className="search-bar-ttm"
                     placeholder="Tìm kiếm sách..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <table className="book-table">
+                <table className="book-table-ttm">
                     <thead>
                         <tr>
                             <th>Mã sách</th>
@@ -362,7 +362,7 @@ function ThanhToanMoi() {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody className="book-table-wrapper">
+                    <tbody className="book-table-wrapper-ttm">
                         {displayedBooks.map((book) => (
                             <tr key={book.maSach}>
                                 <td>{book.maSach}</td>
@@ -373,7 +373,7 @@ function ThanhToanMoi() {
                                 <td>{book.soLuongTon}</td>
                                 <td>
                                     <button
-                                        className="icon-button"
+                                        className="icon-button-ttm"
                                         onClick={() => handleAddToCart(book)}
                                         disabled={book.soLuongTon === 0}
                                         style={{
@@ -388,20 +388,20 @@ function ThanhToanMoi() {
                         ))}
                     </tbody>
                 </table>
-                <div className="pagination-info-wrapper">
+                <div className="pagination-info-wrapper-ttm">
                     <button
-                        className="pagination-button"
+                        className="pagination-button-ttm"
                         onClick={handlePreviousPage}
                         disabled={currentPage === 0}
                     >
                         <FaCaretLeft />
                     </button>
-                    <span className="pagination-info">
+                    <span className="pagination-info-ttm">
                         Hiển thị {currentPage * booksPerPage + 1} -{' '}
                         {Math.min((currentPage + 1) * booksPerPage, filteredBooks.length)} trên {filteredBooks.length} sách
                     </span>
                     <button
-                        className="pagination-button"
+                        className="pagination-button-ttm"
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages - 1}
                     >
@@ -411,13 +411,13 @@ function ThanhToanMoi() {
             </div>
 
             {/* Cart Section */}
-            <div className="cart-section">
-                <h2>Giỏ hàng</h2>
-                <div className="cart-summary">
+            <div className="cart-section-ttm">
+                <h2 className="cart-header-ttm">Giỏ hàng</h2>
+                <div className="cart-summary-ttm">
                     <span>Tổng số sách đã chọn: {cart.reduce((sum, item) => sum + item.soLuongMua, 0)}</span>
                     <span>Tổng số tiền: {cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0).toLocaleString()}đ</span>
                 </div>
-                <table className="cart-table">
+                <table className="cart-table-ttm">
                     <thead>
                         <tr>
                             <th>Mã sách</th>
@@ -435,9 +435,9 @@ function ThanhToanMoi() {
                                 <td>{item.tenSach}</td>
                                 <td>{item.donGia.toLocaleString()}đ</td>
                                 <td>
-                                    <div className="quantity-wrapper">
+                                    <div className="quantity-wrapper-ttm">
                                         <button
-                                            className="quantity-button"
+                                            className="quantity-button-ttm"
                                             onClick={() => handleDecrease(item.maSach)}
                                             disabled={item.soLuongMua <= 1} // Disable if quantity is less than or equal to 1
                                         >
@@ -445,7 +445,7 @@ function ThanhToanMoi() {
                                         </button>
                                         <input
                                             type="number"
-                                            className="quantity-input"
+                                            className="quantity-input-ttm"
                                             value={item.soLuongMua}
                                             onChange={(e) => {
                                                 const value = Math.max(1, Math.min(item.soLuongTon, parseInt(e.target.value) || 1));
@@ -457,7 +457,7 @@ function ThanhToanMoi() {
                                             }}
                                         />
                                         <button
-                                            className="quantity-button"
+                                            className="quantity-button-ttm"
                                             onClick={() => handleIncrease(item.maSach)}
                                             disabled={item.soLuongMua >= item.soLuongTon} // Disable if quantity reaches maximum stock
                                         >
@@ -467,14 +467,14 @@ function ThanhToanMoi() {
                                 </td>
                                 <td>{(item.soLuongMua * item.donGia).toLocaleString()}đ</td>
                                 <td>
-                                    <button className="icon-button" onClick={() => handleRemove(item.maSach)}><IoTrashBin /></button>
+                                    <button className="icon-button-ttm" onClick={() => handleRemove(item.maSach)}><IoTrashBin /></button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
                 <button
-                    className="next-button"
+                    className="next-button-ttm"
                     onClick={() => {
                         if (cart.length > 0) {
                             setShowInvoice(true); // Show the invoice section
@@ -491,13 +491,13 @@ function ThanhToanMoi() {
             </div>
 
             {showInvoice && (
-                <div className="invoice-section" ref={invoiceRef}>
-                    <div className="header">
+                <div className="invoice-section-ttm" ref={invoiceRef}>
+                    <div className="header-ttm">
                         THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG
                     </div>
-                    <div className="details">
-                        <div className="left">
-                            <div className="input-group">
+                    <div className="details-ttm">
+                        <div className="left-ttm">
+                            <div className="input-group-ttm">
                                 <label htmlFor="employee-id">Mã nhân viên:</label>
                                 <input
                                     id="employee-id"
@@ -510,8 +510,8 @@ function ThanhToanMoi() {
                             </div>
                             <p><strong>Họ và tên nhân viên:</strong> {employeeInfo.name}</p>
                         </div>
-                        <div className="right">
-                            <div className="input-group">
+                        <div className="right-ttm">
+                            <div className="input-group-ttm">
                                 <label htmlFor="customer-id">Mã khách hàng:</label>
                                 <input
                                     id="customer-id"
@@ -528,8 +528,8 @@ function ThanhToanMoi() {
                             <p><strong>Số tiền nợ:</strong> {customerInfo.debt.toLocaleString()}đ</p>
                         </div>
                     </div>
-                    <div className="actions">
-                        <button type="button" className="finalize-button" onClick={handleCustomerInfoSubmit}>
+                    <div className="actions-ttm">
+                        <button type="button" className="finalize-button-ttm" onClick={handleCustomerInfoSubmit}>
                             Hoàn tất hóa đơn
                         </button>
                     </div>
@@ -537,21 +537,21 @@ function ThanhToanMoi() {
             )}
 
             {finalInvoice && (
-                <div className="final-invoice-section" ref={finalInvoiceRef}>
+                <div className="final-invoice-section-ttm" ref={finalInvoiceRef}>
                     {/* Div 1: Header */}
-                    <div className="header">
+                    <div className="header-ttm">
                         <h2 style={{ textAlign: 'center', textTransform: 'uppercase' }}>HÓA ĐƠN MUA SÁCH</h2>
                     </div>
 
                     {/* Div 2: Employee and Customer Info */}
-                    <div className="info-section" style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', lineHeight: '2' }}>
-                        <div className="left-info" style={{ flex: 1 }}>
+                    <div className="info-section-ttm" style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', lineHeight: '2' }}>
+                        <div className="left-info-ttm" style={{ flex: 1 }}>
                             <p><strong>Ngày lập hóa đơn:</strong> {new Date().toLocaleDateString()}</p>
                             <p><strong>Mã hóa đơn:</strong> HD{Math.floor(Math.random() * 100000)}</p>
                             <p><strong>Mã nhân viên:</strong> {employeeInfo.id}</p>
                             <p><strong>Tên nhân viên:</strong> {employeeInfo.name}</p>
                         </div>
-                        <div className="right-info" style={{ flex: 1}}>
+                        <div className="right-info-ttm" style={{ flex: 1}}>
                             <p><strong>Mã khách hàng:</strong> {customerInfo.id}</p>
                             <p><strong>Tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
@@ -560,8 +560,8 @@ function ThanhToanMoi() {
                     </div>
 
                     {/* Div 3: Purchased Books List */}
-                    <div className="books-list">
-                        <table className="invoice-table">
+                    <div className="books-list-ttm">
+                        <table className="invoice-table-ttm">
                             <thead>
                                 <tr>
                                     <th>Mã sách</th>
@@ -586,16 +586,16 @@ function ThanhToanMoi() {
                     </div>
 
                     {/* Div 4: Total Amounts */}
-                    <div className="totals" style={{ marginTop: '2rem', textAlign: 'right' }}>
+                    <div className="totals-ttm" style={{ marginTop: '2rem', textAlign: 'right' }}>
                         <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}đ</p>
                         <p><strong>Tổng số tiền nợ sau hóa đơn:</strong> {(customerInfo.debt + totalPrice).toLocaleString()}đ</p>
                     </div>
 
                     {/* Div 5: Save Invoice Button */}
-                    <div className="actions">
+                    <div className="actions-ttm">
                         <button
                             type="button"
-                            className="finalize-button"
+                            className="finalize-button-ttm"
                             style={{ backgroundColor: '#007bff', margin: '0 auto', display: 'block', color: 'white', marginBottom: '1rem', marginTop: '2rem' }}
                             onClick={handleSaveInvoice}
                         >

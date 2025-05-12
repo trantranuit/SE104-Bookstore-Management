@@ -1,26 +1,26 @@
 /* General Page Styles */
 
 /* Book Search Section */
-.book-search-section {
-    background-color: #ffffff; /* White background */
+.book-search-section-ttm {
+    background-color: #ffffff;
     padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem !important;
 }
 
-/* Adjust Search Bar Alignment and Spacing */
-.book-search-section .search-bar {
-    width: 95%; /* Match the width of the book table */
-    margin: 0 auto 2rem; /* Center the search bar and add 2rem spacing below */
-    display: block; /* Ensure it behaves as a block element */
+.book-search-section-ttm .search-bar-ttm {
+    width: 95%;
+    margin: 0 auto 2rem;
+    display: block;
     background: #eaf8eb;
     margin-top: 1rem;
 }
 
-
-.search-bar::placeholder {
-    color: #155724; /* Dark green placeholder text */}
+    
+.search-bar-ttm::placeholder {
+    color: #155724;
+}
 
 /* Cart Section */
 .cart-section {
@@ -35,11 +35,32 @@
     align-items: center; /* Center content horizontally */
 }
 
+.cart-section-ttm {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
 .cart-section .cart-header {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     text-transform: uppercase; /* Make the title uppercase */
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.cart-section-ttm .cart-header-ttm {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
 }
@@ -52,6 +73,14 @@
     padding: 0.5rem;
 }
 
+.cart-section-ttm .cart-items-ttm {
+    max-height: 18.75rem;
+    overflow-y: auto;
+    border: 0.0625rem solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
 .cart-section .cart-summary {
     display: flex;
     justify-content: space-between; /* Align items on the same row */
@@ -59,6 +88,15 @@
     font-size: 1rem; /* Set font size */
     font-weight: bold; /* Make text bold */
     margin-bottom: 1rem; /* Add spacing below the summary */
+}
+
+.cart-section-ttm .cart-summary-ttm {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
 }
 
 /* Invoice Section */
@@ -72,12 +110,31 @@
     margin-top: 1rem; /* Add spacing above */
 }
 
+.invoice-section-ttm {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 1rem;
+}
+
 .invoice-section .header {
     margin-top: 1rem; /* Add spacing above the "THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG" header */
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     text-transform: uppercase; /* Make the title uppercase */
+    margin-bottom: 3rem;
+}
+
+.invoice-section-ttm .header-ttm {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
     margin-bottom: 3rem;
 }
 
@@ -90,9 +147,22 @@
     margin-bottom: 2rem; /* Adjust this value to change the spacing between divs */
 }
 
+.final-invoice-section-ttm {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
 .final-invoice-section .header {
     margin-top: 1rem; /* Add spacing above the "HÓA ĐƠN MUA SÁCH" header */
     margin-bottom: 1rem; /* Add spacing below the "HÓA ĐƠN MUA SÁCH" header */
+}
+
+.final-invoice-section-ttm .header-ttm {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .section::-webkit-scrollbar {
@@ -1008,8 +1078,4 @@ table tbody tr {
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-}
-
-.invoice-list-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
 }
