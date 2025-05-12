@@ -5,7 +5,7 @@
   margin-bottom: 0.4rem;
 }
 
-.kh-search-input {
+.kh-action-bar .kh-search-input {
   flex-grow: 1;
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -43,7 +43,7 @@
   border-collapse: collapse;
   border-spacing: 0;
   margin: auto;
-  font-size: 0.9rem; 
+  font-size: 0.8rem; 
   border-radius: 0.5rem; 
   overflow: hidden;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); 
@@ -143,8 +143,8 @@
 
 .khachhang-pagination {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: 0.3rem;
+  right: 0.9rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
