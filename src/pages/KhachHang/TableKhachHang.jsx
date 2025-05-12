@@ -14,6 +14,9 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // State for managing customers
     const [customers, setCustomers] = React.useState(customerData);
     const [editingCustomer, setEditingCustomer] = React.useState(null);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+    const [customerToDelete, setCustomerToDelete] = React.useState(null);
+    
     // Add pagination state
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
@@ -90,20 +93,25 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
 
     // Handle delete customer
     const handleDeleteCustomer = (customerId) => {
-        if (window.confirm('Bạn có chắc muốn xóa khách hàng này?')) {
-            const currentPage = pagination.pageIndex;
-            const updatedCustomers = customers.filter(customer => customer.id !== customerId);
-            setCustomers(updatedCustomers);
-            
-            // Calculate if we need to adjust the page number
-            const totalPages = Math.ceil(updatedCustomers.length / pagination.pageSize);
-            if (currentPage >= totalPages && totalPages > 0) {
-                setPagination(prev => ({
-                    ...prev,
-                    pageIndex: totalPages - 1
-                }));
-            }
+        setCustomerToDelete(customerId);
+        setShowDeleteConfirmation(true);
+    };
+
+    const confirmDelete = () => {
+        const currentPage = pagination.pageIndex;
+        const updatedCustomers = customers.filter(customer => customer.id !== customerToDelete);
+        setCustomers(updatedCustomers);
+        
+        // Calculate if we need to adjust the page number
+        const totalPages = Math.ceil(updatedCustomers.length / pagination.pageSize);
+        if (currentPage >= totalPages && totalPages > 0) {
+            setPagination(prev => ({
+                ...prev,
+                pageIndex: totalPages - 1
+            }));
         }
+        setShowDeleteConfirmation(false);
+        setCustomerToDelete(null);
     };
 
     // Filter data based on search term
@@ -194,6 +202,29 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
                     →
                 </button>
             </div>
+
+            {/* Thêm modal confirmation ở đây */}
+            {showDeleteConfirmation && (
+                <div className="confirmation-modal">
+                    <div className="confirmation-content">
+                        <p>Bạn có chắc muốn xóa khách hàng này không?</p>
+                        <div className="confirmation-actions">
+                            <button 
+                                className="delete-button"
+                                onClick={confirmDelete}
+                            >
+                                Xóa
+                            </button>
+                            <button 
+                                className="cancel-button"
+                                onClick={() => setShowDeleteConfirmation(false)}
+                            >
+                                Huỷ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

@@ -70,7 +70,7 @@
 }
 
 .bct-report-table th {
-    background-color: #73adef;
+    background-color: #007bff;
     color: white;
     font-weight: bold;
     padding: 1rem; 
@@ -142,14 +142,14 @@
 }
 
 .pagination-button {
-    background-color: #73adef;
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 0.35rem 0.5rem;
     border-radius: 0.2rem; 
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.85rem; 
+    font-size: 1rem; 
     min-width: 32px; 
     height: 28px; 
     display: flex;
@@ -183,7 +183,7 @@
 
 .submit-button {
     padding: 0.5rem 1.25rem;
-    background-color: #73adef;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 0.25rem;
