@@ -130,9 +130,9 @@ function ThanhToanCu() {
         <div className="page-container">
             <h1 className="page-title">Phiếu Thu Tiền</h1>
             <div className="content-wrapper">
-                <div className="button-wrapper">
+                <div className="button-wrapper-ttc">
                     <button
-                        className="invoice-list-button"
+                        className="invoice-list-button-ttc"
                         onClick={() => navigate('/thanhtoan/phieuthutien')}
                     >
                         Danh Sách Các Phiếu Thu Tiền

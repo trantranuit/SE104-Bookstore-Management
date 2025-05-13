@@ -59,7 +59,7 @@ function HoaDon() {
     return (
         <div className="page-container">
             <h1 className="page-title">Danh Sách Các Hóa Đơn</h1>
-            <div className="invoice-section-thd">
+            <div className="content-wrapper">
                 <div className="search-section-thd">
                     <input
                         type="text"
@@ -169,6 +169,7 @@ function HoaDon() {
                     </div>
                 </div>
             )}
+           
         </div>
     );
 }

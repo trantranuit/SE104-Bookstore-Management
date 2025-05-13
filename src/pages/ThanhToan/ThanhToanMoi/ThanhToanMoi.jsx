@@ -36,6 +36,8 @@ function ThanhToanMoi() {
     const finalInvoiceRef = useRef(null);
     const [showNotification, setShowNotification] = useState(false);
     const [showSaveNotification, setShowSaveNotification] = useState(false); // State for save notification modal
+    const [showEmployeeNotification, setShowEmployeeNotification] = useState(false); // State for employee info notification
+    const [showCustomerNotification, setShowCustomerNotification] = useState(false); // State for customer info notification
 
     useEffect(() => {
         // If an invoice is passed, pre-fill the form
@@ -193,11 +195,11 @@ function ThanhToanMoi() {
 
         // Validate required fields
         if (!employeeInfo.id || !employeeInfo.name) {
-            alert('Vui lòng nhập đầy đủ thông tin nhân viên.');
+            setShowEmployeeNotification(true); // Show notification modal
             return;
         }
         if (!customerInfo.id || !customerInfo.name || !customerInfo.phone || !customerInfo.email) {
-            alert('Vui lòng nhập đầy đủ thông tin khách hàng.');
+            setShowCustomerNotification(true); // Show notification modal
             return;
         }
 
@@ -304,16 +306,19 @@ function ThanhToanMoi() {
 
     return (
         <div className="page-container">
-            {/* Notification Modal */}
+            <h1 className="page-title">Tạo Hóa Đơn Mua Sách</h1>
+
+            {/* Notification Modal for Book Quantity */}
             {showNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
                         <p>Không thể thêm quá số lượng sách hiện có.</p>
-                        <button onClick={() => setShowNotification(false)}>Đóng</button>
+                        <button className="close-button-ttm" onClick={() => setShowNotification(false)}>Đóng</button>
                     </div>
                 </div>
             )}
 
+            {/* Notification Modal for Save Success */}
             {showSaveNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
@@ -330,7 +335,35 @@ function ThanhToanMoi() {
                 </div>
             )}
 
-            <h1 className="page-title-ttm">Tạo Hóa Đơn Mua Sách</h1>
+            {/* Notification Modal for Employee Info */}
+            {showEmployeeNotification && (
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm">
+                        <p>Vui lòng nhập đầy đủ thông tin nhân viên.</p>
+                        <button
+                            className="close-button-ttm"
+                            onClick={() => setShowEmployeeNotification(false)} // Close the notification modal
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Notification Modal for Customer Info */}
+            {showCustomerNotification && (
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm">
+                        <p>Vui lòng nhập đầy đủ thông tin khách hàng.</p>
+                        <button
+                            className="close-button-ttm"
+                            onClick={() => setShowCustomerNotification(false)} // Close the notification modal
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Book Search Section */}
             <div className="book-search-section-ttm">
@@ -346,7 +379,7 @@ function ThanhToanMoi() {
                 <input
                     type="text"
                     className="search-bar-ttm"
-                    placeholder="Tìm kiếm sách..."
+                    placeholder="Tìm kiếm sách theo mã sách hoặc theo tên"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -551,7 +584,7 @@ function ThanhToanMoi() {
                             <p><strong>Mã nhân viên:</strong> {employeeInfo.id}</p>
                             <p><strong>Tên nhân viên:</strong> {employeeInfo.name}</p>
                         </div>
-                        <div className="right-info-ttm" style={{ flex: 1}}>
+                        <div className="right-info-ttm" style={{ flex: 1 }}>
                             <p><strong>Mã khách hàng:</strong> {customerInfo.id}</p>
                             <p><strong>Tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
