@@ -47,7 +47,7 @@ function PhanQuyen() {
     return (
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
-            <div className="content-wrapper">
+            <div className="content-wrapper content-wrapper-pq">
             {/* User List Block */}
             <div className="user-list-block">
                 <h2>Danh Sách Người Dùng</h2>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
-import employeeData from '../ThanhToanMoi/EmployeeData'; // Use employee data from ThanhToan folder
-import customerData from '../ThanhToanMoi/CustomerData'; // Use customer data from ThanhToan folder
+import employeeData from '../ThanhToanMoi/EmployeeData';
+import customerData from '../ThanhToanMoi/CustomerData';
 import './ThanhToanCu.css';
-import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function ThanhToanCu() {
     const navigate = useNavigate();
@@ -130,7 +130,7 @@ function ThanhToanCu() {
         <div className="page-container">
             <h1 className="page-title">Phiếu Thu Tiền</h1>
             <div className="content-wrapper">
-                <div className="button-wrapper-ttc">
+                <div className="button-wrapper">
                     <button
                         className="invoice-list-button-ttc"
                         onClick={() => navigate('/thanhtoan/phieuthutien')}
