@@ -51,22 +51,24 @@
     border-spacing: 0;
     margin: 1.25rem auto;
     font-size: 0.8rem; 
-    border-radius: 0.5rem; 
     overflow: hidden;
     table-layout: fixed;
 }
 
 .bct-report-table th,
 .bct-report-table td {
-    border: 0.06rem solid #e0e0e0; 
-    border-left: none;
-    border-right: none;
+    border: none;
     border-top: 0.06rem solid #e0e0e0;
     border-bottom: 0.06rem solid #e0e0e0;
     padding: 0.8rem; 
     text-align: center;
     word-break: break-word;
     min-width: 120px;
+}
+
+.bct-report-table tr {
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .bct-report-table th {
@@ -81,21 +83,6 @@
 
 .bct-report-table tr:last-child td {
     border-bottom: 0.06rem solid #e0e0e0;
-}
-
-.bct-report-table th:first-child,
-.bct-report-table td:first-child {
-    border-left: 0.06rem solid #e0e0e0;
-}
-
-.bct-report-table th:last-child,
-.bct-report-table td:last-child {
-    border-right: 0.06rem solid #e0e0e0;
-}
-
-/* Màu cách hàng */
-.bct-report-table tr:nth-child(odd) {
-    background-color: white;
 }
 
 .bct-report-table tr:nth-child(even) {

@@ -39,35 +39,34 @@
 }
 
 .khachhang-report-table {
-  width: 92%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin: auto;
-  border-radius: 0.5rem; 
-  overflow: hidden;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); 
-  table-layout: fixed;
+    width: 92%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 1.25rem auto;
+    font-size: 0.8rem; 
+    overflow: hidden;
+    table-layout: fixed;
 }
 
 .khachhang-report-table th,
 .khachhang-report-table td {
+  border: none;
   border-bottom: 1px solid #e0e0e0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
   font-size: 0.9rem;
 }
 
-.khachhang-report-table th{
+.khachhang-report-table th {
   background-color: #007bff;
   color: white;
   font-weight: bold;
-  padding: 1rem; 
+  padding: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  border-top: 0.06rem solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0; /* Chỉ giữ lại border bottom */
 }
 
 .khachhang-report-table th:nth-child(1),
