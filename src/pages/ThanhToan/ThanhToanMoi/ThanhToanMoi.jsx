@@ -15,7 +15,7 @@ function ThanhToanMoi() {
     const invoice = location.state?.invoice; // Retrieve invoice data if available
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [books] = useState(() => {
+    const [books, setBooks] = useState(() => {
         const storedBooks = JSON.parse(localStorage.getItem('books') || '[]');
         return storedBooks.length > 0 ? storedBooks : bookData;
     });
@@ -280,7 +280,40 @@ function ThanhToanMoi() {
         localStorage.setItem('customers', JSON.stringify(updatedCustomers));
         customerData.splice(0, customerData.length, ...updatedCustomers);
 
-        // Không cập nhật lại số lượng tồn của sách, chỉ lưu hóa đơn và khách hàng
+        // Cập nhật lại số lượng tồn của những sách đã thanh toán
+        const updatedBooks = bookData.map(book => {
+            const cartItem = cart.find(item => item.maSach === book.maSach);
+            if (cartItem) {
+                return {
+                    ...book,
+                    soLuongTon: Math.max(0, (book.soLuongTon || 0) - cartItem.soLuongMua)
+                };
+            }
+            return book;
+        });
+
+        // Lưu lại danh sách sách mới vào localStorage để các lần load sau sẽ lấy số lượng tồn mới
+        localStorage.setItem('books', JSON.stringify(updatedBooks));
+        // Cập nhật lại state books để bảng danh sách sách hiện số lượng tồn mới
+        setBooks(updatedBooks);
+
+        // Ghi lại vào file ThanhToanMoiData.js (chỉ hoạt động nếu môi trường hỗ trợ Node.js, không hoạt động trên trình duyệt)
+        try {
+            // eslint-disable-next-line
+            const fs = window.require ? window.require('fs') : null;
+            const path = window.require ? window.require('path') : null;
+            if (fs && path) {
+                const dataPath = path.resolve(__dirname, './ThanhToanMoiData.js');
+                const fileContent =
+`// filepath: f:\\UIT\\Courses\\SE104 - NMCNPM\\SE104-Bookstore-Management\\SE104-Bookstore-Management\\src\\pages\\ThanhToan\\ThanhToanMoi\\ThanhToanMoiData.js
+const books = ${JSON.stringify(updatedBooks, null, 4)};
+export default books;
+`;
+                fs.writeFileSync(dataPath, fileContent, 'utf8');
+            }
+        } catch (e) {
+            // Ignore if not possible (browser environment)
+        }
 
         setShowSaveNotification(true); // Show the save notification modal
         setTienKhachTra(''); // Xóa giá trị ô input sau khi lưu hóa đơn
