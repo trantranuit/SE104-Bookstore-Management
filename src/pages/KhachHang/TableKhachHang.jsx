@@ -25,7 +25,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
 
     const columns = [
         {
-            header: 'Mã khách hàng',
+            header: 'MaKH',
             accessorKey: 'id',
             size: 150
         },
@@ -36,6 +36,14 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         {
             header: 'Số điện thoại', 
             accessorKey: 'phone',
+        },
+        {
+            header: 'Email',
+            accessorKey: 'email',
+        },
+        {
+            header: 'Địa chỉ',
+            accessorKey: 'address',
         },
         {
             header: 'Số tiền nợ',

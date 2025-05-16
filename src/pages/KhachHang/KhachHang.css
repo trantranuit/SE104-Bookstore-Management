@@ -4,15 +4,15 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding-bottom: 4rem; 
+    padding-bottom: 2rem; 
 }
-
 
 .kh-action-bar {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 0.4rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
 }
 
 .kh-action-bar .kh-search-input {
@@ -48,11 +48,17 @@
   background-color: #5a92d6;
 }
 
+.kh-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0 auto;
+}
+
 .khachhang-report-table {
-    width: 92%;
+    width: 98%;
     border-collapse: collapse;
     border-spacing: 0;
-    margin: 1.25rem auto;
+    margin: 0.5rem auto;
     font-size: 0.8rem; 
     overflow: hidden;
     table-layout: fixed;
@@ -87,33 +93,39 @@
 
 .khachhang-report-table th:nth-child(2),
 .khachhang-report-table td:nth-child(2) {
-  width: 6rem;
+  width: 9rem;
   text-align: left;
   padding-left: 1rem;
 }
 
 .khachhang-report-table th:nth-child(3),
 .khachhang-report-table td:nth-child(3) {
-    width: 7rem;
+    width: 8rem;
     text-align: center;
 }
 
 .khachhang-report-table th:nth-child(4),
 .khachhang-report-table td:nth-child(4) {
-  width: 6rem;
-  text-align: center;
+    width: 10rem;
+    text-align: left;
 }
 
 .khachhang-report-table th:nth-child(5),
 .khachhang-report-table td:nth-child(5) {
-  width: 4rem;
-  text-align: center;
+    width: 15rem;
+    text-align: left;
 }
 
 .khachhang-report-table th:nth-child(6),
 .khachhang-report-table td:nth-child(6) {
-  width: 5rem;
-  text-align: center;
+    width: 8rem;
+    text-align: right;
+}
+
+.khachhang-report-table th:nth-child(7),
+.khachhang-report-table td:nth-child(7) {
+    width: 6rem;
+    text-align: center;
 }
 
 .khachhang-report-table tr:nth-child(odd) {
@@ -151,8 +163,8 @@
 
 .khachhang-pagination {
   position: absolute;
-  bottom: 0.3rem;
-  right: 0.9rem;
+  bottom: 1rem;
+  right: 0.2rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -199,7 +211,6 @@
   color: #666;
   cursor: not-allowed;
 }
-
 
 /* Modal Styles */
 .modal-overlay {

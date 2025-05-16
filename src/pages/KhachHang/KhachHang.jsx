@@ -18,7 +18,7 @@ function KhachHang() {
     return (
         <div className="page-container">
             <h1 className="page-title">Khách Hàng</h1>
-            <div className="content-wrapper-kh">
+            <div className="content-wrapper content-wrapper-kh">
                 <div className="kh-action-bar">
                     <input
                         type="text"
