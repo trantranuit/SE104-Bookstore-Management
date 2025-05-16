@@ -1,13 +1,13 @@
 import React from "react";
 
-const TableQuyDinh = ({ data, onEdit, onDelete }) => {
+const TableQuyDinh = ({ data, onEdit }) => {
   return (
     <table className="table">
       <thead>
         <tr>
           <th>ID</th>
           <th>Tên quy định</th>
-          <th>Mô tả</th>
+          <th>Tham số</th>
           <th>Tình trạng sử dụng</th>
           <th>Hành động</th>
         </tr>
@@ -22,9 +22,6 @@ const TableQuyDinh = ({ data, onEdit, onDelete }) => {
             <td>
               <button className="edit-btn" onClick={() => onEdit(item)}>
                 ✏️
-              </button>
-              <button className="delete-btn" onClick={() => onDelete(item.id)}>
-                🗑️
               </button>
             </td>
           </tr>

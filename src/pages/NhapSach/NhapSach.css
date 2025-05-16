@@ -1,38 +1,23 @@
-.table-container {
-  margin: 20px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-  max-width: 100%;
-  white-space: nowrap;
-}
-
-.table-container h2 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  min-width: 800px;
+  font-size: 0.75rem;
+  min-width: 50rem;
 }
 
 .table th,
 .table td {
-  padding: 12px 15px;
+  padding: 0.625rem 0.75rem;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 0.0625rem solid #ddd;
 }
 
 .table th {
   background-color: #f4f4f4;
   font-weight: bold;
   color: #333;
+  color: #333;
+  font-size: 0.75rem; /* 14px -> 0.875rem */
 }
 
 .table tr:nth-child(even) {
@@ -48,7 +33,7 @@
   cursor: pointer;
   border: none;
   background: none;
-  font-size: 16px;
+  font-size: 0.75rem;
   color: #007bff;
   transition: color 0.3s;
 }
@@ -119,6 +104,44 @@
 .sidebar {
   width: 250px;
 }
+@media (max-width: 64rem) {
+  /* 1024px -> 64rem */
+  .table {
+    font-size: 0.8125rem; /* 13px -> 0.8125rem */
+    min-width: 45rem; /* 720px -> 45rem */
+  }
+}
+
+@media (max-width: 48rem) {
+  /* 768px -> 48rem */
+  .table {
+    font-size: 0.75rem; /* 12px -> 0.75rem */
+    min-width: 40rem; /* 640px -> 40rem */
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.75rem; /* 8px 12px -> 0.5rem 0.75rem */
+  }
+}
+
+@media (max-width: 30rem) {
+  /* 480px -> 30rem */
+  .table {
+    font-size: 0.6875rem; /* 11px -> 0.6875rem */
+    min-width: 35rem; /* 560px -> 35rem */
+  }
+
+  .table th,
+  .table td {
+    padding: 0.375rem 0.625rem; /* 6px 10px -> 0.375rem 0.625rem */
+  }
+
+  .add-button,
+  .pagination-btn {
+    font-size: 0.75rem; /* 12px -> 0.75rem */
+  }
+}
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
@@ -145,11 +168,4 @@
     padding: 6px 10px; /* Giảm kích thước nút */
     font-size: 12px; /* Giảm kích thước chữ trong nút */
   }
-}
-
-.page-container {
-  overflow-x: hidden;
-  padding: 20px;
-  max-width: 100%;
-  box-sizing: border-box;
 }
