@@ -81,7 +81,7 @@ const NhapSach = () => {
       <h1>Nhập sách</h1>
       <div className="content-wrapper">
         <button className="add-button" onClick={handleOpenModal}>
-          Thêm phiếu nhập
+          + Thêm phiếu nhập
         </button>
         <TableNhapSach
           data={data}

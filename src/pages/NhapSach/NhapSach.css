@@ -70,32 +70,33 @@
 }
 
 /* Pagination container */
-.pagination {
+.pagination-ns {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
-  margin-top: 20px;
-  gap: 10px;
+  margin-top: 1.25rem;
+  gap: 0.625rem;
+  padding-right: 1.25rem;
   max-width: 100%;
 }
 
 /* Pagination button */
-.pagination-btn {
-  padding: 8px 12px;
+.pagination-btn-ns {
+  padding: 0.5rem 0.75rem;
   background-color: #f1f4f9;
   color: #4880ff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: 0.0625rem solid #ddd;
+  border-radius: 0.3125rem;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.pagination-btn:hover {
+.pagination-btn-ns:hover {
   background-color: #4880ff;
   color: #fff;
 }
 
-.pagination-btn.active {
+.pagination-btn-ns.active {
   background-color: #4880ff;
   color: #fff;
   font-weight: bold;
@@ -138,7 +139,7 @@
   }
 
   .add-button,
-  .pagination-btn {
+  .pagination-btn-ns {
     font-size: 0.75rem; /* 12px -> 0.75rem */
   }
 }
@@ -159,12 +160,12 @@
     padding: 8px; /* Giảm khoảng cách bên trong ô */
   }
 
-  .pagination {
+  .pagination-ns {
     flex-wrap: wrap; /* Cho phép các nút phân trang xuống dòng */
     gap: 5px; /* Giảm khoảng cách giữa các nút */
   }
 
-  .pagination-btn {
+  .pagination-btn-ns {
     padding: 6px 10px; /* Giảm kích thước nút */
     font-size: 12px; /* Giảm kích thước chữ trong nút */
   }

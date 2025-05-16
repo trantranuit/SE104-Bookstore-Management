@@ -77,11 +77,11 @@ const TableNhapSach = ({ data, onEdit, onDelete }) => {
       </table>
 
       {/* Pagination */}
-      <div className="pagination">
+      <div className="pagination-ns">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
-            className={`pagination-btn ${
+            className={`pagination-btn-ns ${
               currentPage === index + 1 ? "active" : ""
             }`}
             onClick={() => handlePageChange(index + 1)}
