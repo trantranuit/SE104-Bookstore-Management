@@ -80,16 +80,14 @@ const NhapSach = () => {
     <div className="page-container">
       <h1>Nhập sách</h1>
       <div className="content-wrapper">
-        <div className="table-container">
-          <button className="add-button" onClick={handleOpenModal}>
-            Thêm phiếu nhập
-          </button>
-          <TableNhapSach
-            data={data}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </div>
+        <button className="add-button" onClick={handleOpenModal}>
+          Thêm phiếu nhập
+        </button>
+        <TableNhapSach
+          data={data}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
 
       {isModalOpen && (
