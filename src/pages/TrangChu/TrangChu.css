@@ -76,7 +76,7 @@ div:not(.overview-stats) > .stat-item {
   display: flex;
   justify-content: center; /* Center chart horizontally */
   align-items: center; /* Center chart vertically */
-  height: 25rem;
+  height: 22rem;
 }
 
 /* Style for the chart itself */
