@@ -305,7 +305,7 @@ function ThanhToanMoi() {
             if (fs && path) {
                 const dataPath = path.resolve(__dirname, './ThanhToanMoiData.js');
                 const fileContent =
-`// filepath: f:\\UIT\\Courses\\SE104 - NMCNPM\\SE104-Bookstore-Management\\SE104-Bookstore-Management\\src\\pages\\ThanhToan\\ThanhToanMoi\\ThanhToanMoiData.js
+                    `// filepath: f:\\UIT\\Courses\\SE104 - NMCNPM\\SE104-Bookstore-Management\\SE104-Bookstore-Management\\src\\pages\\ThanhToan\\ThanhToanMoi\\ThanhToanMoiData.js
 const books = ${JSON.stringify(updatedBooks, null, 4)};
 export default books;
 `;
