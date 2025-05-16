@@ -224,7 +224,9 @@ function ThanhToanCu() {
                         <span className="label-name-ttc">Số tiền khách nợ</span>
                         <span className="colon-ttc">:</span>
                         <span className="value-ttc">
-                            {customerInfo?.debt ? customerInfo.debt.toLocaleString() + ' VNĐ' : ''}
+                            {(customerInfo && typeof customerInfo.debt === 'number')
+                                ? customerInfo.debt.toLocaleString('vi-VN').replace(/\./g, ',') + ' VNĐ'
+                                : '0 VNĐ'}
                         </span>
                     </div>
                     <div className="line-ttc">
@@ -237,13 +239,21 @@ function ThanhToanCu() {
                                     className={`${getInputClass(tienKhachTra)}${tienKhachTraError ? ' error' : ''}`}
                                     value={
                                         tienKhachTra
-                                            ? parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN').replace(/\./g, ',')
+                                            ? (
+                                                customerInfo?.debt === 0
+                                                    ? '0'
+                                                    : (customerInfo?.debt && parseInt(tienKhachTra.replace(/\D/g, '')) > customerInfo.debt
+                                                        ? customerInfo.debt.toLocaleString('vi-VN').replace(/\./g, ',')
+                                                        : parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN').replace(/\./g, ',')
+                                                    )
+                                            )
                                             : ''
                                     }
                                     onChange={handleTienKhachTraChange}
                                     onFocus={() => setIsFocused({ ...isFocused, tien: true })}
                                     onBlur={() => setIsFocused({ ...isFocused, tien: false })}
                                     placeholder="Nhập số tiền trả"
+                                    disabled={!maKhachHang || !maNhanVien}
                                 />
                                 <span className="vnd-label-ttc">VNĐ</span>
                             </div>

@@ -135,9 +135,11 @@ function HoaDon() {
                                 <p>
                                     <strong>Số Nợ Trước Khi Lập Hóa Đơn:</strong>{' '}
                                     {(
-                                        selectedInvoice.soNo -
-                                        selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
-                                    ).toLocaleString()} VNĐ
+                                        (selectedInvoice.soNo -
+                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
+                                            + (selectedInvoice.tienKhachTra || 0)
+                                        ).toLocaleString()
+                                    )} VNĐ
                                 </p>
                             </div>
                         </div>
@@ -184,7 +186,6 @@ function HoaDon() {
                                         Math.max(
                                             0,
                                             selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
-                                            - (selectedInvoice.tienKhachTra || 0)
                                         )
                                     ).toLocaleString()
                                 } VNĐ

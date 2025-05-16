@@ -15,7 +15,10 @@ function ThanhToanMoi() {
     const invoice = location.state?.invoice; // Retrieve invoice data if available
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [books] = useState(bookData);
+    const [books] = useState(() => {
+        const storedBooks = JSON.parse(localStorage.getItem('books') || '[]');
+        return storedBooks.length > 0 ? storedBooks : bookData;
+    });
     const [cart, setCart] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const booksPerPage = 5;
@@ -48,7 +51,7 @@ function ThanhToanMoi() {
     const parseNumber = (value) => value.replace(/,/g, '');
 
     useEffect(() => {
-        // If an invoice is passed, pre-fill the form
+        // Nếu có invoice (sửa hóa đơn), set lại cart và thông tin khách/nhân viên
         if (invoice) {
             setCart(
                 invoice.danhSachSach.map(sach => ({
@@ -70,7 +73,6 @@ function ThanhToanMoi() {
                 name: invoice.nhanVien,
             });
         } else {
-            // Reset form for a new invoice
             setCart([]);
             setCustomerInfo({
                 id: '',
@@ -86,7 +88,7 @@ function ThanhToanMoi() {
             setShowInvoice(false);
             setFinalInvoice(false);
         }
-    }, [invoice]);
+    }, [invoice, showSaveNotification]);
 
     const handleAddToCart = (book) => {
         const existing = cart.find(item => item.maSach === book.maSach);
@@ -220,6 +222,9 @@ function ThanhToanMoi() {
 
     const handleCreateNewInvoice = () => {
         navigate('/thanhtoan/moi', { state: null }); // Navigate to /thanhtoan/moi with no pre-filled data
+        setTienKhachTra(''); // Xóa số tiền khách trả cũ khi tạo hóa đơn mới
+        setTienKhachTraError(false);
+        setTienKhachTraErrorMsg('');
     };
 
     const handleSaveInvoice = () => {
@@ -233,6 +238,9 @@ function ThanhToanMoi() {
             return;
         }
         const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
+        const tienKhachTraNumber = parseInt(parseNumber(tienKhachTra) || '0');
+        const tienNoSauThanhToan = customerInfo.debt + Math.max(0, totalInvoiceAmount - tienKhachTraNumber);
+
         const updatedInvoice = {
             ...invoice, // Use existing invoice details if editing
             maHoaDon: invoice?.maHoaDon || generateInvoiceId(), // Use existing ID or generate a new one
@@ -242,8 +250,8 @@ function ThanhToanMoi() {
             tenKhachHang: customerInfo.name,
             sdt: customerInfo.phone,
             email: customerInfo.email,
-            soNo: customerInfo.debt + totalInvoiceAmount,
-            tienKhachTra: parseInt(parseNumber(tienKhachTra) || '0'), // Lưu số tiền khách trả vào hóa đơn
+            soNo: tienNoSauThanhToan, // Lưu số nợ sau thanh toán vào hóa đơn
+            tienKhachTra: tienKhachTraNumber,
             ngayLap: new Date().toISOString().split('T')[0],
             danhSachSach: cart.map(item => ({
                 maSach: item.maSach,
@@ -263,15 +271,21 @@ function ThanhToanMoi() {
         }
         localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
 
-        // Update customer debt in localStorage
+        // Update customer debt in localStorage (lưu số nợ sau thanh toán)
         const updatedCustomers = customerData.map(customer =>
             customer.id === customerInfo.id
-                ? { ...customer, debt: customer.debt + totalInvoiceAmount }
+                ? { ...customer, debt: tienNoSauThanhToan }
                 : customer
         );
         localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+        customerData.splice(0, customerData.length, ...updatedCustomers);
+
+        // Không cập nhật lại số lượng tồn của sách, chỉ lưu hóa đơn và khách hàng
 
         setShowSaveNotification(true); // Show the save notification modal
+        setTienKhachTra(''); // Xóa giá trị ô input sau khi lưu hóa đơn
+        setTienKhachTraError(false);
+        setTienKhachTraErrorMsg('');
     };
 
     const handleCloseNotification = () => {
@@ -577,6 +591,16 @@ function ThanhToanMoi() {
                             <p><strong>Tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
                             <p><strong>Email:</strong> {customerInfo.email}</p>
+                            <p>
+                                <strong>Số tiền nợ trước khi lập hóa đơn:</strong> {
+                                    (() => {
+                                        const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
+                                        const tienKhachTraNumber = parseInt(parseNumber(tienKhachTra) || '0');
+                                        const tienNoSauThanhToan = customerInfo.debt + Math.max(0, totalInvoiceAmount - tienKhachTraNumber);
+                                        return (tienNoSauThanhToan - Math.max(0, totalInvoiceAmount - tienKhachTraNumber)).toLocaleString() + 'đ';
+                                    })()
+                                }
+                            </p>
                         </div>
                     </div>
 
