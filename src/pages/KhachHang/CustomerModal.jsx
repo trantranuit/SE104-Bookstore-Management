@@ -4,6 +4,8 @@ function CustomerModal({ customer, onSave, onClose }) {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
+        email: '',
+        address: '',
         debtAmount: 0
     });
     const [phoneError, setPhoneError] = useState('');
@@ -67,6 +69,24 @@ function CustomerModal({ customer, onSave, onClose }) {
                             inputMode="numeric"
                         />
                         {phoneError && <span className="error-message">{phoneError}</span>}
+                    </div>
+                    <div className="form-group">
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Địa chỉ:</label>
+                        <input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                        />
                     </div>
                     <div className="form-group">
                         <label>Số tiền nợ:</label>
