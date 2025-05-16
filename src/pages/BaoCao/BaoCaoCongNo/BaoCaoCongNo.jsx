@@ -31,8 +31,8 @@ function BaoCaoCongNo() {
 
     return (
         <div className="page-container">
-            <h1>Báo cáo công nợ</h1>
-            <div className="content-wrapper">
+            <h1 className="page-title">Báo Cáo Công Nợ</h1>
+            <div className="content-wrapper-bccn">
                 <div className="content-day">
                     <div className="date-group">
                         <h2>Tháng:</h2>

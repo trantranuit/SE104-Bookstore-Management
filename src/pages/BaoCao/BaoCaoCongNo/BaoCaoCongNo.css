@@ -2,6 +2,15 @@
     overflow-x: auto;
 }
 
+.content-wrapper-bccn {
+    background-color: #fff;
+    position: relative; 
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 4rem; 
+}
+
 .customer-table {
     width: 100%;
     border-collapse: collapse;

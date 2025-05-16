@@ -142,7 +142,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     });
 
     return (
-        <>
+        <div className="kh-table-container">
             <table className="khachhang-report-table">
                 <thead>
                     {table.getHeaderGroups().map(headerGroup => (
@@ -225,7 +225,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }
 

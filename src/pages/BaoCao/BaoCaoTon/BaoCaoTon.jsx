@@ -31,7 +31,7 @@ function BaoCaoTon() {
 
     return (
         <div className="page-container">
-            <h1>Báo cáo Tồn</h1>
+            <h1 className="page-title">Báo Cáo Tồn</h1>
             <div className="content-wrapper">
                 <div className="content-day">
                     <div className="date-group">
