@@ -38,6 +38,14 @@ function ThanhToanMoi() {
     const [showSaveNotification, setShowSaveNotification] = useState(false); // State for save notification modal
     const [showEmployeeNotification, setShowEmployeeNotification] = useState(false); // State for employee info notification
     const [showCustomerNotification, setShowCustomerNotification] = useState(false); // State for customer info notification
+    const [tienKhachTra, setTienKhachTra] = useState('');
+    const [tienKhachTraError, setTienKhachTraError] = useState(false);
+    const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
+    const formatNumber = (value) => {
+        if (!value) return '';
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+    const parseNumber = (value) => value.replace(/,/g, '');
 
     useEffect(() => {
         // If an invoice is passed, pre-fill the form
@@ -203,37 +211,7 @@ function ThanhToanMoi() {
             return;
         }
 
-        const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
-        const newInvoice = {
-            maHoaDon: generateInvoiceId(), // Generate sequential invoice ID
-            nhanVien: employeeInfo.name,
-            maNhanVien: employeeInfo.id, // Include employee ID
-            maKhachHang: customerInfo.id,
-            tenKhachHang: customerInfo.name,
-            sdt: customerInfo.phone,
-            email: customerInfo.email,
-            soNo: customerInfo.debt + totalInvoiceAmount, // Updated debt
-            ngayLap: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-            danhSachSach: cart.map(item => ({
-                maSach: item.maSach,
-                tenSach: item.tenSach,
-                soLuong: item.soLuongMua,
-                donGia: item.donGia,
-            })),
-        };
-
-        // Update invoices in localStorage
-        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-        localStorage.setItem('invoices', JSON.stringify([...existingInvoices, newInvoice]));
-
-        // Update customer debt in localStorage
-        const updatedCustomers = customerData.map(customer =>
-            customer.id === customerInfo.id
-                ? { ...customer, debt: customer.debt + totalInvoiceAmount }
-                : customer
-        );
-        localStorage.setItem('customers', JSON.stringify(updatedCustomers));
-
+        // Chỉ chuyển sang xem hóa đơn, chưa lưu vào localStorage
         setFinalInvoice(true); // Show the final invoice
         setTimeout(() => {
             finalInvoiceRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll to the final invoice
@@ -245,6 +223,15 @@ function ThanhToanMoi() {
     };
 
     const handleSaveInvoice = () => {
+        // Không cho lưu nếu chưa nhập tiền khách trả hoặc có lỗi nhập tiền khách trả
+        if (!tienKhachTra) {
+            setTienKhachTraError(true);
+            setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
+            return;
+        }
+        if (tienKhachTraError) {
+            return;
+        }
         const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
         const updatedInvoice = {
             ...invoice, // Use existing invoice details if editing
@@ -256,6 +243,7 @@ function ThanhToanMoi() {
             sdt: customerInfo.phone,
             email: customerInfo.email,
             soNo: customerInfo.debt + totalInvoiceAmount,
+            tienKhachTra: parseInt(parseNumber(tienKhachTra) || '0'), // Lưu số tiền khách trả vào hóa đơn
             ngayLap: new Date().toISOString().split('T')[0],
             danhSachSach: cart.map(item => ({
                 maSach: item.maSach,
@@ -621,7 +609,53 @@ function ThanhToanMoi() {
                     {/* Div 4: Total Amounts */}
                     <div className="totals-ttm" style={{ marginTop: '2rem', textAlign: 'right' }}>
                         <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}đ</p>
-                        <p><strong>Tổng số tiền nợ sau hóa đơn:</strong> {(customerInfo.debt + totalPrice).toLocaleString()}đ</p>
+                        <p>
+                            <strong>Tiền khách trả:</strong>
+                            <input
+                                type="text"
+                                style={{
+                                    marginLeft: '1rem',
+                                    width: '9rem',
+                                    padding: '0.3rem 0.5rem',
+                                    fontSize: '1rem',
+                                    border: tienKhachTraError ? '2px solid #ff4d4d' : '0.1% solid #ccc',
+                                    borderRadius: '10%',
+                                    textAlign: 'right',
+                                    color: tienKhachTraError ? '#ff4d4d' : undefined,
+                                    background: tienKhachTraError ? '#fff0f0' : undefined
+                                }}
+                                value={formatNumber(tienKhachTra)}
+                                onChange={e => {
+                                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                                    if (!raw) {
+                                        setTienKhachTraError(true);
+                                        setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
+                                    } else if (parseInt(raw || '0') > totalPrice) {
+                                        setTienKhachTraError(true);
+                                        setTienKhachTraErrorMsg('Số tiền khách trả không được vượt quá tổng tiền sách!');
+                                    } else {
+                                        setTienKhachTraError(false);
+                                        setTienKhachTraErrorMsg('');
+                                    }
+                                    setTienKhachTra(raw);
+                                }}
+                                placeholder="Nhập số tiền trả"
+                                inputMode="numeric"
+                            /> đ
+                        </p>
+                        {tienKhachTraError && (
+                            <p style={{ color: '#ff4d4d', fontWeight: 'bold', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
+                                {tienKhachTraErrorMsg}
+                            </p>
+                        )}
+                        <p>
+                            <strong>Tổng số tiền nợ sau hóa đơn:</strong> {
+                                (
+                                    customerInfo.debt +
+                                    Math.max(0, totalPrice - (parseInt(parseNumber(tienKhachTra) || '0')))
+                                ).toLocaleString()
+                            }đ
+                        </p>
                     </div>
 
                     {/* Div 5: Save Invoice Button */}

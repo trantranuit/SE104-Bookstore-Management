@@ -19,6 +19,8 @@ function ThanhToanCu() {
     const [showValidationModal, setShowValidationModal] = useState(false); // State for validation modal
     const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success modal
     const [savedReceiptId, setSavedReceiptId] = useState(''); // State for saved receipt ID
+    const [tienKhachTraError, setTienKhachTraError] = useState(false);
+    const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
 
     const customerInfo = customerData.find(customer => customer.id === maKhachHang);
     const employeeInfo = employeeData.find(employee => employee.id === maNhanVien);
@@ -52,6 +54,14 @@ function ThanhToanCu() {
 
     const handleTienKhachTraChange = (e) => {
         const rawValue = e.target.value.replace(/\D/g, '');
+        // Kiểm tra nếu nhập lớn hơn số tiền nợ thì báo lỗi
+        if (customerInfo?.debt && parseInt(rawValue || '0') > customerInfo.debt) {
+            setTienKhachTraError(true);
+            setTienKhachTraErrorMsg('Số tiền trả không được lớn hơn số tiền khách đang nợ!');
+        } else {
+            setTienKhachTraError(false);
+            setTienKhachTraErrorMsg('');
+        }
         setTienKhachTra(rawValue);
     };
 
@@ -67,6 +77,9 @@ function ThanhToanCu() {
     const handleSavePayment = () => {
         if (!maKhachHang || !tienKhachTra || !maNhanVien || !ngayLap) {
             setShowValidationModal(true); // Show validation modal
+            return;
+        }
+        if (tienKhachTraError) {
             return;
         }
 
@@ -130,7 +143,7 @@ function ThanhToanCu() {
         <div className="page-container">
             <h1 className="page-title">Phiếu Thu Tiền</h1>
             <div className="content-wrapper">
-                <div className="button-wrapper">
+                <div className="button-wrapper-ttc">
                     <button
                         className="invoice-list-button-ttc"
                         onClick={() => navigate('/thanhtoan/phieuthutien')}
@@ -221,13 +234,11 @@ function ThanhToanCu() {
                             <div className="input-vnd-wrapper-ttc">
                                 <input
                                     type="text"
-                                    className={`${getInputClass(tienKhachTra)} ${!isFocused.tien && tienKhachTra ? 'input-as-text-ttc' : ''}`}
+                                    className={`${getInputClass(tienKhachTra)}${tienKhachTraError ? ' error' : ''}`}
                                     value={
-                                        isFocused.tien
-                                            ? tienKhachTra
-                                            : tienKhachTra
-                                                ? parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN')
-                                                : ','
+                                        tienKhachTra
+                                            ? parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN').replace(/\./g, ',')
+                                            : ''
                                     }
                                     onChange={handleTienKhachTraChange}
                                     onFocus={() => setIsFocused({ ...isFocused, tien: true })}
@@ -236,6 +247,11 @@ function ThanhToanCu() {
                                 />
                                 <span className="vnd-label-ttc">VNĐ</span>
                             </div>
+                            {tienKhachTraError && (
+                                <div style={{ color: '#ff4d4d', fontWeight: 'bold', marginTop: '0.2rem' }}>
+                                    {tienKhachTraErrorMsg}
+                                </div>
+                            )}
                         </span>
                     </div>
                     <div className="line-ttc">

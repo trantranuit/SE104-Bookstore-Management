@@ -1,17 +1,17 @@
-.content-wrapper-pq{
+.content-wrapper-pq {
     background: none;
     padding: 0;
     box-shadow: none;
 }
-.page-title-new {
-    font-size: 2rem;
-    margin-bottom: 2rem;
+
+.page-title-pq {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
     padding-bottom: 1rem;
-    text-align: center;
 }
 
-.user-list-block,
-.role-config-block {
+.user-list-block-pq,
+.role-config-block-pq {
     background-color: white;
     padding: 2rem;
     border-radius: 0.5rem;
@@ -19,7 +19,7 @@
     margin-bottom: 2rem;
 }
 
-.user-list-filters {
+.user-list-filters-pq {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
@@ -27,8 +27,8 @@
     /* Align items vertically */
 }
 
-.user-list-filters input,
-.user-list-filters select {
+.user-list-filters-pq input,
+.user-list-filters-pq select {
     padding: 0.8rem;
     border: 0.1rem solid #ccc;
     border-radius: 0.5rem;
@@ -36,7 +36,7 @@
     flex: 1;
 }
 
-.add-user-button {
+.add-user-button-pq {
     padding: 0.8rem 1.5rem;
     background-color: #28a745;
     color: white;
@@ -48,41 +48,41 @@
     transition: background-color 0.3s ease;
 }
 
-.add-user-button:hover {
+.add-user-button-pq:hover {
     background-color: #218838;
 }
 
-.user-table,
-.role-config-table {
+.user-table-pq,
+.role-config-table-pq {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
 }
 
-.user-table th,
-.user-table td,
-.role-config-table th,
-.role-config-table td {
+.user-table-pq th,
+.user-table-pq td,
+.role-config-table-pq th,
+.role-config-table-pq td {
     border: 0.1rem solid #ccc;
     padding: 0.8rem;
     text-align: center;
 }
 
-.user-table th,
-.role-config-table th {
+.user-table-pq th,
+.role-config-table-pq th {
     background-color: #007bff;
     color: white;
     font-weight: bold;
 }
 
-.password-cell {
+.password-cell-pq {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
 }
 
-.action-buttons {
+.action-buttons-pq {
     display: flex;
     gap: 0.5rem;
     /* Add spacing between buttons */
@@ -92,7 +92,7 @@
     /* Vertically align buttons */
 }
 
-.icon-button {
+.icon-button-pq {
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -101,11 +101,11 @@
     transition: color 0.3s ease;
 }
 
-.icon-button:hover {
+.icon-button-pq:hover {
     color: #0056b3;
 }
 
-.role-config-table select {
+.role-config-table-pq select {
     padding: 0.5rem;
     border: 0.1rem solid #ccc;
     border-radius: 0.5rem;
@@ -132,7 +132,7 @@
     font-size: 1rem;
 }
 
-.modal-buttons {
+.modal-buttons-pq {
     display: flex;
     justify-content: center;
     /* Center the buttons horizontally */
@@ -141,8 +141,8 @@
     /* Add spacing above the buttons */
 }
 
-.apply-button,
-.cancel-button {
+.apply-button-pq,
+.cancel-button-pq {
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
@@ -150,20 +150,96 @@
     font-size: 1rem;
 }
 
-.apply-button {
+.apply-button-pq {
     background-color: #28a745;
     color: white;
 }
 
-.apply-button:hover {
+.apply-button-pq:hover {
     background-color: #218838;
 }
 
-.cancel-button {
+.cancel-button-pq {
     background-color: #dc3545;
     color: white;
 }
 
-.cancel-button:hover {
+.cancel-button-pq:hover {
+    background-color: #c82333;
+}
+
+.modal-overlay-pq {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-pq {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 2rem 2.5rem;
+    min-width: 340px;
+    max-width: 95vw;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-title-pq {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.modal-content-pq input,
+.modal-content-pq select {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal-buttons-pq {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.apply-button-pq,
+.cancel-button-pq {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.apply-button-pq {
+    background-color: #28a745;
+    color: white;
+}
+
+.apply-button-pq:hover {
+    background-color: #218838;
+}
+
+.cancel-button-pq {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-button-pq:hover {
     background-color: #c82333;
 }

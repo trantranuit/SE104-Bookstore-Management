@@ -9,6 +9,8 @@ function HoaDon() {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoiceIndex, setSelectedInvoiceIndex] = useState(null);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+    const [deletedInvoiceId, setDeletedInvoiceId] = useState('');
     const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
@@ -30,8 +32,18 @@ function HoaDon() {
     };
 
     const handleDeleteInvoice = () => {
-        const invoiceToDelete = filteredInvoices[selectedInvoiceIndex];
-        const updatedInvoices = invoices.filter((_, index) => index !== selectedInvoiceIndex);
+        // Lấy lại danh sách hóa đơn đã lọc theo searchTerm
+        const filtered = invoices.filter(invoice =>
+            invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            invoice.ngayLap.includes(searchTerm)
+        );
+        const invoiceToDelete = filtered[selectedInvoiceIndex];
+        if (!invoiceToDelete) {
+            setShowDeleteConfirmation(false);
+            return;
+        }
+        // Xóa hóa đơn khỏi danh sách invoices
+        const updatedInvoices = invoices.filter(inv => inv.maHoaDon !== invoiceToDelete.maHoaDon);
 
         // Update localStorage
         localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
@@ -47,6 +59,8 @@ function HoaDon() {
 
         setInvoices(updatedInvoices);
         setShowDeleteConfirmation(false);
+        setDeletedInvoiceId(invoiceToDelete.maHoaDon);
+        setShowDeleteSuccess(true);
         handleCloseModal();
     };
 
@@ -109,7 +123,7 @@ function HoaDon() {
                                 <h3 className="section-header-thd">Thông Tin Hóa Đơn</h3>
                                 <p><strong>Ngày Lập:</strong> {selectedInvoice.ngayLap}</p>
                                 <p><strong>Mã Hóa Đơn:</strong> {selectedInvoice.maHoaDon}</p>
-                                <p><strong>Mã Nhân Viên:</strong> {selectedInvoice.maNhanVien || 'Không có'}</p> {/* Correctly display Mã Nhân Viên */}
+                                <p><strong>Mã Nhân Viên:</strong> {selectedInvoice.maNhanVien || 'Không có'}</p>
                                 <p><strong>Tên Nhân Viên:</strong> {selectedInvoice.nhanVien}</p>
                             </div>
                             <div className="modal-right-thd">
@@ -118,7 +132,13 @@ function HoaDon() {
                                 <p><strong>Tên Khách Hàng:</strong> {selectedInvoice.tenKhachHang}</p>
                                 <p><strong>Số Điện Thoại:</strong> {selectedInvoice.sdt}</p>
                                 <p><strong>Email:</strong> {selectedInvoice.email}</p>
-                                <p><strong>Số Nợ:</strong> {selectedInvoice.soNo.toLocaleString()}đ</p>
+                                <p>
+                                    <strong>Số Nợ Trước Khi Lập Hóa Đơn:</strong>{' '}
+                                    {(
+                                        selectedInvoice.soNo -
+                                        selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
+                                    ).toLocaleString()} VNĐ
+                                </p>
                             </div>
                         </div>
                         <h3 className="section-header-thd">Danh Sách Sách Đã Mua</h3>
@@ -146,8 +166,29 @@ function HoaDon() {
                         </table>
                         <div className="modal-totals-thd">
                             <p><strong>Tổng Số Sách:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong, 0)}</p>
-                            <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()}đ</p>
-                            <p><strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {(selectedInvoice.soNo + selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)).toLocaleString()}VNĐ</p>
+                            <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()} VNĐ</p>
+                            <p>
+                                <strong>Số Tiền Khách Trả:</strong>{' '}
+                                {selectedInvoice.tienKhachTra !== undefined
+                                    ? Number(selectedInvoice.tienKhachTra).toLocaleString() + ' VNĐ'
+                                    : selectedInvoice.tienKhachTra === 0
+                                        ? '0 VNĐ'
+                                        : 'Chưa có'}
+                            </p>
+                            <p>
+                                <strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {
+                                    (
+                                        (selectedInvoice.soNo -
+                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
+                                        ) +
+                                        Math.max(
+                                            0,
+                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
+                                            - (selectedInvoice.tienKhachTra || 0)
+                                        )
+                                    ).toLocaleString()
+                                } VNĐ
+                            </p>
                         </div>
                         <div className="modal-actions-thd">
                             <button className="edit-button-thd" onClick={() => handleEditInvoice(selectedInvoice)}>Sửa</button>
@@ -159,17 +200,28 @@ function HoaDon() {
             )}
 
             {showDeleteConfirmation && (
-                <div className="confirmation-modal">
-                    <div className="confirmation-content">
+                <div className="confirmation-modal-thd">
+                    <div className="confirmation-content-thd">
                         <p>Bạn có chắc muốn xóa hóa đơn này không?</p>
-                        <div className="confirmation-actions">
-                            <button className="confirm-button" onClick={handleDeleteInvoice}>Có</button>
-                            <button className="cancel-button" onClick={() => setShowDeleteConfirmation(false)}>Không</button>
+                        <div className="confirmation-actions-thd">
+                            <button className="confirm-button-thd" onClick={handleDeleteInvoice}>Có</button>
+                            <button className="cancel-button-thd" onClick={() => setShowDeleteConfirmation(false)}>Không</button>
                         </div>
                     </div>
                 </div>
             )}
-           
+
+            {showDeleteSuccess && (
+                <div className="confirmation-modal-thd">
+                    <div className="confirmation-content-thd">
+                        <p>Hóa đơn <strong>{deletedInvoiceId}</strong> đã được xóa thành công!</p>
+                        <div className="confirmation-actions-thd">
+                            <button className="cancel-button-thd" onClick={() => setShowDeleteSuccess(false)}>Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
