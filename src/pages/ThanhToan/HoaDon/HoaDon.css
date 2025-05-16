@@ -1,118 +1,97 @@
-.edit-button {
-    background-color: #6d006d; /* Pink background for edit button */
+.edit-button-thd {
+    background-color: #6d006d;
+    /* Pink background for edit button */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 10%;
     cursor: pointer;
     font-size: 1rem;
 }
 
-.edit-button:hover {
-    background-color: #ff1493; /* Darker pink on hover */
+.edit-button-thd:hover {
+    background-color: #ff1493;
+    /* Darker pink on hover */
 }
 
-.delete-button {
-    background-color: #dc3545; /* Red background for delete button */
+.delete-button-thd {
+    background-color: #dc3545;
+    /* Red background for delete button */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 10%;
     cursor: pointer;
     font-size: 1rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
-.delete-button:hover {
-    background-color: #c82333; /* Darker red on hover */
+.delete-button-thd:hover {
+    background-color: #c82333;
+    /* Darker red on hover */
 }
 
-.modal {
+.modal-thd {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it appears above other elements */
+    z-index: 1000;
+    /* Ensure it appears above other elements */
 }
 
-.modal-content {
-    width: 80%; /* Increase modal width */
-    max-width: 900px; /* Set a maximum width */
-    margin: 0 auto; /* Center the modal */
+.modal-content-thd {
+    width: 80%;
+    /* Increase modal width */
+    max-width: 900px;
+    /* Set a maximum width */
+    margin: 0 auto;
+    /* Center the modal */
     padding: 2rem;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: left; /* Align text to the left */
+    text-align: left;
+    /* Align text to the left */
 }
 
-.modal-content h2 {
+.modal-content-thd h2 {
     margin-bottom: 2rem;
 }
 
-.modal-content h3 {
-    text-align: center; /* Center the heading */
-    font-size: 1.2rem; /* Adjust font size for better visibility */
-    font-weight: bold; /* Make the heading bold */
-    margin-bottom: 1rem; /* Add spacing below the heading */
-}
-
-.modal-table {
-    width: calc(100% - 2rem); /* Adjust width to align with modal content */
-    margin: 0 auto; /* Center the table */
-    border-collapse: collapse;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-    overflow-y: auto; /* Enable vertical scrolling */
-}
-
-.modal-table th, .modal-table td {
-    border-bottom: 1px solid #ddd; /* Only horizontal borders */
-    padding: 0.75rem;
-    text-align: center; /* Align text to the center */
-}
-
-.modal-table th {
-    background-color: #4CAF50; /* Green background for table headers */
-    color: white; /* White text */
+.modal-content-thd h3 {
+    text-align: center;
+    /* Center the heading */
+    font-size: 1.2rem;
+    /* Adjust font size for better visibility */
     font-weight: bold;
+    /* Make the heading bold */
+    margin-bottom: 1rem;
+    /* Add spacing below the heading */
 }
 
-.modal-totals {
-    text-align: right; /* Align totals to the right */
-    margin-top: 1.5rem; /* Add spacing above totals */
-    font-size: 1rem; /* Adjust font size for better readability */
-    font-weight: bold; /* Make totals bold */
-    color: #333; /* Dark gray text */
-    margin-right: 1rem; /* Add right margin */
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: center; /* Center buttons horizontally */
-    align-items: center; /* Center buttons vertically */
-    gap: 1rem; /* Add spacing between buttons */
-    margin-top: 1.5rem; /* Add spacing above the buttons */
-}
-
-.confirmation-modal {
+.confirmation-modal-thd {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-.confirmation-content {
+.confirmation-content-thd {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
@@ -120,19 +99,21 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.confirmation-content p {
+.confirmation-content-thd p {
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
 
-.confirmation-actions {
+.confirmation-actions-thd {
     display: flex;
     justify-content: center;
     gap: 1rem;
 }
 
-.confirm-button, .cancel-button {
-    background-color: #007bff; /* Blue for confirm button */
+.confirm-button-thd,
+.cancel-button-thd {
+    background-color: #007bff;
+    /* Blue for confirm button */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -141,20 +122,24 @@
     font-size: 1rem;
 }
 
-.confirm-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.confirm-button-thd:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
-.cancel-button {
-    background-color: #6c757d; /* Gray for cancel button */
+.cancel-button-thd {
+    background-color: #6c757d;
+    /* Gray for cancel button */
 }
 
-.cancel-button:hover {
-    background-color: #5a6268; /* Darker gray on hover */
+.cancel-button-thd:hover {
+    background-color: #5a6268;
+    /* Darker gray on hover */
 }
 
-.close-button {
-    background-color: #6c757d; /* Gray background for close button */
+.close-button-thd {
+    background-color: #6c757d;
+    /* Gray background for close button */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -163,68 +148,112 @@
     font-size: 1rem;
 }
 
-.close-button:hover {
-    background-color: #5a6268; /* Darker gray on hover */
+.close-button-thd:hover {
+    background-color: #5a6268;
+    /* Darker gray on hover */
 }
 
-.invoice-section {
-    background-color: #ffffff; /* White background */
+.invoice-section-thd {
+    background-color: #ffffff;
+    /* White background */
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
+    margin-bottom: 3rem !important;
+    /* Adjust this value to change the spacing between divs */
 }
 
-.search-section {
-    width: 90%; /* Match the width of the table in ThanhToanMoi */
-    margin: 0 auto 2rem; /* Center the search bar and add 2rem spacing below */
-    display: block; /* Ensure it behaves as a block element */
+.search-section-thd {
+    width: 90%;
+    /* Match the width of the table in ThanhToanMoi */
+    margin: 0 auto 2rem;
+    /* Center the search bar and add 2rem spacing below */
+    display: block;
+    /* Ensure it behaves as a block element */
     margin-top: 1rem;
 }
 
-.search-bar {
-    width: 100%; /* Match the width of the table */
-    padding: 0.75rem; /* Add padding for better usability */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 1rem; /* Adjust font size for readability */
-    margin-top: 1rem; /* Add spacing above */
-    margin-bottom: 1rem; /* Add spacing below */
-    display: block; /* Ensure it spans the full width */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+.search-bar-thd {
+    width: 100%;
+    /* Match the width of the table */
+    padding: 0.75rem;
+    /* Add padding for better usability */
+    border: 1px solid #ccc;
+    /* Light gray border */
+    border-radius: 4px;
+    /* Rounded corners */
+    font-size: 0.8rem;
+    /* Adjust font size for readability */
+    margin-top: 1rem;
+    /* Add spacing above */
+    margin-bottom: 0.5rem;
+    /* Add spacing below */
+    display: block;
+    /* Ensure it spans the full width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
 }
 
-.search-bar:focus {
-    outline: none; /* Remove default outline */
-    border-color: #007bff; /* Blue border on focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue glow on focus */
+.search-bar-thd:focus {
+    outline: none;
+    /* Remove default outline */
+    border-color: #007bff;
+    /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Blue glow on focus */
 }
 
-.search-bar::placeholder {
-    color: #888; /* Light gray placeholder text */
-    font-style: italic; /* Italicize placeholder text */
+.search-bar-thd::placeholder {
+    color: #888;
+    /* Light gray placeholder text */
+    font-style: italic;
+    /* Italicize placeholder text */
 }
 
-.invoice-table {
-    width: 90%; /* Match the width of the table in ThanhToanMoi */
-    margin: 0 auto; /* Center the table */
+.invoice-table-thd {
+    width: 90%;
+    /* Match the width of the table in ThanhToanMoi */
+    margin: 0 auto;
+    /* Center the table */
     border-collapse: collapse;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    background-color: transparent; /* Remove background */
+    background-color: transparent;
+    /* Remove background */
 }
 
-.invoice-table th {
-    background-color: #007bff; /* Blue background */
-    color: white; /* White text */
-    text-align: center; /* Center-align header text */
-    padding: 0.75rem; /* Add padding for spacing */
-    font-weight: bold; /* Make text bold */
-    border-bottom: 1px solid #ddd; /* Add a border below the header */
+.invoice-table-thd th {
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White text */
+    text-align: center;
+    /* Center-align header text */
+    padding: 0.75rem;
+    /* Add padding for spacing */
+    font-weight: bold;
+    /* Make text bold */
+    border-bottom: 1px solid #ddd;
+    /* Add a border below the header */
 }
 
-.view-button {
-    background-color: #007bff; /* Blue background */
+.invoice-table-thd th,
+.invoice-table-thd td {
+    text-align: center;
+    /* Center-align text */
+    vertical-align: middle;
+    /* Vertically align text in the middle */
+    padding: 0.75rem;
+    /* Add padding for spacing */
+    border-bottom: 1px solid #ddd;
+    /* Add a border below each row */
+    font-size: 0.8rem;
+    /* Adjust font size for readability */
+}
+
+.view-button-thd {
+    background-color: #007bff;
+    /* Blue background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -233,55 +262,162 @@
     font-size: 0.9rem;
 }
 
-.view-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.view-button-thd:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
-.modal-columns {
+.modal-columns-thd {
     display: flex;
     justify-content: space-between;
-    gap: 2rem; /* Add spacing between columns */
+    gap: 2rem;
+    /* Add spacing between columns */
     margin-bottom: 1.5rem;
 }
 
-.modal-left, .modal-right {
+.modal-left-thd,
+.modal-right-thd {
     flex: 1;
-    padding: 0; /* Remove padding */
+    padding: 0;
+    /* Remove padding */
 }
 
-.modal-left p, .modal-right p {
-    margin-bottom: 1rem; /* Add spacing between rows */
+.modal-left-thd p,
+.modal-right-thd p {
+    margin-bottom: 1rem;
+    /* Add spacing between rows */
 }
 
-.section-header {
+.section-header-thd {
     text-align: center;
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 1rem;
-    color: white; /* Dark gray text */
+    color: white;
+    /* Dark gray text */
     background: #007bff;
-    padding-top: 0.2rem;/* Add spacing above the header */
+    padding-top: 0.2rem;
+    /* Add spacing above the header */
     padding-bottom: 0.2rem
 }
 
-.invoice-header, .customer-header {
-    background-color: #87CEEB; /* Light blue background */
+.invoice-header-thd,
+.customer-header-thd {
+    background-color: #87CEEB;
+    /* Light blue background */
     color: white;
-    padding: 1rem; /* Increase padding for a wider background */
-    border-radius: 8px; /* Adjust border radius for a smoother look */
+    padding: 1rem;
+    /* Increase padding for a wider background */
+    border-radius: 8px;
+    /* Adjust border radius for a smoother look */
     text-align: center;
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 1rem;
 }
 
-.modal-title {
-    text-align: center; /* Center the title */
+.modal-title-thd {
+    text-align: center;
+    /* Center the title */
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 2rem !important; /* Add spacing below the title */
+    margin-bottom: 2rem !important;
+    /* Add spacing below the title */
 }
 
-.modal-left {
-    margin-left: 1rem; /* Align content with the left edge of the book list table */
+.modal-left-thd {
+    margin-left: 1rem;
+    /* Align content with the left edge of the book list table */
+}
+
+.icon-button-thd {
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White icon color */
+    border: none;
+    /* Remove border */
+    padding: 0.5rem;
+    /* Add padding for better usability */
+    border-radius: 10%;
+    cursor: pointer;
+    /* Pointer cursor for better UX */
+    font-size: 1.2rem;
+    /* Increase icon size */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Add subtle shadow */
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    /* Smooth transition */
+}
+
+.icon-button-thd:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    transform: scale(1.1);
+    /* Slightly enlarge the button on hover */
+}
+
+.icon-button-thd:active {
+    background-color: #003f7f;
+    /* Even darker blue on active */
+    transform: scale(0.95);
+    /* Slightly shrink the button on click */
+}
+
+.modal-table-thd {
+    width: 100%;
+    /* Full width */
+    border-collapse: collapse;
+    /* Remove gaps between table cells */
+    margin-bottom: 2rem;
+    /* Add spacing above the table */
+
+}
+
+.modal-table-thd th {
+    /*background-color: #4CAF50;  Green background for table headers */
+    /*color: white;  White text */
+    text-align: center;
+    /* Center-align header text */
+    /*padding: 0.75rem;  Add padding for spacing */
+    font-weight: bold;
+    /* Bold text */
+    border-bottom: 1px solid #ddd;
+    /* Add a border below the header */
+}
+
+.modal-table-thd td {
+    text-align: center;
+    /* Center-align table content */
+    padding: 0.75rem;
+    /* Add padding for spacing */
+    border-bottom: 1px solid #ddd;
+    /* Add a border below each row */
+    font-size: 1rem;
+    /* Adjust font size for readability */
+}
+
+.modal-totals-thd {
+    text-align: right;
+    /* Align text to the right */
+    font-weight: bold;
+    /* Make text bold */
+    font-size: 1rem;
+    /* Adjust font size for readability */
+    line-height: 1.75rem;
+    /* Add spacing between lines (0.5rem) */
+    margin-bottom: 1rem;
+    ;
+}
+
+.modal-actions-thd {
+    display: flex;
+    justify-content: center;
+    /* Center buttons horizontally */
+    align-items: center;
+    /* Center buttons vertically */
+    gap: 1rem;
+    /* Add spacing between buttons */
+    margin-top: 2rem;
+    /* Add spacing above the buttons */
 }

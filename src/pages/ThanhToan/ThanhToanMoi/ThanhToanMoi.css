@@ -1,259 +1,331 @@
 /* General Page Styles */
 
 /* Book Search Section */
-.book-search-section {
-    background-color: #ffffff; /* White background */
+.book-search-section-ttm {
+    background-color: #ffffff;
     padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
-/* Adjust Search Bar Alignment and Spacing */
-.book-search-section .search-bar {
-    width: 95%; /* Match the width of the book table */
-    margin: 0 auto 2rem; /* Center the search bar and add 2rem spacing below */
-    display: block; /* Ensure it behaves as a block element */
+.book-search-section-ttm .search-bar-ttm {
+    width: 95%;
+    height: 2rem;
+    margin: 0 auto 2rem;
+    display: block;
     background: #eaf8eb;
     margin-top: 1rem;
 }
 
-
-.search-bar::placeholder {
-    color: #155724; /* Dark green placeholder text */}
-
-/* Cart Section */
-.cart-section {
-    background-color: #ffffff; /* White background */
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem !important; /* Adjust this value to change the spacing between divs */
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem; /* Increase spacing between elements */
-    align-items: center; /* Center content horizontally */
+.search-bar-ttm {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    font-size: 0.8rem;
+    background-color: #eaf8eb;
+    /* Light green background */
 }
 
-.cart-section .cart-header {
+.search-bar-ttm::placeholder {
+    color: #155724;
+}
+
+.cart-section-ttm {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(10, 9, 9, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+
+.cart-section-ttm .cart-header-ttm {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    text-transform: uppercase; /* Make the title uppercase */
+    text-transform: uppercase;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
 }
 
-.cart-section .cart-items {
-    max-height: 300px; /* Set a maximum height for the scrollable area */
-    overflow-y: auto; /* Enable vertical scrolling */
-    border: 1px solid #ddd; /* Add a border around the product list */
-    border-radius: 8px;
+
+.cart-section-ttm .cart-items-ttm {
+    max-height: 18.75rem;
+    overflow-y: auto;
+    border: 0.0625rem solid #ddd;
+    border-radius: 0.5rem;
     padding: 0.5rem;
 }
 
-.cart-section .cart-summary {
+.cart-section-ttm .cart-summary-ttm {
     display: flex;
-    justify-content: space-between; /* Align items on the same row */
-    width: 100%; /* Match the width of the cart section */
-    font-size: 1rem; /* Set font size */
-    font-weight: bold; /* Make text bold */
-    margin-bottom: 1rem; /* Add spacing below the summary */
+    justify-content: space-between;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+
+}
+
+.cart-summary-ttm {
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 2rem
 }
 
 /* Invoice Section */
-.invoice-section {
-    background-color: #ffffff; /* White background */
-    padding: 2rem; /* Padding for content */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    width: 95%; /* Match width of ThanhToanMoi sections */
-    margin: 0 auto; /* Center align */
-    margin-top: 1rem; /* Add spacing above */
+.invoice-section-ttm {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 1rem;
 }
 
-.invoice-section .header {
-    margin-top: 1rem; /* Add spacing above the "THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG" header */
+.invoice-section-ttm .header-ttm {
+    margin-top: 1rem;
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    text-transform: uppercase; /* Make the title uppercase */
+    text-transform: uppercase;
     margin-bottom: 3rem;
 }
 
 /* Final Invoice Section */
-.final-invoice-section {
-    background-color: #ffffff; /* White background */
+
+.final-invoice-section-ttm {
+    background-color: #ffffff;
     padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem; /* Adjust this value to change the spacing between divs */
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
-.final-invoice-section .header {
-    margin-top: 1rem; /* Add spacing above the "HÓA ĐƠN MUA SÁCH" header */
-    margin-bottom: 1rem; /* Add spacing below the "HÓA ĐƠN MUA SÁCH" header */
+.final-invoice-section-ttm .header-ttm {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .section::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
+    width: 8px;
+    /* Width of the scrollbar */
 }
 
 .section::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Color of the scrollbar thumb */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+    background-color: #ccc;
+    /* Color of the scrollbar thumb */
+    border-radius: 4px;
+    /* Rounded corners for the scrollbar thumb */
 }
 
 .section::-webkit-scrollbar-thumb:hover {
-    background-color: #aaa; /* Darker color on hover */
+    background-color: #aaa;
+    /* Darker color on hover */
 }
 
 .section::-webkit-scrollbar-track {
-    background-color: #f9f9f9; /* Background of the scrollbar track */
+    background-color: #f9f9f9;
+    /* Background of the scrollbar track */
 }
 
 
-.book-table-wrapper {
-    max-height: 300px; /* Set a maximum height for the scrollable area */
-    overflow-y: auto; /* Enable vertical scrolling */
+.book-table-wrapper-ttm {
+    max-height: 300px;
+    /* Set a maximum height for the scrollable area */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
 }
 
-.book-table-wrapper::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
+.book-table-wrapper-ttm::-webkit-scrollbar {
+    width: 8px;
+    /* Width of the scrollbar */
 }
 
-.book-table-wrapper::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Color of the scrollbar thumb */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+.book-table-wrapper-ttm::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* Color of the scrollbar thumb */
+    border-radius: 4px;
+    /* Rounded corners for the scrollbar thumb */
 }
 
-.book-table-wrapper::-webkit-scrollbar-thumb:hover {
-    background-color: #aaa; /* Darker color on hover */
+.book-table-wrapper-ttm::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+    /* Darker col
+    or on hover */
 }
 
-.book-table-wrapper::-webkit-scrollbar-track {
-    background-color: #f9f9f9; /* Background of the scrollbar track */
+.book-table-wrapper-ttm::-webkit-scrollbar-track {
+    background-color: #f9f9f9;
+    /* Background of the scrollbar track */
 }
 
-.book-table, .cart-table, .invoice-table, .final-invoice-section .invoice-table {
+.book-table-ttm,
+.cart-table-ttm,
+.invoice-table-ttm,
+.final-invoice-section-ttm .invoice-table-ttm {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    background-color: transparent; /* Remove background */
+    background-color: transparent;
+    /* Remove background */
 }
 
-.book-table th, .cart-table th, .invoice-table th, .final-invoice-section .invoice-table th {
+.book-table-ttm th,
+.cart-table-ttm th,
+.invoice-table-ttm th,
+.final-invoice-section-ttm .invoice-table-ttm th {
     font-weight: bold;
     text-align: left;
     padding: 0.75rem;
-    border-bottom: 1px solid #ddd; /* Only horizontal borders */
-    background-color: #4CAF50; /* Bright green */
+    border-bottom: 1px solid #ddd;
+    /* Only horizontal borders */
+    background-color: #4CAF50;
+    /* Bright green */
     color: white;
 }
 
-.book-table td, .cart-table td, .invoice-table td, .final-invoice-section .invoice-table td {
+.book-table-ttm td,
+.cart-table-ttm td,
+.invoice-table-ttm td,
+.final-invoice-section-ttm .invoice-table-ttm td {
     text-align: center;
     padding: 0.75rem;
-    border-bottom: 1px solid #ddd; /* Only horizontal borders */
-    font-size: 0.9rem; /* Adjust font size for consistency */
+    border-bottom: 1px solid #ddd;
+    /* Only horizontal borders */
+    font-size: 0.9rem;
+    /* Adjust font size for consistency */
 }
 
-.book-table-wrapper, .invoice-table-wrapper, .final-invoice-section .invoice-table-wrapper {
-    max-height: 300px; /* Set a maximum height for scrollable areas */
-    overflow-y: auto; /* Enable vertical scrolling */
+.book-table-wrapper-ttm,
+.invoice-table-wrapper-ttm,
+.final-invoice-section-ttm .invoice-table-wrapper-ttm {
+    max-height: 300px;
+    /* Set a maximum height for scrollable areas */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
 }
 
-.book-table-wrapper::-webkit-scrollbar, 
-.invoice-table-wrapper::-webkit-scrollbar, 
-.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
+.book-table-wrapper-ttm::-webkit-scrollbar,
+.invoice-table-wrapper-ttm::-webkit-scrollbar,
+.final-invoice-section-ttm .invoice-table-wrapper-ttm::-webkit-scrollbar {
+    width: 8px;
+    /* Width of the scrollbar */
 }
 
-.book-table-wrapper::-webkit-scrollbar-thumb, 
-.invoice-table-wrapper::-webkit-scrollbar-thumb, 
-.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Color of the scrollbar thumb */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+.book-table-wrapper-ttm::-webkit-scrollbar-thumb,
+.invoice-table-wrapper-ttm::-webkit-scrollbar-thumb,
+.final-invoice-section-ttm .invoice-table-wrapper-ttm::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* Color of the scrollbar thumb */
+    border-radius: 4px;
+    /* Rounded corners for the scrollbar thumb */
 }
 
-.book-table-wrapper::-webkit-scrollbar-thumb:hover, 
-.invoice-table-wrapper::-webkit-scrollbar-thumb:hover, 
-.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-thumb:hover {
-    background-color: #aaa; /* Darker color on hover */
+.book-table-wrapper-ttm::-webkit-scrollbar-thumb:hover,
+.invoice-table-wrapper-ttm::-webkit-scrollbar-thumb:hover,
+.final-invoice-section-ttm .invoice-table-wrapper-ttm::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+    /* Darker color on hover */
 }
 
-.book-table-wrapper::-webkit-scrollbar-track, 
-.invoice-table-wrapper::-webkit-scrollbar-track, 
-.final-invoice-section .invoice-table-wrapper::-webkit-scrollbar-track {
-    background-color: #f9f9f9; /* Background of the scrollbar track */
+.book-table-wrapper-ttm::-webkit-scrollbar-track,
+.invoice-table-wrapper-ttm::-webkit-scrollbar-track,
+.final-invoice-section-ttm .invoice-table-wrapper-ttm::-webkit-scrollbar-track {
+    background-color: #f9f9f9;
+    /* Background of the scrollbar track */
 }
 
-.book-table, .cart-table {
-    width: 95%; /* Increase table width */
-    margin: 0 auto; /* Center the table */
+.book-table-ttm,
+.cart-table-ttm {
+    width: 95%;
+    /* Increase table width */
+    margin: 0 auto;
+    /* Center the table */
     border-collapse: collapse;
 }
 
-.book-table th, .book-table td,
-.cart-table th, .cart-table td {
+.book-table-ttm th,
+.book-table-ttm td,
+.cart-table-ttm th,
+.cart-table-ttm td {
     padding: 0.5rem;
     text-align: center;
-    font-size: 0.75rem; /* Reduce font size */
+    font-size: 0.8rem;
+    /* Reduce font size */
 }
 
-.cart-table th {
-    background-color: #FF9800; /* Bright blue */
+.cart-table-ttm th {
+    background-color: #FF9800;
+    /* Bright blue */
     color: white;
 }
 
-.cart-table td {
+.cart-table-ttm td {
     padding: 0.75rem;
     border-bottom: 1px solid #ddd;
 }
 
-.cart-section h2 {
-    margin-top: 1rem; /* Add spacing above the "GIỎ HÀNG" title */
+.cart-section-ttm h2 {
+    margin-top: 1rem;
+    /* Add spacing above the "GIỎ HÀNG" title */
     margin-bottom: 0.5rem;
-    text-align: center; /* Center-align the "GIỎ HÀNG" title */
+    text-align: center;
+    /* Center-align the "GIỎ HÀNG" title */
 }
 
-.quantity {
+.quantity-ttm {
     margin: 0 0.5rem;
     display: inline-block;
     text-align: center;
-    width: 30px; /* Adjust width for better alignment */
+    width: 30px;
+    /* Adjust width for better alignment */
 }
 
-.summary-bar {
+.summary-bar-ttm {
     display: flex;
     justify-content: 0.2rem;
     margin-top: 1rem;
     font-weight: bold;
     font-size: 1rem;
-    align-items: center; /* Align items vertically */
+    align-items: center;
+    /* Align items vertically */
 }
 
-.summary-bar span:first-child {
-    margin-left: auto; /* Move total number of books to the right */
+.summary-bar-ttm span:first-child {
+    margin-left: auto;
+    /* Move total number of books to the right */
 }
 
-.summary-bar span:last-child {
-    text-align: center; /* Center-align the total price */
-    flex: 1; /* Ensure it takes up space to center properly */
-    font-size: 0.85rem; /* Adjust font size for better visibility */
+.summary-bar-ttm span:last-child {
+    text-align: center;
+    /* Center-align the total price */
+    flex: 1;
+    /* Ensure it takes up space to center properly */
+    font-size: 0.85rem;
+    /* Adjust font size for better visibility */
 }
 
-.summary-bar span:last-child::after {
-    content: " VND"; /* Append "VND" to the total price */
+.summary-bar-ttm span:last-child::after {
+    content: " VND";
+    /* Append "VND" to the total price */
 }
 
-.next-button-wrapper {
-    display: none; /* Remove the old "Tiếp tục thanh toán" button wrapper */
+.next-button-wrapper-ttm {
+    display: none;
+    /* Remove the old "Tiếp tục thanh toán" button wrapper */
 }
 
-.icon-button {
-    background-color: #FF9800; /* Change button color to orange */
+.icon-button-ttm {
+    background-color: #FF9800;
+    /* Change button color to orange */
     border: none;
     color: white;
     font-size: 1.2rem;
@@ -265,17 +337,20 @@
     border-radius: 4px;
 }
 
-.icon-button:hover {
-    background-color: #e68a00; /* Slightly darker orange on hover */
+.icon-button-ttm:hover {
+    background-color: #e68a00;
+    /* Slightly darker orange on hover */
 }
 
-.icon-button:disabled {
-    background-color: #ccc; /* Gray for disabled buttons */
+.icon-button-ttm:disabled {
+    background-color: #ccc;
+    /* Gray for disabled buttons */
     cursor: not-allowed;
 }
 
-.quantity-button {
-    background-color: #FF9800; /* Bright orange */
+.quantity-button-ttm {
+    background-color: #FF9800;
+    /* Bright orange */
     border: none;
     color: white;
     font-size: 1rem;
@@ -283,85 +358,102 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease; /* Smooth hover effect */
+    transition: color 0.2s ease;
+    /* Smooth hover effect */
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
 }
 
-.quantity-button:hover {
-}
+.quantity-button-ttm:hover {}
 
-quantity-button:disabled {
-    background-color: #ccc; /* Gray for disabled buttons */
+quantity-button-ttm:disabled {
+    background-color: #ccc;
+    /* Gray for disabled buttons */
     cursor: not-allowed;
 }
 
-.quantity-button:disabled {
-    background-color: #ccc; /* Gray background for disabled buttons */
-    cursor: not-allowed; /* Not-allowed cursor for disabled buttons */
-    color: #666; /* Dark gray text for disabled buttons */
+.quantity-button-ttm:disabled {
+    background-color: #ccc;
+    /* Gray background for disabled buttons */
+    cursor: not-allowed;
+    /* Not-allowed cursor for disabled buttons */
+    color: #666;
+    /* Dark gray text for disabled buttons */
 }
 
 body {
-    font-family: inherit; /* Use the global font family of the web */
+    font-family: inherit;
+    /* Use the global font family of the web */
 }
 
 table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 0.85rem; /* Reduced font size */
-    border-color: white; /* Set border color to white */
-    font-family: inherit; /* Ensure table uses the global font family */
+    font-size: 0.85rem;
+    /* Reduced font size */
+    border-color: white;
+    /* Set border color to white */
+    font-family: inherit;
+    /* Ensure table uses the global font family */
 }
 
-table th, table td {
+table th,
+table td {
     text-align: left;
-    padding: 16px 8px; /* Increased padding for more spacing */
-    border: none; /* Remove all borders */
+    padding: 16px 8px;
+    /* Increased padding for more spacing */
+    border: none;
+    /* Remove all borders */
 }
 
 table thead tr {
-    border-bottom: 1px solid #ddd; /* Lighter bottom border for header row */
+    border-bottom: 1px solid #ddd;
+    /* Lighter bottom border for header row */
 }
 
 table tbody tr {
-    border-bottom: 1px solid #eee; /* Lighter bottom border for body rows */
+    border-bottom: 1px solid #eee;
+    /* Lighter bottom border for body rows */
 }
 
-.quantity-wrapper {
+.quantity-wrapper-ttm {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem; /* Space between buttons and input */
+    gap: 0.5rem;
+    /* Space between buttons and input */
 }
 
-.quantity-input {
+.quantity-input-ttm {
     width: 50px;
+    height: 2rem;
     text-align: center;
-    font-size: 1rem;
+    font-size: 0.8rem;
     padding: 0.25rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    -moz-appearance: textfield; /* Remove spinner for Firefox */
+    -moz-appearance: textfield;
+    /* Remove spinner for Firefox */
 }
 
-.quantity-input::-webkit-inner-spin-button,
-.quantity-input::-webkit-outer-spin-button {
-    -webkit-appearance: none; /* Remove spinner for Chrome, Safari, Edge */
+.quantity-input-ttm::-webkit-inner-spin-button,
+.quantity-input-ttm::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    /* Remove spinner for Chrome, Safari, Edge */
     margin: 0;
 }
 
-.quantity-input:focus {
+.quantity-input-ttm:focus {
     outline: none;
     border-color: #4CAF50;
 }
 
-.toggle-books-button-wrapper {
+.toggle-books-button-wrapper-ttm {
     text-align: center;
     margin-top: 1rem;
 }
 
-.toggle-books-button {
+.toggle-books-button-ttm {
     padding: 0.5rem 1.5rem;
     font-size: 1rem;
     background-color: #007bff;
@@ -371,131 +463,114 @@ table tbody tr {
     cursor: pointer;
 }
 
-.toggle-books-button:hover {
+.toggle-books-button-ttm:hover {
     background-color: #0056b3;
 }
 
-.pagination-info-wrapper {
-    margin-top: 0.5rem; /* Add spacing above the pagination section */
+.pagination-info-wrapper-ttm {
+    margin-top: 1.5rem;
+    /* Add spacing above the pagination section */
     margin-right: 2.5rem;
     display: flex;
-    justify-content: flex-end; /* Align to the right */
+    justify-content: flex-end;
+    /* Align to the right */
     align-items: center;
     gap: 0.5rem;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
 }
 
-.pagination-info {
-    font-size: 0.6rem !important; /* Extremely small font size */ 
-    color: #555;
-    margin-right: 0.8rem;
+.pagination-info-ttm {
+    padding-right: 0.5rem;
 }
 
-.pagination-buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.pagination-button {
-    background-color: transparent; /* Remove background */
-    border: none; /* Remove border */
-    color: #4CAF50; /* Blue color */
-    font-size: 1rem; /* Adjust size for better visibility */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.pagination-button:disabled {
-    color: #ccc; /* Gray color for disabled state */
-    cursor: not-allowed;
-}
-
-.pagination-button:hover:not(:disabled) {
-    color: #0056b3; /* Darker blue on hover */
-}
-
-.pagination-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-    gap: 1rem;
-}
-
-.pagination-button {
-    padding: 0.1rem 0.05rem;
-    font-size: 0.5 rem;
-    background-color: #4CAF50;
-    color: white;
+.pagination-button-ttm {
+    background-color: transparent;
     border: none;
-    border-radius: 0.5rem;
+    color: #4CAF50;
+    font-size: 1rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.pagination-button:disabled {
-    background-color: #ccc;
+.pagination-button-ttm:disabled {
+    color: #ccc;
     cursor: not-allowed;
 }
 
-.pagination-button:hover:not(:disabled) {
+.pagination-button-ttm:hover:not(:disabled) {
+    color: #fcff4a;
+    /* Darker blue on hover */
+}
+
+.pagination-button-ttm:hover:not(:disabled) {
     background-color: #0056b3;
 }
 
-.pagination-info {
-    font-size: 1rem;
-    color: #333;
-}
 
-.invoice-section {
+
+.invoice-section-ttm {
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
+    /* White background */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem; /* Adjust this value to change the spacing between divs */
+    margin-bottom: 2rem;
+    /* Adjust this value to change the spacing between divs */
 }
 
-.invoice-section, .final-invoice-section {
+.invoice-section-ttm,
+.final-invoice-section-ttm {
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
+    /* White background */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 95%; /* Match the width of the above sections */
+    width: 95%;
+    /* Match the width of the above sections */
     margin-left: auto;
     margin-right: auto;
 }
 
-.invoice-table {
+.invoice-table-ttm {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
 }
 
-.invoice-table, .final-invoice-section .invoice-table {
+.invoice-table-ttm,
+.final-invoice-section-ttm .invoice-table-ttm {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
 }
 
-.invoice-table th, .invoice-table td {
-    padding: 0.75rem; /* Adjust padding for consistent spacing */
+.invoice-table-ttm th,
+.invoice-table-ttm td {
+    padding: 0.75rem;
+    /* Adjust padding for consistent spacing */
     text-align: center;
-    border-bottom: 1px solid #ddd; /* Only horizontal borders */
+    border-bottom: 1px solid #ddd;
+    /* Only horizontal borders */
 }
 
-.invoice-table th {
+.invoice-table-ttm th {
     font-weight: bold;
-    background-color: #FF5722; /* Bright red-orange */
+    background-color: #FF5722;
+    /* Bright red-orange */
     color: white;
 }
 
-.invoice-table td {
-    font-size: 0.9rem; /* Adjust font size for better readability */
+.invoice-table-ttm td {
+    font-size: 0.9rem;
+    /* Adjust font size for better readability */
 }
 
-.customer-info {
+.customer-info-ttm {
     margin-top: 1rem;
     padding: 1rem;
     background-color: white;
@@ -503,16 +578,16 @@ table tbody tr {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.customer-info h3 {
+.customer-info-ttm h3 {
     margin-bottom: 0.5rem;
 }
 
-.customer-info label {
+.customer-info-ttm label {
     display: block;
     margin-bottom: 0.5rem;
 }
 
-.customer-info input {
+.customer-info-ttm input {
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.25rem;
@@ -520,41 +595,49 @@ table tbody tr {
     border-radius: 4px;
 }
 
-.finalize-button {
+.finalize-button-ttm {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #4CAF50; /* Bright green */
+    background-color: #4CAF50;
+    /* Bright green */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.finalize-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+.finalize-button-ttm:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
-.customer-info, .customer-details {
+.customer-info-ttm,
+.customer-details-ttm {
     margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content horizontally */
-    justify-content: center; /* Center content vertically */
-    gap: 1rem; /* Increase spacing between customer information fields */
+    align-items: center;
+    /* Center content horizontally */
+    justify-content: center;
+    /* Center content vertically */
+    gap: 1rem;
+    /* Increase spacing between customer information fields */
 }
 
-.customer-info h3, .final-invoice-section h2 {
+.customer-info-ttm h3,
+.final-invoice-section-ttm h2 {
     margin-bottom: 2rem;
 }
 
-.customer-info label {
+.customer-info-ttm label {
     display: block;
     margin-bottom: 0.5rem;
 }
 
-.customer-info input {
+.customer-info-ttm input {
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.25rem;
@@ -562,132 +645,148 @@ table tbody tr {
     border-radius: 4px;
 }
 
-.finalize-button {
+.finalize-button-ttm {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #4CAF50; /* Bright green */
+    background-color: #4CAF50;
+    /* Bright green */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.finalize-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+.finalize-button-ttm:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
-.book-search-section, .cart-section, .invoice-section, .final-invoice-section {
-    width: 95%; /* Ensure all sections have the same width */
+.book-search-section-ttm,
+.cart-section-ttm,
+.invoice-section-ttm,
+.final-invoice-section-ttm {
+    width: 95%;
+    /* Ensure all sections have the same width */
     margin: 0 auto;
-    background-color: white; /* Set background color to white */
+    background-color: white;
+    /* Set background color to white */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 1rem;
     margin-top: 1rem;
 }
 
-.two-columns {
+.two-columns-ttm {
     display: flex;
     justify-content: space-between;
     gap: 2rem;
 }
 
-.thanhtoan {
+.thanhtoan-ttm {
     flex: 1;
 }
 
-.line {
+.line-ttm {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
 }
 
-.label-name {
+.label-name-ttm {
     flex: 1;
     font-weight: bold;
 }
 
-.colon {
+.colon-ttm {
     margin: 0 0.5rem;
 }
 
-.value {
+.value-ttm {
     flex: 2;
 }
 
-.input-ma {
+.input-ma-ttm {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.input-vnd-wrapper {
+.input-vnd-wrapper-ttm {
     display: flex;
     align-items: center;
 }
 
-.vnd-label {
+.vnd-label-ttm {
     margin-left: 0.5rem;
     font-weight: bold;
 }
 
-.customer-details p {
+.customer-details-ttm p {
     font-size: 1rem;
-    color: #333; /* Dark gray */
+    color: #333;
+    /* Dark gray */
     margin-bottom: 0.5rem;
 }
 
-.button-wrapper {
-    text-align: center; /* Center the button */
-    margin-top: 1rem; /* Add spacing above the button */
+.button-wrapper-ttm {
+    text-align: center;
+    /* Center the button */
+    margin-top: 1rem;
+    /* Add spacing above the button */
 }
 
 /* Customer Info Section */
-.customer-info {
+.customer-info-ttm {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Add spacing between child divs */
+    gap: 1rem;
+    /* Add spacing between child divs */
 }
 
 /* Header Div */
-.customer-info .header {
+.customer-info-ttm .header-ttm {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    text-transform: uppercase; /* Make the title uppercase */
+    text-transform: uppercase;
+    /* Make the title uppercase */
     margin-bottom: 1rem;
 }
 
 /* Middle Div with Two Columns */
-.customer-info .details {
+.customer-info-ttm .details-ttm {
     display: flex;
     justify-content: space-between;
-    gap: 2rem; /* Add spacing between the two columns */
+    gap: 2rem;
+    /* Add spacing between the two columns */
 }
 
-.customer-info .details .left,
-.customer-info .details .right {
-    flex: 1; /* Ensure both columns take equal width */
+.customer-info-ttm .details-ttm .left-ttm,
+.customer-info-ttm .details-ttm .right-ttm {
+    flex: 1;
+    /* Ensure both columns take equal width */
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Add spacing between input fields */
+    gap: 1rem;
+    /* Add spacing between input fields */
 }
 
-.customer-info .details .left label,
-.customer-info .details .right label {
+.customer-info-ttm .details-ttm .left-ttm label,
+.customer-info-ttm .details-ttm .right-ttm label {
     font-weight: bold;
     margin-bottom: 0.5rem;
 }
 
-.customer-info .details .left input,
-.customer-info .details .right input {
+.customer-info-ttm .details-ttm .left-ttm input,
+.customer-info-ttm .details-ttm .right-ttm input {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
@@ -695,158 +794,193 @@ table tbody tr {
 }
 
 /* Bottom Div with Button */
-.customer-info .actions {
+.customer-info-ttm .actions-ttm {
     text-align: center;
 }
 
-.customer-info .actions .finalize-button {
+.customer-info-ttm .actions-ttm .finalize-button-ttm {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #4CAF50; /* Bright green */
+    background-color: #4CAF50;
+    /* Bright green */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 1rem; /* Add spacing above the button */
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-top: 1rem;
+    /* Add spacing above the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.customer-info .actions .finalize-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+.customer-info-ttm .actions-ttm .finalize-button-ttm:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
 /* Header Div */
-.invoice-section .header {
-    margin-top: 1rem; /* Add spacing above the "THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG" header */
+.invoice-section-ttm .header-ttm {
+    margin-top: 1rem;
+    /* Add spacing above the "THÔNG TIN NHÂN VIÊN VÀ KHÁCH HÀNG" header */
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    text-transform: uppercase; /* Make the title uppercase */
+    text-transform: uppercase;
+    /* Make the title uppercase */
     margin-bottom: 3rem;
 }
 
 /* Middle Div with Two Columns */
-.invoice-section .details {
+.invoice-section-ttm .details-ttm {
     display: flex;
     justify-content: space-between;
-    gap: 2rem; /* Revert the gap between the left and right sections */
+    gap: 2rem;
+    /* Revert the gap between the left and right sections */
 }
 
-.invoice-section .details .left,
-.invoice-section .details .right {
-    flex: 1; /* Ensure both columns take equal width */
+.invoice-section-ttm .details-ttm .left-ttm,
+.invoice-section-ttm .details-ttm .right-ttm {
+    flex: 1;
+    /* Ensure both columns take equal width */
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Add spacing between input fields */
+    gap: 1rem;
+    /* Add spacing between input fields */
 }
 
-.invoice-section .details .left label,
-.invoice-section .details .right label {
+.invoice-section-ttm .details-ttm .left-ttm label,
+.invoice-section-ttm .details-ttm .right-ttm label {
     font-weight: bold;
     margin-bottom: 0.5rem;
 }
 
-.invoice-section .details .left input,
-.invoice-section .details .right input {
-    width: calc(100% - 5rem); /* Reduce the width by a total of 5rem (2rem + 3rem) */
+.invoice-section-ttm .details-ttm .left-ttm input,
+.invoice-section-ttm .details-ttm .right-ttm input {
+    width: calc(100% - 5rem);
+    /* Reduce the width by a total of 5rem (2rem + 3rem) */
     padding: 0.5rem;
     border: 1px solid #f5a5b9;
     border-radius: 4px;
-    background-color: #ffe7ed; /* Pastel pink background */
+    background-color: #ffe7ed;
+    /* Pastel pink background */
 }
 
-.invoice-section .details p,
-.invoice-section .details label {
-    margin-bottom: 1rem; /* Set spacing between lines to 1rem */
+.invoice-section-ttm .details-ttm p,
+.invoice-section-ttm .details-ttm label {
+    margin-bottom: 1rem;
+    /* Set spacing between lines to 1rem */
 }
 
-.invoice-section .details label {
-    display: inline-block; /* Ensure labels and inputs are inline */
-    width: 30%; /* Set a fixed width for labels */
+.invoice-section-ttm .details-ttm label {
+    display: inline-block;
+    /* Ensure labels and inputs are inline */
+    width: 30%;
+    /* Set a fixed width for labels */
     font-weight: bold;
-    margin-right: 1rem; /* Add spacing between label and input */
+    margin-right: 1rem;
+    /* Add spacing between label and input */
 }
 
-.invoice-section .details input {
-    display: inline-block; /* Ensure inputs are inline */
-    width: calc(70% - 1rem); /* Adjust width to align with labels */
+.invoice-section-ttm .details-ttm input {
+    display: inline-block;
+    /* Ensure inputs are inline */
+    width: calc(70% - 1rem);
+    /* Adjust width to align with labels */
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.invoice-section .details .left label,
-.invoice-section .details .left input,
-.invoice-section .details .left p {
-    margin-left: 1.4rem; /* Add left margin to labels, inputs, and paragraphs */
+.invoice-section-ttm .details-ttm .left-ttm label,
+.invoice-section-ttm .details-ttm .left-ttm input,
+.invoice-section-ttm .details-ttm .left-ttm p {
+    margin-left: 1.4rem;
+    /* Add left margin to labels, inputs, and paragraphs */
 }
 
-.invoice-section .details .right label,
-.invoice-section .details .right input,
-.invoice-section .details .right p {
-    margin-right: 1.4rem; /* Add right margin to customer information fields */
+.invoice-section-ttm .details-ttm .right-ttm label,
+.invoice-section-ttm .details-ttm .right-ttm input,
+.invoice-section-ttm .details-ttm .right-ttm p {
+    margin-right: 1.4rem;
+    /* Add right margin to customer information fields */
 }
 
-.invoice-section .details .right input {
-    margin-right: 1.4rem; /* Add right margin to the "Mã khách hàng" input field */
+.invoice-section-ttm .details-ttm .right-ttm input {
+    margin-right: 1.4rem;
+    /* Add right margin to the "Mã khách hàng" input field */
 }
 
 /* Bottom Div with Button */
-.invoice-section .actions {
+.invoice-section-ttm .actions-ttm {
     text-align: center;
     margin-top: 1.5rem;
 }
 
-.invoice-section .actions .finalize-button {
+.invoice-section-ttm .actions-ttm .finalize-button-ttm {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #f962a7; /* Change button color to f962a7 */
+    background-color: #f962a7;
+    /* Change button color to f962a7 */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 1rem; /* Add spacing above the button */
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-top: 1rem;
+    /* Add spacing above the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.invoice-section .actions .finalize-button:hover {
-    background-color: #e55797; /* Slightly darker shade for hover effect */
+.invoice-section-ttm .actions-ttm .finalize-button-ttm:hover {
+    background-color: #e55797;
+    /* Slightly darker shade for hover effect */
 }
 
 /* Header of Book List in Final Invoice Section */
-.final-invoice-section .invoice-table th {
-    background-color: #007bff; /* Change header background color to f962a7 */
-    text-align: center; /* Center-align header content */
+.final-invoice-section-ttm .invoice-table-ttm th {
+    background-color: #007bff;
+    /* Change header background color to f962a7 */
+    text-align: center;
+    /* Center-align header content */
 }
 
 /* "Thanh toán" Button in Cart Section */
-.cart-section .next-button {
-    background-color: #FF9800; /* Change button color to orange */
+.cart-section-ttm .next-button-ttm {
+    background-color: #FF9800;
+    /* Change button color to orange */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     padding: 0.75rem 1.5rem;
-    margin-top: auto; /* Push the button to the bottom */
-    align-self: center; /* Center the button horizontally */
+    margin-top: auto;
+    /* Push the button to the bottom */
+    align-self: center;
+    /* Center the button horizontally */
     text-align: center;
-    margin-top: 1rem; /* Add spacing above the button */
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-top: 1rem;
+    /* Add spacing above the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.cart-section .next-button:hover {
-    background-color: #e68a00; /* Slightly darker orange on hover */
+.cart-section-ttm .next-button-ttm:hover {
+    background-color: #e68a00;
+    /* Slightly darker orange on hover */
 }
 
 /* Align "Thanh toán" Button with Total Price */
-.cart-section .summary-bar {
-    align-items: center; /* Align items vertically */
-    justify-content: space-between; /* Ensure proper spacing between elements */
+.cart-section-ttm .summary-bar-ttm {
+    align-items: center;
+    /* Align items vertically */
+    justify-content: space-between;
+    /* Ensure proper spacing between elements */
 }
 
 /* "Thêm giỏ hàng" Button */
-.book-table .icon-button {
-    background-color: #4CAF50; /* Keep button color green */
+.book-table-ttm .icon-button-ttm {
+    background-color: #4CAF50;
+    /* Keep button color green */
     color: white;
     border: none;
     border-radius: 4px;
@@ -854,119 +988,151 @@ table tbody tr {
     padding: 0.5rem;
 }
 
-.book-table .icon-button:hover {
-    background-color: #45a049; /* Slightly darker green on hover */
+.book-table-ttm .icon-button-ttm:hover {
+    background-color: #45a049;
+    /* Slightly darker green on hover */
 }
 
 /* Add "Tiếp theo" Button */
-.cart-section .next-button {
-    background-color: #FF9800; /* Orange color */
+.cart-section-ttm .next-button-ttm {
+    background-color: #FF9800;
+    /* Orange color */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     padding: 0.75rem 1.5rem;
-    margin-top: 1rem; /* Add spacing above the button */
-    margin-bottom: 1rem; /* Add spacing below the button */
-    align-self: center; /* Center the button horizontally */
+    margin-top: 1rem;
+    /* Add spacing above the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
+    align-self: center;
+    /* Center the button horizontally */
     text-align: center;
 }
 
-.cart-section .next-button:hover {
-    background-color: #e68a00; /* Slightly darker orange on hover */
+.cart-section-ttm .next-button-ttm:hover {
+    background-color: #e68a00;
+    /* Slightly darker orange on hover */
 }
 
 /* Adjust Cart Section Layout */
-.cart-section .summary-bar {
-    align-items: center; /* Align items vertically */
-    justify-content: center; /* Center total information */
-    flex-direction: column; /* Stack total information and button */
-    gap: 1rem; /* Add spacing between total information and button */
+.cart-section-ttm .summary-bar-ttm {
+    align-items: center;
+    /* Align items vertically */
+    justify-content: center;
+    /* Center total information */
+    flex-direction: column;
+    /* Stack total information and button */
+    gap: 1rem;
+    /* Add spacing between total information and button */
 }
 
 /* Adjust "Thanh toán" Button */
-.cart-section .next-button {
-    background-color: #FF9800; /* Orange color */
+.cart-section-ttm .next-button-ttm {
+    background-color: #FF9800;
+    /* Orange color */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     padding: 0.75rem 1.5rem;
-    margin: 1.5rem auto 0; /* Center horizontally and add spacing above */
-    display: block; /* Ensure it spans the full width */
+    margin: 1.5rem auto 0;
+    /* Center horizontally and add spacing above */
+    display: block;
+    /* Ensure it spans the full width */
     text-align: center;
     font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 1rem; /* Add spacing below the button */
+    margin-bottom: 1rem;
+    /* Add spacing below the button */
 }
 
-.cart-section .next-button:hover {
-    background-color: #e68a00; /* Slightly darker orange on hover */
+.cart-section-ttm .next-button-ttm:hover {
+    background-color: #e68a00;
+    /* Slightly darker orange on hover */
 }
 
 /* Adjust Cart Section Layout */
-.cart-section {
+.cart-section-ttm {
     /* ...existing code... */
-    align-items: center; /* Center content horizontally */
+    align-items: center;
+    /* Center content horizontally */
 }
 
-.cart-section .cart-table {
-    margin-bottom: 1.5rem; /* Add spacing below the table */
+.cart-section-ttm .cart-table-ttm {
+    margin-bottom: 1.5rem;
+    /* Add spacing below the table */
 }
 
-.final-invoice-section .info-section p {
-    margin-bottom: 1rem; /* Set spacing between lines to 1rem */
-    margin-left: 1.4rem; /* Adjust left margin */
-    margin-right: 1.4rem; /* Adjust right margin */
+.final-invoice-section-ttm .info-section-ttm p {
+    margin-bottom: 1rem;
+    /* Set spacing between lines to 1rem */
+    margin-left: 1.4rem;
+    /* Adjust left margin */
+    margin-right: 1.4rem;
+    /* Adjust right margin */
 }
 
-.final-invoice-section .totals p {
-    margin-bottom: 1rem; /* Set spacing between lines to 1rem */
-    margin-left: 1.4rem; /* Adjust left margin */
-    margin-right: 1.4rem; /* Adjust right margin */
+.final-invoice-section-ttm .totals-ttm p {
+    margin-bottom: 1rem;
+    /* Set spacing between lines to 1rem */
+    margin-left: 1.4rem;
+    /* Adjust left margin */
+    margin-right: 1.4rem;
+    /* Adjust right margin */
 }
 
-.final-invoice-section .invoice-table {
-    width: 95%; /* Match the width of the other tables */
-    margin: 0 auto; /* Center the table */
-    margin-bottom: 1.5rem; /* Add spacing below the table */
+.final-invoice-section-ttm .invoice-table-ttm {
+    width: 95%;
+    /* Match the width of the other tables */
+    margin: 0 auto;
+    /* Center the table */
+    margin-bottom: 1.5rem;
+    /* Add spacing below the table */
 }
 
-.notification-modal {
+.notification-modal-ttm {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it appears above other elements */
+    z-index: 1000;
+    /* Ensure it appears above other elements */
 }
 
-.notification-content {
+.notification-content-ttm {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px; /* Fixed width for the modal */
+    max-width: 400px;
+    width: 90%;
+    /* Responsive width */
 }
 
-.notification-content p {
-    font-size: 1.2rem;
+.notification-content-ttm p {
+    font-size: 1rem;
+    color: #333;
     margin-bottom: 1.5rem;
 }
 
-.notification-actions {
+.notification-actions-ttm {
     display: flex;
     justify-content: center;
     gap: 1rem;
 }
 
-.notification-actions .finalize-button {
-    background-color: #007bff; /* Blue background */
+.notification-actions-ttm .finalize-button-ttm {
+    background-color: #007bff;
+    /* Blue background */
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -975,12 +1141,14 @@ table tbody tr {
     font-size: 1rem;
 }
 
-.notification-actions .finalize-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.notification-actions-ttm .finalize-button-ttm:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
-.notification-actions .close-button {
-    background-color: #FF9800; /* Orange background */
+.notification-actions-ttm .close-button-ttm {
+    background-color: #FF9800;
+    /* Orange background */
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -989,27 +1157,69 @@ table tbody tr {
     font-size: 1rem;
 }
 
-.notification-actions .close-button:hover {
-    background-color: #e68a00; /* Darker orange on hover */
+.notification-actions-ttm .close-button-ttm:hover {
+    background-color: #e68a00;
+    /* Darker orange on hover */
 }
 
-.search-header {
+.search-header-ttm {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 1rem;
 }
 
-.invoice-list-button {
-    background-color: #007bff; /* Blue background */
+.invoice-list-button-ttm {
+    background-color: #007bff;
+    /* Blue background */
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
 }
 
-.invoice-list-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+.invoice-list-button-ttm:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.close-button-ttm {
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White text */
+    border: none;
+    /* Remove border */
+    padding: 0.75rem 1.5rem;
+    /* Add padding for spacing */
+    border-radius: 0.5rem;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Pointer cursor for better UX */
+    font-size: 1rem;
+    /* Adjust font size */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    /* Smooth transition */
+}
+
+.close-button-ttm:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    transform: scale(1.05);
+    /* Slightly enlarge the button on hover */
+}
+
+.close-button-ttm:active {
+    background-color: #004494;
+    /* Even darker blue on active */
+    transform: scale(0.95);
+    /* Slightly shrink the button on click */
+}
+
+.close-button-ttm:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Glow effect on focus */
 }
