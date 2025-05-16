@@ -38,12 +38,9 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
             accessorKey: 'phone',
         },
         {
-            header: 'Mã hoá đơn',
-            accessorKey: 'invoiceId',
-        },
-        {
-            header: 'Số lượng',
-            accessorKey: 'quantity',
+            header: 'Số tiền nợ',
+            accessorKey: 'debtAmount',
+            cell: ({ getValue }) => `${getValue().toLocaleString('vi-VN')} VND`
         },
         {
             header: 'Thao tác',
@@ -122,8 +119,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         return customers.filter(customer => {
             return (
                 customer.id.toLowerCase().includes(searchTermLower) ||
-                customer.name.toLowerCase().includes(searchTermLower) ||
-                customer.invoiceId.toLowerCase().includes(searchTermLower)
+                customer.name.toLowerCase().includes(searchTermLower)
             );
         });
     }, [searchTerm, customers]);
