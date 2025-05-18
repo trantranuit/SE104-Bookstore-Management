@@ -8,6 +8,7 @@ const customerService = {
     if (searchTerm) {
       // Add search parameters based on backend API
       params = { name: searchTerm };
+      params = { phone: searchTerm };
     }
 
     try {
@@ -67,8 +68,8 @@ const customerService = {
   // Delete customer
   deleteCustomer: async (id) => {
     try {
-      await axiosInstance.delete(`/khachhang/${id}/`);
-      return true;
+      const response = await axiosInstance.delete(`/khachhang/${id}/`);
+      return response.data;
     } catch (error) {
       console.error(`Error deleting customer ${id}:`, error);
       throw error;
