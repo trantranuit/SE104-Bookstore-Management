@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:8000/api";
 
 const authService = {
-  login: async (email, password, role) => {
+  login: async (email, password) => {
     try {
       // Gọi API đăng nhập từ backend
       const response = await axios.post(`${API_URL}/token/`, {
@@ -15,7 +15,6 @@ const authService = {
         // Lưu thông tin đăng nhập vào localStorage
         const userData = {
           email: email,
-          role: role,
           token: response.data.access,
           refreshToken: response.data.refresh,
         };

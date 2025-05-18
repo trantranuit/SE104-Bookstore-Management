@@ -17,7 +17,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 380px;
+    height: 300px;
 }
 
 .login-content {
@@ -81,4 +81,14 @@
     color: white;
     font-size: 16px;
     background: linear-gradient(135deg, rgb(78, 151, 211) 0%, rgb(202, 205, 226) 100%);
+}
+
+.error-message-login {
+  color: red;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+  margin-left: 0rem;
+  position: absolute;
+  width: 100%;
 }

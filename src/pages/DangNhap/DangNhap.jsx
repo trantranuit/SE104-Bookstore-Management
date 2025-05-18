@@ -18,7 +18,6 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            role: 'staff',
             showPassword: false,
             loading: false,
             error: ''
@@ -72,7 +71,7 @@ class Login extends Component {
             console.error('Lỗi đăng nhập:', error);
             // Hiển thị thông báo lỗi
             this.setState({ 
-                error: 'Đăng nhập thất bại. Vui lòng kiểm tra tên đăng nhập và mật khẩu.', 
+                error: 'Vui lòng kiểm tra tên đăng nhập và mật khẩu.', 
                 loading: false 
             });
         }
@@ -87,17 +86,17 @@ class Login extends Component {
                         
                         {/* Hiển thị thông báo lỗi nếu có */}
                         {this.state.error && (
-                            <div className="col-12 error-message" style={{color: 'red', textAlign: 'center', marginBottom: '10px'}}>
+                            <div className="col-12 error-message-login" style={{color: 'red', textAlign: 'center', marginBottom: '10px'}}>
                                 {this.state.error}
                             </div>
                         )}
                         
                         <div className="col-12 form-group login-input">
-                            <label>Email:</label>
+                            <label>Username:</label>
                             <input 
                                 type="text" 
                                 className="form-control" 
-                                placeholder="Enter your email" 
+                                placeholder="Enter your username" 
                                 value={this.state.email}
                                 onChange={this.handleOnChangeEmail}
                                 disabled={this.state.loading}
@@ -122,19 +121,6 @@ class Login extends Component {
                                     <FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />
                                 </span>
                             </div>
-                        </div>
-
-                        <div className="col-12 form-group login-input">
-                            <label>Vai trò:</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.role}
-                                onChange={this.handleRoleChange}
-                                disabled={this.state.loading}
-                            >
-                                <option value="staff">Nhân viên</option>
-                                <option value="manager">Quản lý</option>
-                            </select>
                         </div>
 
                         <div className="col-12">
