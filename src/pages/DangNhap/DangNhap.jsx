@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './DangNhap.css';
-import { ROUTES } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants';
+import authService from '../../services/authService'; // Import authService
+import './DangNhap.css';
 
-// Wrap the Login component with withRouter HOC
-const withRouter = (Component) => {
-    return (props) => {
-        const navigate = useNavigate();
-        return <Component {...props} navigate={navigate} />;
-    };
-};
+// Wrapper function để sử dụng hook useNavigate với class component
+function LoginWithNavigate(props) {
+    const navigate = useNavigate();
+    return <Login {...props} navigate={navigate} />;
+}
 
 class Login extends Component {
     constructor(props) {
@@ -19,45 +18,64 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
+            role: 'staff',
             showPassword: false,
-            role: 'staff' // Default role
-        }
+            loading: false,
+            error: ''
+        };
     }
 
     handleOnChangeEmail = (event) => {
         this.setState({
             email: event.target.value
-        })
+        });
     }
 
     handleOnChangePassword = (event) => {
         this.setState({
             password: event.target.value
-        })
+        });
     }
 
     handleRoleChange = (event) => {
         this.setState({
             role: event.target.value
-        })
+        });
     }
 
-    handleLogin = () => {
-        // Lưu trạng thái đăng nhập
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('user', JSON.stringify({ 
-            email: this.state.email, 
-            role: this.state.role 
-        }));
-        
-        // Chuyển hướng đến trang chủ sử dụng React Router
-        this.props.navigate(ROUTES.HOME);
-    }
-    
     toggleShowPassword = () => {
         this.setState({
             showPassword: !this.state.showPassword
-        })
+        });
+    }
+
+    handleLogin = async () => {
+        this.setState({ loading: true, error: '' });
+        
+        try {
+            // Kiểm tra các trường đầu vào
+            if (!this.state.email || !this.state.password) {
+                this.setState({ error: 'Vui lòng nhập đầy đủ thông tin đăng nhập', loading: false });
+                return;
+            }
+            
+            // Gọi API đăng nhập qua authService
+            await authService.login(
+                this.state.email, 
+                this.state.password, 
+                this.state.role
+            );
+            
+            // Chuyển hướng đến trang chủ
+            this.props.navigate(ROUTES.HOME);
+        } catch (error) {
+            console.error('Lỗi đăng nhập:', error);
+            // Hiển thị thông báo lỗi
+            this.setState({ 
+                error: 'Đăng nhập thất bại. Vui lòng kiểm tra tên đăng nhập và mật khẩu.', 
+                loading: false 
+            });
+        }
     }
 
     render() {
@@ -66,13 +84,23 @@ class Login extends Component {
                 <div className="login-container">
                     <div className="login-content row"> 
                         <div className="col-12 login-text">Đăng Nhập</div>
+                        
+                        {/* Hiển thị thông báo lỗi nếu có */}
+                        {this.state.error && (
+                            <div className="col-12 error-message" style={{color: 'red', textAlign: 'center', marginBottom: '10px'}}>
+                                {this.state.error}
+                            </div>
+                        )}
+                        
                         <div className="col-12 form-group login-input">
                             <label>Email:</label>
-                            <input type="text" 
-                            className="form-control" 
-                            placeholder="Enter your email" 
-                            value={this.state.email}
-                            onChange={(event) => this.handleOnChangeEmail(event)}
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Enter your email" 
+                                value={this.state.email}
+                                onChange={this.handleOnChangeEmail}
+                                disabled={this.state.loading}
                             />
                         </div>
 
@@ -84,9 +112,13 @@ class Login extends Component {
                                     type={this.state.showPassword ? "text" : "password"}
                                     placeholder="Enter your password" 
                                     value={this.state.password}
-                                    onChange={(event) => this.handleOnChangePassword(event)}
+                                    onChange={this.handleOnChangePassword}
+                                    disabled={this.state.loading}
                                 />
-                                <span className="password-icon" onClick={this.toggleShowPassword}>
+                                <span 
+                                    className="password-icon" 
+                                    onClick={this.toggleShowPassword}
+                                >
                                     <FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />
                                 </span>
                             </div>
@@ -98,6 +130,7 @@ class Login extends Component {
                                 className="form-control"
                                 value={this.state.role}
                                 onChange={this.handleRoleChange}
+                                disabled={this.state.loading}
                             >
                                 <option value="staff">Nhân viên</option>
                                 <option value="manager">Quản lý</option>
@@ -105,13 +138,19 @@ class Login extends Component {
                         </div>
 
                         <div className="col-12">
-                            <button className="btn-login" onClick={() => { this.handleLogin()}} >Đăng Nhập</button>
+                            <button 
+                                className="btn-login" 
+                                onClick={this.handleLogin}
+                                disabled={this.state.loading}
+                            >
+                                {this.state.loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-export default withRouter(Login);
+export default LoginWithNavigate;

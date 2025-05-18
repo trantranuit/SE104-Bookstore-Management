@@ -1,15 +1,17 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants';
+import authService from '../services/authService';
 
 const PrivateRoute = ({ children }) => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-    if (!isLoggedIn) {
+  const isAuthenticated = authService.getCurrentUser() !== null;
+  
+  if (!isAuthenticated) {
+    // Nếu chưa đăng nhập, chuyển hướng tới trang đăng nhập
     return <Navigate to={ROUTES.LOGIN} replace />;
-    }
-
-    return children;
+  }
+  
+  return children;
 };
 
 export default PrivateRoute;
