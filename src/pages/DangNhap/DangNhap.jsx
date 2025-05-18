@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants';
 import authService from '../../services/authService'; // Import authService
 import './DangNhap.css';
+import logo from '../../assets/imgs/logo.svg';
 
 // Wrapper function để sử dụng hook useNavigate với class component
 function LoginWithNavigate(props) {
@@ -48,6 +49,12 @@ class Login extends Component {
         });
     }
 
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.handleLogin();
+        }
+    }
+
     handleLogin = async () => {
         this.setState({ loading: true, error: '' });
         
@@ -82,6 +89,9 @@ class Login extends Component {
             <div className="login-background">
                 <div className="login-container">
                     <div className="login-content row"> 
+                        <div className="col-12 text-center mb-4">
+                            <img src={logo} alt="Logo" className="dangnhap-logo" />
+                        </div>
                         <div className="col-12 login-text">Đăng Nhập</div>
                         
                         {/* Hiển thị thông báo lỗi nếu có */}
@@ -99,6 +109,7 @@ class Login extends Component {
                                 placeholder="Enter your username" 
                                 value={this.state.email}
                                 onChange={this.handleOnChangeEmail}
+                                onKeyPress={this.handleKeyPress}
                                 disabled={this.state.loading}
                             />
                         </div>
@@ -112,6 +123,7 @@ class Login extends Component {
                                     placeholder="Enter your password" 
                                     value={this.state.password}
                                     onChange={this.handleOnChangePassword}
+                                    onKeyPress={this.handleKeyPress}
                                     disabled={this.state.loading}
                                 />
                                 <span 

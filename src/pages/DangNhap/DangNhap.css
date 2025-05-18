@@ -1,7 +1,7 @@
 .login-background {
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, rgb(78, 151, 211) 0%, rgb(202, 205, 226) 100%);
+    background: linear-gradient(135deg, rgb(219, 163, 227) 0%, rgb(174, 181, 225) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,7 +17,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 300px;
+    height: 395px;
 }
 
 .login-content {
@@ -73,14 +73,14 @@
 .btn-login {
     width: 50%;
     display: block;
-    margin: 10px auto;
+    margin: 1.5rem auto;
     height: 40px;
     border-radius: 15px;
     outline: none;
     border: none;
     color: white;
     font-size: 16px;
-    background: linear-gradient(135deg, rgb(78, 151, 211) 0%, rgb(202, 205, 226) 100%);
+    background: linear-gradient(50deg, rgb(216, 185, 220) 0%, rgb(149, 156, 198) 100%);
 }
 
 .error-message-login {
@@ -91,4 +91,13 @@
   margin-left: 0rem;
   position: absolute;
   width: 100%;
+}
+
+.dangnhap-logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 180px;
+    width: 20%;
+    height: auto;
+    transition: transform 0.3s ease; 
 }
