@@ -9,6 +9,7 @@ function CustomerModal({ customer, onSave, onClose }) {
         debtAmount: 0
     });
     const [phoneError, setPhoneError] = useState('');
+    const [submitting, setSubmitting] = useState(false); 
 
     useEffect(() => {
         if (customer) {
@@ -34,21 +35,31 @@ function CustomerModal({ customer, onSave, onClose }) {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (phoneError) {
             return;
         }
-        onSave(formData);
+        
+        setSubmitting(true); // Set submitting to true when starting the save
+        try {
+            await onSave(formData);
+            // If we get here, the save was successful
+        } catch (error) {
+            console.error('Error saving customer:', error);
+            // Handle error if needed
+        } finally {
+            setSubmitting(false); // Set submitting to false when done
+        }
     };
 
     return (
         <div className="modal-overlay">
-            <div className="kh-modal-content">
-                <h2>{customer ? 'Sửa Khách Hàng' : 'Thêm Khách Hàng'}</h2>
+            <div className="kh-modal-content"> {/* Changed from modal-content to kh-modal-content */}
+                <h2>{customer ? 'Cập Nhật Khách Hàng' : 'Thêm Khách Hàng'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Tên khách hàng:</label>
+                        <label>Họ tên:</label>
                         <input
                             type="text"
                             name="name"
@@ -65,11 +76,11 @@ function CustomerModal({ customer, onSave, onClose }) {
                             value={formData.phone}
                             onChange={handleChange}
                             required
-                            pattern="\d*"
-                            inputMode="numeric"
+                            maxLength={10}
                         />
-                        {phoneError && <span className="error-message">{phoneError}</span>}
+                        {phoneError && <div className="error-message">{phoneError}</div>}
                     </div>
+
                     <div className="form-group">
                         <label>Email:</label>
                         <input
@@ -100,10 +111,10 @@ function CustomerModal({ customer, onSave, onClose }) {
                         />
                     </div>
                     <div className="modal-buttons">
-                        <button type="submit" disabled={!!phoneError}>
-                            {customer ? 'Cập nhật' : 'Thêm'}
+                        <button type="submit" disabled={!!phoneError || submitting}>
+                            {submitting ? 'Đang lưu...' : (customer ? 'Cập nhật' : 'Thêm')}
                         </button>
-                        <button type="button" onClick={onClose}>
+                        <button type="button" onClick={onClose} disabled={submitting}>
                             Huỷ
                         </button>
                     </div>

@@ -1,27 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
-    useReactTable,
-    getCoreRowModel,
-    getPaginationRowModel,
-} from '@tanstack/react-table';
-import './KhachHang.css';
-import customerData from './KhachHangData';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import CustomerModal from './CustomerModal';
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import customerService from "../../services/customerService";
+import CustomerModal from "./CustomerModal"; // Add this import
+import "./KhachHang.css";
 
 function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     // State for managing customers
-    const [customers, setCustomers] = React.useState(customerData);
-    const [editingCustomer, setEditingCustomer] = React.useState(null);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
-    const [customerToDelete, setCustomerToDelete] = React.useState(null);
+    const [customers, setCustomers] = useState([]);
+    const [editingCustomer, setEditingCustomer] = useState(null);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [customerToDelete, setCustomerToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     
     // Add pagination state
-    const [pagination, setPagination] = React.useState({
+    const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 10,
     });
+
+    // Fetch customers from API on component mount and when searchTerm changes
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await customerService.getAllCustomers(searchTerm);
+                
+                // Transform the API data to match your component's data structure
+                const transformedData = data.map(customer => ({
+                    id: customer.MaKhachHang.toString(),
+                    name: customer.HoTen,
+                    phone: customer.DienThoai,
+                    email: customer.Email,
+                    address: customer.DiaChi,
+                    debtAmount: customer.SoTienNo,
+                }));
+                
+                setCustomers(transformedData);
+            } catch (err) {
+                setError("Failed to load customers. Please try again.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCustomers();
+    }, [searchTerm]);
 
     const columns = [
         {
@@ -74,118 +108,156 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
     ];
 
     // Handle add customer
-    const handleAddCustomer = (newCustomer) => {
-        const lastId = customers[customers.length - 1].id;
-        const newId = 'KH' + String(parseInt(lastId.substring(2)) + 1).padStart(3, '0');
-        
-        const newCustomers = [...customers, {
-            ...newCustomer,
-            id: newId
-        }];
-        setCustomers(newCustomers);
-        setIsModalOpen(false);
+    const handleAddCustomer = async (newCustomer) => {
+        setLoading(true);
+        try {
+            const createdCustomer = await customerService.createCustomer(newCustomer);
+            
+            // Transform created customer to match your data structure
+            const transformedCustomer = {
+                id: createdCustomer.MaKhachHang.toString(),
+                name: createdCustomer.HoTen,
+                phone: createdCustomer.DienThoai,
+                email: createdCustomer.Email,
+                address: createdCustomer.DiaChi,
+                debtAmount: createdCustomer.SoTienNo,
+            };
+            
+            setCustomers(prevCustomers => [...prevCustomers, transformedCustomer]);
+            setIsModalOpen(false);
+        } catch (err) {
+            setError("Failed to add customer. Please try again.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Handle edit customer
-    const handleEditCustomer = (editedCustomer) => {
-        const updatedCustomers = customers.map(customer => 
-            customer.id === editedCustomer.id ? editedCustomer : customer
-        );
-        setCustomers(updatedCustomers);
-        setIsModalOpen(false);
-        setEditingCustomer(null);
+    // Handle update customer
+    const handleUpdateCustomer = async (updatedCustomer) => {
+        setLoading(true);
+        try {
+            const response = await customerService.updateCustomer(
+                updatedCustomer.id, 
+                updatedCustomer
+            );
+            
+            // Transform updated customer to match your data structure
+            const transformedCustomer = {
+                id: response.MaKhachHang.toString(),
+                name: response.HoTen,
+                phone: response.DienThoai,
+                email: response.Email,
+                address: response.DiaChi,
+                debtAmount: response.SoTienNo,
+            };
+            
+            setCustomers(prevCustomers => 
+                prevCustomers.map(customer => 
+                    customer.id === transformedCustomer.id ? transformedCustomer : customer
+                )
+            );
+            setIsModalOpen(false);
+            setEditingCustomer(null);
+        } catch (err) {
+            setError("Failed to update customer. Please try again.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Handle delete customer
-    const handleDeleteCustomer = (customerId) => {
-        setCustomerToDelete(customerId);
+    // Handle delete confirmation setup
+    const handleDeleteCustomer = (id) => {
+        setCustomerToDelete(id);
         setShowDeleteConfirmation(true);
     };
 
-    const confirmDelete = () => {
-        const currentPage = pagination.pageIndex;
-        const updatedCustomers = customers.filter(customer => customer.id !== customerToDelete);
-        setCustomers(updatedCustomers);
-        
-        // Calculate if we need to adjust the page number
-        const totalPages = Math.ceil(updatedCustomers.length / pagination.pageSize);
-        if (currentPage >= totalPages && totalPages > 0) {
-            setPagination(prev => ({
-                ...prev,
-                pageIndex: totalPages - 1
-            }));
+    // Handle delete confirmation
+    const confirmDelete = async () => {
+        setLoading(true);
+        try {
+            await customerService.deleteCustomer(customerToDelete);
+            setCustomers(prevCustomers => 
+                prevCustomers.filter(customer => customer.id !== customerToDelete)
+            );
+            setShowDeleteConfirmation(false);
+            setCustomerToDelete(null);
+        } catch (err) {
+            setError("Failed to delete customer. Please try again.");
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-        setShowDeleteConfirmation(false);
-        setCustomerToDelete(null);
     };
 
-    // Filter data based on search term
-    const filteredData = React.useMemo(() => {
-        if (!searchTerm) return customers;
-        
-        const searchTermLower = searchTerm.toLowerCase();
-        return customers.filter(customer => {
-            return (
-                customer.id.toLowerCase().includes(searchTermLower) ||
-                customer.name.toLowerCase().includes(searchTermLower)
-            );
-        });
-    }, [searchTerm, customers]);
-
     const table = useReactTable({
-        data: filteredData,
+        data: customers,
         columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         state: {
             pagination,
         },
         onPaginationChange: setPagination,
-        manualPagination: false,
-        autoResetPageIndex: false, // Prevent page reset on data changes
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
     });
 
     return (
-        <div className="kh-table-container">
-            <table className="khachhang-report-table">
-                <thead>
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                <th key={header.id}>
-                                    {header.isPlaceholder
-                                        ? null
-                                        : header.column.columnDef.header}
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map(row => (
-                        <tr key={row.id}>
-                            {row.getVisibleCells().map(cell => (
-                                <td key={cell.id}>
-                                    {cell.column.columnDef.cell ? 
-                                        cell.column.columnDef.cell(cell) : 
-                                        cell.getValue()}
+            <div className="kh-table-container">
+                {loading && <div className="loading-indicator">Loading...</div>}
+                {error && <div className="error-message">{error}</div>}
+                
+                <table className="khachhang-report-table">
+                    <thead>
+                        {table.getHeaderGroups().map(headerGroup => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                    <th key={header.id} className="khachhang-th">
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
+                    <tbody>
+                        {table.getRowModel().rows.map(row => (
+                            <tr key={row.id} className="khachhang-tr">
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id} className="khachhang-td">
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                        {customers.length === 0 && !loading && (
+                            <tr>
+                                <td colSpan={7} style={{ textAlign: 'center', padding: '1rem' }}>
+                                    No customers found.
                                 </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            
-            {isModalOpen && (
-                <CustomerModal
-                    customer={editingCustomer}
-                    onSave={editingCustomer ? handleEditCustomer : handleAddCustomer}
-                    onClose={() => {
-                        setIsModalOpen(false);
-                        setEditingCustomer(null);
-                    }}
-                />
-            )}
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+                
+                {isModalOpen && (
+                    <CustomerModal
+                        customer={editingCustomer}
+                        onSave={editingCustomer ? handleUpdateCustomer : handleAddCustomer}
+                        onClose={() => {
+                            setIsModalOpen(false);
+                            setEditingCustomer(null);
+                        }}
+                    />
+                )}
 
             <div className="khachhang-pagination">
                 <button
@@ -206,31 +278,31 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
                     →
                 </button>
             </div>
-
-            {/* Thêm modal confirmation ở đây */}
-            {showDeleteConfirmation && (
-                <div className="confirmation-modal">
-                    <div className="confirmation-content">
-                        <p>Bạn có chắc muốn xóa khách hàng này không?</p>
-                        <div className="confirmation-actions">
-                            <button 
-                                className="delete-button"
-                                onClick={confirmDelete}
-                            >
-                                Xóa
-                            </button>
-                            <button 
-                                className="cancel-button"
-                                onClick={() => setShowDeleteConfirmation(false)}
-                            >
-                                Huỷ
-                            </button>
+                {/* Thêm modal confirmation ở đây */}
+                {showDeleteConfirmation && (
+                    <div className="confirmation-modal">
+                        <div className="confirmation-content">
+                            <p>Bạn có chắc muốn xóa khách hàng này không?</p>
+                            <div className="confirmation-actions">
+                                <button 
+                                    className="delete-button"
+                                    onClick={confirmDelete}
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Đang xóa...' : 'Xóa'}
+                                </button>
+                                <button 
+                                    className="cancel-button"
+                                    onClick={() => setShowDeleteConfirmation(false)}
+                                    disabled={loading}
+                                >
+                                    Huỷ
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
     );
 }
-
 export default TableKhachHang;
