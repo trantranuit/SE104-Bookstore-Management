@@ -12,7 +12,14 @@ import customerService from "../../services/customerService";
 import CustomerModal from "./CustomerModal"; // Add this import
 import "./KhachHang.css";
 
-function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
+function TableKhachHang({ 
+    searchTerm, 
+    isModalOpen, 
+    setIsModalOpen, 
+    setCurrentCustomer, 
+    refreshTrigger,
+    setRefreshTrigger 
+}) {
     // State for managing customers
     const [customers, setCustomers] = useState([]);
     const [editingCustomer, setEditingCustomer] = useState(null);
@@ -27,7 +34,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         pageSize: 10,
     });
 
-    // Fetch customers from API on component mount and when searchTerm changes
+    // Fetch customers from API on component mount and when searchTerm or refreshTrigger changes
     useEffect(() => {
         const fetchCustomers = async () => {
             setLoading(true);
@@ -37,7 +44,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
                 
                 // Transform the API data to match your component's data structure
                 const transformedData = data.map(customer => ({
-                    id: customer.MaKhachHang.toString(),
+                    id: customer.MaKhachHang,  // Remove toString() to keep original ID format
                     name: customer.HoTen,
                     phone: customer.DienThoai,
                     email: customer.Email,
@@ -55,7 +62,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         };
 
         fetchCustomers();
-    }, [searchTerm]);
+    }, [searchTerm, refreshTrigger]);
 
     const columns = [
         {
@@ -93,7 +100,7 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
                         icon={faEdit} 
                         className="khachhang-edit-icon" 
                         onClick={() => {
-                            setEditingCustomer(row.original);
+                            setCurrentCustomer(row.original);
                             setIsModalOpen(true);
                         }}
                     />
@@ -133,7 +140,6 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         }
     };
 
-    // Handle update customer
     const handleUpdateCustomer = async (updatedCustomer) => {
         setLoading(true);
         try {
@@ -178,11 +184,14 @@ function TableKhachHang({ searchTerm, isModalOpen, setIsModalOpen }) {
         setLoading(true);
         try {
             await customerService.deleteCustomer(customerToDelete);
+            // Remove the customer from the local state
             setCustomers(prevCustomers => 
                 prevCustomers.filter(customer => customer.id !== customerToDelete)
             );
             setShowDeleteConfirmation(false);
             setCustomerToDelete(null);
+            // Trigger refresh to ensure data is in sync with server
+            setRefreshTrigger(prev => prev + 1);
         } catch (err) {
             setError("Failed to delete customer. Please try again.");
             console.error(err);

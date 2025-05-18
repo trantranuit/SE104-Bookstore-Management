@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import TableKhachHang from './TableKhachHang';
 import CustomerModal from './CustomerModal';
 import customerService from '../../services/customerService';
@@ -9,6 +9,7 @@ function KhachHang() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentCustomer, setCurrentCustomer] = useState(null);
     const [error, setError] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleOpenModal = () => {
         setCurrentCustomer(null); // Reset customer for adding new one
@@ -31,6 +32,8 @@ function KhachHang() {
                 await customerService.createCustomer(customerData);
             }
             setIsModalOpen(false);
+            // Trigger refresh after save
+            setRefreshTrigger(prev => prev + 1);
             return true;
         } catch (err) {
             setError("Failed to save customer. Please try again.");
@@ -38,7 +41,6 @@ function KhachHang() {
             throw err; // Rethrow to let the modal know the save failed
         }
     };
-
 
     return (
         <div className="page-container">
@@ -49,7 +51,7 @@ function KhachHang() {
                 <div className="kh-action-bar">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo mã, tên khách hàng hoặc mã hoá đơn..."
+                        placeholder="Tìm kiếm tên khách hàng hoặc số điện thoại..."
                         className="kh-search-input"
                         value={searchTerm}
                         onChange={handleSearchChange}
@@ -66,6 +68,9 @@ function KhachHang() {
                     searchTerm={searchTerm} 
                     isModalOpen={isModalOpen}
                     setIsModalOpen={setIsModalOpen}
+                    setCurrentCustomer={setCurrentCustomer}
+                    refreshTrigger={refreshTrigger}
+                    setRefreshTrigger={setRefreshTrigger}
                 />
 
                 {isModalOpen && (
