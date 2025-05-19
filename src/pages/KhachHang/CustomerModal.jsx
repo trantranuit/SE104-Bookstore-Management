@@ -41,15 +41,15 @@ function CustomerModal({ customer, onSave, onClose }) {
             return;
         }
         
-        setSubmitting(true); // Set submitting to true when starting the save
+        setSubmitting(true);
         try {
+            // Just call onSave and let parent component handle modals
             await onSave(formData);
-            // If we get here, the save was successful
+            // Parent will close this modal
         } catch (error) {
             console.error('Error saving customer:', error);
-            // Handle error if needed
         } finally {
-            setSubmitting(false); // Set submitting to false when done
+            setSubmitting(false);
         }
     };
 

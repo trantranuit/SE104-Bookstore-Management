@@ -354,3 +354,61 @@
 .cancel-button:hover {
   background-color: #5a6268;
 }
+
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+.success-modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    min-width: 350px;
+    box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
+    animation: fadeInUp 0.4s ease-out;
+    position: relative; /* Ensure it's positioned correctly */
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-modal-content h3 {
+    margin-top: 0;
+    color: #c18bd7;
+    font-size: 1.5rem;
+}
+
+.success-modal-content p {
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.success-modal-button {
+    margin-top: 1rem;
+    padding: 0.6rem 3rem;
+    background-color: #c18bd7;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.success-modal-button:hover {
+    background-color: #bd43ad;
+}

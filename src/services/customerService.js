@@ -6,9 +6,9 @@ const customerService = {
   getAllCustomers: async (searchTerm = "") => {
     let params = {};
     if (searchTerm) {
-      // Add search parameters based on backend API
-      params = { name: searchTerm };
-      params = { phone: searchTerm };
+      params = {
+        search: searchTerm, // Changed to use a single search parameter that will match either name or phone
+      };
     }
 
     try {

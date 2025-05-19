@@ -42,15 +42,21 @@ function TableKhachHang({
             try {
                 const data = await customerService.getAllCustomers(searchTerm);
                 
-                // Transform the API data to match your component's data structure
-                const transformedData = data.map(customer => ({
-                    id: customer.MaKhachHang,  // Remove toString() to keep original ID format
-                    name: customer.HoTen,
-                    phone: customer.DienThoai,
-                    email: customer.Email,
-                    address: customer.DiaChi,
-                    debtAmount: customer.SoTienNo,
-                }));
+                // Transform and filter the data locally as well for redundancy
+                const transformedData = data
+                    .map(customer => ({
+                        id: customer.MaKhachHang,
+                        name: customer.HoTen,
+                        phone: customer.DienThoai,
+                        email: customer.Email,
+                        address: customer.DiaChi,
+                        debtAmount: customer.SoTienNo,
+                    }))
+                    // Filter customer
+                    .filter(customer => 
+                        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        customer.phone.includes(searchTerm)
+                    );
                 
                 setCustomers(transformedData);
             } catch (err) {
