@@ -10,6 +10,8 @@ function KhachHang() {
     const [currentCustomer, setCurrentCustomer] = useState(null);
     const [error, setError] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     const handleOpenModal = () => {
         setCurrentCustomer(null); // Reset customer for adding new one
@@ -27,11 +29,19 @@ function KhachHang() {
             if (customerData.id) {
                 // Update existing customer
                 await customerService.updateCustomer(customerData.id, customerData);
+                setSuccessMessage("Cập nhật thông tin khách hàng thành công!");
             } else {
                 // Create new customer
                 await customerService.createCustomer(customerData);
+                setSuccessMessage("Thêm thông tin khách hàng thành công!");
             }
+            
+            // Close the edit modal immediately
             setIsModalOpen(false);
+            
+            // Show success modal 
+            setShowSuccessModal(true);
+            
             // Trigger refresh after save
             setRefreshTrigger(prev => prev + 1);
             return true;
@@ -40,6 +50,10 @@ function KhachHang() {
             console.error(err);
             throw err; // Rethrow to let the modal know the save failed
         }
+    };
+
+    const handleCloseSuccessModal = () => {
+        setShowSuccessModal(false);
     };
 
     return (
@@ -80,9 +94,21 @@ function KhachHang() {
                         onClose={() => setIsModalOpen(false)}
                     />
                 )}
+
+                {showSuccessModal && (
+                    <div className="success-modal">
+                        <div className="success-modal-content">
+                            <h3>Thông báo</h3>
+                            <p>{successMessage}</p>
+                            <button className="success-modal-button" onClick={handleCloseSuccessModal}>
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 }
 
-export default KhachHang; 
+export default KhachHang;
