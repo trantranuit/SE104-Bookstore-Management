@@ -1,33 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
-import './BaoCaoTon.css'; // Make sure this line exists and is correct
+import './BaoCaoTon.css';
 import TableTon from './TableTon';
-import baoCaoTonData from './BaoCaoTonData';
+import baoCaoTonService from '../../../services/baoCaoTonService';
 
 function BaoCaoTon() {
     const [selectedMonth, setSelectedMonth] = useState('1');
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [filteredData, setFilteredData] = useState([]); 
 
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const years = Array.from({ length: 2 }, (_, i) => 2025 - i);
-
-    // Hàm lọc dữ liệu
-    const filterData = (month, year) => {
-        const filtered = baoCaoTonData.filter(item => {
-            return item.month === parseInt(month) && item.year === parseInt(year);
-        });
-        setFilteredData(filtered);
-    };
-
-    // Tự động lọc dữ liệu khi component được tải
-    useEffect(() => {
-        filterData(selectedMonth, selectedYear);
-    }, []);
-
-    const handleSubmit = () => {
-        filterData(selectedMonth, selectedYear);
-    };
 
     return (
         <div className="page-container">
@@ -56,12 +38,11 @@ function BaoCaoTon() {
                             ))}
                         </select>
                     </div>
-                    <button className="submit-button" onClick={handleSubmit}>
+                    <button className="submit-button">
                         Hiển Thị
                     </button>
                 </div>
-                {/* Pass filtered data to TableCongNo */}
-                <TableTon data={filteredData} />
+                <TableTon month={parseInt(selectedMonth)} year={parseInt(selectedYear)} />
             </div>
         </div>
     );

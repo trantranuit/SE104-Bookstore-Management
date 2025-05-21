@@ -1,11 +1,12 @@
-import React from 'react';
-import { 
-    useReactTable, 
-    getCoreRowModel,
-    getPaginationRowModel 
-} from '@tanstack/react-table';
+import React, { useState, useEffect } from 'react';
+import { useReactTable, getCoreRowModel, getPaginationRowModel } from '@tanstack/react-table';
+import baoCaoTonService from '../../../services/baoCaoTonService';
 
-function TableTon({ data }) {
+function TableTon({ month, year }) {
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const columns = [
         {
             header: 'STT',
@@ -14,31 +15,31 @@ function TableTon({ data }) {
         },
         {
             header: 'Mã Sách',
-            accessorKey: 'id',
+            accessorKey: 'MaSach',
         },
         {
             header: 'Tên Sách',
-            accessorKey: 'name',
+            accessorKey: 'TenSach',
         },
         {
-            header: 'Tác Giả',
-            accessorKey: 'author',
+            header: 'NXB',
+            accessorKey: 'NXB',
         },
         {
-            header: 'Thể Loại',
-            accessorKey: 'category',
+            header: 'Năm XB',
+            accessorKey: 'NamXB',
         },
         {
             header: 'Tồn đầu',
-            accessorKey: 'startStock',
+            accessorKey: 'TonDau',
         },
         {
             header: 'Phát sinh',
-            accessorKey: 'change',
+            accessorKey: 'PhatSinh',
         },
         {
             header: 'Tồn cuối',
-            accessorKey: 'endStock',
+            accessorKey: 'TonCuoi',
         }
     ];
 
@@ -49,10 +50,41 @@ function TableTon({ data }) {
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
             pagination: {
-                pageSize: 10, 
+                pageSize: 10,
             },
         },
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const reports = await baoCaoTonService.getBaoCaoTon(month, year);
+                
+                if (reports && reports.length > 0) {
+                    setData(reports);
+                    setError(null);
+                } else {
+                    setData([]);
+                    setError('Không có dữ liệu cho thời gian này');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('Có lỗi xảy ra khi tải dữ liệu');
+                setData([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (month && year) {
+            fetchData();
+        }
+    }, [month, year]);
+
+    if (isLoading) return <div>Đang tải...</div>;
+    if (error) return <div>Lỗi: {error}</div>;
+    if (data.length === 0) return <div>Không có dữ liệu</div>;
 
     return (
         <>
@@ -62,10 +94,8 @@ function TableTon({ data }) {
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map(header => (
-                                    <th key={header.id} className={header.id === 'stt' ? 'stt-header' : ''}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : header.column.columnDef.header}
+                                    <th key={header.id}>
+                                        {header.isPlaceholder ? null : header.column.columnDef.header}
                                     </th>
                                 ))}
                             </tr>
@@ -75,7 +105,7 @@ function TableTon({ data }) {
                         {table.getRowModel().rows.map(row => (
                             <tr key={row.id}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id} className={cell.column.id === 'stt' ? 'stt-cell' : ''}>
+                                    <td key={cell.id}>
                                         {cell.getValue()}
                                     </td>
                                 ))}
