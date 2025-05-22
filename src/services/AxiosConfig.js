@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 // Interceptor để tự động thêm token vào mọi request
 axiosInstance.interceptors.request.use(
   (config) => {
-    const user = authService.getCurrentUser();
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.token) {
       config.headers.Authorization = `Bearer ${user.token}`;
     }

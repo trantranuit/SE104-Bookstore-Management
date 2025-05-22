@@ -46,7 +46,7 @@
 }
 
 .bct-report-table {
-    width: 92%;
+    width: 96%;
     border-collapse: collapse;
     border-spacing: 0;
     margin: 1.25rem auto;
@@ -60,15 +60,19 @@
     border: none;
     border-top: 0.06rem solid #e0e0e0;
     border-bottom: 0.06rem solid #e0e0e0;
-    padding: 0.8rem; 
+    padding: 0.8rem; /* Đặt giống nhau */
     text-align: center;
     word-break: break-word;
     min-width: 120px;
+    font-size: 0.8rem;
+    height: 1.5rem;  
 }
+
 
 .bct-report-table tr {
     border: none;
     border-bottom: 1px solid #e0e0e0;
+    height: 40px;  /* Thêm chiều cao cố định cho hàng */
 }
 
 .bct-report-table th {
@@ -79,6 +83,7 @@
     cursor: pointer;
     transition: background-color 0.2s;
     border-top: 0.06rem solid #e0e0e0;
+    height:3rem; 
 }
 
 .bct-report-table tr:last-child td {

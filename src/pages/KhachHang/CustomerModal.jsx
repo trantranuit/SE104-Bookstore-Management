@@ -6,7 +6,7 @@ function CustomerModal({ customer, onSave, onClose }) {
         phone: '',
         email: '',
         address: '',
-        debtAmount: 0
+        debtAmount: 0  // Will always be 0 for new customers
     });
     const [phoneError, setPhoneError] = useState('');
     const [submitting, setSubmitting] = useState(false); 
@@ -108,6 +108,9 @@ function CustomerModal({ customer, onSave, onClose }) {
                             onChange={handleChange}
                             required
                             min="0"
+                            disabled={true} // Always disable this field
+                            className="disabled-input" // Add this class for styling
+                            style={{ backgroundColor: '#f0f0f0' }} // Make it look disabled
                         />
                     </div>
                     <div className="modal-buttons">

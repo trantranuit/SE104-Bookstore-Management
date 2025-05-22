@@ -92,3 +92,11 @@
   position: absolute;
   width: 100%;
 }
+
+.dangnhap-logo {
+    display: block;
+    margin: 0 auto;
+    width: 180px; 
+    max-width: 22%; 
+    height: auto;
+}
