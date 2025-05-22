@@ -8,7 +8,7 @@ const baoCaoTonService = {
     try {
       console.log(`Fetching report for month ${month}, year ${year}`);
 
-      // Use axiosInstance for authenticated requests
+      // Gọi API baocaoton
       const reportResponse = await axiosInstance.get(`${BASE_URL}/baocaoton/`);
       console.log("API Response (baocaoton):", reportResponse.data);
 
@@ -17,6 +17,7 @@ const baoCaoTonService = {
         return [];
       }
 
+      // Lọc báo cáo theo tháng và năm
       const filteredReports = reportResponse.data.filter(
         (report) => report.Thang === month && report.Nam === year
       );
@@ -26,17 +27,37 @@ const baoCaoTonService = {
         return [];
       }
 
+      // Gọi API ctbcton
       const detailsResponse = await axiosInstance.get(`${BASE_URL}/ctbcton/`);
       console.log("API Response (ctbcton):", detailsResponse.data);
 
       let allDetails = [];
 
+      // Xử lý chi tiết từ baocaoton
       for (const report of filteredReports) {
         if (report.chitiet && Array.isArray(report.chitiet)) {
           for (const item of report.chitiet) {
+            // Lấy TenSach từ API /dausach/{MaDauSach}
+            let tenSach = `Sách ${
+              item.MaSach?.MaDauSach || item.MaSach?.MaSach
+            }`; // Giá trị mặc định
+            try {
+              const dauSachResponse = await axiosInstance.get(
+                `${BASE_URL}/dausach/${item.MaSach?.MaDauSach}/`
+              );
+              if (dauSachResponse.data && dauSachResponse.data.TenSach) {
+                tenSach = dauSachResponse.data.TenSach;
+              }
+            } catch (dauSachError) {
+              console.error(
+                `Error fetching DauSach for MaDauSach ${item.MaSach?.MaDauSach}:`,
+                dauSachError
+              );
+            }
+
             allDetails.push({
               MaSach: item.MaSach?.MaSach || "N/A",
-              TenSach: `Sách ${item.MaSach?.MaDauSach || item.MaSach?.MaSach}`,
+              TenSach: tenSach,
               NXB: item.MaSach?.NXB || "Không có",
               NamXB: item.MaSach?.NamXB || 0,
               TonDau: item.TonDau || 0,
@@ -47,6 +68,7 @@ const baoCaoTonService = {
         }
       }
 
+      // Xử lý chi tiết từ ctbcton
       if (detailsResponse.data && Array.isArray(detailsResponse.data)) {
         for (const item of detailsResponse.data) {
           const matchingReport = filteredReports.find((report) =>
@@ -55,9 +77,27 @@ const baoCaoTonService = {
             )
           );
           if (matchingReport) {
+            // Lấy TenSach từ API /dausach/{MaDauSach}
+            let tenSach = `Sách ${
+              item.MaSach?.MaDauSach || item.MaSach?.MaSach
+            }`; // Giá trị mặc định
+            try {
+              const dauSachResponse = await axiosInstance.get(
+                `${BASE_URL}/dausach/${item.MaSach?.MaDauSach}/`
+              );
+              if (dauSachResponse.data && dauSachResponse.data.TenSach) {
+                tenSach = dauSachResponse.data.TenSach;
+              }
+            } catch (dauSachError) {
+              console.error(
+                `Error fetching DauSach for MaDauSach ${item.MaSach?.MaDauSach}:`,
+                dauSachError
+              );
+            }
+
             allDetails.push({
               MaSach: item.MaSach?.MaSach || "N/A",
-              TenSach: `Sách ${item.MaSach?.MaDauSach || item.MaSach?.MaSach}`,
+              TenSach: tenSach,
               NXB: item.MaSach?.NXB || "Không có",
               NamXB: item.MaSach?.NamXB || 0,
               TonDau: item.TonDau || 0,

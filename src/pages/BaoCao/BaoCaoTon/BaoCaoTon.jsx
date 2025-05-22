@@ -5,7 +5,7 @@ import TableTon from './TableTon';
 import baoCaoTonService from '../../../services/baoCaoTonService';
 
 function BaoCaoTon() {
-    const [selectedMonth, setSelectedMonth] = useState('1');
+    const [selectedMonth, setSelectedMonth] = useState('4');
     const [selectedYear, setSelectedYear] = useState('2025');
 
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
