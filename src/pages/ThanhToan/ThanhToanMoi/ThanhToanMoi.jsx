@@ -2,23 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaCartPlus } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
-import { useNavigate, useLocation } from 'react-router-dom'; // Import useNavigate and useLocation for navigation
-import bookData from './ThanhToanMoiData';
-import customerData from './CustomerData'; // Mock customer data
-import employeeData from './EmployeeData'; // Mock employee data
+import { useNavigate, useLocation } from 'react-router-dom';
+import thanhToanMoiApi from '../../../services/thanhToanMoiApi';
 import '../../../styles/PathStyles.css';
 import './ThanhToanMoi.css';
 
 function ThanhToanMoi() {
-    const navigate = useNavigate(); // Initialize useNavigate
-    const location = useLocation(); // Access passed state
-    const invoice = location.state?.invoice; // Retrieve invoice data if available
+    const navigate = useNavigate();
+    const location = useLocation();
+    const invoice = location.state?.invoice;
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [books, setBooks] = useState(() => {
-        const storedBooks = JSON.parse(localStorage.getItem('books') || '[]');
-        return storedBooks.length > 0 ? storedBooks : bookData;
-    });
+    const [books, setBooks] = useState([]);
     const [cart, setCart] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const booksPerPage = 5;
@@ -31,16 +26,16 @@ function ThanhToanMoi() {
         debt: 0,
     });
     const [employeeInfo, setEmployeeInfo] = useState({
-        id: '', // Employee ID is not passed in the invoice
+        id: '',
         name: '',
     });
     const [finalInvoice, setFinalInvoice] = useState(false);
     const invoiceRef = useRef(null);
     const finalInvoiceRef = useRef(null);
     const [showNotification, setShowNotification] = useState(false);
-    const [showSaveNotification, setShowSaveNotification] = useState(false); // State for save notification modal
-    const [showEmployeeNotification, setShowEmployeeNotification] = useState(false); // State for employee info notification
-    const [showCustomerNotification, setShowCustomerNotification] = useState(false); // State for customer info notification
+    const [showSaveNotification, setShowSaveNotification] = useState(false);
+    const [showEmployeeNotification, setShowEmployeeNotification] = useState(false);
+    const [showCustomerNotification, setShowCustomerNotification] = useState(false);
     const [tienKhachTra, setTienKhachTra] = useState('');
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
@@ -50,13 +45,56 @@ function ThanhToanMoi() {
     };
     const parseNumber = (value) => value.replace(/,/g, '');
 
+    // Lấy danh sách sách từ API
+    useEffect(() => {
+        const fetchBooks = async () => {
+            try {
+                // Lấy tất cả dữ liệu cần thiết
+                const [sachList, dauSachList, tacGiaList] = await Promise.all([
+                    thanhToanMoiApi.getAllBooks(),
+                    thanhToanMoiApi.getAllDauSach(),
+                    thanhToanMoiApi.getAllTacGia()
+                ]);
+                // Map sách với tên sách và tác giả
+                const booksData = sachList.map(sach => {
+                    const dauSach = dauSachList.find(ds => ds.MaDauSach === sach.MaDauSach);
+                    let tenSach = dauSach ? dauSach.TenSach : '';
+                    // MaTG có thể là mảng, lấy tên tác giả đầu tiên hoặc gộp nhiều tên
+                    let tacGia = '';
+                    if (dauSach && Array.isArray(dauSach.MaTG)) {
+                        tacGia = dauSach.MaTG
+                            .map(maTG => {
+                                const tg = tacGiaList.find(t => t.MaTG === maTG);
+                                return tg ? tg.TenTG : '';
+                            })
+                            .filter(Boolean)
+                            .join(', ');
+                    }
+                    return {
+                        maSach: String(sach.MaSach),
+                        tenSach,
+                        tacGia,
+                        nhaXuatBan: sach.NXB,
+                        donGia: 0, // Nếu cần lấy giá, phải lấy từ bảng khác (cthoadon)
+                        soLuongTon: sach.SLTon,
+                        maDauSach: sach.MaDauSach
+                    };
+                });
+                setBooks(booksData);
+            } catch (error) {
+                setBooks([]);
+            }
+        };
+        fetchBooks();
+    }, [showSaveNotification]);
+
     useEffect(() => {
         // Nếu có invoice (sửa hóa đơn), set lại cart và thông tin khách/nhân viên
         if (invoice) {
             setCart(
                 invoice.danhSachSach.map(sach => ({
-                    maSach: sach.maSach,
-                    tenSach: sach.tenSach,
+                    maSach: sach.ten_sach,
+                    tenSach: sach.tac_gia,
                     soLuongMua: sach.soLuong,
                     donGia: sach.donGia,
                 }))
@@ -155,37 +193,45 @@ function ThanhToanMoi() {
     const totalQuantity = cart.reduce((sum, item) => sum + item.soLuongMua, 0);
     const totalPrice = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
 
-    const handleCustomerIdChange = (e) => {
+    const handleCustomerIdChange = async (e) => {
         const customerId = e.target.value;
         setCustomerInfo({ ...customerInfo, id: customerId });
 
-        // Fetch customer information based on the entered ID
-        const customer = customerData.find(c => c.id === customerId);
-        if (customer) {
+        if (!customerId) {
+            setCustomerInfo({ id: '', name: '', phone: '', email: '', debt: 0 });
+            return;
+        }
+
+        try {
+            const customer = await thanhToanMoiApi.getCustomerById(customerId);
             setCustomerInfo({
-                id: customer.id,
-                name: customer.name,
-                phone: customer.phone,
-                email: customer.email,
-                debt: customer.debt,
+                id: String(customer.MaKhachHang),
+                name: customer.HoTen,
+                phone: customer.DienThoai,
+                email: customer.Email,
+                debt: customer.SoTienNo,
             });
-        } else {
+        } catch {
             setCustomerInfo({ id: customerId, name: '', phone: '', email: '', debt: 0 });
         }
     };
 
-    const handleEmployeeIdChange = (e) => {
+    const handleEmployeeIdChange = async (e) => {
         const employeeId = e.target.value;
         setEmployeeInfo({ ...employeeInfo, id: employeeId });
 
-        // Fetch employee information based on the entered ID
-        const employee = employeeData.find(emp => emp.id === employeeId);
-        if (employee) {
+        if (!employeeId) {
+            setEmployeeInfo({ id: '', name: '' });
+            return;
+        }
+
+        try {
+            const employee = await thanhToanMoiApi.getUserById(employeeId);
             setEmployeeInfo({
-                id: employee.id,
-                name: employee.name,
+                id: String(employee.id),
+                name: `${employee.last_name} ${employee.first_name}`,
             });
-        } else {
+        } catch {
             setEmployeeInfo({ id: employeeId, name: '' });
         }
     };
@@ -227,7 +273,7 @@ function ThanhToanMoi() {
         setTienKhachTraErrorMsg('');
     };
 
-    const handleSaveInvoice = () => {
+    const handleSaveInvoice = async () => {
         // Không cho lưu nếu chưa nhập tiền khách trả hoặc có lỗi nhập tiền khách trả
         if (!tienKhachTra) {
             setTienKhachTraError(true);
@@ -261,64 +307,21 @@ function ThanhToanMoi() {
             })),
         };
 
-        // Update the invoice in localStorage
-        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-        const updatedInvoices = existingInvoices.map((inv) =>
-            inv.maHoaDon === updatedInvoice.maHoaDon ? updatedInvoice : inv
-        );
-        if (!existingInvoices.some(inv => inv.maHoaDon === updatedInvoice.maHoaDon)) {
-            updatedInvoices.push(updatedInvoice); // Add new invoice if it doesn't exist
-        }
-        localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
-
-        // Update customer debt in localStorage (lưu số nợ sau thanh toán)
-        const updatedCustomers = customerData.map(customer =>
-            customer.id === customerInfo.id
-                ? { ...customer, debt: tienNoSauThanhToan }
-                : customer
-        );
-        localStorage.setItem('customers', JSON.stringify(updatedCustomers));
-        customerData.splice(0, customerData.length, ...updatedCustomers);
-
-        // Cập nhật lại số lượng tồn của những sách đã thanh toán
-        const updatedBooks = bookData.map(book => {
-            const cartItem = cart.find(item => item.maSach === book.maSach);
-            if (cartItem) {
-                return {
-                    ...book,
-                    soLuongTon: Math.max(0, (book.soLuongTon || 0) - cartItem.soLuongMua)
-                };
-            }
-            return book;
-        });
-
-        // Lưu lại danh sách sách mới vào localStorage để các lần load sau sẽ lấy số lượng tồn mới
-        localStorage.setItem('books', JSON.stringify(updatedBooks));
-        // Cập nhật lại state books để bảng danh sách sách hiện số lượng tồn mới
-        setBooks(updatedBooks);
-
-        // Ghi lại vào file ThanhToanMoiData.js (chỉ hoạt động nếu môi trường hỗ trợ Node.js, không hoạt động trên trình duyệt)
+        // Gọi API tạo hóa đơn
         try {
-            // eslint-disable-next-line
-            const fs = window.require ? window.require('fs') : null;
-            const path = window.require ? window.require('path') : null;
-            if (fs && path) {
-                const dataPath = path.resolve(__dirname, './ThanhToanMoiData.js');
-                const fileContent =
-                    `// filepath: f:\\UIT\\Courses\\SE104 - NMCNPM\\SE104-Bookstore-Management\\SE104-Bookstore-Management\\src\\pages\\ThanhToan\\ThanhToanMoi\\ThanhToanMoiData.js
-const books = ${JSON.stringify(updatedBooks, null, 4)};
-export default books;
-`;
-                fs.writeFileSync(dataPath, fileContent, 'utf8');
+            await thanhToanMoiApi.createInvoice(updatedInvoice);
+            // Cập nhật số lượng tồn cho từng sách trong cart
+            for (const item of cart) {
+                const newStock = Math.max(0, (item.soLuongTon || 0) - item.soLuongMua);
+                await thanhToanMoiApi.updateBookStock(item.maSach, newStock);
             }
-        } catch (e) {
-            // Ignore if not possible (browser environment)
+            setShowSaveNotification(true);
+            setTienKhachTra('');
+            setTienKhachTraError(false);
+            setTienKhachTraErrorMsg('');
+        } catch (err) {
+            alert('Có lỗi khi lưu hóa đơn!');
         }
-
-        setShowSaveNotification(true); // Show the save notification modal
-        setTienKhachTra(''); // Xóa giá trị ô input sau khi lưu hóa đơn
-        setTienKhachTraError(false);
-        setTienKhachTraErrorMsg('');
     };
 
     const handleCloseNotification = () => {
@@ -624,16 +627,6 @@ export default books;
                             <p><strong>Tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
                             <p><strong>Email:</strong> {customerInfo.email}</p>
-                            <p>
-                                <strong>Số tiền nợ trước khi lập hóa đơn:</strong> {
-                                    (() => {
-                                        const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
-                                        const tienKhachTraNumber = parseInt(parseNumber(tienKhachTra) || '0');
-                                        const tienNoSauThanhToan = customerInfo.debt + Math.max(0, totalInvoiceAmount - tienKhachTraNumber);
-                                        return (tienNoSauThanhToan - Math.max(0, totalInvoiceAmount - tienKhachTraNumber)).toLocaleString() + 'đ';
-                                    })()
-                                }
-                            </p>
                         </div>
                     </div>
 
@@ -705,14 +698,6 @@ export default books;
                                 {tienKhachTraErrorMsg}
                             </p>
                         )}
-                        <p>
-                            <strong>Tổng số tiền nợ sau hóa đơn:</strong> {
-                                (
-                                    customerInfo.debt +
-                                    Math.max(0, totalPrice - (parseInt(parseNumber(tienKhachTra) || '0')))
-                                ).toLocaleString()
-                            }đ
-                        </p>
                     </div>
 
                     {/* Div 5: Save Invoice Button */}

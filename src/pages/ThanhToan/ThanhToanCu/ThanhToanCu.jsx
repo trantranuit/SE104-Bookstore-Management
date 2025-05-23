@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/PathStyles.css';
-import employeeData from '../ThanhToanMoi/EmployeeData';
-import customerData from '../ThanhToanMoi/CustomerData';
 import './ThanhToanCu.css';
 import { useNavigate, useLocation } from 'react-router-dom';
+import thanhToanCuApi from '../../../services/thanhToanCuApi';
 
 function ThanhToanCu() {
     const navigate = useNavigate();
@@ -21,9 +20,11 @@ function ThanhToanCu() {
     const [savedReceiptId, setSavedReceiptId] = useState(''); // State for saved receipt ID
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
+    const [customerData, setCustomerData] = useState([]);
+    const [employeeData, setEmployeeData] = useState([]);
 
-    const customerInfo = customerData.find(customer => customer.id === maKhachHang);
-    const employeeInfo = employeeData.find(employee => employee.id === maNhanVien);
+    const customerInfo = customerData.find(customer => String(customer.MaKhachHang) === String(maKhachHang));
+    const employeeInfo = employeeData.find(employee => String(employee.id) === String(maNhanVien));
 
     // Define getNewMaPhieu function
     const getNewMaPhieu = () => {
@@ -47,6 +48,24 @@ function ThanhToanCu() {
         }
     }, [isEditing, receipt]);
 
+    useEffect(() => {
+        // Fetch customer data
+        thanhToanCuApi.getAllCustomers()
+            .then(data => setCustomerData(data))
+            .catch(err => {
+                console.error('Lỗi khi lấy khách hàng:', err);
+                setCustomerData([]);
+            });
+
+        // Fetch employee data
+        thanhToanCuApi.getAllUsers()
+            .then(data => setEmployeeData(data))
+            .catch(err => {
+                console.error('Lỗi khi lấy nhân viên:', err);
+                setEmployeeData([]);
+            });
+    }, []);
+
     const handleMaKhachHangChange = (e) => {
         const value = e.target.value;
         setMaKhachHang(value);
@@ -55,7 +74,7 @@ function ThanhToanCu() {
     const handleTienKhachTraChange = (e) => {
         const rawValue = e.target.value.replace(/\D/g, '');
         // Kiểm tra nếu nhập lớn hơn số tiền nợ thì báo lỗi
-        if (customerInfo?.debt && parseInt(rawValue || '0') > customerInfo.debt) {
+        if (customerInfo?.SoTienNo && parseInt(rawValue || '0') > customerInfo.SoTienNo) {
             setTienKhachTraError(true);
             setTienKhachTraErrorMsg('Số tiền trả không được lớn hơn số tiền khách đang nợ!');
         } else {
@@ -86,12 +105,12 @@ function ThanhToanCu() {
         const newPayment = {
             maPhieuThu,
             maKhachHang,
-            tenKhachHang: customerInfo?.name || '',
-            soDienThoai: customerInfo?.phone || '',
-            diaChiEmail: customerInfo?.email || '',
-            soTienNo: customerInfo?.debt || 0,
+            tenKhachHang: customerInfo?.HoTen || '',
+            soDienThoai: customerInfo?.DienThoai || '',
+            diaChiEmail: customerInfo?.Email || '',
+            soTienNo: customerInfo?.SoTienNo || 0,
             soTienTra: parseInt(tienKhachTra),
-            soTienConLai: customerInfo?.debt - parseInt(tienKhachTra),
+            soTienConLai: customerInfo?.SoTienNo - parseInt(tienKhachTra),
             maNhanVien,
             nguoiLapPhieu: employeeInfo?.name || '',
             ngayLap,
@@ -109,12 +128,12 @@ function ThanhToanCu() {
 
         // Update customer's debt in customerData and localStorage
         const updatedCustomers = customerData.map(customer => {
-            if (customer.id === maKhachHang) {
-                const previousDebt = customer.debt || 0;
+            if (String(customer.MaKhachHang) === String(maKhachHang)) {
+                const previousDebt = customer.SoTienNo || 0;
                 const newDebt = isEditing
                     ? previousDebt + (receipt?.soTienTra || 0) - parseInt(tienKhachTra) // Adjust debt for editing
                     : previousDebt - parseInt(tienKhachTra); // Subtract payment for new receipt
-                return { ...customer, debt: newDebt };
+                return { ...customer, SoTienNo: newDebt };
             }
             return customer;
         });
@@ -124,6 +143,16 @@ function ThanhToanCu() {
 
         // Save updated customers to localStorage
         localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+
+        // Update debt in the API
+        thanhToanCuApi.updateCustomerDebt(maKhachHang, { SoTienNo: updatedCustomers.find(c => String(c.MaKhachHang) === String(maKhachHang)).SoTienNo });
+
+        // Save receipt to the API
+        if (isEditing) {
+            thanhToanCuApi.updateReceipt(maPhieuThu, newPayment);
+        } else {
+            thanhToanCuApi.createReceipt(newPayment);
+        }
 
         setSavedReceiptId(maPhieuThu); // Set the saved receipt ID
         setShowSuccessModal(true); // Show success modal
@@ -171,7 +200,7 @@ function ThanhToanCu() {
                         <div className="line-ttc">
                             <span className="label-name-ttc">Người lập phiếu</span>
                             <span className="colon-ttc">:</span>
-                            <span className="value-ttc">{employeeInfo?.name || ''}</span>
+                            <span className="value-ttc">{employeeInfo ? `${employeeInfo.last_name} ${employeeInfo.first_name}` : ''}</span>
                         </div>
                         <div className="line-ttc">
                             <span className="label-name-ttc">Mã phiếu thu</span>
@@ -204,17 +233,17 @@ function ThanhToanCu() {
                         <div className="line-ttc">
                             <span className="label-name-ttc">Tên khách hàng</span>
                             <span className="colon-ttc">:</span>
-                            <span className="value-ttc">{customerInfo?.name || ''}</span>
+                            <span className="value-ttc">{customerInfo?.HoTen || ''}</span>
                         </div>
                         <div className="line-ttc">
                             <span className="label-name-ttc">Số điện thoại</span>
                             <span className="colon-ttc">:</span>
-                            <span className="value-ttc">{customerInfo?.phone || ''}</span>
+                            <span className="value-ttc">{customerInfo?.DienThoai || ''}</span>
                         </div>
                         <div className="line-ttc">
                             <span className="label-name-ttc">Địa chỉ email</span>
                             <span className="colon-ttc">:</span>
-                            <span className="value-ttc">{customerInfo?.email || ''}</span>
+                            <span className="value-ttc">{customerInfo?.Email || ''}</span>
                         </div>
                     </div>
                 </div>
@@ -224,8 +253,8 @@ function ThanhToanCu() {
                         <span className="label-name-ttc">Số tiền khách nợ</span>
                         <span className="colon-ttc">:</span>
                         <span className="value-ttc">
-                            {(customerInfo && typeof customerInfo.debt === 'number')
-                                ? customerInfo.debt.toLocaleString('vi-VN').replace(/\./g, ',') + ' VNĐ'
+                            {(customerInfo && typeof customerInfo.SoTienNo === 'number')
+                                ? customerInfo.SoTienNo.toLocaleString('vi-VN').replace(/\./g, ',') + ' VNĐ'
                                 : '0 VNĐ'}
                         </span>
                     </div>
@@ -240,10 +269,10 @@ function ThanhToanCu() {
                                     value={
                                         tienKhachTra
                                             ? (
-                                                customerInfo?.debt === 0
+                                                customerInfo?.SoTienNo === 0
                                                     ? '0'
-                                                    : (customerInfo?.debt && parseInt(tienKhachTra.replace(/\D/g, '')) > customerInfo.debt
-                                                        ? customerInfo.debt.toLocaleString('vi-VN').replace(/\./g, ',')
+                                                    : (customerInfo?.SoTienNo && parseInt(tienKhachTra.replace(/\D/g, '')) > customerInfo.SoTienNo
+                                                        ? customerInfo.SoTienNo.toLocaleString('vi-VN').replace(/\./g, ',')
                                                         : parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN').replace(/\./g, ',')
                                                     )
                                             )
@@ -268,8 +297,8 @@ function ThanhToanCu() {
                         <span className="label-name-ttc">Còn nợ</span>
                         <span className="colon-ttc">:</span>
                         <span className="value-ttc">
-                            {customerInfo?.debt && tienKhachTra
-                                ? (customerInfo.debt - parseInt(tienKhachTra)).toLocaleString() + ' VNĐ'
+                            {customerInfo?.SoTienNo && tienKhachTra
+                                ? (customerInfo.SoTienNo - parseInt(tienKhachTra)).toLocaleString() + ' VNĐ'
                                 : ''}
                         </span>
                     </div>

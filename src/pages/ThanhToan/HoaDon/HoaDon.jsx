@@ -132,15 +132,6 @@ function HoaDon() {
                                 <p><strong>Tên Khách Hàng:</strong> {selectedInvoice.tenKhachHang}</p>
                                 <p><strong>Số Điện Thoại:</strong> {selectedInvoice.sdt}</p>
                                 <p><strong>Email:</strong> {selectedInvoice.email}</p>
-                                <p>
-                                    <strong>Số Nợ Trước Khi Lập Hóa Đơn:</strong>{' '}
-                                    {(
-                                        (selectedInvoice.soNo -
-                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
-                                            + (selectedInvoice.tienKhachTra || 0)
-                                        ).toLocaleString()
-                                    )} VNĐ
-                                </p>
                             </div>
                         </div>
                         <h3 className="section-header-thd">Danh Sách Sách Đã Mua</h3>
@@ -176,19 +167,6 @@ function HoaDon() {
                                     : selectedInvoice.tienKhachTra === 0
                                         ? '0 VNĐ'
                                         : 'Chưa có'}
-                            </p>
-                            <p>
-                                <strong>Tổng Số Nợ Sau Khi Lập Hóa Đơn:</strong> {
-                                    (
-                                        (selectedInvoice.soNo -
-                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
-                                        ) +
-                                        Math.max(
-                                            0,
-                                            selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0)
-                                        )
-                                    ).toLocaleString()
-                                } VNĐ
                             </p>
                         </div>
                         <div className="modal-actions-thd">

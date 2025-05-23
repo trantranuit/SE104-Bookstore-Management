@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { PiNotePencil } from "react-icons/pi"; // Import the icon
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { PiNotePencil } from "react-icons/pi";
+import { useNavigate } from 'react-router-dom';
 import '../../../styles/PathStyles.css';
-import './PhieuThuTien.css'; // Ensure this CSS file is imported
+import './PhieuThuTien.css';
+import phieuThuTienApi from '../../../services/phieuThuTienApi';
 
 function PhieuThuTien() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,17 +12,29 @@ function PhieuThuTien() {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showDeleteNotification, setShowDeleteNotification] = useState(false);
     const [deletedReceiptId, setDeletedReceiptId] = useState('');
+    const [customerData, setCustomerData] = useState([]);
+    const [employeeData, setEmployeeData] = useState([]);
 
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const storedReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
-        setReceipts(storedReceipts); // Load receipts from localStorage
+        // Lấy danh sách phiếu thu từ API
+        phieuThuTienApi.getAllReceipts()
+            .then(data => setReceipts(data))
+            .catch(() => setReceipts([]));
+        // Lấy danh sách khách hàng
+        phieuThuTienApi.getAllCustomers()
+            .then(data => setCustomerData(data))
+            .catch(() => setCustomerData([]));
+        // Lấy danh sách nhân viên
+        phieuThuTienApi.getAllUsers()
+            .then(data => setEmployeeData(data))
+            .catch(() => setEmployeeData([]));
     }, []);
 
     const filteredReceipts = receipts.filter(receipt =>
-        receipt.maPhieuThu.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        receipt.ngayLap.includes(searchTerm)
+        String(receipt.MaPhieuThu).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (receipt.NgayThu || '').includes(searchTerm)
     );
 
     const handleViewReceipt = (index) => {
@@ -33,8 +46,8 @@ function PhieuThuTien() {
     };
 
     const handleEditReceipt = () => {
-        const selectedReceipt = receipts[selectedReceiptIndex];
-        navigate('/thanhtoan/cu', { state: { receipt: selectedReceipt, isEditing: true } }); // Pass isEditing flag
+        const selectedReceipt = filteredReceipts[selectedReceiptIndex];
+        navigate('/thanhtoan/cu', { state: { receipt: selectedReceipt, isEditing: true } });
     };
 
     const generateNewReceiptId = () => {
@@ -82,6 +95,11 @@ function PhieuThuTien() {
 
     const selectedReceipt = selectedReceiptIndex !== null ? filteredReceipts[selectedReceiptIndex] : null;
 
+    // Hàm lấy thông tin khách hàng từ MaKH
+    const getCustomerInfo = (maKH) => customerData.find(c => String(c.MaKhachHang) === String(maKH));
+    // Hàm lấy thông tin nhân viên từ NguoiThu
+    const getEmployeeInfo = (nguoiThu) => employeeData.find(e => String(e.id) === String(nguoiThu));
+
     return (
         <div className="page-container">
             <h1 className="page-title">Danh Sách Phiếu Thu Tiền</h1>
@@ -100,21 +118,21 @@ function PhieuThuTien() {
                         <thead>
                             <tr>
                                 <th>Mã Phiếu</th>
-                                <th>Người Lập</th>
                                 <th>Mã Khách Hàng</th>
-                                <th>Ngày Lập</th>
+                                <th>Ngày Thu</th>
                                 <th>Số Tiền Thu</th>
+                                <th>Người Thu</th>
                                 <th>Hành Động</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredReceipts.map((receipt, index) => (
-                                <tr key={receipt.maPhieuThu}>
-                                    <td>{receipt.maPhieuThu || 'N/A'}</td>
-                                    <td>{receipt.nguoiLapPhieu || 'N/A'}</td>
-                                    <td>{receipt.maKhachHang || 'N/A'}</td>
-                                    <td>{receipt.ngayLap || 'N/A'}</td>
-                                    <td>{receipt.soTienTra?.toLocaleString() || '0'}đ</td> {/* Add nullish check */}
+                                <tr key={receipt.MaPhieuThu}>
+                                    <td>{receipt.MaPhieuThu || 'N/A'}</td>
+                                    <td>{receipt.MaKH || 'N/A'}</td>
+                                    <td>{receipt.NgayThu || 'N/A'}</td>
+                                    <td>{receipt.SoTienThu ? Number(receipt.SoTienThu).toLocaleString() : '0'}đ</td>
+                                    <td>{receipt.NguoiThu || 'N/A'}</td>
                                     <td>
                                         <button
                                             className="icon-button-ptt"
@@ -137,16 +155,40 @@ function PhieuThuTien() {
                         <div className="modal-columns-ptt">
                             <div className="modal-left-ptt" style={{ textAlign: 'left' }}>
                                 <h3 className="section-header-ptt">Thông Tin Phiếu Thu</h3>
-                                <p><strong>Ngày Lập:</strong> {selectedReceipt.ngayLap || 'N/A'}</p>
-                                <p><strong>Mã Phiếu Thu:</strong> {selectedReceipt.maPhieuThu || 'N/A'}</p>
-                                <p><strong>Người Lập Phiếu:</strong> {selectedReceipt.nguoiLapPhieu || 'N/A'}</p>
+                                <p><strong>Ngày Thu:</strong> {selectedReceipt.NgayThu || 'N/A'}</p>
+                                <p><strong>Mã Phiếu Thu:</strong> {selectedReceipt.MaPhieuThu || 'N/A'}</p>
+                                <p>
+                                    <strong>Mã Nhân Viên:</strong> {selectedReceipt.NguoiThu || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Họ Tên Nhân Viên:</strong> {(() => {
+                                        const emp = getEmployeeInfo(selectedReceipt.NguoiThu);
+                                        return emp ? `${emp.last_name} ${emp.first_name}` : 'N/A';
+                                    })()}
+                                </p>
                             </div>
                             <div className="modal-right-ptt">
                                 <h3 className="section-header-ptt">Thông Tin Khách Hàng</h3>
-                                <p><strong>Mã Khách Hàng:</strong> {selectedReceipt.maKhachHang || 'N/A'}</p>
-                                <p><strong>Tên Khách Hàng:</strong> {selectedReceipt.tenKhachHang || 'N/A'}</p>
-                                <p><strong>Số Tiền Thu:</strong> {selectedReceipt.soTienTra?.toLocaleString() || '0'}đ</p> {/* Add nullish check */}
-                                <p><strong>Còn Nợ:</strong> {selectedReceipt.soTienConLai?.toLocaleString() || '0'}đ</p> {/* Add nullish check */}
+                                <p><strong>Mã Khách Hàng:</strong> {selectedReceipt.MaKH || 'N/A'}</p>
+                                <p>
+                                    <strong>Họ Tên:</strong> {(() => {
+                                        const cus = getCustomerInfo(selectedReceipt.MaKH);
+                                        return cus ? cus.HoTen : 'N/A';
+                                    })()}
+                                </p>
+                                <p>
+                                    <strong>Số Điện Thoại:</strong> {(() => {
+                                        const cus = getCustomerInfo(selectedReceipt.MaKH);
+                                        return cus ? cus.DienThoai : 'N/A';
+                                    })()}
+                                </p>
+                                <p>
+                                    <strong>Email:</strong> {(() => {
+                                        const cus = getCustomerInfo(selectedReceipt.MaKH);
+                                        return cus ? cus.Email : 'N/A';
+                                    })()}
+                                </p>
+                                <p><strong>Số Tiền Thu:</strong> {selectedReceipt.SoTienThu ? Number(selectedReceipt.SoTienThu).toLocaleString() : '0'}đ</p>
                             </div>
                         </div>
                         <div className="modal-actions-ptt">
