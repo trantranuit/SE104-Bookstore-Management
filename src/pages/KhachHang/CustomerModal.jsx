@@ -9,7 +9,10 @@ function CustomerModal({ customer, onSave, onClose }) {
         debtAmount: 0  // Will always be 0 for new customers
     });
     const [phoneError, setPhoneError] = useState('');
-    const [submitting, setSubmitting] = useState(false); 
+    const [emailError, setEmailError] = useState(''); // New state for email validation
+    const [submitting, setSubmitting] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (customer) {
@@ -21,12 +24,15 @@ function CustomerModal({ customer, onSave, onClose }) {
         const { name, value } = e.target;
         
         if (name === 'phone') {
-            // Only allow numbers
-            if (!/^\d*$/.test(value)) {
-                setPhoneError('Số điện thoại chỉ được chứa số');
-                return;
+            // Validate phone number format - must be 10 digits and start with 0
+            if (value.length > 0 && (!/^\d*$/.test(value) || value.length !== 10 || value.charAt(0) !== '0')) {
+                setPhoneError('Số điện thoại không hợp lệ');
+            } else {
+                setPhoneError('');
             }
-            setPhoneError('');
+        } else if (name === 'email') {
+            // Let the browser handle email validation via the input type="email"
+            setEmailError('');
         }
 
         setFormData(prev => ({
@@ -37,7 +43,28 @@ function CustomerModal({ customer, onSave, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (phoneError) {
+        
+        // Phone validation
+        if (formData.phone.length !== 10 || !/^\d+$/.test(formData.phone)) {
+            setPhoneError('Số điện thoại không hợp lệ');
+            setErrorMessage(`Không thể ${customer ? 'cập nhật' : 'thêm'} khách hàng do số điện thoại không hợp lệ`);
+            setShowErrorModal(true);
+            return;
+        }
+        
+        // Email validation using HTML5 validation
+        const emailInput = document.querySelector('input[name="email"]');
+        if (formData.email && !emailInput.checkValidity()) {
+            setEmailError('Email không hợp lệ');
+            setErrorMessage(`Không thể ${customer ? 'cập nhật' : 'thêm'} khách hàng do email không hợp lệ`);
+            setShowErrorModal(true);
+            return;
+        }
+        
+        // Check for any validation errors
+        if (phoneError || emailError) {
+            setErrorMessage(`Không thể ${customer ? 'cập nhật' : 'thêm'} khách hàng do thông tin không hợp lệ`);
+            setShowErrorModal(true);
             return;
         }
         
@@ -53,9 +80,13 @@ function CustomerModal({ customer, onSave, onClose }) {
         }
     };
 
+    const closeErrorModal = () => {
+        setShowErrorModal(false);
+    };
+
     return (
         <div className="modal-overlay">
-            <div className="kh-modal-content"> {/* Changed from modal-content to kh-modal-content */}
+            <div className="kh-modal-content">
                 <h2>{customer ? 'Cập Nhật Khách Hàng' : 'Thêm Khách Hàng'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -84,11 +115,12 @@ function CustomerModal({ customer, onSave, onClose }) {
                     <div className="form-group">
                         <label>Email:</label>
                         <input
-                            type="email"
+                            type="email" // Using native email input type for built-in validation
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                         />
+                        {emailError && <div className="error-message">{emailError}</div>}
                     </div>
                     <div className="form-group">
                         <label>Địa chỉ:</label>
@@ -114,7 +146,12 @@ function CustomerModal({ customer, onSave, onClose }) {
                         />
                     </div>
                     <div className="modal-buttons">
-                        <button type="submit" disabled={!!phoneError || submitting}>
+                        <button 
+                            type="submit" 
+                            disabled={!!phoneError || !!emailError || submitting}
+                            className={`submit-button ${(!!phoneError || !!emailError || submitting) ? 'submit-button-disabled' : ''}`}
+                            title={phoneError ? 'Số điện thoại không hợp lệ' : (emailError ? 'Email không hợp lệ' : '')}
+                        >
                             {submitting ? 'Đang lưu...' : (customer ? 'Cập nhật' : 'Thêm')}
                         </button>
                         <button type="button" onClick={onClose} disabled={submitting}>
@@ -123,6 +160,24 @@ function CustomerModal({ customer, onSave, onClose }) {
                     </div>
                 </form>
             </div>
+
+            {/* Error Modal */}
+            {showErrorModal && (
+                <div className="modal-overlay error-modal-overlay">
+                    <div className="error-modal-content">
+                        <h3 className="error-modal-title">Lỗi</h3>
+                        <p>{errorMessage}</p>
+                        <div className="error-modal-actions">
+                            <button 
+                                onClick={closeErrorModal}
+                                className="error-modal-button"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

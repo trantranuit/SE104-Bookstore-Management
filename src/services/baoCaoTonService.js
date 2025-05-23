@@ -27,39 +27,34 @@ const baoCaoTonService = {
         return [];
       }
 
-      // Gọi API ctbcton
-      const detailsResponse = await axiosInstance.get(`${BASE_URL}/ctbcton/`);
-      console.log("API Response (ctbcton):", detailsResponse.data);
+      // Lấy dữ liệu đầu sách để mapping với tên sách
+      const dauSachResponse = await axiosInstance.get(`${BASE_URL}/dausach/`);
+      const dauSachMap = {};
 
+      if (dauSachResponse.data && Array.isArray(dauSachResponse.data)) {
+        dauSachResponse.data.forEach((dausach) => {
+          dauSachMap[dausach.MaDauSach] = dausach.TenSach;
+        });
+      }
+
+      // Xử lý dữ liệu từ các báo cáo đã lọc
       let allDetails = [];
 
-      // Xử lý chi tiết từ baocaoton
       for (const report of filteredReports) {
         if (report.chitiet && Array.isArray(report.chitiet)) {
           for (const item of report.chitiet) {
-            // Lấy TenSach từ API /dausach/{MaDauSach}
-            let tenSach = `Sách ${
-              item.MaSach?.MaDauSach || item.MaSach?.MaSach
-            }`; // Giá trị mặc định
-            try {
-              const dauSachResponse = await axiosInstance.get(
-                `${BASE_URL}/dausach/${item.MaSach?.MaDauSach}/`
-              );
-              if (dauSachResponse.data && dauSachResponse.data.TenSach) {
-                tenSach = dauSachResponse.data.TenSach;
-              }
-            } catch (dauSachError) {
-              console.error(
-                `Error fetching DauSach for MaDauSach ${item.MaSach?.MaDauSach}:`,
-                dauSachError
-              );
-            }
+            if (!item.MaSach) continue;
+
+            const maDauSach = item.MaSach.MaDauSach;
+            const tenSach =
+              dauSachMap[maDauSach] ||
+              `Sách ${maDauSach || item.MaSach.MaSach}`;
 
             allDetails.push({
-              MaSach: item.MaSach?.MaSach || "N/A",
+              MaSach: item.MaSach.MaSach || "N/A",
               TenSach: tenSach,
-              NXB: item.MaSach?.NXB || "Không có",
-              NamXB: item.MaSach?.NamXB || 0,
+              NXB: item.MaSach.NXB || "Không có",
+              NamXB: item.MaSach.NamXB || 0,
               TonDau: item.TonDau || 0,
               PhatSinh: item.PhatSinh || 0,
               TonCuoi: item.TonCuoi || 0,
@@ -68,47 +63,7 @@ const baoCaoTonService = {
         }
       }
 
-      // Xử lý chi tiết từ ctbcton
-      if (detailsResponse.data && Array.isArray(detailsResponse.data)) {
-        for (const item of detailsResponse.data) {
-          const matchingReport = filteredReports.find((report) =>
-            report.chitiet.some(
-              (detail) => detail.MaSach?.MaSach === item.MaSach?.MaSach
-            )
-          );
-          if (matchingReport) {
-            // Lấy TenSach từ API /dausach/{MaDauSach}
-            let tenSach = `Sách ${
-              item.MaSach?.MaDauSach || item.MaSach?.MaSach
-            }`; // Giá trị mặc định
-            try {
-              const dauSachResponse = await axiosInstance.get(
-                `${BASE_URL}/dausach/${item.MaSach?.MaDauSach}/`
-              );
-              if (dauSachResponse.data && dauSachResponse.data.TenSach) {
-                tenSach = dauSachResponse.data.TenSach;
-              }
-            } catch (dauSachError) {
-              console.error(
-                `Error fetching DauSach for MaDauSach ${item.MaSach?.MaDauSach}:`,
-                dauSachError
-              );
-            }
-
-            allDetails.push({
-              MaSach: item.MaSach?.MaSach || "N/A",
-              TenSach: tenSach,
-              NXB: item.MaSach?.NXB || "Không có",
-              NamXB: item.MaSach?.NamXB || 0,
-              TonDau: item.TonDau || 0,
-              PhatSinh: item.PhatSinh || 0,
-              TonCuoi: item.TonCuoi || 0,
-            });
-          }
-        }
-      }
-
-      console.log("Final allDetails:", allDetails);
+      console.log("Processed inventory report details:", allDetails);
       return allDetails;
     } catch (error) {
       console.error("Error fetching inventory report:", error);
@@ -120,7 +75,7 @@ const baoCaoTonService = {
       } else {
         console.error("Error setting up request:", error.message);
       }
-      return [];
+      throw error; // Re-throw to allow component to handle the error
     }
   },
 
