@@ -14,8 +14,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const user = JSON.parse(localStorage.getItem("user"));
+    console.log("Interceptor: user from localStorage:", user); // Debug
     if (user && user.token) {
       config.headers.Authorization = `Bearer ${user.token}`;
+    } else {
+      console.warn("Interceptor: No user or token found in localStorage");
     }
     return config;
   },
@@ -35,14 +38,13 @@ axiosInstance.interceptors.response.use(
       try {
         // Thử refresh token
         const token = await authService.refreshToken();
-
+        console.log("Interceptor: New token after refresh:", token); // Debug
         // Thêm token mới vào request và thử lại
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         originalRequest.headers["Authorization"] = `Bearer ${token}`;
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // Nếu refresh token thất bại, chuyển hướng đến trang đăng nhập
+        console.error("Interceptor: Refresh token failed:", refreshError);
         authService.logout();
         window.location.href = "/login";
         return Promise.reject(refreshError);
