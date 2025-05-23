@@ -20,26 +20,32 @@ function TableTon({ month, year }) {
         {
             header: 'Tên Sách',
             accessorKey: 'TenSach',
+            cell: info => info.getValue() || 'Không có tên'
         },
         {
             header: 'NXB',
             accessorKey: 'NXB',
+            cell: info => info.getValue() || 'Không có'
         },
         {
             header: 'Năm XB',
             accessorKey: 'NamXB',
+            cell: info => info.getValue() || '-'
         },
         {
             header: 'Tồn đầu',
             accessorKey: 'TonDau',
+            cell: info => info.getValue() || 0
         },
         {
             header: 'Phát sinh',
             accessorKey: 'PhatSinh',
+            cell: info => info.getValue() || 0
         },
         {
             header: 'Tồn cuối',
             accessorKey: 'TonCuoi',
+            cell: info => info.getValue() || 0
         }
     ];
 
@@ -82,9 +88,9 @@ function TableTon({ month, year }) {
         }
     }, [month, year]);
 
-    if (isLoading) return <div>Đang tải...</div>;
-    if (error) return <div>Lỗi: {error}</div>;
-    if (data.length === 0) return <div>Không có dữ liệu</div>;
+    if (isLoading) return <div className="loading-container">Đang tải dữ liệu...</div>;
+    if (error) return <div className="error-container">Lỗi: {error}</div>;
+    if (data.length === 0) return <div className="empty-data-container">Không có dữ liệu báo cáo tồn cho tháng {month}/{year}</div>;
 
     return (
         <>

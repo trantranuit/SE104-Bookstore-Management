@@ -1,15 +1,35 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { mainMenuItems, bottomMenuItems } from './SidebarData.jsx';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import logo from '../../../assets/imgs/logo.svg';
-import avata from '../../../assets/imgs/avt.svg';
+import avata1 from '../../../assets/imgs/avt_female.svg';
+import avata2 from '../../../assets/imgs/avt_male.svg';
+import axiosInstance from '../../../services/AxiosConfig';
 
 function Navbar() {
     const location = useLocation();
     const [activeSubNav, setActiveSubNav] = useState('');
+    const [userData, setUserData] = useState({ username: 'Đang tải...' });
     
+    // Fetch user data when component mounts
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axiosInstance.get('http://localhost:8000/api/user/');
+                if (response.data && response.data.length > 0) {
+                    setUserData(response.data[0]);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                setUserData({ username: 'User' }); // Fallback name if API fails
+            }
+        };
+        
+        fetchUserData();
+    }, []);
+
     const handleItemClick = (item, e) => {
         if (item.subNav) {
             e.preventDefault();
@@ -31,10 +51,10 @@ function Navbar() {
                 <div className="navbar">
                     <div className="profile-card">
                         <div className="avatar">
-                            <img src={avata} alt="Avatar" />
+                            <img src={avata1} alt="Avatar" />
                         </div>
                         <div className="info">
-                            <h1 className="name">Ngọc Bích</h1>
+                            <h1 className="name">{userData.username}</h1>
                             <h2 className="position">Nhân Viên</h2>
                         </div>
                     </div>
