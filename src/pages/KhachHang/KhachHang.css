@@ -1,0 +1,462 @@
+.content-wrapper-kh {
+  background-color: #fff;
+  position: relative; 
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem; 
+}
+
+.kh-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+}
+
+.kh-action-bar .kh-search-input {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  outline: none;
+  transition: border-color 0.2s;
+  margin: 1.5rem -2rem 1.5rem 1.5rem;
+}
+
+.kh-search-input:focus {
+  border-color: #73adef;
+  box-shadow: 0 0 5px rgba(115, 173, 239, 0.5);
+}
+
+.add-customer-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(115, 173, 239, 0.12);
+  margin: 1rem 1.5rem 1rem 3rem;
+}
+
+.add-customer-button:hover {
+  background-color: #5a92d6;
+}
+
+.kh-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0 auto;
+}
+
+.khachhang-report-table {
+  width: 96%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 0.5rem auto;
+  font-size: 0.8rem; 
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.khachhang-report-table th,
+.khachhang-report-table td {
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.khachhang-report-table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #e0e0e0; /* Chỉ giữ lại border bottom */
+}
+
+.khachhang-report-table th:nth-child(1),
+.khachhang-report-table td:nth-child(1) {
+  width: 6rem;
+  text-align: center;
+}
+
+.khachhang-report-table th:nth-child(2),
+.khachhang-report-table td:nth-child(2) {
+  width: 9rem;
+  text-align: left;
+  padding-left: 1rem;
+}
+
+.khachhang-report-table th:nth-child(3),
+.khachhang-report-table td:nth-child(3) {
+    width: 8rem;
+    text-align: center;
+}
+
+.khachhang-report-table th:nth-child(4),
+.khachhang-report-table td:nth-child(4) {
+  width: 11rem;
+  text-align: left;
+}
+
+.khachhang-report-table th:nth-child(5),
+.khachhang-report-table td:nth-child(5) {
+  width: 14rem;
+  text-align: left;
+}
+
+.khachhang-report-table th:nth-child(6),
+.khachhang-report-table td:nth-child(6) {
+  width: 7rem;
+  text-align: right;
+}
+
+.khachhang-report-table th:nth-child(7),
+.khachhang-report-table td:nth-child(7) {
+  width: 6rem;
+  text-align: center;
+}
+
+.khachhang-report-table tr:nth-child(odd) {
+  background-color: white;
+}
+
+.khachhang-report-table tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+.khachhang-report-table tr:hover {
+  background-color: #e6f2ff;
+}
+
+.khachhang-action-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  
+}
+
+.khachhang-edit-icon,
+.khachhang-delete-icon {
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem;
+}
+
+.khachhang-edit-icon:hover {
+  color: #19e169;
+}
+.khachhang-delete-icon:hover {
+  color: #cf150f;
+}
+
+.khachhang-pagination {
+  position: absolute;
+  bottom: 1rem;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
+}
+
+.khachhang-pagination-info {
+  margin: 0; 
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px; 
+  text-align: center;
+}
+
+.khachhang-pagination-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem; 
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem; 
+  min-width: 32px; 
+  height: 28px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0; 
+  line-height: 1; 
+}
+
+.khachhang-pagination-button:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
+}
+
+.khachhang-pagination-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.kh-modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  min-width: 400px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.modal-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.modal-buttons button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-buttons button[type="button"] {
+  background-color: #ddd;
+}
+
+.modal-buttons button:hover {
+  opacity: 0.9;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  display: block;
+  margin-top: 1px;
+  margin-left: 100px;
+  position: absolute;
+  width: 100%;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirmation-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-content p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.confirmation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.cancel-button:hover {
+  background-color: #5a6268;
+}
+
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+.success-modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    min-width: 350px;
+    box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
+    animation: fadeInUp 0.4s ease-out;
+    position: relative; /* Ensure it's positioned correctly */
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-modal-content h3 {
+    margin-top: 0;
+    color: #c18bd7;
+    font-size: 1.5rem;
+}
+
+.success-modal-content p {
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.success-modal-button {
+    margin-top: 1rem;
+    padding: 0.6rem 3rem;
+    background-color: #c18bd7;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.success-modal-button:hover {
+    background-color: #bd43ad;
+}
+
+/* Error Modal Styles */
+.error-modal-overlay {
+  z-index: 1100;
+}
+
+.error-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-modal-title {
+  color: #e74c3c;
+}
+
+.error-modal-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-modal-button:hover {
+  background-color: #c0392b;
+}
+
+.error-modal-actions {
+  text-align: right;
+  margin-top: 20px;
+}
+
+/* Submit Button Styles */
+.submit-button {
+  opacity: 1;
+  cursor: pointer;
+  position: relative;
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

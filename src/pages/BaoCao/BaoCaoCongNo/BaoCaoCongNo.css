@@ -1,112 +1,201 @@
-.content-day {
-    display: flex;
-    justify-content: center;
-    gap: 300px;
-    padding: 0 40px;
-    margin: 10px 0;
-    align-items: center;
+.bccn-table-container {
+    overflow-x: auto;
 }
 
-.content-day h2 {
-    font-size: 16px;
-    font-weight: 500;
+.content-wrapper-bccn {
+    background-color: #fff;
+    position: relative;
+    width: calc(100% - 3vw);
+    min-height: calc(95vh - 6rem);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin: 0 0 1.875rem 1.875rem;
+    padding: 0.625rem;
+    overflow: hidden; 
 }
 
-.content-day .date-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
 }
 
-.content-day select {
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    font-size: 14px;
-    background-color: white;
+.customer-table th,
+.customer-table td {
+    border: 0.06rem solid #ddd;
+    padding: 0.5rem;
+    text-align: left;
 }
 
-.report-table {
-    width: 90%;
+.customer-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.customer-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.bccn-report-table {
+    width: 96%;
     border-collapse: separate;
     border-spacing: 0;
-    margin: 40px auto 60px auto;
-    font-size: 14px;
-    border-radius: 8px;
+    margin: 0.8rem auto;
+    font-size: 0.8rem;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    table-layout: fixed
+    table-layout: fixed;
 }
 
-.report-table th,
-.report-table td {
-    border: 1px solid #e0e0e0;
-    padding: 12px;
+.bccn-report-table th,
+.bccn-report-table td {
+    border: 0.06rem solid #e0e0e0;
+    border-left: none;
+    border-right: none;
+    border-top: 0.06rem solid #e0e0e0;
+    border-bottom: 0.06rem solid #e0e0e0;
+    padding: 0.4rem; 
     text-align: center;
+    min-width: 7.5rem;
+    line-height: 1; 
+    height: 1.5rem; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
-.report-table th {
-    background-color: #73adef;
+.bccn-report-table th {
+    background-color: #007bff; 
     color: white;
-    font-weight: 500;
-    padding: 15px 12px;
+    font-weight: bold;
+    padding: 0.4rem; 
     cursor: pointer;
     transition: background-color 0.2s;
+    border-top: 0.06rem solid #e0e0e0;
+    height: 3rem; 
+    font-size: 0.9rem; 
 }
 
-.report-table th:hover {
-    background-color: #5b9ce5;
+.bccn-report-table tr {
+    height: 1.5rem; /* Chiều cao cố định cho hàng dữ liệu */
 }
 
-.report-table tbody tr {
+/* Định nghĩa chiều rộng cho từng cột */
+.bccn-report-table th:nth-child(1),
+.bccn-report-table td:nth-child(1) {
+    width: 3rem; /* STT */
+    min-width: 3rem;
+    max-width: 4rem;
+}
+
+.bccn-report-table th:nth-child(2),
+.bccn-report-table td:nth-child(2) {
+    width: 6rem; /* Mã Khách Hàng */
+    min-width: 6rem;
+    max-width: 8rem;
+}
+
+.bccn-report-table th:nth-child(3),
+.bccn-report-table td:nth-child(3) {
+    width: 6rem; /* Tên Khách Hàng */
+    min-width: 10rem;
+    max-width: 14rem;
+    text-align: left;
+}
+
+.bccn-report-table th:nth-child(4),
+.bccn-report-table td:nth-child(4) {
+    width: 7rem; /* Số Điện Thoại */
+    min-width: 8rem;
+    max-width: 11rem;
+}
+
+.bccn-report-table th:nth-child(5),
+.bccn-report-table td:nth-child(5) {
+    width: 8rem; /* Email */
+    min-width: 8rem;
+    max-width: 11rem;
+}
+
+.bccn-report-table th:nth-child(6),
+.bccn-report-table td:nth-child(6) {
+    width: 5rem; /* Nợ đầu */
+    min-width: 4rem;
+    max-width: 6rem;
+}
+
+.bccn-report-table th:nth-child(7),
+.bccn-report-table td:nth-child(7) {
+    width: 5rem; /* Phát sinh */
+    min-width: 5rem;
+    max-width: 7rem;
+}
+
+.bccn-report-table th:nth-child(8),
+.bccn-report-table td:nth-child(8) {
+    width: 5rem; /* Nợ cuối */
+    min-width: 5rem;
+    max-width: 7rem;
+}
+
+/* Màu cách hàng */
+.bccn-report-table tr:nth-child(odd) {
     background-color: white;
-    transition: background-color 0.2s;
 }
 
-.report-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+.bccn-report-table tr:nth-child(even) {
+    background-color: #f5f5f5;
 }
 
-.report-table tbody tr:hover {
-    background-color: #f1f3f5;
+.bccn-report-table tr:hover {
+    background-color: #e6f2ff;
 }
 
 .pagination {
     position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+    bottom: 1.25rem;
+    right: 1.25rem;
     display: flex;
-    justify-content: flex-end;;
+    justify-content: flex-end;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background-color: white;
-    width: auto;
+    gap: 0.25rem;
+    padding: 0.75rem 2.8rem;
+    z-index: 10;
+    min-width: 15.625rem;
+    transform: translateX(1%);
 }
 
-.pagination button {
-    background-color: #73adef;
+.submit-button {
+    padding: 0.5rem 1.25rem;
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
-    transition: background-color 0.2s;
-    min-width: 40px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    min-width: 6.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.pagination button:hover:not(:disabled) {
-    background-color: #5b9ce5;
+@media (max-width: 1200px) {
+    .pagination {
+        transform: translateX(1%);
+    }
 }
 
-.pagination button:disabled {
-    background-color: #e0e0e0;
-    cursor: not-allowed;
+@media (max-width: 992px) {
+    .pagination {
+        transform: translateX(5%); 
+    }
 }
 
-.pagination span {
-    font-size: 14px;
-    color: #666;
-    margin: 0 10px; 
+@media (max-width: 768px) {
+    .pagination {
+        transform: translateX(0);
+        right: 0.625rem;
+    }
 }
