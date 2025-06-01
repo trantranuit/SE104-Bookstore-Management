@@ -7,7 +7,7 @@ import logo from '../../../assets/imgs/logo.svg';
 import avata1 from '../../../assets/imgs/avt_female.svg';
 import avata2 from '../../../assets/imgs/avt_male.svg';
 import axiosInstance from '../../../services/AxiosConfig';
-import authService from '../../../services/authService'; // Import authService
+import authService from '../../../services/authService';
 
 function Navbar() {
   const location = useLocation();
@@ -15,9 +15,18 @@ function Navbar() {
   const [userData, setUserData] = useState({ username: 'Đang tải...', id: null, gioiTinh: '' });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Lấy quyền truy cập cho role hiện tại từ localStorage
-  const rolePages = JSON.parse(localStorage.getItem('rolePages') || '{}');
-  const currentRole = localStorage.getItem('currentRole') || 'Kho';
+  // Giá trị mặc định cho rolePages và currentRole
+  const defaultRolePages = {
+    'Kho': ['Trang Chủ', 'Nhập Sách'],
+    'Thu Ngân': ['Trang Chủ', 'Thanh Toán'],
+    'Quản Lý': ['Trang Chủ', 'Báo Cáo', 'Phân Quyền'],
+    'Admin': ['Trang Chủ', 'Thêm Sách', 'Nhập Sách', 'Khách Hàng', 'Thanh Toán', 'Báo Cáo', 'Thay Đổi Quy Định', 'Phân Quyền']
+  };
+  const defaultRole = 'Kho';
+
+  // Lấy quyền truy cập cho role hiện tại từ localStorage, dùng giá trị mặc định nếu không có
+  const rolePages = JSON.parse(localStorage.getItem('rolePages')) || defaultRolePages;
+  const currentRole = localStorage.getItem('currentRole') || defaultRole;
   const allowedPages = rolePages[currentRole] || [];
 
   // Hàm kiểm tra menu/submenu có được phép hiển thị không
@@ -26,21 +35,16 @@ function Navbar() {
   // Lọc main menu
   const filteredMainMenu = mainMenuItems
     .filter(item => {
-      // Nếu là Thanh Toán hoặc Báo Cáo thì luôn hiện nếu role được phép vào menu cha
       if (item.title === 'Thanh Toán' && isAllowed('Thanh Toán')) return true;
       if (item.title === 'Báo Cáo' && isAllowed('Báo Cáo')) return true;
-      // Luôn hiện Tất cả sách nếu role được phép vào
       if (item.title === 'Tất cả sách' && isAllowed('Tất Cả Sách')) return true;
-      // Các menu khác lọc theo quyền
       return isAllowed(item.title);
     })
     .map(item => {
       if (item.subNav) {
-        // Nếu là Thanh Toán hoặc Báo Cáo thì luôn hiện tất cả subNav
         if (item.title === 'Thanh Toán' || item.title === 'Báo Cáo') {
           return { ...item, subNav: item.subNav };
         }
-        // Các menu khác lọc subNav theo quyền
         const filteredSubNav = item.subNav.filter(sub => isAllowed(sub.title));
         return { ...item, subNav: filteredSubNav.length > 0 ? filteredSubNav : undefined };
       }
@@ -57,7 +61,6 @@ function Navbar() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Check localStorage first
         const storedUser = authService.getCurrentUser();
         console.log('localStorage user:', storedUser);
         if (storedUser?.user) {
@@ -65,15 +68,13 @@ function Navbar() {
           console.log('Using stored userData:', storedUser.user);
           setIsLoading(false);
         } else {
-          // Fallback to API call if no user data in localStorage
           console.log('Fetching user data from API');
           const response = await axiosInstance.get('http://localhost:8000/api/token/');
           console.log('API response:', response.data);
-          const { user } = response.data;
+          const { user } = response.data || {};
           if (user) {
             setUserData(user);
             console.log('Updated userData from API:', user);
-            // Update localStorage with new user data
             localStorage.setItem('user', JSON.stringify({
               ...storedUser,
               user
