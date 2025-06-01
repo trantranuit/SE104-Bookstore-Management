@@ -3,7 +3,9 @@ import axiosInstance from "./AxiosConfig";
 const trangChuApi = {
   getAllBooks: async () => {
     try {
-      const response = await axiosInstance.get("/sach/");
+      const response = await axiosInstance.get("/sach/", {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log("API /sach/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu sách không hợp lệ hoặc rỗng");
@@ -20,7 +22,9 @@ const trangChuApi = {
 
   getAllCTHoaDon: async () => {
     try {
-      const response = await axiosInstance.get("/cthoadon/");
+      const response = await axiosInstance.get("/cthoadon/", {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log("API /cthoadon/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu chi tiết hóa đơn không hợp lệ hoặc rỗng");
@@ -39,7 +43,9 @@ const trangChuApi = {
 
   getAllHoaDon: async () => {
     try {
-      const response = await axiosInstance.get("/hoadon/");
+      const response = await axiosInstance.get("/hoadon/", {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log("API /hoadon/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu hóa đơn không hợp lệ hoặc rỗng");

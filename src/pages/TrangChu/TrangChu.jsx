@@ -56,16 +56,6 @@ function TrangChu() {
       setLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          setError(
-            "Không tìm thấy token! Vui lòng lưu token vào localStorage với key 'authToken'."
-          );
-          console.warn("Token not found, skipping API calls.");
-          setLoading(false);
-          return;
-        }
-
         const books = await trangChuApi.getAllBooks();
         console.log("Books data:", books);
         if (!books || books.length === 0)
