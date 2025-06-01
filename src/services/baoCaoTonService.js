@@ -1,3 +1,4 @@
+import axios from "axios";
 import axiosInstance from "./AxiosConfig";
 
 const BASE_URL = "http://localhost:8000/api";
@@ -17,9 +18,8 @@ const baoCaoTonService = {
       }
 
       // Lọc báo cáo theo tháng và năm
-      const formattedMonthYear = `${month}/${year}`;
       const filteredReports = reportResponse.data.filter(
-        (report) => report.Thang === formattedMonthYear
+        (report) => report.Thang === month && report.Nam === year
       );
 
       if (!filteredReports.length) {
@@ -27,44 +27,40 @@ const baoCaoTonService = {
         return [];
       }
 
-      // Gọi API ctbcton để lấy chi tiết báo cáo
-      const detailResponse = await axiosInstance.get(`${BASE_URL}/ctbcton`);
-      console.log("API Response (ctbcton):", detailResponse.data);
+      // Lấy dữ liệu đầu sách để mapping với tên sách
+      const dauSachResponse = await axiosInstance.get(`${BASE_URL}/dausach/`);
+      const dauSachMap = {};
 
-      // Gọi API sach để lấy thông tin NXB và NamXB
-      const sachResponse = await axiosInstance.get(`${BASE_URL}/sach/`);
-      console.log("API Response (sach):", sachResponse.data);
-
-      // Tạo map từ MaSach đến NXB và NamXB
-      const sachMap = {};
-      if (sachResponse.data && Array.isArray(sachResponse.data)) {
-        sachResponse.data.forEach((sach) => {
-          sachMap[sach.MaSach] = {
-            NXB: sach.NXB || "Không có",
-            NamXB: sach.NamXB || "-",
-          };
+      if (dauSachResponse.data && Array.isArray(dauSachResponse.data)) {
+        dauSachResponse.data.forEach((dausach) => {
+          dauSachMap[dausach.MaDauSach] = dausach.TenSach;
         });
       }
 
-      // Xử lý dữ liệu chi tiết
-      const allDetails = [];
-      if (detailResponse.data && Array.isArray(detailResponse.data)) {
-        detailResponse.data.forEach((item) => {
-          const sachInfo = sachMap[item.MaSach] || {
-            NXB: "Không có",
-            NamXB: "-",
-          };
+      // Xử lý dữ liệu từ các báo cáo đã lọc
+      let allDetails = [];
 
-          allDetails.push({
-            MaSach: item.MaSach || "N/A",
-            TenSach: item.TenSach || "Không có tên",
-            NXB: sachInfo.NXB,
-            NamXB: sachInfo.NamXB,
-            TonDau: item.TonDau || 0,
-            PhatSinh: item.PhatSinh || 0,
-            TonCuoi: item.TonCuoi || 0,
-          });
-        });
+      for (const report of filteredReports) {
+        if (report.chitiet && Array.isArray(report.chitiet)) {
+          for (const item of report.chitiet) {
+            if (!item.MaSach) continue;
+
+            const maDauSach = item.MaSach.MaDauSach;
+            const tenSach =
+              dauSachMap[maDauSach] ||
+              `Sách ${maDauSach || item.MaSach.MaSach}`;
+
+            allDetails.push({
+              MaSach: item.MaSach.MaSach || "N/A",
+              TenSach: tenSach,
+              NXB: item.MaSach.NXB || "Không có",
+              NamXB: item.MaSach.NamXB || 0,
+              TonDau: item.TonDau || 0,
+              PhatSinh: item.PhatSinh || 0,
+              TonCuoi: item.TonCuoi || 0,
+            });
+          }
+        }
       }
 
       console.log("Processed inventory report details:", allDetails);
@@ -79,7 +75,7 @@ const baoCaoTonService = {
       } else {
         console.error("Error setting up request:", error.message);
       }
-      throw error;
+      throw error; // Re-throw to allow component to handle the error
     }
   },
 

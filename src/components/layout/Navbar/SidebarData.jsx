@@ -12,17 +12,9 @@ export const mainMenuItems = [
     },
 
     {
-        title: 'Tra Cứu Sách',
+        title: 'Tất cả sách',
         path: '/tatcasach',
         icon: <FaIcons.FaBook />,
-        cName: 'nav-text'
-    },
-
-    ,
-    {
-        title: 'Thêm Sách',
-        path: '/themsach',
-        icon: <FaIcons.FaPlusSquare />,
         cName: 'nav-text'
     },
 
@@ -53,11 +45,11 @@ export const mainMenuItems = [
             }
         ]
     },
-
+    
     {
         title: 'Khách Hàng',
         path: '/khachhang',
-        icon: <FaIcons.FaUserFriends />,
+        icon: <FaIcons.FaUserFriends  />,
         cName: 'nav-text'
     },
 
@@ -88,20 +80,20 @@ export const mainMenuItems = [
         path: '/phanquyen',
         icon: <FaIcons.FaUniversalAccess />,
         cName: 'nav-text'
-    }
+    },
 ]
 
 export const bottomMenuItems = [
     {
         title: 'Thay Đổi Quy Định',
         path: '/thaydoiquydinh',
-        icon: <FaIcons.FaCog />,
+        icon: <FaIcons.FaCog />, 
         cName: 'nav-text'
     },
     {
         title: 'Đăng Xuất',
         path: '/dangxuat',
-        icon: <FaIcons.FaSignOutAlt />,
+        icon: <FaIcons.FaSignOutAlt />, 
         cName: 'nav-text'
     }
 ]

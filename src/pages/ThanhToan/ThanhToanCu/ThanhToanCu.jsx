@@ -30,24 +30,10 @@ function ThanhToanCu() {
     const getNewMaPhieu = () => {
         const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
         const maxExistingId = existingReceipts.length > 0
-            ? Math.max(
-                ...existingReceipts
-                    .map(receipt => {
-                        // Kiểm tra receipt.maPhieuThu tồn tại và có dạng 'PTxxxxxx'
-                        if (
-                            receipt &&
-                            typeof receipt.maPhieuThu === 'string' &&
-                            receipt.maPhieuThu.startsWith('PT') &&
-                            !isNaN(parseInt(receipt.maPhieuThu.slice(2)))
-                        ) {
-                            return parseInt(receipt.maPhieuThu.slice(2));
-                        }
-                        return 0;
-                    })
-            )
-            : 0;
-        const nextId = maxExistingId + 1;
-        return 'PT' + nextId.toString().padStart(6, '0');
+            ? Math.max(...existingReceipts.map(receipt => parseInt(receipt.maPhieuThu.slice(2))))
+            : 0; // Get the largest existing ID or default to 0
+        const nextId = maxExistingId + 1; // Increment the largest ID
+        return 'PT' + nextId.toString().padStart(6, '0'); // Format the new ID with leading zeros
     };
 
     useEffect(() => {

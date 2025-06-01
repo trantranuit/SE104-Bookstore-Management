@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import thanhToanMoiApi from '../../services/thanhToanMoiApi';
+import React, { useState } from 'react';
 import '../../styles/PathStyles.css';
 import './TatCaSach.css';
+import bookData from './BookData';
 
 function TatCaSach() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -9,93 +9,41 @@ function TatCaSach() {
     const [isAuthorModalOpen, setIsAuthorModalOpen] = useState(false);
     const [isGenreModalOpen, setIsGenreModalOpen] = useState(false);
     const [isPublisherModalOpen, setIsPublisherModalOpen] = useState(false);
-    const [isYearModalOpen, setIsYearModalOpen] = useState(false);
-    const [isStockModalOpen, setIsStockModalOpen] = useState(false);
-    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+    const [isYearModalOpen, setIsYearModalOpen] = useState(false); // New modal state for year
+    const [isStockModalOpen, setIsStockModalOpen] = useState(false); // New modal state for stock
+    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false); // New modal state for price
     const [authorSearchTerm, setAuthorSearchTerm] = useState('');
     const [genreSearchTerm, setGenreSearchTerm] = useState('');
     const [publisherSearchTerm, setPublisherSearchTerm] = useState('');
-    const [yearStart, setYearStart] = useState('');
-    const [yearEnd, setYearEnd] = useState('');
-    const [specificYears, setSpecificYears] = useState('');
-    const [stockMin, setStockMin] = useState('');
-    const [stockMax, setStockMax] = useState('');
-    const [priceMin, setPriceMin] = useState('');
-    const [priceMax, setPriceMax] = useState('');
-    const [specificPrices, setSpecificPrices] = useState('');
-    const [tempSelectedYears, setTempSelectedYears] = useState([]);
-    const [selectedYears, setSelectedYears] = useState([]);
-    const [selectedStocks, setSelectedStocks] = useState([]);
-    const [selectedPrices, setSelectedPrices] = useState([]);
+    const [yearStart, setYearStart] = useState(''); // Start year for range
+    const [yearEnd, setYearEnd] = useState(''); // End year for range
+    const [specificYears, setSpecificYears] = useState(''); // Specific years separated by commas
+    const [stockMin, setStockMin] = useState(''); // Minimum stock
+    const [stockMax, setStockMax] = useState(''); // Maximum stock
+    const [priceMin, setPriceMin] = useState(''); // Minimum price
+    const [priceMax, setPriceMax] = useState(''); // Maximum price
+    const [specificPrices, setSpecificPrices] = useState(''); // Specific prices separated by commas
+    const [tempSelectedYears, setTempSelectedYears] = useState([]); // Temporary selection for year
+    const [selectedYears, setSelectedYears] = useState([]); // Final selection for year
+    const [selectedStocks, setSelectedStocks] = useState([]); // Final selection for stock
+    const [selectedPrices, setSelectedPrices] = useState([]); // Final selection for price
     const [yearSearchTerm, setYearSearchTerm] = useState('');
-    const [tempSelectedAuthors, setTempSelectedAuthors] = useState([]);
-    const [tempSelectedGenres, setTempSelectedGenres] = useState([]);
-    const [tempSelectedPublishers, setTempSelectedPublishers] = useState([]);
-    const [selectedAuthors, setSelectedAuthors] = useState([]);
-    const [selectedGenres, setSelectedGenres] = useState([]);
-    const [selectedPublishers, setSelectedPublishers] = useState([]);
-    const [specificStocks, setSpecificStocks] = useState('');
-    const [books, setBooks] = useState([]);
+    const [tempSelectedAuthors, setTempSelectedAuthors] = useState([]); // Define missing variable
+    const [tempSelectedGenres, setTempSelectedGenres] = useState([]); // Define missing variable
+    const [tempSelectedPublishers, setTempSelectedPublishers] = useState([]); // Define missing variable
+    const [selectedAuthors, setSelectedAuthors] = useState([]); // Define missing variable
+    const [selectedGenres, setSelectedGenres] = useState([]); // Define missing variable
+    const [selectedPublishers, setSelectedPublishers] = useState([]); // Define missing variable
+    const [specificStocks, setSpecificStocks] = useState(''); // Specific stock values separated by commas
     const booksPerPage = 10;
 
-    // Lấy dữ liệu từ API
-    useEffect(() => {
-        const fetchBooks = async () => {
-            try {
-                const [sachList, dauSachList, tacGiaList, theLoaiList, ctNhapSachList, thamSoList] = await Promise.all([
-                    thanhToanMoiApi.getAllBooks(),
-                    thanhToanMoiApi.getAllDauSach(),
-                    thanhToanMoiApi.getAllTacGia(),
-                    thanhToanMoiApi.getAllTheLoai(),
-                    thanhToanMoiApi.getAllCTNhapSach(),
-                    thanhToanMoiApi.getAllThamSo()
-                ]);
-                const thamSo = thamSoList[0]; // Giả định chỉ có một tham số
-                const booksData = sachList.map(sach => {
-                    const dauSach = dauSachList.find(ds => ds.MaDauSach === sach.MaDauSach);
-                    const theLoai = dauSach ? theLoaiList.find(tl => tl.MaTheLoai === dauSach.MaTheLoai) : null;
-                    let tenSach = dauSach ? dauSach.TenSach : '';
-                    let tacGia = '';
-                    if (dauSach && Array.isArray(dauSach.MaTG)) {
-                        tacGia = dauSach.MaTG
-                            .map(maTG => {
-                                const tg = tacGiaList.find(t => t.MaTG === maTG);
-                                return tg ? tg.TenTG : '';
-                            })
-                            .filter(Boolean)
-                            .join(', ');
-                    }
-                    const ctNhapSach = ctNhapSachList.find(ct => ct.MaSach === sach.MaSach);
-                    const giaNhap = ctNhapSach ? ctNhapSach.GiaNhap : 0;
-                    const donGiaBan = thamSo && giaNhap ? Math.round(giaNhap * thamSo.TiLe) : 0;
-                    return {
-                        maSach: String(sach.MaSach),
-                        tenSach,
-                        tacGia,
-                        theLoai: theLoai ? theLoai.TenTheLoai : '',
-                        nhaXuatBan: sach.NXB,
-                        namXuatBan: sach.NamXB,
-                        soLuongTon: sach.SLTon,
-                        donGiaBan
-                    };
-                });
-                setBooks(booksData);
-            } catch (error) {
-                console.error('Error fetching books:', error);
-                setBooks([]);
-                alert('Có lỗi khi tải danh sách sách!');
-            }
-        };
-        fetchBooks();
-    }, []);
-
-    const authors = [...new Set(books.map(book => book.tacGia))];
-    const genres = [...new Set(books.map(book => book.theLoai))];
-    const publishers = [...new Set(books.map(book => book.nhaXuatBan))];
-    const years = [...new Set(books.map(book => book.namXuatBan))];
+    const authors = [...new Set(bookData.map((book) => book.tacGia))];
+    const genres = [...new Set(bookData.map((book) => book.theLoai))];
+    const publishers = [...new Set(bookData.map((book) => book.nhaXuatBan))];
+    const years = [...new Set(bookData.map((book) => book.namXuatBan))]; // Extract unique years
 
     const filteredAuthors = authors
-        .filter(author => author.toLowerCase().includes(authorSearchTerm.toLowerCase()))
+        .filter((author) => author.toLowerCase().includes(authorSearchTerm.toLowerCase()))
         .sort((a, b) => {
             const isSelectedA = tempSelectedAuthors.includes(a);
             const isSelectedB = tempSelectedAuthors.includes(b);
@@ -105,7 +53,7 @@ function TatCaSach() {
         });
 
     const filteredGenres = genres
-        .filter(genre => genre.toLowerCase().includes(genreSearchTerm.toLowerCase()))
+        .filter((genre) => genre.toLowerCase().includes(genreSearchTerm.toLowerCase()))
         .sort((a, b) => {
             const isSelectedA = tempSelectedGenres.includes(a);
             const isSelectedB = tempSelectedGenres.includes(b);
@@ -115,7 +63,7 @@ function TatCaSach() {
         });
 
     const filteredPublishers = publishers
-        .filter(publisher => publisher.toLowerCase().includes(publisherSearchTerm.toLowerCase()))
+        .filter((publisher) => publisher.toLowerCase().includes(publisherSearchTerm.toLowerCase()))
         .sort((a, b) => {
             const isSelectedA = tempSelectedPublishers.includes(a);
             const isSelectedB = tempSelectedPublishers.includes(b);
@@ -125,17 +73,17 @@ function TatCaSach() {
         });
 
     const filteredYears = years
-        .filter(year => year.toString().includes(yearSearchTerm))
+        .filter((year) => year.toString().includes(yearSearchTerm))
         .sort((a, b) => {
             const isSelectedA = tempSelectedYears.includes(a);
             const isSelectedB = tempSelectedYears.includes(b);
             if (isSelectedA && !isSelectedB) return -1;
             if (!isSelectedA && isSelectedB) return 1;
-            return a - b;
+            return a - b; // Sort numerically
         });
 
-    const filteredBooks = books.filter(
-        book =>
+    const filteredBooks = bookData.filter(
+        (book) =>
             (book.maSach.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 book.tenSach.toLowerCase().includes(searchTerm.toLowerCase())) &&
             (selectedAuthors.length === 0 || selectedAuthors.includes(book.tacGia)) &&
@@ -163,8 +111,8 @@ function TatCaSach() {
     };
 
     const handleSelection = (item, setTempSelected) => {
-        setTempSelected(prev =>
-            prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+        setTempSelected((prev) =>
+            prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
         );
     };
 
@@ -189,8 +137,8 @@ function TatCaSach() {
 
         const specificYearList = specificYears
             .split(',')
-            .map(year => parseInt(year.trim()))
-            .filter(year => !isNaN(year));
+            .map((year) => parseInt(year.trim()))
+            .filter((year) => !isNaN(year));
 
         const combinedYears = [...new Set([...rangeYears, ...specificYearList])];
         setSelectedYears(combinedYears);
@@ -215,8 +163,8 @@ function TatCaSach() {
 
         const specificStockList = specificStocks
             .split(',')
-            .map(stock => parseInt(stock.trim()))
-            .filter(stock => !isNaN(stock));
+            .map((stock) => parseInt(stock.trim()))
+            .filter((stock) => !isNaN(stock));
 
         const combinedStocks = [...new Set([...stockRange, ...specificStockList])];
         setSelectedStocks(combinedStocks);
@@ -226,7 +174,7 @@ function TatCaSach() {
     const cancelStockFilter = () => {
         setStockMin('');
         setStockMax('');
-        setSpecificStocks('');
+        setSpecificStocks(''); // Clear specific stock input
         setSelectedStocks([]);
         setIsStockModalOpen(false);
     };
@@ -241,8 +189,8 @@ function TatCaSach() {
 
         const specificPriceList = specificPrices
             .split(',')
-            .map(price => parseInt(price.trim()))
-            .filter(price => !isNaN(price));
+            .map((price) => parseInt(price.trim()))
+            .filter((price) => !isNaN(price));
 
         const combinedPrices = [...new Set([...priceRange, ...specificPriceList])];
         setSelectedPrices(combinedPrices);
@@ -259,7 +207,7 @@ function TatCaSach() {
 
     return (
         <div className="page-container">
-            <h1 className="page-title">Tra Cứu Sách</h1>
+            <h1 className="page-title">Tất Cả Sách</h1>
             <div className="content-container">
                 {/* Search Bar */}
                 <div className="search-filter-block">
@@ -268,43 +216,49 @@ function TatCaSach() {
                         placeholder="Tìm kiếm sách theo mã hoặc tên sách"
                         className="search-bar"
                         value={searchTerm}
-                        onChange={e => {
+                        onChange={(e) => {
                             setSearchTerm(e.target.value);
-                            setCurrentPage(1);
+                            setCurrentPage(1); // Reset to the first page when searching
                         }}
                     />
                     <button
-                        className={`filter-button ${selectedAuthors.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedAuthors.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsAuthorModalOpen(true)}
                     >
                         Lọc theo tác giả
                     </button>
                     <button
-                        className={`filter-button ${selectedGenres.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedGenres.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsGenreModalOpen(true)}
                     >
                         Lọc theo thể loại
                     </button>
                     <button
-                        className={`filter-button ${selectedPublishers.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedPublishers.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsPublisherModalOpen(true)}
                     >
                         Lọc theo nhà xuất bản
                     </button>
                     <button
-                        className={`filter-button ${selectedYears.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedYears.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsYearModalOpen(true)}
                     >
                         Lọc theo năm xuất bản
                     </button>
                     <button
-                        className={`filter-button ${selectedStocks.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedStocks.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsStockModalOpen(true)}
                     >
                         Lọc theo số lượng tồn
                     </button>
                     <button
-                        className={`filter-button ${selectedPrices.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button ${selectedPrices.length > 0 ? 'active-filter' : ''
+                            }`}
                         onClick={() => setIsPriceModalOpen(true)}
                     >
                         Lọc theo đơn giá bán
@@ -321,13 +275,14 @@ function TatCaSach() {
                                 placeholder="Tìm kiếm tác giả"
                                 className="author-search-bar"
                                 value={authorSearchTerm}
-                                onChange={e => setAuthorSearchTerm(e.target.value)}
+                                onChange={(e) => setAuthorSearchTerm(e.target.value)}
                             />
                             <div className="author-list">
-                                {filteredAuthors.map(author => (
+                                {filteredAuthors.map((author) => (
                                     <div
                                         key={author}
-                                        className={`author-item ${tempSelectedAuthors.includes(author) ? 'selected' : ''}`}
+                                        className={`author-item ${tempSelectedAuthors.includes(author) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(author, setTempSelectedAuthors)}
                                     >
                                         {author}
@@ -337,13 +292,17 @@ function TatCaSach() {
                             <div className="modal-buttons">
                                 <button
                                     className="apply-button"
-                                    onClick={() => applyFilter(setSelectedAuthors, tempSelectedAuthors, setIsAuthorModalOpen)}
+                                    onClick={() =>
+                                        applyFilter(setSelectedAuthors, tempSelectedAuthors, setIsAuthorModalOpen)
+                                    }
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
                                     className="cancel-button-new"
-                                    onClick={() => cancelFilter(setTempSelectedAuthors, setSelectedAuthors, setIsAuthorModalOpen)}
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedAuthors, setSelectedAuthors, setIsAuthorModalOpen)
+                                    }
                                 >
                                     Hủy Áp Dụng
                                 </button>
@@ -368,13 +327,14 @@ function TatCaSach() {
                                 placeholder="Tìm kiếm thể loại"
                                 className="author-search-bar"
                                 value={genreSearchTerm}
-                                onChange={e => setGenreSearchTerm(e.target.value)}
+                                onChange={(e) => setGenreSearchTerm(e.target.value)}
                             />
                             <div className="author-list">
-                                {filteredGenres.map(genre => (
+                                {filteredGenres.map((genre) => (
                                     <div
                                         key={genre}
-                                        className={`author-item ${tempSelectedGenres.includes(genre) ? 'selected' : ''}`}
+                                        className={`author-item ${tempSelectedGenres.includes(genre) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(genre, setTempSelectedGenres)}
                                     >
                                         {genre}
@@ -384,13 +344,17 @@ function TatCaSach() {
                             <div className="modal-buttons">
                                 <button
                                     className="apply-button"
-                                    onClick={() => applyFilter(setSelectedGenres, tempSelectedGenres, setIsGenreModalOpen)}
+                                    onClick={() =>
+                                        applyFilter(setSelectedGenres, tempSelectedGenres, setIsGenreModalOpen)
+                                    }
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
                                     className="cancel-button-new"
-                                    onClick={() => cancelFilter(setTempSelectedGenres, setSelectedGenres, setIsGenreModalOpen)}
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedGenres, setSelectedGenres, setIsGenreModalOpen)
+                                    }
                                 >
                                     Hủy Áp Dụng
                                 </button>
@@ -415,13 +379,14 @@ function TatCaSach() {
                                 placeholder="Tìm kiếm nhà xuất bản"
                                 className="author-search-bar"
                                 value={publisherSearchTerm}
-                                onChange={e => setPublisherSearchTerm(e.target.value)}
+                                onChange={(e) => setPublisherSearchTerm(e.target.value)}
                             />
                             <div className="author-list">
-                                {filteredPublishers.map(publisher => (
+                                {filteredPublishers.map((publisher) => (
                                     <div
                                         key={publisher}
-                                        className={`author-item ${tempSelectedPublishers.includes(publisher) ? 'selected' : ''}`}
+                                        className={`author-item ${tempSelectedPublishers.includes(publisher) ? 'selected' : ''
+                                            }`}
                                         onClick={() => handleSelection(publisher, setTempSelectedPublishers)}
                                     >
                                         {publisher}
@@ -431,13 +396,17 @@ function TatCaSach() {
                             <div className="modal-buttons">
                                 <button
                                     className="apply-button"
-                                    onClick={() => applyFilter(setSelectedPublishers, tempSelectedPublishers, setIsPublisherModalOpen)}
+                                    onClick={() =>
+                                        applyFilter(setSelectedPublishers, tempSelectedPublishers, setIsPublisherModalOpen)
+                                    }
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
                                     className="cancel-button-new"
-                                    onClick={() => cancelFilter(setTempSelectedPublishers, setSelectedPublishers, setIsPublisherModalOpen)}
+                                    onClick={() =>
+                                        cancelFilter(setTempSelectedPublishers, setSelectedPublishers, setIsPublisherModalOpen)
+                                    }
                                 >
                                     Hủy Áp Dụng
                                 </button>
@@ -464,13 +433,13 @@ function TatCaSach() {
                                         type="number"
                                         placeholder="Năm bắt đầu"
                                         value={yearStart}
-                                        onChange={e => setYearStart(e.target.value)}
+                                        onChange={(e) => setYearStart(e.target.value)}
                                     />
                                     <input
                                         type="number"
                                         placeholder="Năm kết thúc"
                                         value={yearEnd}
-                                        onChange={e => setYearEnd(e.target.value)}
+                                        onChange={(e) => setYearEnd(e.target.value)}
                                     />
                                 </div>
                                 <h3>Nhập từng năm riêng lẻ:</h3>
@@ -478,7 +447,7 @@ function TatCaSach() {
                                     type="text"
                                     placeholder="Các năm cách nhau bởi dấu phẩy"
                                     value={specificYears}
-                                    onChange={e => setSpecificYears(e.target.value)}
+                                    onChange={(e) => setSpecificYears(e.target.value)}
                                 />
                             </div>
                             <div className="modal-buttons">
@@ -511,13 +480,13 @@ function TatCaSach() {
                                         type="number"
                                         placeholder="Số lượng tối thiểu"
                                         value={stockMin}
-                                        onChange={e => setStockMin(e.target.value)}
+                                        onChange={(e) => setStockMin(e.target.value)}
                                     />
                                     <input
                                         type="number"
                                         placeholder="Số lượng tối đa"
                                         value={stockMax}
-                                        onChange={e => setStockMax(e.target.value)}
+                                        onChange={(e) => setStockMax(e.target.value)}
                                     />
                                 </div>
                                 <h3>Nhập từng số lượng riêng lẻ:</h3>
@@ -525,7 +494,7 @@ function TatCaSach() {
                                     type="text"
                                     placeholder="Các số lượng cách nhau bởi dấu phẩy"
                                     value={specificStocks}
-                                    onChange={e => setSpecificStocks(e.target.value)}
+                                    onChange={(e) => setSpecificStocks(e.target.value)}
                                 />
                             </div>
                             <div className="modal-buttons">
@@ -558,13 +527,13 @@ function TatCaSach() {
                                         type="number"
                                         placeholder="Giá tối thiểu"
                                         value={priceMin}
-                                        onChange={e => setPriceMin(e.target.value)}
+                                        onChange={(e) => setPriceMin(e.target.value)}
                                     />
                                     <input
                                         type="number"
                                         placeholder="Giá tối đa"
                                         value={priceMax}
-                                        onChange={e => setPriceMax(e.target.value)}
+                                        onChange={(e) => setPriceMax(e.target.value)}
                                     />
                                 </div>
                                 <h3>Nhập từng giá riêng lẻ:</h3>
@@ -572,7 +541,7 @@ function TatCaSach() {
                                     type="text"
                                     placeholder="Các giá cách nhau bởi dấu phẩy"
                                     value={specificPrices}
-                                    onChange={e => setSpecificPrices(e.target.value)}
+                                    onChange={(e) => setSpecificPrices(e.target.value)}
                                 />
                             </div>
                             <div className="modal-buttons">
@@ -606,12 +575,12 @@ function TatCaSach() {
                                 <th>NămXB</th>
                                 <th>Nhà xuất bản</th>
                                 <th>Tồn</th>
-                                <th>Đơn giá bán</th>
+                                <th>Đơn giá bán</th> {/* New column */}
                             </tr>
                         </thead>
                         <tbody>
                             {currentBooks.map((book, index) => (
-                                <tr key={book.maSach}>
+                                <tr key={book.id}>
                                     <td>{startIndex + index + 1}</td>
                                     <td>{book.maSach}</td>
                                     <td>{book.tenSach}</td>
@@ -623,8 +592,8 @@ function TatCaSach() {
                                     <td>
                                         {new Intl.NumberFormat('vi-VN', {
                                             style: 'currency',
-                                            currency: 'VND'
-                                        }).format(book.donGiaBan).replace('₫', 'VNĐ')}
+                                            currency: 'VND',
+                                        }).format(book.donGiaBan).replace('₫', 'VNĐ')} {/* Format price */}
                                     </td>
                                 </tr>
                             ))}

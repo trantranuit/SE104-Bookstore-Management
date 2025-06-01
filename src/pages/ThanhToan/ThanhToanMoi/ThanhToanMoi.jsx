@@ -30,18 +30,15 @@ function ThanhToanMoi() {
         name: '',
     });
     const [finalInvoice, setFinalInvoice] = useState(false);
-    const [newInvoiceId, setNewInvoiceId] = useState(null);
     const invoiceRef = useRef(null);
     const finalInvoiceRef = useRef(null);
     const [showNotification, setShowNotification] = useState(false);
     const [showSaveNotification, setShowSaveNotification] = useState(false);
     const [showEmployeeNotification, setShowEmployeeNotification] = useState(false);
     const [showCustomerNotification, setShowCustomerNotification] = useState(false);
-    const [showDebtNotification, setShowDebtNotification] = useState(false);
     const [tienKhachTra, setTienKhachTra] = useState('');
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
-
     const formatNumber = (value) => {
         if (!value) return '';
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -52,17 +49,17 @@ function ThanhToanMoi() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const [sachList, dauSachList, tacGiaList, ctNhapSachList, thamSoList] = await Promise.all([
+                // Lấy tất cả dữ liệu cần thiết
+                const [sachList, dauSachList, tacGiaList] = await Promise.all([
                     thanhToanMoiApi.getAllBooks(),
                     thanhToanMoiApi.getAllDauSach(),
-                    thanhToanMoiApi.getAllTacGia(),
-                    thanhToanMoiApi.getAllCTNhapSach(),
-                    thanhToanMoiApi.getAllThamSo()
+                    thanhToanMoiApi.getAllTacGia()
                 ]);
-                const thamSo = thamSoList[0]; // Giả định chỉ có một tham số
+                // Map sách với tên sách và tác giả
                 const booksData = sachList.map(sach => {
                     const dauSach = dauSachList.find(ds => ds.MaDauSach === sach.MaDauSach);
                     let tenSach = dauSach ? dauSach.TenSach : '';
+                    // MaTG có thể là mảng, lấy tên tác giả đầu tiên hoặc gộp nhiều tên
                     let tacGia = '';
                     if (dauSach && Array.isArray(dauSach.MaTG)) {
                         tacGia = dauSach.MaTG
@@ -73,74 +70,46 @@ function ThanhToanMoi() {
                             .filter(Boolean)
                             .join(', ');
                     }
-                    // Lấy giá nhập từ ctNhapSach và tính đơn giá bằng GiaNhap * TiLe
-                    const ctNhapSach = ctNhapSachList.find(ct => ct.MaSach === sach.MaSach);
-                    const giaNhap = ctNhapSach ? ctNhapSach.GiaNhap : 0;
-                    const donGia = thamSo && giaNhap ? Math.round(giaNhap * thamSo.TiLe) : 0;
                     return {
                         maSach: String(sach.MaSach),
                         tenSach,
                         tacGia,
                         nhaXuatBan: sach.NXB,
-                        donGia,
+                        donGia: 0, // Nếu cần lấy giá, phải lấy từ bảng khác (cthoadon)
                         soLuongTon: sach.SLTon,
                         maDauSach: sach.MaDauSach
                     };
                 });
                 setBooks(booksData);
             } catch (error) {
-                console.error('Error fetching books:', error);
                 setBooks([]);
             }
         };
         fetchBooks();
     }, [showSaveNotification]);
 
-    // Lấy mã hóa đơn lớn nhất khi hiển thị finalInvoice
     useEffect(() => {
-        const generateNewInvoiceId = async () => {
-            if (finalInvoice && !invoice) {
-                try {
-                    const invoices = await thanhToanMoiApi.getAllHoaDon();
-                    let maxId = 1;
-                    if (invoices && invoices.length > 0) {
-                        maxId = invoices.reduce((max, inv) => {
-                            const num = parseInt(inv.MaHD, 10);
-                            return num > max ? num : max;
-                        }, 0) + 1;
-                    }
-                    setNewInvoiceId(maxId);
-                } catch {
-                    setNewInvoiceId(1);
-                }
-            }
-        };
-        generateNewInvoiceId();
-    }, [finalInvoice, invoice]);
-
-    useEffect(() => {
+        // Nếu có invoice (sửa hóa đơn), set lại cart và thông tin khách/nhân viên
         if (invoice) {
             setCart(
                 invoice.danhSachSach.map(sach => ({
-                    maSach: String(sach.MaSach),
-                    tenSach: sach.tenSach,
+                    maSach: sach.ten_sach,
+                    tenSach: sach.tac_gia,
                     soLuongMua: sach.soLuong,
                     donGia: sach.donGia,
-                    soLuongTon: sach.soLuongTon || 0,
                 }))
             );
             setCustomerInfo({
-                id: String(invoice.MaKH),
+                id: invoice.maKhachHang,
                 name: invoice.tenKhachHang,
                 phone: invoice.sdt,
                 email: invoice.email,
-                debt: invoice.soNo || 0,
+                debt: invoice.soNo,
             });
             setEmployeeInfo({
-                id: String(invoice.NguoiLapHD) || '',
-                name: invoice.nhanVien || '',
+                id: invoice.maNhanVien || '', // Include maNhanVien
+                name: invoice.nhanVien,
             });
-            setNewInvoiceId(parseInt(invoice.MaHD, 10));
         } else {
             setCart([]);
             setCustomerInfo({
@@ -156,7 +125,6 @@ function ThanhToanMoi() {
             });
             setShowInvoice(false);
             setFinalInvoice(false);
-            setNewInvoiceId(null);
         }
     }, [invoice, showSaveNotification]);
 
@@ -170,7 +138,7 @@ function ThanhToanMoi() {
                         : item
                 ));
             } else {
-                setShowNotification(true);
+                setShowNotification(true); // Show notification modal
             }
         } else {
             if (book.soLuongTon > 0) {
@@ -181,7 +149,7 @@ function ThanhToanMoi() {
 
     const handleIncrease = (maSach) => {
         setCart(cart.map(item =>
-            item.maSach === maSach && item.soLuongMua < item.soLuongTon
+            item.maSach === maSach
                 ? { ...item, soLuongMua: item.soLuongMua + 1 }
                 : item
         ));
@@ -201,12 +169,12 @@ function ThanhToanMoi() {
 
     const filteredBooks = books.filter(book =>
         book.tenSach.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.maSach.toLowerCase().includes(searchTerm.toLowerCase())
+        book.maSach.toLowerCase().includes(searchTerm.toLowerCase()) // Search by book name or ID
     );
 
     const displayedBooks = searchTerm
-        ? filteredBooks
-        : books.slice(currentPage * booksPerPage, (currentPage + 1) * booksPerPage);
+        ? filteredBooks // Show all matching books if a search term is entered
+        : books.slice(currentPage * booksPerPage, (currentPage + 1) * booksPerPage); // Otherwise, paginate
 
     const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
@@ -231,44 +199,20 @@ function ThanhToanMoi() {
 
         if (!customerId) {
             setCustomerInfo({ id: '', name: '', phone: '', email: '', debt: 0 });
-            if (finalInvoice) {
-                setFinalInvoice(false);
-            }
             return;
         }
 
         try {
             const customer = await thanhToanMoiApi.getCustomerById(customerId);
-            const updatedCustomerInfo = {
+            setCustomerInfo({
                 id: String(customer.MaKhachHang),
                 name: customer.HoTen,
                 phone: customer.DienThoai,
                 email: customer.Email,
                 debt: customer.SoTienNo,
-            };
-            setCustomerInfo(updatedCustomerInfo);
-
-            // Kiểm tra số nợ của khách hàng mới so với NoTD
-            const thamSoList = await thanhToanMoiApi.getAllThamSo();
-            const thamSo = thamSoList[0]; // Giả định chỉ có một tham số
-            if (!thamSo) {
-                console.error('Không tìm thấy tham số NoTD');
-                alert('Lỗi hệ thống: Không tìm thấy tham số nợ tối đa.');
-                return;
-            }
-
-            if (updatedCustomerInfo.debt > thamSo.NoTD) {
-                setShowDebtNotification(true);
-                if (finalInvoice) {
-                    setFinalInvoice(false);
-                }
-            }
-        } catch (error) {
-            console.error('Lỗi khi lấy thông tin khách hàng:', error);
+            });
+        } catch {
             setCustomerInfo({ id: customerId, name: '', phone: '', email: '', debt: 0 });
-            if (finalInvoice) {
-                setFinalInvoice(false);
-            }
         }
     };
 
@@ -292,53 +236,45 @@ function ThanhToanMoi() {
         }
     };
 
-    const handleCustomerInfoSubmit = async (e) => {
+    const generateInvoiceId = () => {
+        const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+        if (existingInvoices.length === 0) {
+            return 'HD001'; // Start with HD001 if no invoices exist
+        }
+        const lastInvoiceId = existingInvoices[existingInvoices.length - 1].maHoaDon;
+        const nextIdNumber = parseInt(lastInvoiceId.replace('HD', '')) + 1;
+        return `HD${String(nextIdNumber).padStart(3, '0')}`; // Ensure 3-digit format
+    };
+
+    const handleCustomerInfoSubmit = (e) => {
         e.preventDefault();
 
+        // Validate required fields
         if (!employeeInfo.id || !employeeInfo.name) {
-            setShowEmployeeNotification(true);
+            setShowEmployeeNotification(true); // Show notification modal
             return;
         }
         if (!customerInfo.id || !customerInfo.name || !customerInfo.phone || !customerInfo.email) {
-            setShowCustomerNotification(true);
+            setShowCustomerNotification(true); // Show notification modal
             return;
         }
 
-        try {
-            // Lấy NoTD từ thamso
-            const thamSoList = await thanhToanMoiApi.getAllThamSo();
-            const thamSo = thamSoList[0]; // Giả định chỉ có một tham số
-            if (!thamSo) {
-                console.error('Không tìm thấy tham số NoTD');
-                alert('Lỗi hệ thống: Không tìm thấy tham số nợ tối đa.');
-                return;
-            }
-
-            // Kiểm tra số nợ hiện tại có vượt NoTD không
-            if (customerInfo.debt > thamSo.NoTD) {
-                setShowDebtNotification(true);
-                return;
-            }
-
-            // Nếu hợp lệ, tiếp tục hoàn tất hóa đơn
-            setFinalInvoice(true);
-            setTimeout(() => {
-                finalInvoiceRef.current.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        } catch (error) {
-            console.error('Lỗi khi kiểm tra nợ:', error);
-            alert('Có lỗi khi kiểm tra số nợ khách hàng!');
-        }
+        // Chỉ chuyển sang xem hóa đơn, chưa lưu vào localStorage
+        setFinalInvoice(true); // Show the final invoice
+        setTimeout(() => {
+            finalInvoiceRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll to the final invoice
+        }, 100);
     };
 
     const handleCreateNewInvoice = () => {
-        navigate('/thanhtoan/moi', { state: null });
-        setTienKhachTra('');
+        navigate('/thanhtoan/moi', { state: null }); // Navigate to /thanhtoan/moi with no pre-filled data
+        setTienKhachTra(''); // Xóa số tiền khách trả cũ khi tạo hóa đơn mới
         setTienKhachTraError(false);
         setTienKhachTraErrorMsg('');
     };
 
     const handleSaveInvoice = async () => {
+        // Không cho lưu nếu chưa nhập tiền khách trả hoặc có lỗi nhập tiền khách trả
         if (!tienKhachTra) {
             setTienKhachTraError(true);
             setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
@@ -349,66 +285,68 @@ function ThanhToanMoi() {
         }
         const totalInvoiceAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
         const tienKhachTraNumber = parseInt(parseNumber(tienKhachTra) || '0');
-        const newDebt = customerInfo.debt + (totalInvoiceAmount - tienKhachTraNumber);
+        const tienNoSauThanhToan = customerInfo.debt + Math.max(0, totalInvoiceAmount - tienKhachTraNumber);
 
         const updatedInvoice = {
-            MaHD: invoice ? invoice.MaHD : newInvoiceId,
-            NgayLap: new Date().toISOString().split('T')[0],
-            TongTien: totalInvoiceAmount,
-            SoTienTra: tienKhachTraNumber,
-            ConLai: newDebt,
-            MaKH: customerInfo.id,
-            NguoiLapHD: employeeInfo.id,
+            ...invoice, // Use existing invoice details if editing
+            maHoaDon: invoice?.maHoaDon || generateInvoiceId(), // Use existing ID or generate a new one
+            nhanVien: employeeInfo.name,
+            maNhanVien: employeeInfo.id,
+            maKhachHang: customerInfo.id,
+            tenKhachHang: customerInfo.name,
+            sdt: customerInfo.phone,
+            email: customerInfo.email,
+            soNo: tienNoSauThanhToan, // Lưu số nợ sau thanh toán vào hóa đơn
+            tienKhachTra: tienKhachTraNumber,
+            ngayLap: new Date().toISOString().split('T')[0],
+            danhSachSach: cart.map(item => ({
+                maSach: item.maSach,
+                tenSach: item.tenSach,
+                soLuong: item.soLuongMua,
+                donGia: item.donGia,
+            })),
         };
 
+        // Gọi API tạo hóa đơn
         try {
             await thanhToanMoiApi.createInvoice(updatedInvoice);
+            // Cập nhật số lượng tồn cho từng sách trong cart
             for (const item of cart) {
-                const ctHoaDon = {
-                    MaHD: updatedInvoice.MaHD,
-                    MaSach: item.maSach,
-                    SLBan: item.soLuongMua,
-                    GiaBan: item.donGia,
-                    ThanhTien: item.soLuongMua * item.donGia,
-                };
-                await thanhToanMoiApi.createCTHoaDon(ctHoaDon);
                 const newStock = Math.max(0, (item.soLuongTon || 0) - item.soLuongMua);
                 await thanhToanMoiApi.updateBookStock(item.maSach, newStock);
             }
-            await thanhToanMoiApi.updateCustomerDebt(customerInfo.id, newDebt);
             setShowSaveNotification(true);
             setTienKhachTra('');
             setTienKhachTraError(false);
             setTienKhachTraErrorMsg('');
         } catch (err) {
-            console.error('Error saving invoice, chi tiet hoa don, stock, or customer debt:', err);
-            alert('Có lỗi khi lưu hóa đơn, chi tiết hóa đơn, tồn kho, hoặc nợ khách hàng!');
+            alert('Có lỗi khi lưu hóa đơn!');
         }
     };
 
     const handleCloseNotification = () => {
-        setCart([]);
+        setCart([]); // Clear the cart
         setCustomerInfo({
             id: '',
             name: '',
             phone: '',
             email: '',
             debt: 0,
-        });
+        }); // Reset customer info
         setEmployeeInfo({
             id: '',
             name: '',
-        });
-        setShowSaveNotification(false);
-        setShowInvoice(false);
-        setFinalInvoice(false);
-        setNewInvoiceId(null);
+        }); // Reset employee info
+        setShowSaveNotification(false); // Close the notification modal
+        setShowInvoice(false); // Reset the invoice view
+        setFinalInvoice(false); // Reset the final invoice state
     };
 
     return (
         <div className="page-container">
             <h1 className="page-title">Tạo Hóa Đơn Mua Sách</h1>
 
+            {/* Notification Modal for Book Quantity */}
             {showNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
@@ -418,6 +356,7 @@ function ThanhToanMoi() {
                 </div>
             )}
 
+            {/* Notification Modal for Save Success */}
             {showSaveNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
@@ -425,7 +364,7 @@ function ThanhToanMoi() {
                         <div className="notification-actions-ttm">
                             <button
                                 className="close-button-ttm"
-                                onClick={handleCloseNotification}
+                                onClick={handleCloseNotification} // Reset and return to an empty cart
                             >
                                 Đóng
                             </button>
@@ -434,13 +373,14 @@ function ThanhToanMoi() {
                 </div>
             )}
 
+            {/* Notification Modal for Employee Info */}
             {showEmployeeNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
                         <p>Vui lòng nhập đầy đủ thông tin nhân viên.</p>
                         <button
                             className="close-button-ttm"
-                            onClick={() => setShowEmployeeNotification(false)}
+                            onClick={() => setShowEmployeeNotification(false)} // Close the notification modal
                         >
                             Đóng
                         </button>
@@ -448,13 +388,14 @@ function ThanhToanMoi() {
                 </div>
             )}
 
+            {/* Notification Modal for Customer Info */}
             {showCustomerNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
                         <p>Vui lòng nhập đầy đủ thông tin khách hàng.</p>
                         <button
                             className="close-button-ttm"
-                            onClick={() => setShowCustomerNotification(false)}
+                            onClick={() => setShowCustomerNotification(false)} // Close the notification modal
                         >
                             Đóng
                         </button>
@@ -462,26 +403,13 @@ function ThanhToanMoi() {
                 </div>
             )}
 
-            {showDebtNotification && (
-                <div className="notification-modal-ttm">
-                    <div className="notification-content-ttm">
-                        <p>Số tiền nợ vượt quá mức cho phép mua sách.</p>
-                        <button
-                            className="close-button-ttm"
-                            onClick={() => setShowDebtNotification(false)}
-                        >
-                            Đóng
-                        </button>
-                    </div>
-                </div>
-            )}
-
+            {/* Book Search Section */}
             <div className="book-search-section-ttm">
                 <div className="search-header-ttm">
                     <button
                         className="invoice-list-button-ttm"
                         style={{ marginTop: '1rem', marginBottom: '1rem', marginRight: '1.4rem' }}
-                        onClick={() => navigate('/thanhToan/hoaDon')}
+                        onClick={() => navigate('/thanhToan/hoaDon')} // Corrected path to match the route for HoaDon.jsx
                     >
                         Danh sách các hóa đơn
                     </button>
@@ -520,8 +448,8 @@ function ThanhToanMoi() {
                                         onClick={() => handleAddToCart(book)}
                                         disabled={book.soLuongTon === 0}
                                         style={{
-                                            backgroundColor: book.soLuongTon === 0 ? '#ccc' : '',
-                                            cursor: book.soLuongTon === 0 ? 'not-allowed' : 'pointer',
+                                            backgroundColor: book.soLuongTon === 0 ? '#ccc' : '', // Gray color for disabled button
+                                            cursor: book.soLuongTon === 0 ? 'not-allowed' : 'pointer', // Not-allowed cursor for disabled button
                                         }}
                                     >
                                         <FaCartPlus />
@@ -553,11 +481,12 @@ function ThanhToanMoi() {
                 </div>
             </div>
 
+            {/* Cart Section */}
             <div className="cart-section-ttm">
                 <h2 className="cart-header-ttm">Giỏ hàng</h2>
                 <div className="cart-summary-ttm">
-                    <span>Tổng số sách đã chọn: {totalQuantity}</span>
-                    <span>Tổng số tiền: {totalPrice.toLocaleString()}đ</span>
+                    <span>Tổng số sách đã chọn: {cart.reduce((sum, item) => sum + item.soLuongMua, 0)}</span>
+                    <span>Tổng số tiền: {cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0).toLocaleString()}đ</span>
                 </div>
                 <table className="cart-table-ttm">
                     <thead>
@@ -581,7 +510,7 @@ function ThanhToanMoi() {
                                         <button
                                             className="quantity-button-ttm"
                                             onClick={() => handleDecrease(item.maSach)}
-                                            disabled={item.soLuongMua <= 1}
+                                            disabled={item.soLuongMua <= 1} // Disable if quantity is less than or equal to 1
                                         >
                                             -
                                         </button>
@@ -601,7 +530,7 @@ function ThanhToanMoi() {
                                         <button
                                             className="quantity-button-ttm"
                                             onClick={() => handleIncrease(item.maSach)}
-                                            disabled={item.soLuongMua >= item.soLuongTon}
+                                            disabled={item.soLuongMua >= item.soLuongTon} // Disable if quantity reaches maximum stock
                                         >
                                             +
                                         </button>
@@ -619,9 +548,9 @@ function ThanhToanMoi() {
                     className="next-button-ttm"
                     onClick={() => {
                         if (cart.length > 0) {
-                            setShowInvoice(true);
+                            setShowInvoice(true); // Show the invoice section
                             setTimeout(() => {
-                                invoiceRef.current.scrollIntoView({ behavior: 'smooth' });
+                                invoiceRef.current.scrollIntoView({ behavior: 'smooth' }); // Scroll to the invoice section
                             }, 100);
                         } else {
                             alert('Vui lòng thêm ít nhất một sản phẩm vào giỏ hàng.');
@@ -680,13 +609,16 @@ function ThanhToanMoi() {
 
             {finalInvoice && (
                 <div className="final-invoice-section-ttm" ref={finalInvoiceRef}>
+                    {/* Div 1: Header */}
                     <div className="header-ttm">
                         <h2 style={{ textAlign: 'center', textTransform: 'uppercase' }}>HÓA ĐƠN MUA SÁCH</h2>
                     </div>
+
+                    {/* Div 2: Employee and Customer Info */}
                     <div className="info-section-ttm" style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', lineHeight: '2' }}>
                         <div className="left-info-ttm" style={{ flex: 1 }}>
                             <p><strong>Ngày lập hóa đơn:</strong> {new Date().toLocaleDateString()}</p>
-                            <p><strong>Mã hóa đơn:</strong> {invoice ? invoice.MaHD : newInvoiceId || 'Đang tạo...'}</p>
+                            <p><strong>Mã hóa đơn:</strong> HD{Math.floor(Math.random() * 100000)}</p>
                             <p><strong>Mã nhân viên:</strong> {employeeInfo.id}</p>
                             <p><strong>Tên nhân viên:</strong> {employeeInfo.name}</p>
                         </div>
@@ -697,6 +629,8 @@ function ThanhToanMoi() {
                             <p><strong>Email:</strong> {customerInfo.email}</p>
                         </div>
                     </div>
+
+                    {/* Div 3: Purchased Books List */}
                     <div className="books-list-ttm">
                         <table className="invoice-table-ttm">
                             <thead>
@@ -721,6 +655,8 @@ function ThanhToanMoi() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Div 4: Total Amounts */}
                     <div className="totals-ttm" style={{ marginTop: '2rem', textAlign: 'right' }}>
                         <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}đ</p>
                         <p>
@@ -762,11 +698,9 @@ function ThanhToanMoi() {
                                 {tienKhachTraErrorMsg}
                             </p>
                         )}
-                        <p>
-                            <strong>Còn lại:</strong>{' '}
-                            {(totalPrice - parseInt(parseNumber(tienKhachTra) || '0')).toLocaleString()}đ
-                        </p>
                     </div>
+
+                    {/* Div 5: Save Invoice Button */}
                     <div className="actions-ttm">
                         <button
                             type="button"

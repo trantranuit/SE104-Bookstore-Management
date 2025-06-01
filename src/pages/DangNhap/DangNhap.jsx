@@ -21,8 +21,7 @@ class Login extends Component {
             password: '',
             showPassword: false,
             loading: false,
-            error: '',
-            role: 'Admin' // Thêm state role mặc định
+            error: ''
         };
     }
 
@@ -58,28 +57,29 @@ class Login extends Component {
 
     handleLogin = async () => {
         this.setState({ loading: true, error: '' });
-
+        
         try {
+            // Kiểm tra các trường đầu vào
             if (!this.state.email || !this.state.password) {
                 this.setState({ error: 'Vui lòng nhập đầy đủ thông tin đăng nhập', loading: false });
                 return;
             }
+            
             // Gọi API đăng nhập qua authService
             await authService.login(
-                this.state.email,
-                this.state.password,
+                this.state.email, 
+                this.state.password, 
                 this.state.role
             );
-            // Lưu role vào localStorage để sidebar sử dụng
-            localStorage.setItem('currentRole', this.state.role);
+            
             // Chuyển hướng đến trang chủ
             this.props.navigate(ROUTES.HOME);
         } catch (error) {
             console.error('Lỗi đăng nhập:', error);
             // Hiển thị thông báo lỗi
-            this.setState({
-                error: 'Vui lòng kiểm tra tên đăng nhập và mật khẩu.',
-                loading: false
+            this.setState({ 
+                error: 'Vui lòng kiểm tra tên đăng nhập và mật khẩu.', 
+                loading: false 
             });
         }
     }
@@ -88,25 +88,25 @@ class Login extends Component {
         return (
             <div className="login-background">
                 <div className="login-container">
-                    <div className="login-content row">
+                    <div className="login-content row"> 
                         <div className="col-12 text-center mb-4">
                             <img src={logo} alt="Logo" className="dangnhap-logo" />
                         </div>
                         <div className="col-12 login-text">Đăng Nhập</div>
-
+                        
                         {/* Hiển thị thông báo lỗi nếu có */}
                         {this.state.error && (
-                            <div className="col-12 error-message-login" style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>
+                            <div className="col-12 error-message-login" style={{color: 'red', textAlign: 'center', marginBottom: '10px'}}>
                                 {this.state.error}
                             </div>
                         )}
-
+                        
                         <div className="col-12 form-group login-input">
                             <label>Username:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter your username"
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Enter your username" 
                                 value={this.state.email}
                                 onChange={this.handleOnChangeEmail}
                                 onKeyPress={this.handleKeyPress}
@@ -120,14 +120,14 @@ class Login extends Component {
                                 <input
                                     className="form-control"
                                     type={this.state.showPassword ? "text" : "password"}
-                                    placeholder="Enter your password"
+                                    placeholder="Enter your password" 
                                     value={this.state.password}
                                     onChange={this.handleOnChangePassword}
                                     onKeyPress={this.handleKeyPress}
                                     disabled={this.state.loading}
                                 />
-                                <span
-                                    className="password-icon"
+                                <span 
+                                    className="password-icon" 
                                     onClick={this.toggleShowPassword}
                                 >
                                     <FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />
@@ -135,24 +135,9 @@ class Login extends Component {
                             </div>
                         </div>
 
-                        <div className="col-12 form-group login-input">
-                            <label>Chọn vai trò:</label>
-                            <select
-                                className="form-control"
-                                value={this.state.role}
-                                onChange={this.handleRoleChange}
-                                disabled={this.state.loading}
-                            >
-                                <option value="Kho">Kho</option>
-                                <option value="Thu Ngân">Thu Ngân</option>
-                                <option value="Quản Lý">Quản Lý</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                        </div>
-
                         <div className="col-12">
-                            <button
-                                className="btn-login"
+                            <button 
+                                className="btn-login" 
                                 onClick={this.handleLogin}
                                 disabled={this.state.loading}
                             >

@@ -94,6 +94,10 @@ function TableKhachHang({
     {
       header: "MaKH",
       accessorKey: "id",
+      cell: ({ getValue }) => {
+        const id = getValue();
+        return `MA${id.toString().padStart(3, "0")}`;
+      },
       size: 150,
     },
     {

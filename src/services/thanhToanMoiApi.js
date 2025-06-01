@@ -22,9 +22,6 @@ const thanhToanMoiApi = {
             MaDauSach: s.MaDauSach
         };
     },
-    updateBookStock: async (maSach, slTon) => {
-        await axiosInstance.patch(`/sach/${maSach}/`, { SLTon: slTon });
-    },
 
     // Khách hàng
     getAllCustomers: async (params = {}) => {
@@ -48,10 +45,6 @@ const thanhToanMoiApi = {
             Email: c.Email,
             SoTienNo: c.SoTienNo
         };
-    },
-    updateCustomerDebt: async (maKhachHang, soTienNo) => {
-        const response = await axiosInstance.patch(`/khachhang/${maKhachHang}/`, { SoTienNo: soTienNo });
-        return response.data;
     },
 
     // Nhân viên (user)
@@ -157,14 +150,6 @@ const thanhToanMoiApi = {
             MaSach: hd.MaSach
         };
     },
-    createInvoice: async (invoice) => {
-        const response = await axiosInstance.post("/hoadon/", invoice);
-        return response.data;
-    },
-    deleteInvoice: async (maHoaDon) => {
-        const response = await axiosInstance.delete(`/hoadon/${maHoaDon}/`);
-        return response.data;
-    },
 
     // Chi tiết hóa đơn
     getAllCTHoaDon: async (params = {}) => {
@@ -187,80 +172,6 @@ const thanhToanMoiApi = {
             ThanhTien: ct.ThanhTien,
             MaHD: ct.MaHD,
             MaSach: ct.MaSach
-        };
-    },
-    createCTHoaDon: async (ctHoaDon) => {
-        const response = await axiosInstance.post("/cthoadon/", ctHoaDon);
-        return response.data;
-    },
-
-    // Chi tiết nhập sách
-    getAllCTNhapSach: async (params = {}) => {
-        const response = await axiosInstance.get("/ctnhapsach/", { params });
-        return response.data.map(ct => ({
-            id: ct.id,
-            SLNhap: ct.SLNhap,
-            GiaNhap: parseFloat(ct.GiaNhap),
-            MaPhieuNhap: ct.MaPhieuNhap,
-            MaSach: ct.MaSach
-        }));
-    },
-    getCTNhapSachById: async (id) => {
-        const ct = (await axiosInstance.get(`/ctnhapsach/${id}/`)).data;
-        return {
-            id: ct.id,
-            SLNhap: ct.SLNhap,
-            GiaNhap: parseFloat(ct.GiaNhap),
-            MaPhieuNhap: ct.MaPhieuNhap,
-            MaSach: ct.MaSach
-        };
-    },
-
-    // Phiếu nhập sách
-    getAllPhieuNhapSach: async (params = {}) => {
-        const response = await axiosInstance.get("/phieunhapsach/", { params });
-        return response.data.map(pn => ({
-            id: pn.id,
-            SLNhap: pn.SLNhap,
-            GiaNhap: parseFloat(pn.GiaNhap),
-            MaPhieuNhap: pn.MaPhieuNhap,
-            MaSach: pn.MaSach
-        }));
-    },
-    getPhieuNhapSachById: async (id) => {
-        const pn = (await axiosInstance.get(`/phieunhapsach/${id}/`)).data;
-        return {
-            id: pn.id,
-            SLNhap: pn.SLNhap,
-            GiaNhap: parseFloat(pn.GiaNhap),
-            MaPhieuNhap: pn.MaPhieuNhap,
-            MaSach: pn.MaSach
-        };
-    },
-
-    // Tham số
-    getAllThamSo: async (params = {}) => {
-        const response = await axiosInstance.get("/thamso/", { params });
-        return response.data.map(ts => ({
-            id: ts.id,
-            SLNhapTT: ts.SLNhapTT,
-            TonTD: ts.TonTD,
-            NoTD: parseFloat(ts.NoTD),
-            TonTT: ts.TonTT,
-            TiLe: parseFloat(ts.TiLe),
-            SDQD4: ts.SDQD4
-        }));
-    },
-    getThamSoById: async (id) => {
-        const ts = (await axiosInstance.get(`/thamso/${id}/`)).data;
-        return {
-            id: ts.id,
-            SLNhapTT: ts.SLNhapTT,
-            TonTD: ts.TonTD,
-            NoTD: parseFloat(ts.NoTD),
-            TonTT: ts.TonTT,
-            TiLe: parseFloat(ts.TiLe),
-            SDQD4: ts.SDQD4
         };
     }
 };

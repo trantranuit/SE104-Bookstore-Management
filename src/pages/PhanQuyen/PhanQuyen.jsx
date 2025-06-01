@@ -2,25 +2,18 @@ import React, { useState } from 'react';
 import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
 import { FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { addUser } from '../../services/phanQuyen.js';
 
 function PhanQuyen() {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const [showPassword, setShowPassword] = useState({});
-    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-    const [newUser, setNewUser] = useState({ name: '', phone: '', role: '', maNV: '', email: '', username: '' });
+    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); // State for add user modal
+    const [newUser, setNewUser] = useState({ name: '', phone: '', role: '', maNV: '', email: '' });
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
     const [editUser, setEditUser] = useState(null);
-    const [users, setUsers] = useState([
-        { id: 1, maNV: 'NV001', username: 'nv001', name: 'Nguyễn Văn A', phone: '0901234567', email: 'a@gmail.com', password: '123456', role: 'Kho', lastAccess: '2023-10-01 10:00' },
-        { id: 2, maNV: 'NV002', username: 'nv002', name: 'Trần Thị B', phone: '0912345678', email: 'b@gmail.com', password: 'abcdef', role: 'Thu Ngân', lastAccess: '2023-10-02 15:30' },
-        { id: 3, maNV: 'NV003', username: 'nv003', name: 'Lê Văn C', phone: '0987654321', email: 'c@gmail.com', password: 'password', role: 'Quản Lý', lastAccess: '2023-10-03 09:45' },
-    ]);
-    const [message, setMessage] = useState('');
-    const [showSavedModal, setShowSavedModal] = useState(false);
-
     const [rolePermissions, setRolePermissions] = useState(() => {
+        // Load from localStorage or initialize default
         return JSON.parse(localStorage.getItem('rolePermissions')) || {
             Kho: {},
             'Thu Ngân': {},
@@ -28,77 +21,49 @@ function PhanQuyen() {
             Admin: {}
         };
     });
-    const [rolePages, setRolePages] = useState(() => {
-        return JSON.parse(localStorage.getItem('rolePages')) || {
-            Kho: [],
-            'Thu Ngân': [],
-            'Quản Lý': [],
-            Admin: []
-        };
-    });
 
     const pages = [
         'Trang Chủ',
-        'Tra Cứu Sách',
-        'Thêm Sách',
+        'Tất Cả Sách',
         'Nhập Sách',
-        'Khách Hàng',
         'Thanh Toán',
+        'Khách Hàng',
         'Báo Cáo',
         'Thay Đổi Quy Định'
     ];
 
+    const users = [
+        { id: 1, maNV: 'NV001', name: 'Nguyễn Văn A', phone: '0901234567', email: 'a@gmail.com', password: '123456', role: 'Kho', status: 'Đang hoạt động', lastAccess: '2023-10-01 10:00' },
+        { id: 2, maNV: 'NV002', name: 'Trần Thị B', phone: '0912345678', email: 'b@gmail.com', password: 'abcdef', role: 'Thu Ngân', status: 'Tạm nghỉ', lastAccess: '2023-10-02 15:30' },
+        { id: 3, maNV: 'NV003', name: 'Lê Văn C', phone: '0987654321', email: 'c@gmail.com', password: 'password', role: 'Quản Lý', status: 'Đang hoạt động', lastAccess: '2023-10-03 09:45' },
+    ];
+
     const filteredUsers = users.filter(user =>
         (user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (roleFilter === '' || user.role === roleFilter)
+        (roleFilter === '' || user.role === roleFilter) &&
+        (statusFilter === '' || user.status === statusFilter)
     );
 
     const handleTogglePassword = (id) => {
         setShowPassword((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handleAddUser = async () => {
-        // Ánh xạ role từ giao diện sang định dạng API
-        const roleMapping = {
-            'Kho': 'NguoiNhap',
-            'Thu Ngân': 'ThuNgan',
-            'Quản Lý': 'QuanLy',
-            'Admin': 'Admin'
-        };
-
-        // Tách tên thành first_name và last_name
-        const [firstName, ...lastNameParts] = newUser.name.trim().split(' ');
-        const lastName = lastNameParts.join(' ');
-
-        // Tạo dữ liệu người dùng theo định dạng API
-        const userData = {
-            username: newUser.username || newUser.maNV, // Ưu tiên username, fallback sang maNV
-            password: `${firstName?.toLowerCase() || 'user'}_${(roleMapping[newUser.role] || newUser.role).toLowerCase()}`,
+    const handleAddUser = () => {
+        const generatedPassword = `${newUser.name.split(' ')[0].toLowerCase()}_${newUser.role.toLowerCase()}`;
+        const newUserData = {
+            id: users.length + 1,
+            maNV: newUser.maNV,
+            name: newUser.name,
+            phone: newUser.phone,
             email: newUser.email,
-            first_name: firstName || '',
-            last_name: lastName || '',
-            role: roleMapping[newUser.role] || newUser.role
+            password: generatedPassword,
+            role: newUser.role,
+            status: 'Đang hoạt động',
+            lastAccess: 'Chưa truy cập',
         };
-
-        try {
-            const response = await addUser(userData);
-            setUsers([...users, {
-                id: users.length + 1,
-                maNV: newUser.maNV,
-                username: userData.username,
-                name: newUser.name,
-                phone: newUser.phone,
-                email: newUser.email,
-                password: userData.password,
-                role: newUser.role,
-                lastAccess: 'Chưa truy cập',
-            }]);
-            setMessage('Thêm người dùng thành công!');
-            setIsAddUserModalOpen(false);
-            setNewUser({ name: '', phone: '', role: '', maNV: '', email: '', username: '' });
-        } catch (error) {
-            setMessage(error.message || 'Thêm người dùng thất bại, vui lòng kiểm tra lại!');
-        }
+        users.push(newUserData); // Add the new user to the list
+        setIsAddUserModalOpen(false); // Close the modal
+        setNewUser({ name: '', phone: '', role: '', maNV: '', email: '' }); // Reset the form
     };
 
     const handleEditUser = (user) => {
@@ -107,7 +72,17 @@ function PhanQuyen() {
     };
 
     const handleSaveEditUser = () => {
-        setUsers(users.map(u => u.id === editUser.id ? editUser : u));
+        // Update user in users array (mock, not persistent)
+        const idx = users.findIndex(u => u.id === editUser.id);
+        if (idx !== -1) {
+            users[idx] = {
+                ...users[idx],
+                phone: editUser.phone,
+                role: editUser.role,
+                status: editUser.status,
+                password: editUser.password // allow password update
+            };
+        }
         setIsEditUserModalOpen(false);
         setEditUser(null);
     };
@@ -121,55 +96,11 @@ function PhanQuyen() {
         localStorage.setItem('rolePermissions', JSON.stringify(updated));
     };
 
-    const handlePageAccessChange = (role, page) => {
-        setRolePages(prev => {
-            const current = prev[role] || [];
-            let updatedPages;
-            if (current.includes(page)) {
-                updatedPages = current.filter(p => p !== page);
-            } else {
-                updatedPages = [...current, page];
-            }
-            const updated = { ...prev, [role]: updatedPages };
-            localStorage.setItem('rolePages', JSON.stringify(updated));
-            return updated;
-        });
-    };
-
-    const handleSaveRolePages = () => {
-        localStorage.setItem('rolePages', JSON.stringify(rolePages));
-        setShowSavedModal(true);
-        setMessage('Đã lưu cấu hình quyền truy cập!');
-        setTimeout(() => setShowSavedModal(false), 1500);
-    };
-
     return (
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
             <div className="content-wrapper content-wrapper-pq">
-                {showSavedModal && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        background: 'rgba(0,0,0,0.2)',
-                        zIndex: 9999,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <div style={{
-                            background: '#fff',
-                            padding: '32px 48px',
-                            borderRadius: 10,
-                            fontSize: 22,
-                            fontWeight: 'bold',
-                            boxShadow: '0 2px 16px rgba(0,0,0,0.15)'
-                        }}>
-                            Đã lưu cấu hình quyền
-                        </div>
-                    </div>
-                )}
-                {message && <p className="message">{message}</p>}
+                {/* User List Block */}
                 <div className="user-list-block-pq">
                     <h2 className="page-title-pq">Danh Sách Người Dùng</h2>
                     <div className="user-list-filters-pq">
@@ -186,6 +117,11 @@ function PhanQuyen() {
                             <option value="Quản Lý">Quản Lý</option>
                             <option value="Admin">Admin</option>
                         </select>
+                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                            <option value="">Lọc theo trạng thái</option>
+                            <option value="Đang hoạt động">Đang hoạt động</option>
+                            <option value="Tạm nghỉ">Tạm nghỉ</option>
+                        </select>
                         <button className="add-user-button-pq" onClick={() => setIsAddUserModalOpen(true)}>Thêm Người Dùng</button>
                     </div>
                     <table className="user-table-pq">
@@ -193,12 +129,13 @@ function PhanQuyen() {
                             <tr>
                                 <th>No.</th>
                                 <th>Mã NV</th>
-                                <th>Username</th>
                                 <th>Họ Tên</th>
                                 <th>Số điện thoại</th>
                                 <th>Email</th>
                                 <th>Mật Khẩu</th>
                                 <th>Vai Trò</th>
+                                <th>Trạng Thái</th>
+                                <th>Thời Gian Truy Cập Cuối Cùng</th>
                                 <th>Hành Động</th>
                             </tr>
                         </thead>
@@ -207,7 +144,6 @@ function PhanQuyen() {
                                 <tr key={user.id}>
                                     <td>{index + 1}</td>
                                     <td>{user.maNV}</td>
-                                    <td>{user.username}</td>
                                     <td>{user.name}</td>
                                     <td>{user.phone}</td>
                                     <td>{user.email}</td>
@@ -220,6 +156,8 @@ function PhanQuyen() {
                                         </div>
                                     </td>
                                     <td>{user.role}</td>
+                                    <td>{user.status}</td>
+                                    <td>{user.lastAccess}</td>
                                     <td>
                                         <div className="action-buttons-pq">
                                             <button className="icon-button-pq" onClick={() => handleEditUser(user)}><FaEdit /></button>
@@ -232,18 +170,12 @@ function PhanQuyen() {
                     </table>
                 </div>
 
+                {/* Add User Modal */}
                 {isAddUserModalOpen && (
                     <div className="modal-overlay-pq">
                         <div className="modal-pq">
                             <h2 className="modal-title-pq">Thêm Người Dùng Mới</h2>
                             <div className="modal-content-pq">
-                                <label>Username</label>
-                                <input
-                                    type="text"
-                                    placeholder="Username"
-                                    value={newUser.username}
-                                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                                />
                                 <label>Họ Tên</label>
                                 <input
                                     type="text"
@@ -292,13 +224,12 @@ function PhanQuyen() {
                     </div>
                 )}
 
+                {/* Edit User Modal */}
                 {isEditUserModalOpen && editUser && (
                     <div className="modal-overlay-pq">
                         <div className="modal-pq">
                             <h2 className="modal-title-pq">Sửa Người Dùng</h2>
                             <div className="modal-content-pq">
-                                <label>Username</label>
-                                <input type="text" value={editUser.username} disabled />
                                 <label>Họ Tên</label>
                                 <input type="text" value={editUser.name} disabled />
                                 <label>Mã Nhân Viên</label>
@@ -327,6 +258,14 @@ function PhanQuyen() {
                                     <option value="Quản Lý">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
+                                <label>Trạng Thái</label>
+                                <select
+                                    value={editUser.status}
+                                    onChange={e => setEditUser({ ...editUser, status: e.target.value })}
+                                >
+                                    <option value="Đang hoạt động">Đang hoạt động</option>
+                                    <option value="Tạm nghỉ">Tạm nghỉ</option>
+                                </select>
                             </div>
                             <div className="modal-buttons-pq">
                                 <button className="apply-button-pq" onClick={handleSaveEditUser}>Lưu</button>
@@ -336,26 +275,9 @@ function PhanQuyen() {
                     </div>
                 )}
 
-                <div className="role-config-block-pq" style={{ position: 'relative' }}>
+                {/* Role Configuration Block */}
+                <div className="role-config-block-pq">
                     <h2 className="page-title-pq">Cấu Hình Quyền</h2>
-                    <button
-                        style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: 0,
-                            margin: '8px 16px',
-                            padding: '8px 20px',
-                            background: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
-                        }}
-                        onClick={handleSaveRolePages}
-                    >
-                        Lưu
-                    </button>
                     <table className="role-config-table-pq">
                         <thead>
                             <tr>
@@ -363,7 +285,6 @@ function PhanQuyen() {
                                 {pages.map((page) => (
                                     <th key={page}>{page}</th>
                                 ))}
-                                <th>Phân Quyền</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -371,21 +292,17 @@ function PhanQuyen() {
                                 <tr key={role}>
                                     <td>{role}</td>
                                     {pages.map((page) => (
-                                        <td key={page} style={{ textAlign: 'center' }}>
-                                            <input
-                                                type="checkbox"
-                                                checked={rolePages[role]?.includes(page)}
-                                                onChange={() => handlePageAccessChange(role, page)}
-                                            />
+                                        <td key={page}>
+                                            <select
+                                                value={rolePermissions[role]?.[page] || 'none'}
+                                                onChange={e => handlePermissionChange(role, page, e.target.value)}
+                                            >
+                                                <option value="none">Không</option>
+                                                <option value="view">Chỉ Xem</option>
+                                                <option value="edit">Được Sửa</option>
+                                            </select>
                                         </td>
                                     ))}
-                                    <td style={{ textAlign: 'center' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={rolePages[role]?.includes('Phân Quyền')}
-                                            onChange={() => handlePageAccessChange(role, 'Phân Quyền')}
-                                        />
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>
