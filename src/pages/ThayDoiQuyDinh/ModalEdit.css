@@ -6,32 +6,36 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
 .modal-container {
-  background-color: white;
+  background: white;
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 8px;
-  width: 400px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .modal-close-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  right: 15px;
+  top: 15px;
   border: none;
   background: none;
   font-size: 24px;
   cursor: pointer;
+  color: #666;
 }
 
 .modal-form {
-  display: flex;
-  flex-direction: column;
+  margin-top: 20px;
 }
 
 .form-group {
@@ -41,66 +45,80 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
 }
 
 .edit-input,
-.edit-select {
+.edit-select,
+.disabled-input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.edit-input:focus,
+.edit-select:focus {
+  outline: none;
+  border-color: #4880ff;
+  box-shadow: 0 0 0 2px rgba(72, 128, 255, 0.2);
 }
 
 .disabled-input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
   cursor: not-allowed;
-}
-
-.edit-checkbox {
-  margin-left: 10px;
+  color: #666;
 }
 
 .button-group {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 20px;
 }
 
 .cancel-btn,
 .save-btn {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cancel-btn {
-  background-color: #ccc;
-  color: white;
+  background-color: #f1f1f1;
+  color: #666;
 }
 
 .save-btn {
-  background-color: #007bff;
+  background-color: #4880ff;
   color: white;
 }
 
-.notification {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  text-align: center;
+.cancel-btn:hover {
+  background-color: #e0e0e0;
 }
 
-.notification.success {
-  background-color: #d4edda;
-  color: #155724;
+.save-btn:hover {
+  background-color: #3a66cc;
 }
 
-.notification.error {
-  background-color: #f8d7da;
-  color: #721c24;
+/* Animation for modal */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-container {
+  animation: modalFadeIn 0.3s ease;
 }

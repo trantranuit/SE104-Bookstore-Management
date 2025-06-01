@@ -10,11 +10,7 @@ function TableCongNo({ data }) {
     },
     {
         header: 'MaKH',
-        accessorKey: 'id',
-        cell: ({ row }) => {
-            const id = row.original.id;
-            return `MA${String(id).padStart(3, '0')}`;
-        },
+        accessorKey: 'id',       
     },
     {
       header: "Tên KH",

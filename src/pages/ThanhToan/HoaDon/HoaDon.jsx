@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { PiNotePencil } from "react-icons/pi"; // Import the icon
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { PiNotePencil } from "react-icons/pi";
+import { useNavigate } from 'react-router-dom';
+import thanhToanMoiApi from '../../../services/thanhToanMoiApi';
 import '../../../styles/PathStyles.css';
-import './HoaDon.css'; // Ensure this CSS file is imported
+import './HoaDon.css';
 
 function HoaDon() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,12 +12,61 @@ function HoaDon() {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
     const [deletedInvoiceId, setDeletedInvoiceId] = useState('');
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const storedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-        setInvoices(storedInvoices);
-    }, []);
+        const fetchInvoices = async () => {
+            try {
+                const [hoaDonList, ctHoaDonList, customers, users, books, dauSachList] = await Promise.all([
+                    thanhToanMoiApi.getAllHoaDon(),
+                    thanhToanMoiApi.getAllCTHoaDon(),
+                    thanhToanMoiApi.getAllCustomers(),
+                    thanhToanMoiApi.getAllUsers(),
+                    thanhToanMoiApi.getAllBooks(),
+                    thanhToanMoiApi.getAllDauSach(),
+                ]);
+
+                const formattedInvoices = await Promise.all(hoaDonList.map(async (hd) => {
+                    // Lấy chi tiết hóa đơn
+                    const chiTiet = ctHoaDonList.filter(ct => ct.MaHD === hd.MaHD);
+                    // Lấy thông tin khách hàng
+                    const customer = customers.find(c => c.MaKhachHang === hd.MaKH) || {};
+                    // Lấy thông tin nhân viên
+                    const user = users.find(u => u.id === hd.NguoiLapHD) || {};
+                    // Lấy danh sách sách
+                    const danhSachSach = await Promise.all(chiTiet.map(async (ct) => {
+                        const book = books.find(b => b.MaSach === ct.MaSach) || {};
+                        const dauSach = dauSachList.find(ds => ds.MaDauSach === book.MaDauSach) || {};
+                        return {
+                            maSach: String(ct.MaSach),
+                            tenSach: dauSach.TenSach || 'Không xác định',
+                            soLuong: ct.SLBan,
+                            donGia: ct.GiaBan,
+                        };
+                    }));
+
+                    return {
+                        maHoaDon: String(hd.MaHD),
+                        ngayLap: hd.NgayLap,
+                        maKhachHang: String(hd.MaKH),
+                        tenKhachHang: customer.HoTen || 'Không xác định',
+                        sdt: customer.DienThoai || '',
+                        email: customer.Email || '',
+                        maNhanVien: String(hd.NguoiLapHD) || '',
+                        nhanVien: user.first_name ? `${user.last_name} ${user.first_name}` : 'Không xác định',
+                        tienKhachTra: hd.SoTienTra || 0,
+                        danhSachSach,
+                    };
+                }));
+
+                setInvoices(formattedInvoices);
+            } catch (error) {
+                console.error('Error fetching invoices:', error);
+                setInvoices([]);
+            }
+        };
+        fetchInvoices();
+    }, [showDeleteSuccess]);
 
     const filteredInvoices = invoices.filter(invoice =>
         invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,8 +81,7 @@ function HoaDon() {
         setSelectedInvoiceIndex(null);
     };
 
-    const handleDeleteInvoice = () => {
-        // Lấy lại danh sách hóa đơn đã lọc theo searchTerm
+    const handleDeleteInvoice = async () => {
         const filtered = invoices.filter(invoice =>
             invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
             invoice.ngayLap.includes(searchTerm)
@@ -42,30 +91,37 @@ function HoaDon() {
             setShowDeleteConfirmation(false);
             return;
         }
-        // Xóa hóa đơn khỏi danh sách invoices
-        const updatedInvoices = invoices.filter(inv => inv.maHoaDon !== invoiceToDelete.maHoaDon);
 
-        // Update localStorage
-        localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
+        try {
+            // Tính tổng tiền hóa đơn
+            const totalAmount = invoiceToDelete.danhSachSach.reduce(
+                (sum, sach) => sum + sach.soLuong * sach.donGia,
+                0
+            );
 
-        // Update customer debt
-        const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-        const updatedCustomers = customers.map(customer =>
-            customer.id === invoiceToDelete.maKhachHang
-                ? { ...customer, debt: customer.debt - invoiceToDelete.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0) }
-                : customer
-        );
-        localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+            // Lấy thông tin khách hàng
+            const customer = await thanhToanMoiApi.getCustomerById(invoiceToDelete.maKhachHang);
+            const currentDebt = customer.SoTienNo || 0;
+            const newDebt = Math.max(0, currentDebt - totalAmount);
 
-        setInvoices(updatedInvoices);
-        setShowDeleteConfirmation(false);
-        setDeletedInvoiceId(invoiceToDelete.maHoaDon);
-        setShowDeleteSuccess(true);
-        handleCloseModal();
+            // Cập nhật nợ khách hàng
+            await thanhToanMoiApi.updateCustomerDebt(invoiceToDelete.maKhachHang, newDebt);
+
+            // Xóa hóa đơn
+            await thanhToanMoiApi.deleteInvoice(invoiceToDelete.maHoaDon);
+
+            setShowDeleteConfirmation(false);
+            setDeletedInvoiceId(invoiceToDelete.maHoaDon);
+            setShowDeleteSuccess(true);
+            handleCloseModal();
+        } catch (error) {
+            console.error('Error deleting invoice:', error);
+            alert('Có lỗi khi xóa hóa đơn!');
+        }
     };
 
     const handleEditInvoice = (invoice) => {
-        navigate('/thanhToan/moi', { state: { invoice } }); // Pass the invoice details via state
+        navigate('/thanhToan/moi', { state: { invoice } });
     };
 
     const selectedInvoice = selectedInvoiceIndex !== null ? filteredInvoices[selectedInvoiceIndex] : null;
@@ -200,7 +256,6 @@ function HoaDon() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
