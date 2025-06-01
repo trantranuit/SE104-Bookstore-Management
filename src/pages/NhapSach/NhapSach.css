@@ -52,15 +52,15 @@
 
 .add-button {
   display: inline-block;
-  margin-bottom: 15px;
-  padding: 10px 20px;
+  margin-bottom: 0.9375rem;
+  padding: 0.625rem 1.25rem;
   background-color: #f1f4f9;
   color: #4880ff;
   opacity: 0.8;
   font-weight: bold;
   border: none;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -103,26 +103,13 @@
 }
 
 .sidebar {
-  width: 250px;
+  width: 15.625rem;
 }
 @media (max-width: 64rem) {
   /* 1024px -> 64rem */
   .table {
     font-size: 0.8125rem; /* 13px -> 0.8125rem */
     min-width: 45rem; /* 720px -> 45rem */
-  }
-}
-
-@media (max-width: 48rem) {
-  /* 768px -> 48rem */
-  .table {
-    font-size: 0.75rem; /* 12px -> 0.75rem */
-    min-width: 40rem; /* 640px -> 40rem */
-  }
-
-  .table th,
-  .table td {
-    padding: 0.5rem 0.75rem; /* 8px 12px -> 0.5rem 0.75rem */
   }
 }
 
@@ -143,30 +130,74 @@
     font-size: 0.75rem; /* 12px -> 0.75rem */
   }
 }
-@media (max-width: 768px) {
+/* Responsive breakpoints */
+@media (max-width: 48rem) {
+  /* 768px */
   .sidebar {
-    width: 200px;
+    width: 12.5rem;
   }
+
   .table-container {
-    padding: 10px; /* Giảm padding trên màn hình nhỏ */
+    padding: 0.625rem;
   }
+
   .table {
-    font-size: 12px; /* Giảm kích thước chữ */
-    min-width: 600px; /* Giảm chiều rộng tối thiểu của bảng */
+    font-size: 0.75rem;
+    min-width: 37.5rem;
   }
+
   .table th,
   .table td {
-    font-size: 12px; /* Giảm kích thước chữ */
-    padding: 8px; /* Giảm khoảng cách bên trong ô */
+    font-size: 0.75rem;
+    padding: 0.5rem;
   }
 
   .pagination-ns {
-    flex-wrap: wrap; /* Cho phép các nút phân trang xuống dòng */
-    gap: 5px; /* Giảm khoảng cách giữa các nút */
+    flex-wrap: wrap;
+    gap: 0.3125rem;
   }
 
   .pagination-btn-ns {
-    padding: 6px 10px; /* Giảm kích thước nút */
-    font-size: 12px; /* Giảm kích thước chữ trong nút */
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
   }
+}
+
+.pagination-ns {
+  flex-wrap: wrap; /* Cho phép các nút phân trang xuống dòng */
+  gap: 5px; /* Giảm khoảng cách giữa các nút */
+}
+
+.pagination-btn-ns {
+  padding: 6px 10px; /* Giảm kích thước nút */
+  font-size: 12px; /* Giảm kích thước chữ trong nút */
+}
+
+.search-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 150px;
+}
+
+.filter-input::placeholder {
+  color: #aaa;
 }

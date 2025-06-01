@@ -6,36 +6,32 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
 }
 
 .modal-container {
-  background: white;
-  border-radius: 10px;
+  background-color: white;
   padding: 20px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+  border-radius: 8px;
+  width: 400px;
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .modal-close-btn {
   position: absolute;
-  right: 15px;
-  top: 15px;
+  top: 10px;
+  right: 10px;
   border: none;
   background: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
 }
 
 .modal-form {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group {
@@ -45,80 +41,66 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
-  color: #333;
 }
 
 .edit-input,
-.edit-select,
+.edit-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .disabled-input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.edit-input:focus,
-.edit-select:focus {
-  outline: none;
-  border-color: #4880ff;
-  box-shadow: 0 0 0 2px rgba(72, 128, 255, 0.2);
-}
-
-.disabled-input {
-  background-color: #f5f5f5;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
   cursor: not-allowed;
-  color: #666;
+}
+
+.edit-checkbox {
+  margin-left: 10px;
 }
 
 .button-group {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
 }
 
 .cancel-btn,
 .save-btn {
   padding: 8px 16px;
   border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .cancel-btn {
-  background-color: #f1f1f1;
-  color: #666;
-}
-
-.save-btn {
-  background-color: #4880ff;
+  background-color: #ccc;
   color: white;
 }
 
-.cancel-btn:hover {
-  background-color: #e0e0e0;
+.save-btn {
+  background-color: #007bff;
+  color: white;
 }
 
-.save-btn:hover {
-  background-color: #3a66cc;
+.notification {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  text-align: center;
 }
 
-/* Animation for modal */
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.notification.success {
+  background-color: #d4edda;
+  color: #155724;
 }
 
-.modal-container {
-  animation: modalFadeIn 0.3s ease;
+.notification.error {
+  background-color: #f8d7da;
+  color: #721c24;
 }
