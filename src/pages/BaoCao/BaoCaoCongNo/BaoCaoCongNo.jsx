@@ -4,8 +4,8 @@ import baoCaoCongNoService from "../../../services/baoCaoCongNoService";
 import "./BaoCaoCongNo.css";
 
 function BaoCaoCongNo() {
-  const [selectedMonth, setSelectedMonth] = useState("5"); 
-  const [selectedYear, setSelectedYear] = useState("2025");
+  const [selectedMonth, setSelectedMonth] = useState("12"); 
+  const [selectedYear, setSelectedYear] = useState("2024");
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
