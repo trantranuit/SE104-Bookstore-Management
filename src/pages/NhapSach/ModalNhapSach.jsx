@@ -1,74 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ModalNhapSach.css";
 
-const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
+const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    maNhap: "",
-    maSach: "",
     ngayNhap: "",
-    tenSach: "",
-    tacGia: "",
-    theLoai: "",
-    nhaXuatBan: "",
-    namXuatBan: "",
-    soLuong: "",
-    giaNhap: "",
-    donGia: "",
+    NguoiNhap: "",
   });
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (initialData) {
-      console.log("Initial data received:", initialData);
-      setFormData({
-        maNhap: initialData.maNhap || "",
-        maSach: initialData.maSach || "",
-        ngayNhap: initialData.ngayNhap || "",
-        tenSach: initialData.tenSach || "",
-        tacGia: initialData.tacGia || "",
-        theLoai: initialData.theLoai || "",
-        nhaXuatBan: initialData.nhaXuatBan || "",
-        namXuatBan: initialData.namXuatBan || "",
-        soLuong: initialData.soLuong || "",
-        giaNhap: initialData.giaNhap || "",
-        donGia: initialData.donGia || "",
-      });
-    }
-  }, [initialData]);
-
-  // In ModalNhapSach.jsx
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    console.log("Form data updated:", name, value); // Debug log
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null);
   };
 
   const handleSaveClick = () => {
-    console.log("Form data before save:", formData);
-
-    // Validate dữ liệu
-    if (!formData.maNhap || !formData.ngayNhap) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+    if (!formData.ngayNhap || !formData.NguoiNhap) {
+      setError("Vui lòng điền đầy đủ thông tin!");
       return;
     }
-
-    // Gọi hàm onSave trực tiếp với formData
     onSave(formData);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        <button className="modal-close-btn" onClick={onClose}>
+    <div className="modal-overlay-ns">
+      <div className="modal-container-ns">
+        <button className="modal-close-btn-ns" onClick={onClose}>
           &times;
         </button>
         <h2>Phiếu nhập sách</h2>
-        <form className="modal-form">
-          <div className="form-group">
+        <form className="modal-form-ns">
+          <div className="form-group-ns">
             <label>Mã Nhập Sách</label>
             <input
               type="text"
@@ -79,27 +43,26 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Ngày Nhập</label>
             <input
-              type="text"
+              type="date"
               name="ngayNhap"
               value={formData.ngayNhap}
               onChange={handleInputChange}
-              placeholder="Nhập Ngày Nhập (dd/mm/yyyy)"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Mã Sách</label>
             <input
-              type="text"
-              name="maSach"
-              value={formData.maSach}
+              type="text" // Sử dụng type="text" để chấp nhận chuỗi
+              name="NguoiNhap"
+              value={formData.NguoiNhap}
               onChange={handleInputChange}
               placeholder="Nhập Mã Sách"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Tên Sách</label>
             <input
               type="text"
@@ -110,7 +73,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Tác Giả</label>
             <input
               type="text"
@@ -121,7 +84,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Thể Loại</label>
             <input
               type="text"
@@ -132,8 +95,8 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             />
           </div>
 
-          <div className="form-group-row">
-            <div className="form-group">
+          <div className="form-group-row-ns">
+            <div className="form-group-ns">
               <label>Nhà Xuất Bản</label>
               <input
                 type="text"
@@ -143,7 +106,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
                 placeholder="Nhập Nhà Xuất Bản"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group-ns">
               <label>Năm Xuất Bản</label>
               <input
                 type="number"
@@ -155,8 +118,8 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             </div>
           </div>
 
-          <div className="form-group-row">
-            <div className="form-group">
+          <div className="form-group-row-ns">
+            <div className="form-group-ns">
               <label>Số Lượng</label>
               <input
                 type="number"
@@ -166,7 +129,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
                 placeholder="Nhập Số Lượng"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group-ns">
               <label>Giá Nhập</label>
               <input
                 type="number"
@@ -178,7 +141,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group-ns">
             <label>Đơn Giá</label>
             <input
               type="number"

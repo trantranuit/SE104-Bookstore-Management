@@ -5,20 +5,18 @@ const TableQuyDinh = ({ data, onEdit }) => {
     <table className="table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Tên quy định</th>
           <th>Tham số</th>
-          <th>Tình trạng sử dụng</th>
-          <th>Hành động</th>
+          <th>Giá trị</th>
+          <th>Thao tác</th>
         </tr>
       </thead>
       <tbody>
-        {data.map((item) => (
-          <tr key={item.id}>
-            <td>{item.id}</td>
-            <td>{item.name}</td>
-            <td>{item.description}</td>
-            <td>{item.isActive ? "Đang áp dụng" : "Không áp dụng"}</td>
+        {data.map((item, index) => (
+          <tr key={`${item.id}-${index}`}>
+            <td>{item.tenQuyDinh}</td>
+            <td>{item.thamSo}</td>
+            <td>{item.giaTri}</td>
             <td>
               <button className="edit-btn" onClick={() => onEdit(item)}>
                 ✏️
