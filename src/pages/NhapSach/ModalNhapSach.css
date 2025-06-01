@@ -1,4 +1,4 @@
-.modal-overlay {
+.modal-overlay-ns {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,10 +12,10 @@
   overflow: hidden;
 }
 
-.modal-container {
+.modal-container-ns {
   background-color: #fff;
-  padding: 2rem; /* Khoảng cách padding */
-  border-radius: 1rem; /* Bo góc */
+  padding: 1.5rem; /* Khoảng cách padding */
+  border-radius: 0.625rem; /* Bo góc */
   width: 80%; /* Chiếm 80% chiều rộng màn hình */
   max-width: 40rem; /* Giới hạn chiều rộng tối đa là 40rem (~640px) */
   max-height: 90vh; /* Giới hạn chiều cao tối đa là 90% chiều cao màn hình */
@@ -23,15 +23,25 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  flex-direction: column;
+}
+.modal-container-ns h2 {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+
+  font-weight: 600;
+  text-align: center;
 }
 @media (max-width: 768px) {
-  .modal-container {
+  .modal-container-ns {
     width: 90%; /* Chiếm 90% chiều rộng màn hình */
     max-width: 35rem; /* Giới hạn chiều rộng tối đa là 35rem (~560px) */
     padding: 1.5rem; /* Giảm padding trên thiết bị nhỏ */
   }
 }
-.modal-close-btn {
+.modal-close-btn-ns {
   position: absolute;
   top: 0;
   right: 0;
@@ -49,41 +59,43 @@
   border-radius: 0; /* Bo góc nhẹ cho ô vuông */
 }
 
-.modal-close-btn:hover {
+.modal-close-btn-ns:hover {
   color: #000; /* Đổi màu khi hover */
   background-color: #ff6666;
 }
-.modal-form {
+.modal-form-ns {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem; /* Add space for buttons */
 }
-.form-group-row {
+.form-group-row-ns {
   display: flex;
   gap: 10px;
   margin-bottom: 5px;
 }
 
-.form-group-row .form-group {
+.form-group-row-ns .form-group-ns {
   flex: 1; /* Đảm bảo các trường có cùng chiều rộng */
 }
 
-.form-group-row .form-group input {
+.form-group-row-ns .form-group-ns input {
   width: 100%; /* Đảm bảo input chiếm toàn bộ chiều rộng của container */
 }
-.form-group {
+.form-group-ns {
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
+.form-group-ns label {
   font-weight: bold;
   margin-bottom: 5px;
   color: #333;
   font-size: 0.85rem;
 }
 
-.form-group input {
+.form-group-ns input {
   padding: 0.5rem; /* Thay 10px bằng 0.625rem */
   border: 1px solid #ddd;
   border-radius: 0.5rem; /* Thay 8px bằng 0.5rem */
@@ -92,12 +104,12 @@
   font-size: 0.5rem;
 }
 
-.form-group input:focus {
+.form-group-ns input:focus {
   border-color: #4880ff; /* Đổi màu viền khi focus */
   box-shadow: 0 0 8px rgba(72, 128, 255, 0.5); /* Hiệu ứng ánh sáng khi focus */
   outline: none;
 }
-.button-group {
+.button-group-ns {
   display: flex;
   justify-content: flex-end; /* Căn nút về phía bên phải */
   gap: 10px; /* Khoảng cách giữa các nút */
@@ -106,8 +118,8 @@
   box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
 }
 
-.modal-cancel-btn,
-.modal-submit-btn {
+.modal-cancel-btn-ns,
+.modal-submit-btn-ns {
   padding: 8px 20px;
   border: none;
   border-radius: 4px;
@@ -117,30 +129,30 @@
   transition: background-color 0.3s ease;
 }
 
-.modal-cancel-btn {
+.modal-cancel-btn-ns {
   background-color: #6c757d;
   color: white;
 }
 
-.modal-cancel-btn:hover {
+.modal-cancel-btn-ns:hover {
   background-color: #5a6268;
   transform: translateY(-2px); /* Hiệu ứng nhấn lên */
 }
 
-.modal-submit-btn {
+.modal-submit-btn-ns {
   background-color: #007bff;
   color: white;
 }
 
-.modal-submit-btn:hover {
+.modal-submit-btn-ns:hover {
   background-color: #0056b3;
   transform: translateY(-2px); /* Hiệu ứng nhấn lên */
 }
 
-.modal-submit-btn:active {
+.modal-submit-btn-ns:active {
   transform: translateY(0); /* Hiệu ứng nhấn xuống */
 }
-.modal-cancel-btn:active {
+.modal-cancel-btn-ns:active {
   transform: translateY(0); /* Hiệu ứng nhấn xuống */
 }
 
