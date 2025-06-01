@@ -1,24 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
-import { FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { addUser } from '../../services/phanQuyen.js';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import { getUsers, addUser, updateUser, deleteUser } from '../../services/phanQuyen';
 
 function PhanQuyen() {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
-    const [showPassword, setShowPassword] = useState({});
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-    const [newUser, setNewUser] = useState({ name: '', phone: '', role: '', maNV: '', email: '', username: '' });
+    const [newUser, setNewUser] = useState({ first_name: '', last_name: '', gioiTinh: '', role: '' });
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
     const [editUser, setEditUser] = useState(null);
-    const [users, setUsers] = useState([
-        { id: 1, maNV: 'NV001', username: 'nv001', name: 'Nguyễn Văn A', phone: '0901234567', email: 'a@gmail.com', password: '123456', role: 'Kho', lastAccess: '2023-10-01 10:00' },
-        { id: 2, maNV: 'NV002', username: 'nv002', name: 'Trần Thị B', phone: '0912345678', email: 'b@gmail.com', password: 'abcdef', role: 'Thu Ngân', lastAccess: '2023-10-02 15:30' },
-        { id: 3, maNV: 'NV003', username: 'nv003', name: 'Lê Văn C', phone: '0987654321', email: 'c@gmail.com', password: 'password', role: 'Quản Lý', lastAccess: '2023-10-03 09:45' },
-    ]);
+    const [users, setUsers] = useState([]);
     const [message, setMessage] = useState('');
-    const [showSavedModal, setShowSavedModal] = useState(false);
 
     const [rolePermissions, setRolePermissions] = useState(() => {
         return JSON.parse(localStorage.getItem('rolePermissions')) || {
@@ -48,68 +42,111 @@ function PhanQuyen() {
         'Thay Đổi Quy Định'
     ];
 
-    const filteredUsers = users.filter(user =>
-        (user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (roleFilter === '' || user.role === roleFilter)
-    );
-
-    const handleTogglePassword = (id) => {
-        setShowPassword((prev) => ({ ...prev, [id]: !prev[id] }));
+    // Ánh xạ role API sang role ứng dụng
+    const roleMapping = {
+        NguoiNhap: 'Kho',
+        NguoiThu: 'Thu Ngân',
+        QuanLi: 'Quản Lý',
+        Admin: 'Admin'
     };
 
-    const handleAddUser = async () => {
-        // Ánh xạ role từ giao diện sang định dạng API
-        const roleMapping = {
-            'Kho': 'NguoiNhap',
-            'Thu Ngân': 'ThuNgan',
-            'Quản Lý': 'QuanLy',
-            'Admin': 'Admin'
+    // Lấy danh sách người dùng từ API
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const userData = await getUsers();
+                setUsers(userData);
+            } catch (error) {
+                setMessage(error.message);
+            }
         };
+        fetchUsers();
+    }, []);
 
-        // Tách tên thành first_name và last_name
-        const [firstName, ...lastNameParts] = newUser.name.trim().split(' ');
-        const lastName = lastNameParts.join(' ');
+    // Lọc người dùng
+    const filteredUsers = users.filter(user =>
+        (`${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (roleFilter === '' || roleMapping[user.role] === roleFilter)
+    );
 
-        // Tạo dữ liệu người dùng theo định dạng API
+    const handleAddUser = async () => {
+        if (!newUser.first_name || !newUser.last_name || !newUser.gioiTinh || !newUser.role) {
+            setMessage('Vui lòng nhập đầy đủ thông tin!');
+            return;
+        }
+
+        const newId = users.length + 1;
+        const username = `${newUser.role.toLowerCase()}${newId}`;
+        const email = `${username}@gmail.com`;
+
         const userData = {
-            username: newUser.username || newUser.maNV, // Ưu tiên username, fallback sang maNV
-            password: `${firstName?.toLowerCase() || 'user'}_${(roleMapping[newUser.role] || newUser.role).toLowerCase()}`,
-            email: newUser.email,
-            first_name: firstName || '',
-            last_name: lastName || '',
-            role: roleMapping[newUser.role] || newUser.role
+            username: username,
+            email: email,
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+            gioiTinh: newUser.gioiTinh,
+            role: newUser.role,
+            password: `${newUser.first_name.toLowerCase()}_${newUser.role.toLowerCase()}`
         };
 
         try {
-            const response = await addUser(userData);
-            setUsers([...users, {
-                id: users.length + 1,
-                maNV: newUser.maNV,
-                username: userData.username,
-                name: newUser.name,
-                phone: newUser.phone,
-                email: newUser.email,
-                password: userData.password,
-                role: newUser.role,
-                lastAccess: 'Chưa truy cập',
-            }]);
+            await addUser(userData);
+            const updatedUsers = await getUsers();
+            setUsers(updatedUsers);
             setMessage('Thêm người dùng thành công!');
             setIsAddUserModalOpen(false);
-            setNewUser({ name: '', phone: '', role: '', maNV: '', email: '', username: '' });
+            setNewUser({ first_name: '', last_name: '', gioiTinh: '', role: '' });
         } catch (error) {
-            setMessage(error.message || 'Thêm người dùng thất bại, vui lòng kiểm tra lại!');
+            setMessage(error.message);
         }
     };
 
     const handleEditUser = (user) => {
-        setEditUser({ ...user });
+        setEditUser({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            gioiTinh: user.gioiTinh,
+            role: user.role
+        });
         setIsEditUserModalOpen(true);
     };
 
-    const handleSaveEditUser = () => {
-        setUsers(users.map(u => u.id === editUser.id ? editUser : u));
-        setIsEditUserModalOpen(false);
-        setEditUser(null);
+    const handleSaveEditUser = async () => {
+        if (!editUser.first_name || !editUser.last_name || !editUser.gioiTinh || !editUser.role) {
+            setMessage('Vui lòng nhập đầy đủ thông tin!');
+            return;
+        }
+
+        try {
+            await updateUser(editUser.id, {
+                first_name: editUser.first_name,
+                last_name: editUser.last_name,
+                gioiTinh: editUser.gioiTinh,
+                role: editUser.role
+            });
+            const updatedUsers = await getUsers();
+            setUsers(updatedUsers);
+            setMessage('Cập nhật người dùng thành công!');
+            setIsEditUserModalOpen(false);
+            setEditUser(null);
+        } catch (error) {
+            setMessage(error.response?.data?.detail || error.message || 'Lỗi khi cập nhật người dùng');
+        }
+    };
+
+    const handleDeleteUser = async (id) => {
+        try {
+            await deleteUser(id);
+            const updatedUsers = await getUsers();
+            setUsers(updatedUsers);
+            setMessage('Xóa người dùng thành công!');
+        } catch (error) {
+            setMessage(error.message);
+        }
     };
 
     const handlePermissionChange = (role, page, value) => {
@@ -138,16 +175,15 @@ function PhanQuyen() {
 
     const handleSaveRolePages = () => {
         localStorage.setItem('rolePages', JSON.stringify(rolePages));
-        setShowSavedModal(true);
         setMessage('Đã lưu cấu hình quyền truy cập!');
-        setTimeout(() => setShowSavedModal(false), 1500);
+        setTimeout(() => setMessage(''), 1500);
     };
 
     return (
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
             <div className="content-wrapper content-wrapper-pq">
-                {showSavedModal && (
+                {message && (
                     <div style={{
                         position: 'fixed',
                         top: 0, left: 0, right: 0, bottom: 0,
@@ -165,11 +201,10 @@ function PhanQuyen() {
                             fontWeight: 'bold',
                             boxShadow: '0 2px 16px rgba(0,0,0,0.15)'
                         }}>
-                            Đã lưu cấu hình quyền
+                            {message}
                         </div>
                     </div>
                 )}
-                {message && <p className="message">{message}</p>}
                 <div className="user-list-block-pq">
                     <h2 className="page-title-pq">Danh Sách Người Dùng</h2>
                     <div className="user-list-filters-pq">
@@ -192,12 +227,11 @@ function PhanQuyen() {
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Mã NV</th>
                                 <th>Username</th>
-                                <th>Họ Tên</th>
-                                <th>Số điện thoại</th>
+                                <th>Họ</th>
+                                <th>Tên</th>
+                                <th>Giới Tính</th>
                                 <th>Email</th>
-                                <th>Mật Khẩu</th>
                                 <th>Vai Trò</th>
                                 <th>Hành Động</th>
                             </tr>
@@ -206,30 +240,27 @@ function PhanQuyen() {
                             {filteredUsers.map((user, index) => (
                                 <tr key={user.id}>
                                     <td>{index + 1}</td>
-                                    <td>{user.maNV}</td>
                                     <td>{user.username}</td>
-                                    <td>{user.name}</td>
-                                    <td>{user.phone}</td>
+                                    <td>{user.last_name}</td>
+                                    <td>{user.first_name}</td>
+                                    <td>{user.gioiTinh}</td>
                                     <td>{user.email}</td>
-                                    <td>
-                                        <div className="password-cell-pq">
-                                            {showPassword[user.id] ? user.password : '******'}
-                                            <button onClick={() => handleTogglePassword(user.id)}>
-                                                {showPassword[user.id] ? <FaEyeSlash /> : <FaEye />}
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>{user.role}</td>
+                                    <td>{roleMapping[user.role] || user.role}</td>
                                     <td>
                                         <div className="action-buttons-pq">
                                             <button className="icon-button-pq" onClick={() => handleEditUser(user)}><FaEdit /></button>
-                                            <button className="icon-button-pq"><FaTrash /></button>
+                                            <button className="icon-button-pq" onClick={() => handleDeleteUser(user.id)}><FaTrash /></button>
                                         </div>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                    {filteredUsers.length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '20px' }}>
+                            Không tìm thấy người dùng nào.
+                        </div>
+                    )}
                 </div>
 
                 {isAddUserModalOpen && (
@@ -237,50 +268,38 @@ function PhanQuyen() {
                         <div className="modal-pq">
                             <h2 className="modal-title-pq">Thêm Người Dùng Mới</h2>
                             <div className="modal-content-pq">
-                                <label>Username</label>
+                                <label>Họ</label>
                                 <input
                                     type="text"
-                                    placeholder="Username"
-                                    value={newUser.username}
-                                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                                    placeholder="Họ"
+                                    value={newUser.last_name}
+                                    onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
                                 />
-                                <label>Họ Tên</label>
+                                <label>Tên</label>
                                 <input
                                     type="text"
-                                    placeholder="Họ Tên"
-                                    value={newUser.name}
-                                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                                    placeholder="Tên"
+                                    value={newUser.first_name}
+                                    onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
                                 />
-                                <label>Số điện thoại</label>
-                                <input
-                                    type="text"
-                                    placeholder="Số điện thoại"
-                                    value={newUser.phone}
-                                    onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-                                />
-                                <label>Mã Nhân Viên</label>
-                                <input
-                                    type="text"
-                                    placeholder="Mã Nhân Viên"
-                                    value={newUser.maNV}
-                                    onChange={(e) => setNewUser({ ...newUser, maNV: e.target.value })}
-                                />
-                                <label>Email</label>
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={newUser.email}
-                                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                                />
+                                <label>Giới Tính</label>
+                                <select
+                                    value={newUser.gioiTinh}
+                                    onChange={(e) => setNewUser({ ...newUser, gioiTinh: e.target.value })}
+                                >
+                                    <option value="">Chọn Giới Tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
                                 <label>Vai Trò</label>
                                 <select
                                     value={newUser.role}
                                     onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                                 >
                                     <option value="">Chọn Vai Trò</option>
-                                    <option value="Kho">Kho</option>
-                                    <option value="Thu Ngân">Thu Ngân</option>
-                                    <option value="Quản Lý">Quản Lý</option>
+                                    <option value="NguoiNhap">Người Nhập</option>
+                                    <option value="NguoiThu">Người Thu</option>
+                                    <option value="QuanLi">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
                             </div>
@@ -299,32 +318,38 @@ function PhanQuyen() {
                             <div className="modal-content-pq">
                                 <label>Username</label>
                                 <input type="text" value={editUser.username} disabled />
-                                <label>Họ Tên</label>
-                                <input type="text" value={editUser.name} disabled />
-                                <label>Mã Nhân Viên</label>
-                                <input type="text" value={editUser.maNV} disabled />
+                                <label>Họ</label>
+                                <input
+                                    type="text"
+                                    value={editUser.last_name || ''}
+                                    onChange={e => setEditUser({ ...editUser, last_name: e.target.value })}
+                                />
+                                <label>Tên</label>
+                                <input
+                                    type="text"
+                                    value={editUser.first_name || ''}
+                                    onChange={e => setEditUser({ ...editUser, first_name: e.target.value })}
+                                />
+                                <label>Giới Tính</label>
+                                <select
+                                    value={editUser.gioiTinh || ''}
+                                    onChange={e => setEditUser({ ...editUser, gioiTinh: e.target.value })}
+                                >
+                                    <option value="">Chọn Giới Tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
                                 <label>Email</label>
                                 <input type="email" value={editUser.email} disabled />
-                                <label>Số điện thoại</label>
-                                <input
-                                    type="text"
-                                    value={editUser.phone}
-                                    onChange={e => setEditUser({ ...editUser, phone: e.target.value })}
-                                />
-                                <label>Mật Khẩu</label>
-                                <input
-                                    type="text"
-                                    value={editUser.password}
-                                    onChange={e => setEditUser({ ...editUser, password: e.target.value })}
-                                />
                                 <label>Vai Trò</label>
                                 <select
-                                    value={editUser.role}
+                                    value={editUser.role || ''}
                                     onChange={e => setEditUser({ ...editUser, role: e.target.value })}
                                 >
-                                    <option value="Kho">Kho</option>
-                                    <option value="Thu Ngân">Thu Ngân</option>
-                                    <option value="Quản Lý">Quản Lý</option>
+                                    <option value="">Chọn Vai Trò</option>
+                                    <option value="NguoiNhap">Người Nhập</option>
+                                    <option value="NguoiThu">Người Thu</option>
+                                    <option value="QuanLi">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
                             </div>

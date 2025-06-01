@@ -15,31 +15,41 @@ function Navbar() {
   const [userData, setUserData] = useState({ username: 'Đang tải...', id: null, gioiTinh: '' });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Giá trị mặc định cho rolePages và currentRole
+  // Giá trị mặc định cho rolePages và defaultRole
   const defaultRolePages = {
-    'Kho': ['Trang Chủ', 'Nhập Sách'],
-    'Thu Ngân': ['Trang Chủ', 'Thanh Toán'],
-    'Quản Lý': ['Trang Chủ', 'Báo Cáo', 'Phân Quyền'],
-    'Admin': ['Trang Chủ', 'Thêm Sách', 'Nhập Sách', 'Khách Hàng', 'Thanh Toán', 'Báo Cáo', 'Thay Đổi Quy Định', 'Phân Quyền']
+    'Kho': ['Trang Chủ', 'Nhập Sách', 'Báo Cáo', 'Báo Cáo Công Nợ', 'Báo Cáo Tồn'],
+    'Thu Ngân': ['Trang Chủ', 'Thanh Toán', 'Báo Cáo', 'Báo Cáo Công Nợ', 'Báo Cáo Tồn'],
+    'Quản Lý': ['Trang Chủ', 'Báo Cáo', 'Báo Cáo Công Nợ', 'Báo Cáo Tồn', 'Phân Quyền'],
+    'Admin': ['Trang Chủ', 'Thêm Sách', 'Nhập Sách', 'Khách Hàng', 'Thanh Toán', 'Báo Cáo', 'Báo Cáo Công Nợ', 'Báo Cáo Tồn', 'Thay Đổi Quy Định', 'Phân Quyền']
   };
-  const defaultRole = 'Kho';
+  const defaultRole = 'Admin';
 
-  // Lấy quyền truy cập cho role hiện tại từ localStorage, dùng giá trị mặc định nếu không có
+  // Ánh xạ role từ API sang role trong defaultRolePages
+  const mapApiRoleToAppRole = (apiRole) => {
+    switch (apiRole) {
+      case 'NguoiThu':
+        return 'Thu Ngân';
+      case 'NguoiNhap':
+        return 'Kho';
+      case 'QuanLi':
+        return 'Quản Lý';
+      default:
+        return 'Admin';
+    }
+  };
+
+  // Lấy role từ localStorage và ánh xạ
+  const apiRole = localStorage.getItem('currentRole') || 'Admin';
+  const currentRole = mapApiRoleToAppRole(apiRole);
   const rolePages = JSON.parse(localStorage.getItem('rolePages')) || defaultRolePages;
-  const currentRole = localStorage.getItem('currentRole') || defaultRole;
   const allowedPages = rolePages[currentRole] || [];
 
-  // Hàm kiểm tra menu/submenu có được phép hiển thị không
+  // Hàm kiểm tra menu/submenu có được phép hiển thị
   const isAllowed = (title) => allowedPages.includes(title);
 
   // Lọc main menu
   const filteredMainMenu = mainMenuItems
-    .filter(item => {
-      if (item.title === 'Thanh Toán' && isAllowed('Thanh Toán')) return true;
-      if (item.title === 'Báo Cáo' && isAllowed('Báo Cáo')) return true;
-      if (item.title === 'Tất cả sách' && isAllowed('Tất Cả Sách')) return true;
-      return isAllowed(item.title);
-    })
+    .filter(item => isAllowed(item.title))
     .map(item => {
       if (item.subNav) {
         if (item.title === 'Thanh Toán' || item.title === 'Báo Cáo') {
@@ -51,36 +61,29 @@ function Navbar() {
       return item;
     });
 
-  // Lọc bottom menu: luôn hiện Đăng Xuất, các mục khác thì lọc theo quyền
-  const filteredBottomMenu = [
-    ...bottomMenuItems.filter(item =>
-      item.title === 'Đăng Xuất' || isAllowed(item.title)
-    )
-  ];
+  // Lọc bottom menu
+  const filteredBottomMenu = bottomMenuItems.filter(item => item.title === 'Đăng Xuất' || isAllowed(item.title));
+
+  // Debug quyền và menu
+  console.log('Current Role:', currentRole);
+  console.log('Allowed Pages:', allowedPages);
+  console.log('Filtered Main Menu:', JSON.stringify(filteredMainMenu, null, 2));
+  console.log('Active SubNav:', activeSubNav);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const storedUser = authService.getCurrentUser();
-        console.log('localStorage user:', storedUser);
         if (storedUser?.user) {
           setUserData(storedUser.user);
-          console.log('Using stored userData:', storedUser.user);
-          setIsLoading(false);
         } else {
-          console.log('Fetching user data from API');
           const response = await axiosInstance.get('http://localhost:8000/api/token/');
-          console.log('API response:', response.data);
+          console.log('API Response:', response.data); // Debug
           const { user } = response.data || {};
           if (user) {
             setUserData(user);
-            console.log('Updated userData from API:', user);
-            localStorage.setItem('user', JSON.stringify({
-              ...storedUser,
-              user
-            }));
+            localStorage.setItem('user', JSON.stringify({ ...storedUser, user }));
           } else {
-            console.error('No user data in API response');
             setUserData({ username: 'User', id: null, gioiTinh: '' });
           }
         }
@@ -95,42 +98,38 @@ function Navbar() {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    console.log('Current userData:', userData);
-  }, [userData]);
-
   const getPosition = (id) => {
-    console.log('getPosition id:', id);
     switch (id) {
-      case 1:
-        return 'Quản Lý';
-      case 2:
-        return 'Thu Ngân';
-      case 3:
-        return 'Người Nhập';
-      default:
-        return 'Nhân Viên';
+      case 1: return 'Quản Lý';
+      case 2: return 'Thu Ngân';
+      case 3: return 'Người Nhập';
+      default: return 'Nhân Viên';
     }
   };
 
   const getAvatar = (gioiTinh) => {
-    console.log('getAvatar gioiTinh:', gioiTinh);
     return gioiTinh === 'Nữ' ? avata1 : avata2;
   };
 
   const handleItemClick = (item, e) => {
-    if (item.subNav) {
+    if (item.subNav && item.subNav.length > 0) {
       e.preventDefault();
       setActiveSubNav(activeSubNav === item.path ? '' : item.path);
+      console.log('Set Active SubNav to:', item.path); // Debug
     } else {
       setActiveSubNav('');
     }
   };
 
   useEffect(() => {
-    if (!location.pathname.includes('/baocao') && !location.pathname.includes('/thanhtoan')) {
+    if (location.pathname.includes('/baocao')) {
+      setActiveSubNav('/baocao');
+    } else if (location.pathname.includes('/thanhtoan')) {
+      setActiveSubNav('/thanhtoan');
+    } else {
       setActiveSubNav('');
     }
+    console.log('Location Pathname:', location.pathname, 'Active SubNav:', activeSubNav); // Debug
   }, [location.pathname]);
 
   return (
@@ -161,7 +160,7 @@ function Navbar() {
             {filteredMainMenu.map((item, index) => (
               <React.Fragment key={index}>
                 <li className={item.cName}>
-                  {item.subNav ? (
+                  {item.subNav && item.subNav.length > 0 ? (
                     <div
                       className={`nav-menu-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
                       onClick={(e) => handleItemClick(item, e)}
@@ -175,7 +174,6 @@ function Navbar() {
                       to={item.path}
                       className={location.pathname === item.path ? 'active' : ''}
                       onClick={() => handleItemClick(item)}
-                      target={item.path === '/thanhtoan/moihoadon' ? '_blank' : undefined}
                     >
                       {item.icon}
                       <span>{item.title}</span>
@@ -189,7 +187,6 @@ function Navbar() {
                         <Link
                           to={subItem.path}
                           className={location.pathname === subItem.path ? 'active' : ''}
-                          target={subItem.path === '/thanhtoan/moihoadon' ? '_blank' : undefined}
                         >
                           {subItem.icon}
                           <span>{subItem.title}</span>

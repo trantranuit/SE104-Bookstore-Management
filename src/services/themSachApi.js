@@ -37,10 +37,9 @@ const themSachApi = {
         const newMaDauSach = 'DS' + (maxMaDauSach + 1).toString().padStart(3, '0');
 
         const payload = {
-            MaDauSach: newMaDauSach,
-            TenSach: data.TenSach,
-            TenTheLoai: data.TheLoai[0].TenTheLoai, // Lấy tên thể loại từ object thể loại
-            TenTacGia: data.TenTacGia.map(tg => tg.TenTG) // Chuyển đổi mảng object tác giả thành mảng tên tác giả
+            "TenSach": data.TenSach,
+            "TenTheLoai_input": data.TheLoai[0].TenTheLoai, // Lấy tên thể loại từ object thể loại
+            "TenTacGia_input": data.TenTacGia.map(tg => tg.TenTG) // Chuyển đổi mảng object tác giả thành mảng tên tác giả
         };
 
         const addResponse = await axiosInstance.post("/dausach/", payload);
@@ -52,11 +51,9 @@ const themSachApi = {
         // data cần có TenDauSach (tên đầu sách) và MaDauSach
         const payload = {
             ...data,
-            TenDauSach: data.TenDauSach,
-            MaDauSach: data.MaDauSach,
-            NXB: data.NhaXuatBan || data.NXB,
-            NamXB: data.NamXuatBan || data.NamXB,
-            SLTon: data.SoLuongTon !== undefined ? data.SoLuongTon : 0
+            "TenDauSach_input": data.TenSach,
+            "NXB": data.NhaXuatBan || data.NXB,
+            "NamXB": data.NamXuatBan || data.NamXB,
         };
         // Đảm bảo các trường đúng tên
         delete payload.NhaXuatBan;
