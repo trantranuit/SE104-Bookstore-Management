@@ -15,6 +15,45 @@ function Navbar() {
   const [userData, setUserData] = useState({ username: 'Đang tải...', id: null, gioiTinh: '' });
   const [isLoading, setIsLoading] = useState(true);
 
+  // Lấy quyền truy cập cho role hiện tại từ localStorage
+  const rolePages = JSON.parse(localStorage.getItem('rolePages') || '{}');
+  const currentRole = localStorage.getItem('currentRole') || 'Kho';
+  const allowedPages = rolePages[currentRole] || [];
+
+  // Hàm kiểm tra menu/submenu có được phép hiển thị không
+  const isAllowed = (title) => allowedPages.includes(title);
+
+  // Lọc main menu
+  const filteredMainMenu = mainMenuItems
+    .filter(item => {
+      // Nếu là Thanh Toán hoặc Báo Cáo thì luôn hiện nếu role được phép vào menu cha
+      if (item.title === 'Thanh Toán' && isAllowed('Thanh Toán')) return true;
+      if (item.title === 'Báo Cáo' && isAllowed('Báo Cáo')) return true;
+      // Luôn hiện Tất cả sách nếu role được phép vào
+      if (item.title === 'Tất cả sách' && isAllowed('Tất Cả Sách')) return true;
+      // Các menu khác lọc theo quyền
+      return isAllowed(item.title);
+    })
+    .map(item => {
+      if (item.subNav) {
+        // Nếu là Thanh Toán hoặc Báo Cáo thì luôn hiện tất cả subNav
+        if (item.title === 'Thanh Toán' || item.title === 'Báo Cáo') {
+          return { ...item, subNav: item.subNav };
+        }
+        // Các menu khác lọc subNav theo quyền
+        const filteredSubNav = item.subNav.filter(sub => isAllowed(sub.title));
+        return { ...item, subNav: filteredSubNav.length > 0 ? filteredSubNav : undefined };
+      }
+      return item;
+    });
+
+  // Lọc bottom menu: luôn hiện Đăng Xuất, các mục khác thì lọc theo quyền
+  const filteredBottomMenu = [
+    ...bottomMenuItems.filter(item =>
+      item.title === 'Đăng Xuất' || isAllowed(item.title)
+    )
+  ];
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -118,7 +157,7 @@ function Navbar() {
         </div>
         <div className="menu-content">
           <ul className="nav-menu-items">
-            {mainMenuItems.map((item, index) => (
+            {filteredMainMenu.map((item, index) => (
               <React.Fragment key={index}>
                 <li className={item.cName}>
                   {item.subNav ? (
@@ -135,6 +174,7 @@ function Navbar() {
                       to={item.path}
                       className={location.pathname === item.path ? 'active' : ''}
                       onClick={() => handleItemClick(item)}
+                      target={item.path === '/thanhtoan/moihoadon' ? '_blank' : undefined}
                     >
                       {item.icon}
                       <span>{item.title}</span>
@@ -148,6 +188,7 @@ function Navbar() {
                         <Link
                           to={subItem.path}
                           className={location.pathname === subItem.path ? 'active' : ''}
+                          target={subItem.path === '/thanhtoan/moihoadon' ? '_blank' : undefined}
                         >
                           {subItem.icon}
                           <span>{subItem.title}</span>
@@ -160,7 +201,7 @@ function Navbar() {
             ))}
           </ul>
           <ul className="bottom-items">
-            {bottomMenuItems.map((item, index) => (
+            {filteredBottomMenu.map((item, index) => (
               <li key={`bottom-${index}`} className={item.cName}>
                 <Link
                   to={item.path}

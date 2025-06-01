@@ -259,7 +259,7 @@ function TatCaSach() {
 
     return (
         <div className="page-container">
-            <h1 className="page-title">Tất Cả Sách</h1>
+            <h1 className="page-title">Tra Cứu Sách</h1>
             <div className="content-container">
                 {/* Search Bar */}
                 <div className="search-filter-block">
