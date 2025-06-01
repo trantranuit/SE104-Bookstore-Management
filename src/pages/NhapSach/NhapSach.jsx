@@ -18,46 +18,21 @@ const NhapSach = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     ngayNhap: "",
-    MaNguoiNhap: [],
-    maPhieuNhap: [],
-  });
-  const [nguoiNhapOptions, setNguoiNhapOptions] = useState([]);
-  const [phieuNhapOptions, setPhieuNhapOptions] = useState([]);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [selectedFilterType, setSelectedFilterType] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState({
-    MaNguoiNhap: [],
-    maPhieuNhap: [],
+    NguoiNhap: "", // Thay maNguoiNhap thành NguoiNhap
+    maPhieuNhap: "",
   });
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [
-        ctNhapSach,
-        phieuNhap,
-        sachData,
-        dauSachData,
-        theLoaiData,
-        tacGiaData,
-      ] = await Promise.all([
-        phieuNhapSachApi.getCTNhapSach(),
-        phieuNhapSachApi.getPhieuNhapSach(),
-        phieuNhapSachApi.getSach(),
-        phieuNhapSachApi.getDauSach(),
-        phieuNhapSachApi.getTheLoai(),
-        phieuNhapSachApi.getTacGia(),
-      ]);
-
-      const uniqueNguoiNhap = [
-        ...new Set(phieuNhap.map((p) => p.NguoiNhap_input)),
-      ].filter(Boolean);
-      const uniquePhieuNhap = [
-        ...new Set(phieuNhap.map((p) => p.MaPhieuNhap)),
-      ].filter(Boolean);
-
-      setNguoiNhapOptions(uniqueNguoiNhap);
-      setPhieuNhapOptions(uniquePhieuNhap);
+      const [ctNhapSach, phieuNhap, sachData, dauSachData, theLoaiData] =
+        await Promise.all([
+          phieuNhapSachApi.getCTNhapSach(),
+          phieuNhapSachApi.getPhieuNhapSach(),
+          phieuNhapSachApi.getSach(),
+          phieuNhapSachApi.getDauSach(),
+          phieuNhapSachApi.getTheLoai(),
+        ]);
 
       const formattedData = ctNhapSach
         .map((item) => {
@@ -68,28 +43,21 @@ const NhapSach = () => {
           if (!sach) return null;
 
           const dauSach = dauSachData.find(
-            (ds) => ds.MaDauSach === sach.MaDauSach
+            (ds) => ds.TenSach === sach.TenDauSach
           );
           if (!dauSach) return null;
 
           const theLoai = theLoaiData.find(
-            (tl) => tl.MaTheLoai === dauSach.MaTheLoai
+            (tl) => tl.TenTheLoai === dauSach.TenTheLoai
           );
-          const tacGia = tacGiaData.find((tg) =>
-            dauSach.MaTG.includes(tg.MaTG)
-          );
-
-          const tenNguoiNhap = pn.NguoiNhap || "Không xác định";
 
           return {
             maPhieuNhap: item.MaPhieuNhap,
             ngayNhap: pn.NgayNhap,
-            MaNguoiNhap: pn.NguoiNhap_input || pn.NguoiNhap || "Không xác định",
-            TenNguoiNhap: tenNguoiNhap,
+            NguoiNhap: pn.NguoiNhap || "Không xác định", // Thay maNguoiNhap thành NguoiNhap
             maSach: item.MaSach,
             tenSach: dauSach.TenSach,
             theLoai: theLoai ? theLoai.TenTheLoai : "Không xác định",
-            tacGia: tacGia ? tacGia.TenTG : "Không xác định",
             nhaXuatBan: sach.NXB,
             namXuatBan: sach.NamXB,
             giaNhap: item.GiaNhap,
@@ -127,59 +95,43 @@ const NhapSach = () => {
     setSearchQuery(query);
     const filtered = data.filter(
       (item) =>
-        item.maSach.toString().toLowerCase().includes(query) ||
-        item.tenSach.toLowerCase().includes(query) ||
-        item.maPhieuNhap.toString().toLowerCase().includes(query)
+        item.maSach.toString().includes(query) ||
+        item.maPhieuNhap.toString().includes(query)
     );
     setFilteredData(filtered);
   };
 
   const handleFilterChange = (e) => {
-    const { name, checked, value } = e.target;
-    setSelectedFilters((prev) => {
-      const newValues = checked
-        ? [...prev[name], value]
-        : prev[name].filter((v) => v !== value);
-      return { ...prev, [name]: newValues };
-    });
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+    applyFilters({ ...filters, [name]: value });
   };
 
-  const applyFilters = () => {
+  const applyFilters = (currentFilters) => {
     let filtered = [...data];
 
-    if (filters.ngayNhap) {
-      const dateParts = filters.ngayNhap.split("-");
-      const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-      filtered = filtered.filter((item) => item.ngayNhap === formattedDate);
+    if (currentFilters.ngayNhap) {
+      filtered = filtered.filter((item) => {
+        const dateParts = item.ngayNhap.split("/");
+        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        return formattedDate === currentFilters.ngayNhap;
+      });
     }
-    if (selectedFilters.MaNguoiNhap.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
+    if (currentFilters.NguoiNhap) {
+      // Thay maNguoiNhap thành NguoiNhap
+      filtered = filtered.filter(
+        (item) =>
+          item.NguoiNhap.toString() === currentFilters.NguoiNhap.toString()
       );
     }
-    if (selectedFilters.maPhieuNhap.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedFilters.maPhieuNhap.includes(item.maPhieuNhap)
+    if (currentFilters.maPhieuNhap) {
+      filtered = filtered.filter(
+        (item) =>
+          item.maPhieuNhap.toString() === currentFilters.maPhieuNhap.toString()
       );
     }
 
-    setFilters((prev) => ({ ...prev, ...selectedFilters }));
     setFilteredData(filtered);
-    setIsFilterModalOpen(false);
-  };
-
-  const resetFilters = () => {
-    setSelectedFilters({
-      MaNguoiNhap: [],
-      maPhieuNhap: [],
-    });
-    setFilters({
-      ngayNhap: "",
-      MaNguoiNhap: [],
-      maPhieuNhap: [],
-    });
-    setFilteredData(data);
-    setIsFilterModalOpen(false);
   };
 
   const handleEdit = (item) => {
@@ -197,40 +149,44 @@ const NhapSach = () => {
 
   const handleCloseModalChiTiet = () => {
     setIsModalChiTietOpen(false);
-    setCurrentPhieuNhap(null);
   };
 
   const handleSavePhieuNhap = async (formData) => {
+    console.log("FormData:", formData);
     try {
       if (!formData.ngayNhap || formData.ngayNhap.trim() === "") {
         throw new Error("Vui lòng chọn ngày nhập!");
       }
 
       const dateParts = formData.ngayNhap.split("-");
-      const formattedNgayNhap = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; // dd/mm/yyyy
+      if (dateParts.length !== 3) {
+        throw new Error("Ngày nhập không hợp lệ!");
+      }
+      const formattedNgayNhap = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; // "12/06/2025"
 
-      const maNguoiNhap = formData.MaNguoiNhap;
-      if (!maNguoiNhap || maNguoiNhap.trim() === "") {
-        throw new Error("Mã người nhập không được để trống!");
+      const nguoiNhap = formData.NguoiNhap;
+      if (!nguoiNhap || nguoiNhap.trim() === "") {
+        throw new Error("Người nhập không được để trống!");
       }
 
       const payload = {
+        MaPhieuNhap: null, // Thay "" bằng null, vì server có thể tự tạo
         NgayNhap: formattedNgayNhap,
-        NguoiNhap_input: maNguoiNhap,
+        NguoiNhap: nguoiNhap,
+        username: "admin", // Thêm username tạm thời, thay bằng giá trị hợp lệ
       };
 
-      console.log("Payload gửi đi:", payload);
+      console.log("Data gửi lên:", payload);
+
       const phieuResponse = await phieuNhapSachApi.addPhieuNhapSach(
         null,
         payload
       );
-      console.log("Phản hồi từ server:", phieuResponse);
 
       setCurrentPhieuNhap({
         maPhieuNhap: phieuResponse.MaPhieuNhap,
         ngayNhap: formattedNgayNhap,
-        MaNguoiNhap: maNguoiNhap,
-        TenNguoiNhap: phieuResponse.NguoiNhap || "Không xác định",
+        NguoiNhap: nguoiNhap,
       });
 
       setIsModalPhieuNhapOpen(false);
@@ -243,7 +199,6 @@ const NhapSach = () => {
       });
     }
   };
-
   const handleSaveChiTiet = async (formData, action, resetForm) => {
     try {
       const soLuong = parseInt(formData.soLuong);
@@ -251,7 +206,7 @@ const NhapSach = () => {
 
       if (currentItem) {
         await phieuNhapSachApi.updateCTNhapSach(
-          formData.maCTNhapSach,
+          currentItem.ctNhapId,
           currentItem.maPhieuNhap,
           parseInt(formData.maSach),
           soLuong,
@@ -262,7 +217,6 @@ const NhapSach = () => {
           type: "success",
         });
         setIsModalChiTietOpen(false);
-        setCurrentItem(null);
       } else {
         let maTheLoai;
         const theLoaiList = await phieuNhapSachApi.getTheLoai();
@@ -319,19 +273,12 @@ const NhapSach = () => {
           );
         }
 
-        const ctResponse = await phieuNhapSachApi.addCTNhapSach(
+        await phieuNhapSachApi.addCTNhapSach(
           currentPhieuNhap.maPhieuNhap,
           formData.maSach,
           soLuong,
           giaNhap
         );
-        setCurrentItem({
-          ...currentItem,
-          ctNhapId: ctResponse.MaCT_NhapSach || "",
-          maSach: formData.maSach,
-          soLuong: soLuong,
-          giaNhap: giaNhap,
-        });
 
         setNotification({
           message: "Thêm chi tiết nhập sách thành công!",
@@ -365,103 +312,45 @@ const NhapSach = () => {
     <div className="page-container">
       <h1>Nhập sách</h1>
       <div className="content-wrapper">
-        <div className="search-bar">
+        <div className="search-filter-bar">
           <input
             type="text"
-            placeholder="Tìm kiếm Phiếu nhập theo Mã sách, Tên sách hoặc Mã phiếu nhập..."
+            placeholder="Tìm kiếm theo Mã sách hoặc Mã phiếu nhập..."
             value={searchQuery}
             onChange={handleSearch}
             className="search-input"
           />
-        </div>
-        <div className="filter-bar">
-          <button
-            className="filter-button"
-            onClick={() => {
-              setIsFilterModalOpen(true);
-              setSelectedFilterType("maPhieuNhap");
-            }}
-          >
-            Lọc theo Mã phiếu nhập
-          </button>
           <div className="filter-group">
-            <label>Lọc theo Ngày nhập:</label>
             <input
               type="date"
               name="ngayNhap"
               value={filters.ngayNhap}
-              onChange={(e) => {
-                setFilters((prev) => ({ ...prev, ngayNhap: e.target.value }));
-                applyFilters();
-              }}
+              onChange={handleFilterChange}
+              placeholder="Lọc theo Ngày nhập"
+              className="filter-input"
+            />
+            <input
+              type="text" // Thay type="number" bằng text
+              name="NguoiNhap" // Thay maNguoiNhap thành NguoiNhap
+              value={filters.NguoiNhap}
+              onChange={handleFilterChange}
+              placeholder="Lọc theo Người nhập"
+              className="filter-input"
+            />
+            <input
+              type="text"
+              name="maPhieuNhap"
+              value={filters.maPhieuNhap}
+              onChange={handleFilterChange}
+              placeholder="Lọc theo Mã phiếu nhập"
               className="filter-input"
             />
           </div>
-          <button
-            className="filter-button"
-            onClick={() => {
-              setIsFilterModalOpen(true);
-              setSelectedFilterType("MaNguoiNhap");
-            }}
-          >
-            Lọc theo Người nhập
-          </button>
         </div>
         <button className="add-button" onClick={handleOpenModalPhieuNhap}>
           + Thêm phiếu nhập
         </button>
         <TableNhapSach data={filteredData} onEdit={handleEdit} />
-
-        {isFilterModalOpen && (
-          <div className="modal-overlay">
-            <div className="filter-modal-content">
-              <h2>
-                {selectedFilterType === "maPhieuNhap"
-                  ? "Lọc theo Mã phiếu nhập"
-                  : "Lọc theo Người nhập"}
-              </h2>
-              {selectedFilterType === "maPhieuNhap" && (
-                <div className="filter-options">
-                  {phieuNhapOptions.map((option) => (
-                    <label key={option}>
-                      <input
-                        type="checkbox"
-                        name="maPhieuNhap"
-                        value={option}
-                        checked={selectedFilters.maPhieuNhap.includes(option)}
-                        onChange={handleFilterChange}
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              )}
-              {selectedFilterType === "MaNguoiNhap" && (
-                <div className="filter-options">
-                  {nguoiNhapOptions.map((option) => (
-                    <label key={option}>
-                      <input
-                        type="checkbox"
-                        name="MaNguoiNhap"
-                        value={option}
-                        checked={selectedFilters.MaNguoiNhap.includes(option)}
-                        onChange={handleFilterChange}
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              )}
-              <div className="modal-actions">
-                <button onClick={applyFilters}>Áp dụng</button>
-                <button onClick={resetFilters}>Hủy áp dụng</button>
-                <button onClick={() => setIsFilterModalOpen(false)}>
-                  Đóng
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {isModalPhieuNhapOpen && (

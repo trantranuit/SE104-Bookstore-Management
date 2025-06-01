@@ -117,7 +117,7 @@ const phieuNhapSachApi = {
         MaSach: maSach,
         NXB: nxb,
         NamXB: namXB,
-        SLTon: 0,
+        SLTon: 0, // Ban đầu chưa có số lượng tồn
         MaDauSach: maDauSach,
       });
       console.log("Thêm sách thành công:", response.data);
@@ -167,8 +167,10 @@ const phieuNhapSachApi = {
   addPhieuNhapSach: async (maPhieuNhap, data) => {
     try {
       const response = await axiosInstance.post("/phieunhapsach/", {
+        MaPhieuNhap: maPhieuNhap,
         NgayNhap: data.NgayNhap,
-        NguoiNhap_input: data.NguoiNhap_input, // Sử dụng NguoiNhap_input
+        NguoiNhap: data.NguoiNhap,
+        MaSach: data.MaSach,
       });
       console.log("Thêm phiếu nhập thành công:", response.data);
       return response.data;

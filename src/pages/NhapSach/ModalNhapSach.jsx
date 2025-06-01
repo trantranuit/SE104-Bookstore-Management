@@ -4,51 +4,69 @@ import "./ModalNhapSach.css";
 const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     ngayNhap: "",
-    MaNguoiNhap: "",
+    NguoiNhap: "",
   });
+  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSaveClick = () => {
+    if (!formData.ngayNhap || !formData.NguoiNhap) {
+      setError("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
     onSave(formData);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay-ns">
+      <div className="modal-container-ns">
+        <button className="modal-close-btn-ns" onClick={onClose}>
+          ×
+        </button>
         <h2>Phiếu nhập sách</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Ngày nhập sách:</label>
+        {error && <div className="error-message">{error}</div>}
+        <form className="modal-form-ns">
+          <div className="form-group-ns">
+            <label>Ngày Nhập</label>
             <input
               type="date"
               name="ngayNhap"
               value={formData.ngayNhap}
-              onChange={handleChange}
-              required
+              onChange={handleInputChange}
             />
           </div>
-          <div className="form-group">
-            <label>Mã người nhập sách:</label>
+          <div className="form-group-ns">
+            <label>Người Nhập</label>
             <input
-              type="text"
-              name="MaNguoiNhap"
-              value={formData.MaNguoiNhap}
-              onChange={handleChange}
-              required
+              type="text" // Sử dụng type="text" để chấp nhận chuỗi
+              name="NguoiNhap"
+              value={formData.NguoiNhap}
+              onChange={handleInputChange}
+              placeholder="Nhập Người Nhập"
             />
           </div>
-          <div className="modal-actions">
-            <button type="button" onClick={onClose}>
+          <div className="button-group-ns">
+            <button
+              type="button"
+              className="modal-cancel-btn-ns"
+              onClick={onClose}
+            >
               Hủy
             </button>
-            <button type="submit">Lưu</button>
+            <button
+              type="button"
+              className="modal-submit-btn-ns"
+              onClick={handleSaveClick}
+            >
+              Lưu
+            </button>
           </div>
         </form>
       </div>

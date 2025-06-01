@@ -25,8 +25,10 @@ ChartJS.register(
 );
 
 function TrangChu() {
-  const [selectedMonth, setSelectedMonth] = useState("12");
-  const [selectedYear, setSelectedYear] = useState("2024");
+  // State tạm thời khi chọn
+  const [selectedMonth, setSelectedMonth] = useState("12"); // Mặc định tháng 12
+  const [selectedYear, setSelectedYear] = useState("2024"); // Mặc định năm 2024
+  // State đã áp dụng
   const [applyMonth, setApplyMonth] = useState("12");
   const [applyYear, setApplyYear] = useState("2024");
   const [totalBooks, setTotalBooks] = useState(0);
@@ -54,16 +56,6 @@ function TrangChu() {
       setLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          setError(
-            "Không tìm thấy token! Vui lòng lưu token vào localStorage với key 'authToken'."
-          );
-          console.warn("Token not found, skipping API calls.");
-          setLoading(false);
-          return;
-        }
-
         const books = await trangChuApi.getAllBooks();
         console.log("Books data:", books);
         if (!books || books.length === 0)
@@ -86,14 +78,14 @@ function TrangChu() {
         }
 
         const totalSoldValue = cthoadons.reduce(
-          (sum, ct) => sum + Math.floor(ct.SLBan || 0), // Đảm bảo số nguyên
+          (sum, ct) => sum + (ct.SLBan || 0),
           0
         );
         setTotalSold(totalSoldValue);
 
         const daysInMonth = new Date(
           parseInt(applyYear),
-          parseInt(applyMonth),
+          parseInt(applyMonth) - 1,
           0
         ).getDate();
         const dailySalesArray = Array(daysInMonth).fill(0);
@@ -115,7 +107,7 @@ function TrangChu() {
               date.getFullYear() === parseInt(applyYear)
             ) {
               const day = date.getDate() - 1;
-              dailySalesArray[day] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
+              dailySalesArray[day] += ct.SLBan || 0;
               hasData = true;
             }
           }
@@ -135,7 +127,7 @@ function TrangChu() {
               !isNaN(date.getTime()) &&
               date.getFullYear() === parseInt(applyYear)
             ) {
-              monthlySalesArray[date.getMonth()] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
+              monthlySalesArray[date.getMonth()] += ct.SLBan || 0;
             }
           }
         });
@@ -156,11 +148,11 @@ function TrangChu() {
     };
 
     fetchData();
-  }, [applyMonth, applyYear]);
+  }, [applyMonth, applyYear]); // Chỉ chạy khi applyMonth hoặc applyYear thay đổi
 
   const handleApplyDate = () => {
-    setApplyMonth(selectedMonth);
-    setApplyYear(selectedYear);
+    setApplyMonth(selectedMonth); // Áp dụng giá trị đã chọn
+    setApplyYear(selectedYear); // Áp dụng giá trị đã chọn
   };
 
   const chartData = {
@@ -172,7 +164,7 @@ function TrangChu() {
         fill: true,
         borderColor: "rgb(75, 192, 192)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        tension: 0.1, // Giảm tension để đường cong ít mượt hơn
+        tension: 0.4,
       },
     ],
   };
@@ -188,14 +180,7 @@ function TrangChu() {
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: "Số lượng sách" },
-        ticks: {
-          stepSize: 1, // Chỉ hiển thị số nguyên
-          precision: 0, // Không hiển thị thập phân
-        },
-      },
+      y: { beginAtZero: true, title: { display: true, text: "Số lượng sách" } },
       x: { title: { display: true, text: "Ngày" } },
     },
   };
@@ -222,7 +207,7 @@ function TrangChu() {
         fill: true,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
-        tension: 0.1, // Giảm tension
+        tension: 0.4,
       },
     ],
   };
@@ -238,14 +223,7 @@ function TrangChu() {
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: "Số lượng sách" },
-        ticks: {
-          stepSize: 1, // Chỉ hiển thị số nguyên
-          precision: 0, // Không hiển thị thập phân
-        },
-      },
+      y: { beginAtZero: true, title: { display: true, text: "Số lượng sách" } },
       x: { title: { display: true, text: "Tháng" } },
     },
   };
@@ -265,6 +243,7 @@ function TrangChu() {
         <div className="overview-header">
           <h2 className="overview-title">Tổng quan</h2>
           <div className="date-selectors">
+            {/* Dropdown cho tháng */}
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
@@ -276,6 +255,7 @@ function TrangChu() {
                 </option>
               ))}
             </select>
+            {/* Dropdown cho năm */}
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
@@ -287,6 +267,7 @@ function TrangChu() {
                 </option>
               ))}
             </select>
+            {/* Nút Áp dụng */}
             <button onClick={handleApplyDate} style={{ padding: "8px 16px" }}>
               Áp dụng
             </button>
