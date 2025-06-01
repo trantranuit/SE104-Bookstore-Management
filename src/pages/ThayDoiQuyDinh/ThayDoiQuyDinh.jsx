@@ -14,15 +14,12 @@ const ThayDoiQuyDinh = () => {
     const values = {
       SLNhapTT: item.SLNhapTT,
       TonTD: item.TonTD,
-      NoTD: parseFloat(item.NoTD).toLocaleString("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      }),
+      NoTD: item.NoTD,
       TonTT: item.TonTT,
-      TiLe: `${(parseFloat(item.TiLe) * 100).toFixed(2)}%`,
+      TiLe: item.TiLe,
       SDQD4: item.SDQD4 ? "Đúng" : "Sai",
     };
-    return values[key] || "Không xác định";
+    return values[key] ?? "Không xác định";
   }, []);
 
   const formatApiData = useCallback(
@@ -49,12 +46,12 @@ const ThayDoiQuyDinh = () => {
       };
 
       return Object.keys(rules).map((key) => ({
-        id: item.id,
         tenQuyDinh: rules[key].tenQuyDinh,
         thamSo: rules[key].thamSo,
         giaTri: getGiaTriForKey(item, key),
         key: key,
         [key]: item[key],
+        mota: rules[key].tenQuyDinh, // Use tenQuyDinh as description instead of ID
       }));
     },
     [getGiaTriForKey]
@@ -101,20 +98,70 @@ const ThayDoiQuyDinh = () => {
     setIsModalOpen(true);
   };
 
+  const validateFormData = (formData, fieldKey) => {
+    switch (fieldKey) {
+      case "SLNhapTT":
+        const slValue = Number(formData.SLNhapTT);
+        if (isNaN(slValue) || slValue < 0) {
+          return "Số lượng nhập tối thiểu phải là số dương";
+        }
+        break;
+      case "TonTD":
+        const tdValue = Number(formData.TonTD);
+        if (isNaN(tdValue) || tdValue < 0) {
+          return "Số lượng tồn tối đa phải là số dương";
+        }
+        break;
+      case "NoTD":
+        const noValue = Number(formData.NoTD);
+        if (isNaN(noValue) || noValue < 0) {
+          return "Số tiền nợ tối đa phải là số dương";
+        }
+        break;
+      case "TonTT":
+        const ttValue = Number(formData.TonTT);
+        if (isNaN(ttValue) || ttValue < 0) {
+          return "Số lượng tồn tối thiểu phải là số dương";
+        }
+        break;
+      case "TiLe":
+        const tiLeValue = Number(formData.TiLe);
+        if (isNaN(tiLeValue) || tiLeValue <= 0 || tiLeValue > 100) {
+          return "Tỷ lệ phải là số dương và không được vượt quá 100%";
+        }
+        break;
+      case "SDQD4":
+        return null; // No validation needed for boolean
+      default:
+        console.warn(`No validation defined for field: ${fieldKey}`);
+        return null;
+    }
+  };
+
   const handleSave = async (formData) => {
     try {
-      const updatedItem = {
-        id: currentItem.id,
-        SLNhapTT: formData.SLNhapTT ?? currentItem.SLNhapTT,
-        TonTD: formData.TonTD ?? currentItem.TonTD,
-        NoTD: formData.NoTD ?? currentItem.NoTD,
-        TonTT: formData.TonTT ?? currentItem.TonTT,
-        TiLe: formData.TiLe ?? currentItem.TiLe,
-        SDQD4:
-          formData.SDQD4 !== undefined ? formData.SDQD4 : currentItem.SDQD4,
-      };
+      const fieldKey = currentItem.key;
+      const validationError = validateFormData(formData, fieldKey);
 
-      await thamSoApi.updateThamSo(currentItem.id, updatedItem);
+      if (validationError) {
+        setNotification({
+          message: `Lỗi: ${validationError}`,
+          type: "error",
+        });
+        return;
+      }
+
+      const currentSettings = await thamSoApi.getThamSo();
+      const updatedItem = { ...currentSettings[0] };
+
+      // Only update the specific field being modified
+      if (fieldKey !== "SDQD4") {
+        updatedItem[fieldKey] = formData[fieldKey];
+      } else {
+        updatedItem.SDQD4 = Boolean(formData.SDQD4);
+      }
+
+      await thamSoApi.updateThamSo(updatedItem.id, updatedItem);
 
       const response = await thamSoApi.getThamSo();
       const formattedData = formatApiData(response[0]);
@@ -124,10 +171,12 @@ const ThayDoiQuyDinh = () => {
         type: "success",
       });
     } catch (err) {
-      console.error("Lỗi chi tiết khi cập nhật:", err.message);
+      console.error("Lỗi chi tiết khi cập nhật:", err);
       setNotification({
         message: `Lỗi khi cập nhật quy định: ${
-          err.message.includes("401")
+          err.response?.status === 400
+            ? "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị nhập vào!"
+            : err.response?.status === 401
             ? "Vui lòng đăng nhập hoặc kiểm tra token!"
             : err.message
         }`,
@@ -145,12 +194,13 @@ const ThayDoiQuyDinh = () => {
   return (
     <div className="page-container">
       <h1 className="page-title">Thay đổi quy định</h1>
-      {notification.message && (
-        <div className={`notification ${notification.type}`}>
-          {notification.message}
-        </div>
-      )}
+
       <div className="content-wrapper">
+        {notification.message && (
+          <div className={`notification ${notification.type}`}>
+            {notification.message}
+          </div>
+        )}
         {loading ? (
           <p>Đang tải dữ liệu...</p>
         ) : data.length === 0 ? (
