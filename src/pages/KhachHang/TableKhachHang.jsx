@@ -1,3 +1,4 @@
+// TableKhachHang.js
 import React, { useState, useEffect } from "react";
 import {
   useReactTable,
@@ -9,7 +10,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import customerService from "../../services/customerService";
-import CustomerModal from "./CustomerModal";
 import "./KhachHang.css";
 
 function TableKhachHang({
@@ -20,58 +20,46 @@ function TableKhachHang({
   refreshTrigger,
   setRefreshTrigger,
 }) {
-  // State for managing customers
   const [customers, setCustomers] = useState([]);
-  const [editingCustomer, setEditingCustomer] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [customerToDelete, setCustomerToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Initialize pagination state from localStorage if available
   const [pagination, setPagination] = useState(() => {
     const savedPagination = localStorage.getItem("khachHangPagination");
     return savedPagination
       ? JSON.parse(savedPagination)
-      : {
-          pageIndex: 0,
-          pageSize: 10,
-        };
+      : { pageIndex: 0, pageSize: 10 };
   });
 
-  // Save pagination state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("khachHangPagination", JSON.stringify(pagination));
   }, [pagination]);
 
-  // Fetch customers from API on component mount and when searchTerm or refreshTrigger changes
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
       setError(null);
       try {
         const data = await customerService.getAllCustomers(searchTerm);
-
         // Transform and filter the data locally as well for redundancy
         const transformedData = data
           .map((customer) => ({
-            id: customer.MaKhachHang,
+            MaKhachHang: customer.MaKhachHang.toString(), // Keep as string to handle KH001 format
             name: customer.HoTen,
             phone: customer.DienThoai,
             email: customer.Email,
             address: customer.DiaChi,
-            debtAmount: customer.SoTienNo,
+            debtAmount: parseInt(customer.SoTienNo) || 0, // Convert string to number for display
           }))
-          // Filter customer
           .filter(
             (customer) =>
               customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
               customer.phone.includes(searchTerm)
           );
-
         setCustomers(transformedData);
 
-        // Only adjust pagination if we don't have any customers or if the current page is invalid
         const pageCount = Math.ceil(transformedData.length / pagination.pageSize);
         if (transformedData.length === 0 || (pagination.pageIndex >= pageCount && pageCount > 0)) {
           setPagination((prev) => ({
@@ -80,38 +68,21 @@ function TableKhachHang({
           }));
         }
       } catch (err) {
-        setError("Failed to load customers. Please try again.");
+        setError("Không thể tải danh sách khách hàng. Vui lòng thử lại.");
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchCustomers();
-  }, [searchTerm, refreshTrigger, pagination.pageSize]);
+  }, [searchTerm, refreshTrigger]);
 
   const columns = [
-    {
-      header: "MaKH",
-      accessorKey: "id",
-      size: 150,
-    },
-    {
-      header: "Tên khách hàng",
-      accessorKey: "name",
-    },
-    {
-      header: "Số điện thoại",
-      accessorKey: "phone",
-    },
-    {
-      header: "Email",
-      accessorKey: "email",
-    },
-    {
-      header: "Địa chỉ",
-      accessorKey: "address",
-    },
+    { header: "Mã KH", accessorKey: "MaKhachHang", size: 150 },
+    { header: "Tên khách hàng", accessorKey: "name" },
+    { header: "Số điện thoại", accessorKey: "phone" },
+    { header: "Email", accessorKey: "email" },
+    { header: "Địa chỉ", accessorKey: "address" },
     {
       header: "Số tiền nợ",
       accessorKey: "debtAmount",
@@ -133,12 +104,33 @@ function TableKhachHang({
           <FontAwesomeIcon
             icon={faTrash}
             className="khachhang-delete-icon"
-            onClick={() => handleDeleteCustomer(row.original.id)}
+            onClick={() => handleDeleteCustomer(row.original.MaKhachHang)}
           />
         </div>
       ),
     },
   ];
+
+  const handleDeleteCustomer = (MaKhachHang) => {
+    setCustomerToDelete(MaKhachHang);
+    setShowDeleteConfirmation(true);
+  };
+
+  const confirmDelete = async () => {
+    setLoading(true);
+    try {
+      await customerService.deleteCustomer(customerToDelete);
+      setCustomers((prev) => prev.filter((customer) => customer.MaKhachHang !== customerToDelete));
+      setShowDeleteConfirmation(false);
+      setCustomerToDelete(null);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      setError("Không thể xóa khách hàng. Vui lòng thử lại.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle add customer
   const handleAddCustomer = async (newCustomer) => {
@@ -148,103 +140,18 @@ function TableKhachHang({
 
       // Transform created customer to match your data structure
       const transformedCustomer = {
-        id: createdCustomer.MaKhachHang.toString(),
+        MaKhachHang: createdCustomer.MaKhachHang.toString(), // Keep as string for new format
         name: createdCustomer.HoTen,
         phone: createdCustomer.DienThoai,
         email: createdCustomer.Email,
         address: createdCustomer.DiaChi,
-        debtAmount: createdCustomer.SoTienNo,
+        debtAmount: parseInt(createdCustomer.SoTienNo) || 0, // Convert string to number
       };
 
-      // Add the new customer to our local state
-      const updatedCustomers = [...customers, transformedCustomer];
-      
-      // Calculate what page the new customer would be on
-      const newTotalPages = Math.ceil(updatedCustomers.length / pagination.pageSize);
-      const lastPageIndex = newTotalPages - 1;
-      
-      // Set the pagination to the last page where the new customer appears
-      setPagination(prev => ({
-        ...prev,
-        pageIndex: lastPageIndex
-      }));
-      
-      // Save this to localStorage immediately to prevent any race conditions
-      localStorage.setItem('khachHangPagination', JSON.stringify({
-        pageIndex: lastPageIndex,
-        pageSize: pagination.pageSize
-      }));
-      
-      setCustomers(updatedCustomers);
-      setIsModalOpen(false);
-
-      // After the state is updated and before we refresh, ensure we're on the right page
-      setTimeout(() => {
-        // Trigger refresh to ensure all data is in sync with server
-        setRefreshTrigger(prev => prev + 1);
-      }, 100);
-    } catch (err) {
-      setError("Failed to add customer. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateCustomer = async (updatedCustomer) => {
-    setLoading(true);
-    try {
-      const response = await customerService.updateCustomer(
-        updatedCustomer.id,
-        updatedCustomer
-      );
-
-      // Transform updated customer to match your data structure
-      const transformedCustomer = {
-        id: response.MaKhachHang.toString(),
-        name: response.HoTen,
-        phone: response.DienThoai,
-        email: response.Email,
-        address: response.DiaChi,
-        debtAmount: response.SoTienNo,
-      };
-
-      setCustomers((prevCustomers) =>
-        prevCustomers.map((customer) =>
-          customer.id === transformedCustomer.id ? transformedCustomer : customer
-        )
-      );
-      setIsModalOpen(false);
-      setEditingCustomer(null);
-    } catch (err) {
-      setError("Failed to update customer. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle delete confirmation setup
-  const handleDeleteCustomer = (id) => {
-    setCustomerToDelete(id);
-    setShowDeleteConfirmation(true);
-  };
-
-  // Handle delete confirmation
-  const confirmDelete = async () => {
-    setLoading(true);
-    try {
-      await customerService.deleteCustomer(customerToDelete);
-      // Remove the customer from the local state
-      setCustomers((prevCustomers) =>
-        prevCustomers.filter((customer) => customer.id !== customerToDelete)
-      );
-      setShowDeleteConfirmation(false);
-      setCustomerToDelete(null);
-      // Trigger refresh to ensure data is in sync with server
+      setCustomers((prev) => [...prev, transformedCustomer]);
       setRefreshTrigger((prev) => prev + 1);
     } catch (err) {
-      setError("Failed to delete customer. Please try again.");
+      setError("Không thể thêm khách hàng. Vui lòng thử lại.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -254,9 +161,7 @@ function TableKhachHang({
   const table = useReactTable({
     data: customers,
     columns,
-    state: {
-      pagination,
-    },
+    state: { pagination },
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -266,7 +171,7 @@ function TableKhachHang({
 
   return (
     <div className="kh-table-container">
-      {loading && <div className="loading-indicator">Loading...</div>}
+      {loading && <div className="loading-indicator">Đang tải...</div>}
       {error && <div className="error-message">{error}</div>}
 
       <table className="khachhang-report-table">
@@ -296,23 +201,12 @@ function TableKhachHang({
           {customers.length === 0 && !loading && (
             <tr>
               <td colSpan={7} style={{ textAlign: "center", padding: "1rem" }}>
-                No customers found.
+                Không tìm thấy khách hàng.
               </td>
             </tr>
           )}
         </tbody>
       </table>
-
-      {isModalOpen && (
-        <CustomerModal
-          customer={editingCustomer}
-          onSave={editingCustomer ? handleUpdateCustomer : handleAddCustomer}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingCustomer(null);
-          }}
-        />
-      )}
 
       <div className="khachhang-pagination">
         <button
