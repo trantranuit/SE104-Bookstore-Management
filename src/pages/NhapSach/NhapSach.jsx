@@ -6,6 +6,19 @@ import ModalChiTietNhapSach from "./ModalChiTietNhapSach";
 import Notification from "./Notification";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 
+// Helper function to normalize date formats for comparison
+const normalizeDate = (dateStr) => {
+  if (!dateStr || typeof dateStr !== "string") return "";
+  // Handle dd/mm/yyyy format
+  if (dateStr.includes("/")) {
+    const [day, month, year] = dateStr.split("/");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+  // Handle yyyy-mm-dd format
+  const [year, month, day] = dateStr.split("-");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+};
+
 const NhapSach = () => {
   const [isModalPhieuNhapOpen, setIsModalPhieuNhapOpen] = useState(false);
   const [isModalChiTietOpen, setIsModalChiTietOpen] = useState(false);
@@ -33,21 +46,18 @@ const NhapSach = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [
-        ctNhapSach,
-        phieuNhap,
-        sachData,
-        dauSachData,
-        theLoaiData,
-        tacGiaData,
-      ] = await Promise.all([
-        phieuNhapSachApi.getCTNhapSach(),
-        phieuNhapSachApi.getPhieuNhapSach(),
-        phieuNhapSachApi.getSach(),
-        phieuNhapSachApi.getDauSach(),
-        phieuNhapSachApi.getTheLoai(),
-        phieuNhapSachApi.getTacGia(),
-      ]);
+      const [ctNhapSach, phieuNhap, sachData, dauSachData, tacGiaData] =
+        await Promise.all([
+          phieuNhapSachApi.getCTNhapSach(),
+          phieuNhapSachApi.getPhieuNhapSach(),
+          phieuNhapSachApi.getSach(),
+          phieuNhapSachApi.getDauSach(),
+          phieuNhapSachApi.getTheLoai(),
+          phieuNhapSachApi.getTacGia(),
+        ]);
+
+      console.log("sachData:", sachData);
+      console.log("dauSachData:", dauSachData);
 
       const uniqueNguoiNhap = [
         ...new Set(phieuNhap.map((p) => p.NguoiNhap_input)),
@@ -67,30 +77,28 @@ const NhapSach = () => {
           const sach = sachData.find((s) => s.MaSach === item.MaSach);
           if (!sach) return null;
 
+          console.log("sach for MaSach", item.MaSach, ":", sach);
+
           const dauSach = dauSachData.find(
             (ds) => ds.MaDauSach === sach.MaDauSach
           );
           if (!dauSach) return null;
 
-          const theLoai = theLoaiData.find(
-            (tl) => tl.MaTheLoai === dauSach.MaTheLoai
+          const tacGia = tacGiaData.find(
+            (tg) =>
+              Array.isArray(dauSach.MaTG) && dauSach.MaTG.includes(tg.MaTG)
           );
-          const tacGia = tacGiaData.find((tg) =>
-            dauSach.MaTG.includes(tg.MaTG)
-          );
-
-          const tenNguoiNhap = pn.NguoiNhap || "Không xác định";
 
           return {
             maPhieuNhap: item.MaPhieuNhap,
-            ngayNhap: pn.NgayNhap,
+            ngayNhap: pn.NgayNhap || "01/01/1900",
             MaNguoiNhap: pn.NguoiNhap_input || pn.NguoiNhap || "Không xác định",
-            TenNguoiNhap: tenNguoiNhap,
+            TenNguoiNhap: pn.NguoiNhap || "Không xác định",
             maSach: item.MaSach,
             tenSach: dauSach.TenSach,
-            theLoai: theLoai ? theLoai.TenTheLoai : "Không xác định",
+            theLoai: dauSach.TenTheLoai || "Không xác định",
             tacGia: tacGia ? tacGia.TenTG : "Không xác định",
-            nhaXuatBan: sach.NXB,
+            nhaXuatBan: sach.TenNXB || "Không xác định",
             namXuatBan: sach.NamXB,
             giaNhap: item.GiaNhap,
             soLuong: item.SLNhap,
@@ -147,24 +155,35 @@ const NhapSach = () => {
   const applyFilters = () => {
     let filtered = [...data];
 
+    // Lọc theo ngày nhập
     if (filters.ngayNhap) {
-      const dateParts = filters.ngayNhap.split("-");
-      const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-      filtered = filtered.filter((item) => item.ngayNhap === formattedDate);
+      const filterDate = normalizeDate(filters.ngayNhap);
+      filtered = filtered.filter((item) => {
+        const itemDate = normalizeDate(item.ngayNhap);
+        return itemDate === filterDate;
+      });
     }
-    if (selectedFilters.MaNguoiNhap.length > 0) {
+
+    // Lọc theo Mã người nhập
+    if (filters.MaNguoiNhap.length > 0) {
       filtered = filtered.filter((item) =>
-        selectedFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
-      );
-    }
-    if (selectedFilters.maPhieuNhap.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedFilters.maPhieuNhap.includes(item.maPhieuNhap)
+        filters.MaNguoiNhap.includes(item.MaNguoiNhap)
       );
     }
 
-    setFilters((prev) => ({ ...prev, ...selectedFilters }));
+    // Lọc theo Mã phiếu nhập
+    if (filters.maPhieuNhap.length > 0) {
+      filtered = filtered.filter((item) =>
+        filters.maPhieuNhap.includes(item.maPhieuNhap)
+      );
+    }
+
     setFilteredData(filtered);
+    setFilters((prev) => ({
+      ...prev,
+      MaNguoiNhap: selectedFilters.MaNguoiNhap,
+      maPhieuNhap: selectedFilters.maPhieuNhap,
+    }));
     setIsFilterModalOpen(false);
   };
 
@@ -478,7 +497,7 @@ const NhapSach = () => {
           onClose={handleCloseModalChiTiet}
           onSave={handleSaveChiTiet}
           initialData={currentItem}
-          maPhieuNhap={currentPhieuNhap?.maPhieuNhap}
+          maPhieuNhap={currentPhieuNhap?.MaPhieuNhap}
         />
       )}
 
