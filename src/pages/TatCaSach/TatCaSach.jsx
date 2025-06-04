@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import thanhToanMoiApi from '../../services/thanhToanMoiApi';
+import { tatCaSachApi } from '../../services/tatCaSachApi';
 import '../../styles/PathStyles.css';
 import './TatCaSach.css';
 
@@ -40,63 +40,62 @@ function TatCaSach() {
 
     // Lấy dữ liệu từ API
     useEffect(() => {
-        const fetchBooks = async () => {
+        const fetchData = async () => {
             try {
                 const [sachList, dauSachList, tacGiaList, theLoaiList, ctNhapSachList, thamSoList] = await Promise.all([
-                    thanhToanMoiApi.getAllBooks(),
-                    thanhToanMoiApi.getAllDauSach(),
-                    thanhToanMoiApi.getAllTacGia(),
-                    thanhToanMoiApi.getAllTheLoai(),
-                    thanhToanMoiApi.getAllCTNhapSach(),
-                    thanhToanMoiApi.getAllThamSo()
+                    tatCaSachApi.fetchAllBooks(),
+                    tatCaSachApi.fetchAllTitles(),
+                    tatCaSachApi.fetchAllAuthors(),
+                    tatCaSachApi.fetchAllCategories(),
+                    tatCaSachApi.fetchAllCTNhapSach(),
+                    tatCaSachApi.fetchThamSo()
                 ]);
-                const thamSo = thamSoList[0]; // Giả định chỉ có một tham số
+
+                const thamSo = thamSoList[0];
+
                 const booksData = sachList.map(sach => {
                     const dauSach = dauSachList.find(ds => ds.MaDauSach === sach.MaDauSach);
-                    const theLoai = dauSach ? theLoaiList.find(tl => tl.MaTheLoai === dauSach.MaTheLoai) : null;
-                    let tenSach = dauSach ? dauSach.TenSach : '';
-                    let tacGia = '';
-                    if (dauSach && Array.isArray(dauSach.MaTG)) {
-                        tacGia = dauSach.MaTG
-                            .map(maTG => {
-                                const tg = tacGiaList.find(t => t.MaTG === maTG);
-                                return tg ? tg.TenTG : '';
-                            })
-                            .filter(Boolean)
-                            .join(', ');
-                    }
-                    const ctNhapSach = ctNhapSachList.find(ct => ct.MaSach === sach.MaSach);
-                    const giaNhap = ctNhapSach ? ctNhapSach.GiaNhap : 0;
-                    const donGiaBan = thamSo && giaNhap ? Math.round(giaNhap * thamSo.TiLe) : 0;
+                    let tacGia = dauSach ? (Array.isArray(dauSach.TenTacGia) ? dauSach.TenTacGia.join(', ') : dauSach.TenTacGia) : '';
+
+                    // Remove duplicate declaration of ctNhapSach
+                    const latestCtNhapSach = [...ctNhapSachList]
+                        .filter(ct => ct.MaSach === sach.MaSach)
+                        .sort((a, b) => b.MaPhieuNhap.localeCompare(a.MaPhieuNhap))[0];
+
+                    const giaNhap = latestCtNhapSach ? parseInt(latestCtNhapSach.GiaNhap) : 0;
+                    const donGiaBan = thamSo ? Math.round(giaNhap * parseFloat(thamSo.TiLe)) : 0;
+
                     return {
-                        maSach: String(sach.MaSach),
-                        tenSach,
-                        tacGia,
-                        theLoai: theLoai ? theLoai.TenTheLoai : '',
-                        nhaXuatBan: sach.NXB,
+                        maSach: sach.MaSach,
+                        maDauSach: sach.MaDauSach,
+                        tenSach: dauSach ? dauSach.TenSach : '',
+                        tacGia: tacGia,
+                        theLoai: dauSach ? dauSach.TenTheLoai : '',
+                        nhaXuatBan: sach.TenNXB,
                         namXuatBan: sach.NamXB,
                         soLuongTon: sach.SLTon,
-                        donGiaBan
+                        donGiaBan: donGiaBan
                     };
                 });
                 setBooks(booksData);
             } catch (error) {
-                console.error('Error fetching books:', error);
+                console.error('Error fetching data:', error);
                 setBooks([]);
-                alert('Có lỗi khi tải danh sách sách!');
+                alert('Có lỗi khi tải dữ liệu!');
             }
         };
-        fetchBooks();
+        fetchData();
     }, []);
 
-    const authors = [...new Set(books.map(book => book.tacGia))];
-    const genres = [...new Set(books.map(book => book.theLoai))];
-    const publishers = [...new Set(books.map(book => book.nhaXuatBan))];
-    const years = [...new Set(books.map(book => book.namXuatBan))];
+    const authors = [...new Set(books.map(book => book.tacGia).filter(Boolean))];
+    const genres = [...new Set(books.map(book => book.theLoai).filter(Boolean))];
+    const publishers = [...new Set(books.map(book => book.nhaXuatBan).filter(Boolean))];
+    const years = [...new Set(books.map(book => book.namXuatBan).filter(Boolean))];
 
     const filteredAuthors = authors
-        .filter(author => author.toLowerCase().includes(authorSearchTerm.toLowerCase()))
+        .filter(author => author?.toLowerCase().includes(authorSearchTerm?.toLowerCase() || ''))
         .sort((a, b) => {
+            if (!a || !b) return 0;
             const isSelectedA = tempSelectedAuthors.includes(a);
             const isSelectedB = tempSelectedAuthors.includes(b);
             if (isSelectedA && !isSelectedB) return -1;
@@ -136,8 +135,8 @@ function TatCaSach() {
 
     const filteredBooks = books.filter(
         book =>
-            (book.maSach.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                book.tenSach.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            (book?.maSach?.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
+                book?.tenSach?.toLowerCase().includes(searchTerm?.toLowerCase() || '')) &&
             (selectedAuthors.length === 0 || selectedAuthors.includes(book.tacGia)) &&
             (selectedGenres.length === 0 || selectedGenres.includes(book.theLoai)) &&
             (selectedPublishers.length === 0 || selectedPublishers.includes(book.nhaXuatBan)) &&
@@ -166,6 +165,10 @@ function TatCaSach() {
         setTempSelected(prev =>
             prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
         );
+    };
+
+    const handlePublisherSelection = (publisher) => {
+        setTempSelectedPublishers([publisher]); // Replace array instead of adding/removing
     };
 
     const applyFilter = (setSelected, tempSelected, setModalOpen) => {
@@ -421,8 +424,8 @@ function TatCaSach() {
                                 {filteredPublishers.map(publisher => (
                                     <div
                                         key={publisher}
-                                        className={`author-item ${tempSelectedPublishers.includes(publisher) ? 'selected' : ''}`}
-                                        onClick={() => handleSelection(publisher, setTempSelectedPublishers)}
+                                        className={`author-item ${tempSelectedPublishers[0] === publisher ? 'selected' : ''}`}
+                                        onClick={() => handlePublisherSelection(publisher)}
                                     >
                                         {publisher}
                                     </div>
@@ -599,7 +602,8 @@ function TatCaSach() {
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Mã</th>
+                                <th>Mã sách</th>
+                                <th>Mã đầu sách</th>
                                 <th>Tên sách</th>
                                 <th>Tác giả</th>
                                 <th>Thể loại</th>
@@ -614,6 +618,7 @@ function TatCaSach() {
                                 <tr key={book.maSach}>
                                     <td>{startIndex + index + 1}</td>
                                     <td>{book.maSach}</td>
+                                    <td>{book.maDauSach}</td>
                                     <td>{book.tenSach}</td>
                                     <td>{book.tacGia}</td>
                                     <td>{book.theLoai}</td>

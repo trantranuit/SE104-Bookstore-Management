@@ -62,7 +62,16 @@ const thanhToanCuApi = {
 
     // Tạo phiếu thu mới
     createReceipt: async (receiptData) => {
-        const response = await axiosInstance.post("/phieuthutien/", receiptData);
+        // Ensure all required fields are properly formatted
+        const formattedData = {
+            SoTienThu: receiptData.SoTienThu.toString(),
+            NgayThu: receiptData.NgayThu,
+            MaKH_input: receiptData.MaKH_input,
+            NguoiThu_input: receiptData.NguoiThu_input
+        };
+
+        console.log('Sending receipt data:', formattedData);
+        const response = await axiosInstance.post("/phieuthutien/", formattedData);
         return response.data;
     },
 
@@ -76,6 +85,40 @@ const thanhToanCuApi = {
     updateCustomerDebt: async (id, debtData) => {
         const response = await axiosInstance.patch(`/khachhang/${id}/`, debtData);
         return response.data;
+    },
+
+    // Lấy tất cả phiếu thu tiền
+    getAllReceipts: async () => {
+        const response = await axiosInstance.get("/phieuthutien/");
+        return response.data.map(pt => ({
+            MaPhieuThu: pt.MaPhieuThu,
+            MaKH: pt.MaKH,
+            TenKH: pt.TenKH,
+            SoTienThu: pt.SoTienThu,
+            NguoiThu: pt.NguoiThu,
+            NgayThu: pt.NgayThu
+        }));
+    },
+
+    getNextReceiptId: async () => {
+        try {
+            const receipts = await thanhToanCuApi.getAllReceipts();
+            let maxId = 0;
+
+            receipts.forEach(receipt => {
+                // Extract numeric part from PT001 format
+                const numericId = parseInt(receipt.MaPhieuThu.replace(/^PT/, ''));
+                if (!isNaN(numericId) && numericId > maxId) {
+                    maxId = numericId;
+                }
+            });
+
+            const nextId = maxId + 1;
+            return `PT${nextId.toString().padStart(3, '0')}`;
+        } catch (error) {
+            console.error('Error getting next receipt ID:', error);
+            return 'PT001'; // Default value if error occurs
+        }
     },
 };
 

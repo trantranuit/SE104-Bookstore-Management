@@ -6,24 +6,30 @@ const thanhToanMoiApi = {
         const response = await axiosInstance.get("/sach/", { params });
         return response.data.map(s => ({
             MaSach: s.MaSach,
-            NXB: s.NXB,
+            MaDauSach: s.MaDauSach,
+            TenDauSach: s.TenDauSach,
+            TenNXB: s.TenNXB,
             NamXB: s.NamXB,
-            SLTon: s.SLTon,
-            MaDauSach: s.MaDauSach
+            SLTon: s.SLTon
         }));
     },
     getBookById: async (id) => {
-        const s = (await axiosInstance.get(`/sach/${id}/`)).data;
+        const numericId = id.replace(/^S/, '');
+        console.log(`Gửi yêu cầu lấy sách với ID: ${numericId}`);
+        const s = (await axiosInstance.get(`/sach/${numericId}/`)).data;
         return {
-            MaSach: s.MaSach,
-            NXB: s.NXB,
+            MaSach: `S${s.MaSach.toString().padStart(3, '0')}`,
+            MaDauSach: s.MaDauSach,
+            TenSach: s.TenDauSach,
+            NXB: s.TenNXB,
             NamXB: s.NamXB,
-            SLTon: s.SLTon,
-            MaDauSach: s.MaDauSach
+            SLTon: s.SLTon
         };
     },
     updateBookStock: async (maSach, slTon) => {
-        await axiosInstance.patch(`/sach/${maSach}/`, { SLTon: slTon });
+        const numericId = maSach.replace(/^S/, '');
+        console.log(`Cập nhật tồn kho cho sách ID: ${numericId}, SLTon: ${slTon}`);
+        await axiosInstance.patch(`/sach/${numericId}/`, { SLTon: slTon });
     },
 
     // Khách hàng
@@ -39,7 +45,8 @@ const thanhToanMoiApi = {
         }));
     },
     getCustomerById: async (id) => {
-        const c = (await axiosInstance.get(`/khachhang/${id}/`)).data;
+        const numericId = id.replace(/^KH/, '');
+        const c = (await axiosInstance.get(`/khachhang/${numericId}/`)).data;
         return {
             MaKhachHang: c.MaKhachHang,
             HoTen: c.HoTen,
@@ -50,7 +57,8 @@ const thanhToanMoiApi = {
         };
     },
     updateCustomerDebt: async (maKhachHang, soTienNo) => {
-        const response = await axiosInstance.patch(`/khachhang/${maKhachHang}/`, { SoTienNo: soTienNo });
+        const numericId = maKhachHang.replace(/^KH/, '');
+        const response = await axiosInstance.patch(`/khachhang/${numericId}/`, { SoTienNo: soTienNo });
         return response.data;
     },
 
@@ -67,7 +75,8 @@ const thanhToanMoiApi = {
         }));
     },
     getUserById: async (id) => {
-        const u = (await axiosInstance.get(`/user/${id}/`)).data;
+        const numericId = id.replace(/^NV/, '');
+        const u = (await axiosInstance.get(`/user/${numericId}/`)).data;
         return {
             id: u.id,
             username: u.username,
@@ -81,11 +90,11 @@ const thanhToanMoiApi = {
     // Đầu sách
     getAllDauSach: async (params = {}) => {
         const response = await axiosInstance.get("/dausach/", { params });
-        return response.data.map(d => ({
-            MaDauSach: d.MaDauSach,
-            TenSach: d.TenSach,
-            MaTheLoai: d.MaTheLoai,
-            MaTG: d.MaTG
+        return response.data.map(ds => ({
+            MaDauSach: ds.MaDauSach,
+            TenSach: ds.TenSach,
+            TenTacGia: Array.isArray(ds.TenTacGia) ? ds.TenTacGia : [ds.TenTacGia],
+            TheLoai: ds.TenTheLoai
         }));
     },
     getDauSachById: async (id) => {
@@ -93,8 +102,8 @@ const thanhToanMoiApi = {
         return {
             MaDauSach: d.MaDauSach,
             TenSach: d.TenSach,
-            MaTheLoai: d.MaTheLoai,
-            MaTG: d.MaTG
+            TenTheLoai: d.TenTheLoai,
+            TenTacGia: d.TenTacGia
         };
     },
 
@@ -131,21 +140,16 @@ const thanhToanMoiApi = {
     },
 
     // Hóa đơn
-    getAllHoaDon: async (params = {}) => {
-        const response = await axiosInstance.get("/hoadon/", { params });
-        return response.data.map(hd => ({
-            MaHD: hd.MaHD,
-            NgayLap: hd.NgayLap,
-            TongTien: hd.TongTien,
-            SoTienTra: hd.SoTienTra,
-            ConLai: hd.ConLai,
-            MaKH: hd.MaKH,
-            NguoiLapHD: hd.NguoiLapHD,
-            MaSach: hd.MaSach
-        }));
+    getAllHoaDon: async () => {
+        const response = await axiosInstance.get("/hoadon/");
+        return {
+            data: response.data,
+            count: response.data.length
+        };
     },
     getHoaDonById: async (id) => {
-        const hd = (await axiosInstance.get(`/hoadon/${id}/`)).data;
+        const numericId = id.replace(/^HD/, '');
+        const hd = (await axiosInstance.get(`/hoadon/${numericId}/`)).data;
         return {
             MaHD: hd.MaHD,
             NgayLap: hd.NgayLap,
@@ -157,12 +161,22 @@ const thanhToanMoiApi = {
             MaSach: hd.MaSach
         };
     },
-    createInvoice: async (invoice) => {
-        const response = await axiosInstance.post("/hoadon/", invoice);
+    createInvoice: async (invoiceData) => {
+        const invoiceHeader = {
+            MaKH_input: invoiceData.MaKH_input.replace(/^KH/, ''),
+            NgayLap: invoiceData.NgayLap,
+            NguoiLapHD_input: invoiceData.NguoiLapHD_input.replace(/^NV/, ''),
+            SoTienTra: invoiceData.SoTienTra.toString(),
+            TongTien: invoiceData.TongTien.toString(),
+            ConLai: invoiceData.ConLai.toString()
+        };
+        console.log('Sending invoice header to API:', invoiceHeader);
+        const response = await axiosInstance.post("/hoadon/", invoiceHeader);
         return response.data;
     },
     deleteInvoice: async (maHoaDon) => {
-        const response = await axiosInstance.delete(`/hoadon/${maHoaDon}/`);
+        const numericId = maHoaDon.replace(/^HD/, '');
+        const response = await axiosInstance.delete(`/hoadon/${numericId}/`);
         return response.data;
     },
 
@@ -190,8 +204,27 @@ const thanhToanMoiApi = {
         };
     },
     createCTHoaDon: async (ctHoaDon) => {
-        const response = await axiosInstance.post("/cthoadon/", ctHoaDon);
-        return response.data;
+        const data = {
+            MaHD_input: ctHoaDon.MaHD_input.replace(/^HD/, ''),
+            MaSach_input: ctHoaDon.MaSach_input.replace(/^S/, ''),
+            TenSach: ctHoaDon.TenSach,
+            SLBan: ctHoaDon.SLBan,
+            GiaBan: parseFloat(ctHoaDon.GiaBan),
+            ThanhTien: parseFloat(ctHoaDon.ThanhTien)
+        };
+        console.log('Gửi chi tiết hóa đơn:', data);
+        try {
+            const response = await axiosInstance.post("/cthoadon/", data);
+            console.log('Phản hồi từ /cthoadon/:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Lỗi khi gửi POST /cthoadon/:', {
+                error: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
     },
 
     // Chi tiết nhập sách

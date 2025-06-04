@@ -52,7 +52,7 @@ const themSachApi = {
         const payload = {
             ...data,
             "TenDauSach_input": data.TenSach,
-            "NXB": data.NhaXuatBan || data.NXB,
+            "TenNXB_input": data.NhaXuatBan || data.NXB,
             "NamXB": data.NamXuatBan || data.NamXB,
         };
         // Đảm bảo các trường đúng tên
@@ -109,6 +109,30 @@ const themSachApi = {
             TenTheLoai: genreName
         };
         const addResponse = await axiosInstance.post("/theloai/", payload);
+        return addResponse.data;
+    },
+
+    // Lấy tất cả nhà xuất bản
+    getAllPublishers: async () => {
+        const response = await axiosInstance.get("/nxb/");
+        return response.data;
+    },
+
+    // Thêm nhà xuất bản mới
+    addPublisher: async (publisherName) => {
+        const response = await axiosInstance.get("/nxb/");
+        let maxMaNXB = 0;
+        response.data.forEach(nxb => {
+            const num = parseInt(nxb.MaNXB.replace('NXB', ''), 10);
+            if (!isNaN(num) && num > maxMaNXB) maxMaNXB = num;
+        });
+        const newMaNXB = 'NXB' + (maxMaNXB + 1).toString().padStart(3, '0');
+
+        const payload = {
+            MaNXB: newMaNXB,
+            TenNXB: publisherName
+        };
+        const addResponse = await axiosInstance.post("/nxb/", payload);
         return addResponse.data;
     }
 };

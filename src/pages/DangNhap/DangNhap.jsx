@@ -81,11 +81,11 @@ class Login extends Component {
                         )}
 
                         <div className="col-12 form-group login-input">
-                            <label>Email:</label>
+                            <label>Username:</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Nhập email của bạn"
+                                placeholder="Nhập username của bạn"
                                 value={this.state.email}
                                 onChange={this.handleOnChangeEmail}
                                 onKeyPress={this.handleKeyPress}

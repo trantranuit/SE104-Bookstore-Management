@@ -29,6 +29,14 @@ function ThemSach() {
     const [showConfirmAddAuthor, setShowConfirmAddAuthor] = useState(false);
     const [showConfirmAddGenre, setShowConfirmAddGenre] = useState(false);
 
+    // Danh sách nhà xuất bản
+    const [allNXB, setAllNXB] = useState([]);
+    const [selectedNXB, setSelectedNXB] = useState([]);
+    const [newNXB, setNewNXB] = useState('');
+    const [showNXBDropdown, setShowNXBDropdown] = useState(false);
+    const [showAddNXBInput, setShowAddNXBInput] = useState(false);
+    const [showConfirmAddPublisher, setShowConfirmAddPublisher] = useState(false);
+
     // Lấy mã sách mới tự động và danh sách tác giả/thể loại
     useEffect(() => {
         async function fetchInit() {
@@ -58,6 +66,15 @@ function ThemSach() {
                 } else {
                     setAllTheLoai([]);
                     console.error('Genres data is not an array:', genres);
+                }
+
+                // Lấy danh sách nhà xuất bản
+                const publishers = await themSachApi.getAllPublishers();
+                if (Array.isArray(publishers)) {
+                    setAllNXB(publishers);
+                } else {
+                    setAllNXB([]);
+                    console.error('Publishers data is not an array:', publishers);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -100,6 +117,24 @@ function ThemSach() {
         } catch (error) {
             console.error('Error adding genre:', error);
             setMessage('Có lỗi khi thêm thể loại: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    // Thêm nhà xuất bản mới
+    const handleAddPublisherSuccess = async (newPublisherName) => {
+        try {
+            const newPublisher = await themSachApi.addPublisher(newPublisherName);
+            setAllNXB([...allNXB, newPublisher]);
+            setSelectedNXB([newPublisher]);
+            setNewNXB('');
+            setShowConfirmAddPublisher(false);
+            setShowAddNXBInput(false);
+            setMessage(`Đã thêm nhà xuất bản "${newPublisher.TenNXB}" thành công!`);
+            setShowNXBDropdown(true);
+            setTimeout(() => setMessage(''), 3000);
+        } catch (error) {
+            console.error('Error adding publisher:', error);
+            setMessage('Có lỗi khi thêm nhà xuất bản: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -410,12 +445,64 @@ function ThemSach() {
                         </div>
                         <div className="form-row-tsm">
                             <label>Nhà Xuất Bản:</label>
-                            <input
-                                type="text"
-                                value={nhaXuatBan}
-                                onChange={e => setNhaXuatBan(e.target.value)}
-                                placeholder="Nhập tên nhà xuất bản"
-                            />
+                            <div style={{ position: 'relative', width: '100%' }}>
+                                <div className="authors-input-container-tsm">
+                                    <div className="selected-authors-tsm">
+                                        {selectedNXB.map((pub, index) => (
+                                            <span key={index} className="author-tag-tsm">
+                                                {pub.TenNXB}
+                                                <button
+                                                    className="remove-author-chip-tsm"
+                                                    onClick={() => setSelectedNXB([])}
+                                                >
+                                                    ×
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={newNXB}
+                                        onChange={(e) => setNewNXB(e.target.value)}
+                                        placeholder={selectedNXB.length === 0 ? "Chọn nhà xuất bản" : ""}
+                                        className="author-input-tsm"
+                                        onClick={() => setShowNXBDropdown(true)}
+                                    />
+                                </div>
+                                {showNXBDropdown && (
+                                    <div className="dropdown-container-tsm">
+                                        {allNXB
+                                            .filter(nxb => {
+                                                const searchTerm = (newNXB || '').toLowerCase();
+                                                return nxb?.TenNXB?.toLowerCase().includes(searchTerm) &&
+                                                    !selectedNXB.some(selected => selected.MaNXB === nxb.MaNXB);
+                                            })
+                                            .map((nxb, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="dropdown-item-tsm"
+                                                    onMouseDown={() => {
+                                                        setSelectedNXB([nxb]);
+                                                        setNewNXB('');
+                                                        setShowNXBDropdown(false);
+                                                        setNhaXuatBan(nxb.TenNXB);
+                                                    }}
+                                                >
+                                                    {nxb.TenNXB}
+                                                </div>
+                                            ))}
+                                        <div
+                                            className="dropdown-add-button-tsm"
+                                            onMouseDown={() => {
+                                                setShowNXBDropdown(false);
+                                                setShowAddNXBInput(true);
+                                            }}
+                                        >
+                                            + Thêm nhà xuất bản mới
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="form-row-tsm">
                             <label>Năm Xuất Bản:</label>
@@ -627,6 +714,72 @@ function ThemSach() {
                                 </button>
                                 <button
                                     onClick={() => setShowConfirmAddGenre(false)}
+                                    style={{ background: '#6c757d' }}
+                                >
+                                    Không
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showAddNXBInput && (
+                    <div className="modal-overlay-them-sach-tsm">
+                        <div className="modal-them-sach-tsm">
+                            <h2>Thêm Nhà Xuất Bản Mới</h2>
+                            <div className="modal-content-tsm">
+                                <input
+                                    type="text"
+                                    placeholder="Nhập tên nhà xuất bản mới"
+                                    value={newNXB}
+                                    onChange={e => setNewNXB(e.target.value)}
+                                    className="modal-input-tsm"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="modal-buttons-container-tsm">
+                                <button
+                                    onClick={() => {
+                                        if (newNXB.trim()) {
+                                            setShowConfirmAddPublisher(true);
+                                        }
+                                    }}
+                                    style={{ marginRight: '10px' }}
+                                >
+                                    Thêm
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowAddNXBInput(false);
+                                        setNewNXB('');
+                                    }}
+                                    className="cancel-button-tsm"
+                                >
+                                    Hủy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showConfirmAddPublisher && (
+                    <div className="modal-overlay-them-sach-tsm">
+                        <div className="modal-them-sach-tsm">
+                            <h2>Xác nhận thêm nhà xuất bản</h2>
+                            <p>Bạn có chắc muốn thêm nhà xuất bản "{newNXB}" không?</p>
+                            <div style={{ marginTop: '20px' }}>
+                                <button
+                                    onClick={() => {
+                                        if (newNXB.trim() && !allNXB.some(nxb => nxb.TenNXB.toLowerCase() === newNXB.trim().toLowerCase())) {
+                                            handleAddPublisherSuccess(newNXB.trim());
+                                        }
+                                    }}
+                                    style={{ marginRight: '10px' }}
+                                >
+                                    Có
+                                </button>
+                                <button
+                                    onClick={() => setShowConfirmAddPublisher(false)}
                                     style={{ background: '#6c757d' }}
                                 >
                                     Không

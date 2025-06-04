@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { getUsers, addUser, updateUser, deleteUser } from '../../services/phanQuyen';
 
 function PhanQuyen() {
@@ -13,6 +13,12 @@ function PhanQuyen() {
     const [editUser, setEditUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [message, setMessage] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [addUserStep, setAddUserStep] = useState(1);
+    const [editUserPassword, setEditUserPassword] = useState('');
+    const [showEditPassword, setShowEditPassword] = useState(false);
 
     const [rolePermissions, setRolePermissions] = useState(() => {
         return JSON.parse(localStorage.getItem('rolePermissions')) || {
@@ -66,9 +72,19 @@ function PhanQuyen() {
     // Lọc người dùng
     const filteredUsers = users.filter(user =>
         (`${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
         (roleFilter === '' || roleMapping[user.role] === roleFilter)
     );
+
+    const getRolePrefix = (role) => {
+        switch (role) {
+            case 'NguoiNhap': return 'nguoinhap';
+            case 'NguoiThu': return 'nguoithu';
+            case 'QuanLi': return 'quanli';
+            case 'Admin': return 'admin';
+            default: return '';
+        }
+    };
 
     const handleAddUser = async () => {
         if (!newUser.first_name || !newUser.last_name || !newUser.gioiTinh || !newUser.role) {
@@ -76,18 +92,20 @@ function PhanQuyen() {
             return;
         }
 
+        // Generate default values
         const newId = users.length + 1;
-        const username = `${newUser.role.toLowerCase()}${newId}`;
-        const email = `${username}@gmail.com`;
+        const rolePrefix = getRolePrefix(newUser.role);
+        const defaultUsername = `${rolePrefix}${newId}`;
+        const defaultPassword = `${rolePrefix}1234567`;
 
         const userData = {
-            username: username,
-            email: email,
+            username: username || defaultUsername,
+            password: password || defaultPassword,
+            email: `${username || defaultUsername}@gmail.com`,
             first_name: newUser.first_name,
             last_name: newUser.last_name,
             gioiTinh: newUser.gioiTinh,
-            role: newUser.role,
-            password: `${newUser.first_name.toLowerCase()}_${newUser.role.toLowerCase()}`
+            role: newUser.role
         };
 
         try {
@@ -97,6 +115,8 @@ function PhanQuyen() {
             setMessage('Thêm người dùng thành công!');
             setIsAddUserModalOpen(false);
             setNewUser({ first_name: '', last_name: '', gioiTinh: '', role: '' });
+            setUsername('');
+            setPassword('');
         } catch (error) {
             setMessage(error.message);
         }
@@ -115,6 +135,7 @@ function PhanQuyen() {
         setIsEditUserModalOpen(true);
     };
 
+    // Update handleSaveEditUser function
     const handleSaveEditUser = async () => {
         if (!editUser.first_name || !editUser.last_name || !editUser.gioiTinh || !editUser.role) {
             setMessage('Vui lòng nhập đầy đủ thông tin!');
@@ -123,18 +144,22 @@ function PhanQuyen() {
 
         try {
             await updateUser(editUser.id, {
+                email: editUser.email,
                 first_name: editUser.first_name,
                 last_name: editUser.last_name,
                 gioiTinh: editUser.gioiTinh,
-                role: editUser.role
+                role: editUser.role,
+                password: editUserPassword // Add password to update data
             });
             const updatedUsers = await getUsers();
             setUsers(updatedUsers);
             setMessage('Cập nhật người dùng thành công!');
             setIsEditUserModalOpen(false);
             setEditUser(null);
+            setEditUserPassword('');
+            setShowEditPassword(false);
         } catch (error) {
-            setMessage(error.response?.data?.detail || error.message || 'Lỗi khi cập nhật người dùng');
+            setMessage(error.message);
         }
     };
 
@@ -179,6 +204,111 @@ function PhanQuyen() {
         setTimeout(() => setMessage(''), 1500);
     };
 
+    const handleNextStep = () => {
+        if (!newUser.first_name || !newUser.last_name || !newUser.gioiTinh || !newUser.role) {
+            setMessage('Vui lòng nhập đầy đủ thông tin!');
+            return;
+        }
+
+        const rolePrefix = getRolePrefix(newUser.role);
+        const newId = users.length + 1;
+        const suggestedUsername = `${rolePrefix}${newId}`;
+        const suggestedPassword = `${rolePrefix}1234567`;
+
+        setUsername(suggestedUsername);
+        setPassword(suggestedPassword);
+        setAddUserStep(2);
+        setMessage('');
+    };
+
+    // Update modal content based on step
+    const renderAddUserModalContent = () => {
+        if (addUserStep === 1) {
+            return (
+                <div className="modal-content-pq">
+                    <label>Họ</label>
+                    <input
+                        type="text"
+                        placeholder="Họ"
+                        value={newUser.last_name}
+                        onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
+                    />
+                    <label>Tên</label>
+                    <input
+                        type="text"
+                        placeholder="Tên"
+                        value={newUser.first_name}
+                        onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
+                    />
+                    <label>Giới Tính</label>
+                    <select
+                        value={newUser.gioiTinh}
+                        onChange={(e) => setNewUser({ ...newUser, gioiTinh: e.target.value })}
+                    >
+                        <option value="">Chọn Giới Tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                    <label>Vai Trò</label>
+                    <select
+                        value={newUser.role}
+                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                    >
+                        <option value="">Chọn Vai Trò</option>
+                        <option value="NguoiNhap">Người Nhập</option>
+                        <option value="NguoiThu">Người Thu</option>
+                        <option value="QuanLi">Quản Lý</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <div className="modal-buttons-pq">
+                        <button className="apply-button-pq" onClick={handleNextStep}>Tiếp tục</button>
+                        <button className="cancel-button-pq" onClick={() => setIsAddUserModalOpen(false)}>Hủy</button>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="modal-content-pq">
+                <label>Username</label>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username"
+                />
+                <label>Password</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        style={{ width: '100%' }}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                            position: 'absolute',
+                            right: '10px',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                </div>
+                <div className="modal-buttons-pq">
+                    <button className="apply-button-pq" onClick={handleAddUser}>Thêm</button>
+                    <button className="cancel-button-pq" onClick={() => setAddUserStep(1)}>Quay lại</button>
+                    <button className="cancel-button-pq" onClick={() => setIsAddUserModalOpen(false)}>Hủy</button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
@@ -199,9 +329,28 @@ function PhanQuyen() {
                             borderRadius: 10,
                             fontSize: 22,
                             fontWeight: 'bold',
-                            boxShadow: '0 2px 16px rgba(0,0,0,0.15)'
+                            boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '20px'
                         }}>
                             {message}
+                            <button
+                                onClick={() => setMessage('')}
+                                style={{
+                                    padding: '8px 24px',
+                                    fontSize: '16px',
+                                    cursor: 'pointer',
+                                    backgroundColor: '#007bff',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    marginTop: '10px'
+                                }}
+                            >
+                                Đóng
+                            </button>
                         </div>
                     </div>
                 )}
@@ -266,47 +415,15 @@ function PhanQuyen() {
                 {isAddUserModalOpen && (
                     <div className="modal-overlay-pq">
                         <div className="modal-pq">
-                            <h2 className="modal-title-pq">Thêm Người Dùng Mới</h2>
-                            <div className="modal-content-pq">
-                                <label>Họ</label>
-                                <input
-                                    type="text"
-                                    placeholder="Họ"
-                                    value={newUser.last_name}
-                                    onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
-                                />
-                                <label>Tên</label>
-                                <input
-                                    type="text"
-                                    placeholder="Tên"
-                                    value={newUser.first_name}
-                                    onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
-                                />
-                                <label>Giới Tính</label>
-                                <select
-                                    value={newUser.gioiTinh}
-                                    onChange={(e) => setNewUser({ ...newUser, gioiTinh: e.target.value })}
-                                >
-                                    <option value="">Chọn Giới Tính</option>
-                                    <option value="Nam">Nam</option>
-                                    <option value="Nữ">Nữ</option>
-                                </select>
-                                <label>Vai Trò</label>
-                                <select
-                                    value={newUser.role}
-                                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                                >
-                                    <option value="">Chọn Vai Trò</option>
-                                    <option value="NguoiNhap">Người Nhập</option>
-                                    <option value="NguoiThu">Người Thu</option>
-                                    <option value="QuanLi">Quản Lý</option>
-                                    <option value="Admin">Admin</option>
-                                </select>
-                            </div>
-                            <div className="modal-buttons-pq">
-                                <button className="apply-button-pq" onClick={handleAddUser}>Thêm</button>
-                                <button className="cancel-button-pq" onClick={() => setIsAddUserModalOpen(false)}>Hủy</button>
-                            </div>
+                            <h2 className="modal-title-pq">
+                                {addUserStep === 1 ? 'Thông tin người dùng' : 'Tài khoản đăng nhập'}
+                            </h2>
+                            {message && (
+                                <div style={{ color: 'red', marginBottom: '10px' }}>
+                                    {message}
+                                </div>
+                            )}
+                            {renderAddUserModalContent()}
                         </div>
                     </div>
                 )}
@@ -352,6 +469,30 @@ function PhanQuyen() {
                                     <option value="QuanLi">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
+                                {/* Add password input field */}
+                                <label>Mật khẩu mới (để trống nếu không đổi)</label>
+                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                    <input
+                                        type={showEditPassword ? "text" : "password"}
+                                        value={editUserPassword}
+                                        onChange={e => setEditUserPassword(e.target.value)}
+                                        placeholder="Nhập mật khẩu mới"
+                                        style={{ width: '100%' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowEditPassword(!showEditPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '10px',
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        {showEditPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
+                                </div>
                             </div>
                             <div className="modal-buttons-pq">
                                 <button className="apply-button-pq" onClick={handleSaveEditUser}>Lưu</button>

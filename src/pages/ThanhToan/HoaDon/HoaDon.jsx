@@ -15,13 +15,19 @@ function HoaDon() {
     const [editTienKhachTraIndex, setEditTienKhachTraIndex] = useState(null);
     const [editTienKhachTraValue, setEditTienKhachTraValue] = useState('');
     const [editTienKhachTraError, setEditTienKhachTraError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const invoicesPerPage = 10;
+    const [sortAscending, setSortAscending] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const [hoaDonList, ctHoaDonList, customers, users, books, dauSachList] = await Promise.all([
-                    thanhToanMoiApi.getAllHoaDon(),
+                // Get all invoices without pagination first
+                const result = await thanhToanMoiApi.getAllHoaDon();
+                const hoaDonList = result.data;
+
+                const [ctHoaDonList, customers, users, books, dauSachList] = await Promise.all([
                     thanhToanMoiApi.getAllCTHoaDon(),
                     thanhToanMoiApi.getAllCustomers(),
                     thanhToanMoiApi.getAllUsers(),
@@ -30,13 +36,19 @@ function HoaDon() {
                 ]);
 
                 const formattedInvoices = await Promise.all(hoaDonList.map(async (hd) => {
-                    // Lấy chi tiết hóa đơn
                     const chiTiet = ctHoaDonList.filter(ct => ct.MaHD === hd.MaHD);
-                    // Lấy thông tin khách hàng
                     const customer = customers.find(c => c.MaKhachHang === hd.MaKH) || {};
-                    // Lấy thông tin nhân viên
-                    const user = users.find(u => u.id === hd.NguoiLapHD) || {};
-                    // Lấy danh sách sách
+
+                    // Extract numeric ID from NguoiLapHD (e.g., "NV001" -> "1")
+                    const numericId = parseInt((hd.NguoiLapHD || '').replace(/^NV0*/, ''), 10);
+                    const user = users.find(u => u.id === numericId) || {};
+
+                    // Keep original NguoiLapHD format for display
+                    const originalMaNV = hd.NguoiLapHD;
+
+                    // Create employee name string
+                    const employeeName = user.first_name ? `${user.last_name} ${user.first_name}` : 'Không xác định';
+
                     const danhSachSach = await Promise.all(chiTiet.map(async (ct) => {
                         const book = books.find(b => b.MaSach === ct.MaSach) || {};
                         const dauSach = dauSachList.find(ds => ds.MaDauSach === book.MaDauSach) || {};
@@ -55,29 +67,55 @@ function HoaDon() {
                         tenKhachHang: customer.HoTen || 'Không xác định',
                         sdt: customer.DienThoai || '',
                         email: customer.Email || '',
-                        maNhanVien: String(hd.NguoiLapHD) || '',
-                        nhanVien: user.first_name ? `${user.last_name} ${user.first_name}` : 'Không xác định',
+                        maNhanVien: originalMaNV || '', // Use original format for display
+                        nhanVien: employeeName,
                         tienKhachTra: hd.SoTienTra || 0,
                         danhSachSach,
                     };
                 }));
 
-                setInvoices(formattedInvoices);
+                // Sort invoices based on sortAscending state
+                const sortedInvoices = [...formattedInvoices].sort((a, b) => {
+                    return sortAscending ?
+                        a.maHoaDon.localeCompare(b.maHoaDon) :
+                        b.maHoaDon.localeCompare(a.maHoaDon);
+                });
+
+                setInvoices(sortedInvoices);
             } catch (error) {
                 console.error('Error fetching invoices:', error);
                 setInvoices([]);
             }
         };
         fetchInvoices();
-    }, [showDeleteSuccess]);
+    }, [showDeleteSuccess, sortAscending]);
 
     const filteredInvoices = invoices.filter(invoice =>
         invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
         invoice.ngayLap.includes(searchTerm)
     );
 
-    const handleViewInvoice = (index) => {
-        setSelectedInvoiceIndex(index);
+    // Add pagination calculations
+    const indexOfLastInvoice = currentPage * invoicesPerPage;
+    const indexOfFirstInvoice = indexOfLastInvoice - invoicesPerPage;
+    const currentInvoices = filteredInvoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
+    const totalPages = Math.ceil(filteredInvoices.length / invoicesPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleViewInvoice = (maHoaDon) => {
+        const invoiceIndex = filteredInvoices.findIndex(inv => inv.maHoaDon === maHoaDon);
+        setSelectedInvoiceIndex(invoiceIndex);
     };
 
     const handleCloseModal = () => {
@@ -245,20 +283,26 @@ function HoaDon() {
                 <table className="invoice-table-thd">
                     <thead>
                         <tr>
+                            <th>No.</th>
                             <th>Mã Hóa Đơn</th>
+                            <th>Mã Nhân Viên</th>
                             <th>Nhân Viên Lập</th>
                             <th>Mã Khách Hàng</th>
+                            <th>Tên Khách Hàng</th>
                             <th>Ngày Lập Hóa Đơn</th>
                             <th>Số Tiền Khách Trả</th>
                             <th>Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredInvoices.map((invoice, index) => (
+                        {currentInvoices.map((invoice, index) => (
                             <tr key={invoice.maHoaDon}>
+                                <td>{(currentPage - 1) * invoicesPerPage + index + 1}</td>
                                 <td>{invoice.maHoaDon}</td>
+                                <td>{invoice.maNhanVien}</td>
                                 <td>{invoice.nhanVien}</td>
                                 <td>{invoice.maKhachHang}</td>
+                                <td>{invoice.tenKhachHang}</td>
                                 <td>{invoice.ngayLap}</td>
                                 <td>
                                     {invoice.tienKhachTra !== undefined
@@ -268,16 +312,41 @@ function HoaDon() {
                                 <td>
                                     <button
                                         className="icon-button-thd"
-                                        onClick={() => handleViewInvoice(index)}
+                                        onClick={() => handleViewInvoice(invoice.maHoaDon)}
                                     >
                                         <PiNotePencil />
                                     </button>
-                                    {/* XÓA nút Sửa ở danh sách */}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+
+                {/* Add pagination buttons */}
+                <div className="pagination-wrapper" style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '1rem',
+                    marginTop: '1rem'
+                }}>
+                    <button
+                        onClick={handlePrevPage}
+                        disabled={currentPage === 1}
+                        className="pagination-button-thd"
+                    >
+                        Trước
+                    </button>
+                    <span className="pagination-info">
+                        Trang {currentPage} / {totalPages}
+                    </span>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        className="pagination-button-thd"
+                    >
+                        Sau
+                    </button>
+                </div>
             </div>
 
             {selectedInvoice && (
@@ -354,24 +423,7 @@ function HoaDon() {
                             </p>
                         </div>
                         <div className="modal-actions-thd">
-                            {modalEditTienKhachTra ? (
-                                <>
-                                    <button className="edit-button-thd" onClick={handleModalSaveTienKhachTra}>Lưu</button>
-                                    <button className="close-button-thd" onClick={() => setShowConfirmClose(true)}>Đóng</button>
-                                </>
-                            ) : (
-                                <button
-                                    className="edit-button-thd"
-                                    onClick={handleModalEditTienKhachTra}
-                                    disabled={modalEditTienKhachTra}
-                                >
-                                    Sửa
-                                </button>
-                            )}
-                            <button className="delete-button-thd" onClick={() => setShowDeleteConfirmation(true)}>Xóa</button>
-                            {!modalEditTienKhachTra && (
-                                <button className="close-button-thd" onClick={handleCloseModal}>Đóng</button>
-                            )}
+                            <button className="close-button-thd" onClick={handleCloseModal}>Đóng</button>
                         </div>
                     </div>
                 </div>
