@@ -309,7 +309,7 @@ function HoaDon() {
                                 <td>{invoice.ngayLap}</td>
                                 <td>
                                     {invoice.tienKhachTra !== undefined
-                                        ? Number(invoice.tienKhachTra).toLocaleString() + ' VNĐ'
+                                        ? Number(invoice.tienKhachTra).toLocaleString() + '  VNĐ'
                                         : 'Chưa có'}
                                 </td>
                                 <td>
@@ -391,14 +391,14 @@ function HoaDon() {
                                         <td>{sach.maSach}</td>
                                         <td>{sach.tenSach}</td>
                                         <td>{sach.soLuong}</td>
-                                        <td>{sach.donGia.toLocaleString()}đ</td>
-                                        <td>{(sach.soLuong * sach.donGia).toLocaleString()}đ</td>
+                                        <td>{sach.donGia.toLocaleString()} VNĐ</td>
+                                        <td>{(sach.soLuong * sach.donGia).toLocaleString()} VNĐ</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                         <div className="modal-totals-thd">
-                            <p><strong>Tổng Số Sách:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong, 0)}</p>
+                            <p><strong>Tổng Số Sách:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong, 0)} quyển</p>
                             <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()} VNĐ</p>
                             <p>
                                 <strong>Số Tiền Khách Trả:</strong>{' '}
