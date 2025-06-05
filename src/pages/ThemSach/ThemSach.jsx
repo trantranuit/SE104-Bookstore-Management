@@ -41,14 +41,9 @@ function ThemSach() {
     useEffect(() => {
         async function fetchInit() {
             try {
-                // Lấy tất cả sách để tạo mã sách mới
-                const books = await themSachApi.getAllBooks();
-                let maxMaSach = 0;
-                books.forEach(book => {
-                    const num = parseInt((book.MaSach || '').replace(/^S/, ''), 10);
-                    if (!isNaN(num) && num > maxMaSach) maxMaSach = num;
-                });
-                setMaSachMoi('S' + (maxMaSach + 1).toString().padStart(3, '0'));
+                // Get next book ID
+                const nextBookId = await themSachApi.getNextBookId();
+                setMaSachMoi(nextBookId);
 
                 // Lấy danh sách tác giả
                 const authors = await themSachApi.getAllAuthors();

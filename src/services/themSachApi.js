@@ -1,5 +1,21 @@
 import axiosInstance from "./AxiosConfig";
 
+// Add or modify the method to get next book ID
+const getNextBookId = async () => {
+    const response = await axiosInstance.get("/sach/");
+    const books = response.data;
+    let maxId = 0;
+
+    books.forEach(book => {
+        const numId = parseInt(book.MaSach.replace(/^S/, ''));
+        if (!isNaN(numId) && numId > maxId) {
+            maxId = numId;
+        }
+    });
+
+    return `S${(maxId + 1).toString().padStart(3, '0')}`;
+};
+
 const themSachApi = {
     // Lấy tất cả sách
     getAllBooks: async (params = {}) => {
@@ -134,7 +150,9 @@ const themSachApi = {
         };
         const addResponse = await axiosInstance.post("/nxb/", payload);
         return addResponse.data;
-    }
+    },
+
+    getNextBookId,
 };
 
 export default themSachApi;

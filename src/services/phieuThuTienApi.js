@@ -83,10 +83,11 @@ const phieuThuTienApi = {
         const response = await axiosInstance.get("/phieuthutien/", { params });
         const PhieuThuTien = response.data.map(p => ({
             MaPhieuThu: p.MaPhieuThu,
-            NgayThu: p.NgayThu,
-            SoTienThu: p.SoTienThu,
             MaKH: p.MaKH,
-            NguoiThu: p.NguoiThu
+            TenKH: p.TenKH,
+            SoTienThu: p.SoTienThu,
+            NguoiThu: p.NguoiThu,
+            NgayThu: p.NgayThu
         }));
         return PhieuThuTien;
     },
@@ -97,10 +98,11 @@ const phieuThuTienApi = {
         const p = response.data;
         const PhieuThuTien = {
             MaPhieuThu: p.MaPhieuThu,
-            NgayThu: p.NgayThu,
-            SoTienThu: p.SoTienThu,
             MaKH: p.MaKH,
-            NguoiThu: p.NguoiThu
+            TenKH: p.TenKH,
+            SoTienThu: p.SoTienThu,
+            NguoiThu: p.NguoiThu,
+            NgayThu: p.NgayThu
         };
         return PhieuThuTien;
     },

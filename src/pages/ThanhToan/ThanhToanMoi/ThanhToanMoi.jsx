@@ -43,6 +43,7 @@ function ThanhToanMoi() {
     const [tienKhachTra, setTienKhachTra] = useState('');
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
+    const [showPaymentErrorModal, setShowPaymentErrorModal] = useState(false);
 
     const formatNumber = (value) => {
         if (!value) return '';
@@ -704,6 +705,20 @@ function ThanhToanMoi() {
                 </div>
             )}
 
+            {showPaymentErrorModal && (
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm">
+                        <p>Số tiền khách trả không được vượt quá tổng tiền sách!</p>
+                        <button
+                            className="close-button-ttm"
+                            onClick={() => setShowPaymentErrorModal(false)}
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="book-search-section-ttm">
                 <div className="search-header-ttm">
                     <button
@@ -961,11 +976,9 @@ function ThanhToanMoi() {
                                     width: '9rem',
                                     padding: '0.3rem 0.5rem',
                                     fontSize: '1rem',
-                                    border: tienKhachTraError ? '2px solid #ff4d4d' : '0.1% solid #ccc',
+                                    border: '0.1% solid #ccc',
                                     borderRadius: '10%',
-                                    textAlign: 'right',
-                                    color: tienKhachTraError ? '#ff4d4d' : undefined,
-                                    background: tienKhachTraError ? '#fff0f0' : undefined
+                                    textAlign: 'right'
                                 }}
                                 value={formatNumber(tienKhachTra)}
                                 onChange={e => {
@@ -973,24 +986,19 @@ function ThanhToanMoi() {
                                     if (!raw) {
                                         setTienKhachTraError(true);
                                         setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
-                                    } else if (parseInt(raw || '0') > totalPrice) {
-                                        setTienKhachTraError(true);
-                                        setTienKhachTraErrorMsg('Số tiền khách trả không được vượt quá tổng tiền sách!');
+                                    } else if (parseInt(raw) > totalPrice) {
+                                        setShowPaymentErrorModal(true);
+                                        setTienKhachTra(totalPrice.toString());
                                     } else {
                                         setTienKhachTraError(false);
                                         setTienKhachTraErrorMsg('');
+                                        setTienKhachTra(raw);
                                     }
-                                    setTienKhachTra(raw);
                                 }}
                                 placeholder="Nhập số tiền trả"
                                 inputMode="numeric"
                             /> đ
                         </p>
-                        {tienKhachTraError && (
-                            <p style={{ color: '#ff4d4d', fontWeight: 'bold', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
-                                {tienKhachTraErrorMsg}
-                            </p>
-                        )}
                         <p>
                             <strong>Còn lại:</strong>{' '}
                             {(totalPrice - parseInt(parseNumber(tienKhachTra) || '0')).toLocaleString()}đ

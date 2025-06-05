@@ -20,6 +20,14 @@ function HoaDon() {
     const [sortAscending, setSortAscending] = useState(false);
     const navigate = useNavigate();
 
+    const sortInvoices = (invoices) => {
+        return [...invoices].sort((a, b) => {
+            const idA = parseInt(a.maHoaDon.replace('HD', ''));
+            const idB = parseInt(b.maHoaDon.replace('HD', ''));
+            return idA - idB;
+        });
+    };
+
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
@@ -74,13 +82,8 @@ function HoaDon() {
                     };
                 }));
 
-                // Sort invoices based on sortAscending state
-                const sortedInvoices = [...formattedInvoices].sort((a, b) => {
-                    return sortAscending ?
-                        a.maHoaDon.localeCompare(b.maHoaDon) :
-                        b.maHoaDon.localeCompare(a.maHoaDon);
-                });
-
+                // Sort invoices before setting state
+                const sortedInvoices = sortInvoices(formattedInvoices);
                 setInvoices(sortedInvoices);
             } catch (error) {
                 console.error('Error fetching invoices:', error);
@@ -88,7 +91,7 @@ function HoaDon() {
             }
         };
         fetchInvoices();
-    }, [showDeleteSuccess, sortAscending]);
+    }, [showDeleteSuccess]);
 
     const filteredInvoices = invoices.filter(invoice =>
         invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
