@@ -53,7 +53,15 @@ function PhanQuyen() {
         NguoiNhap: 'Kho',
         NguoiThu: 'Thu Ngân',
         QuanLi: 'Quản Lý',
-        Admin: 'Admin'
+        null: 'Admin'
+    };
+
+    // Ánh xạ ngược từ role hiển thị sang role API
+    const reverseRoleMapping = {
+        'Kho': 'NguoiNhap',
+        'Thu Ngân': 'NguoiThu',
+        'Quản Lý': 'QuanLi',
+        'Admin': null
     };
 
     // Lấy danh sách người dùng từ API
@@ -63,7 +71,7 @@ function PhanQuyen() {
                 const userData = await getUsers();
                 setUsers(userData);
             } catch (error) {
-                setMessage(error.message);
+                setMessage(error.message || 'Lỗi khi lấy danh sách người dùng');
             }
         };
         fetchUsers();
@@ -79,10 +87,17 @@ function PhanQuyen() {
     const getRolePrefix = (role) => {
         switch (role) {
             case 'NguoiNhap': return 'nguoinhap';
-            case 'NguoiThu': return 'nguoithu';
+            case 'NguoiThu': return 'thungan';
             case 'QuanLi': return 'quanli';
             case 'Admin': return 'admin';
             default: return '';
+        }
+    };
+
+    const getRoleDefaultPassword = (role, id) => {
+        switch (role) {
+            case 'NguoiThu': return 'tn1234567';
+            default: return `${getRolePrefix(role)}1234567`;
         }
     };
 
@@ -96,7 +111,7 @@ function PhanQuyen() {
         const newId = users.length + 1;
         const rolePrefix = getRolePrefix(newUser.role);
         const defaultUsername = `${rolePrefix}${newId}`;
-        const defaultPassword = `${rolePrefix}1234567`;
+        const defaultPassword = getRoleDefaultPassword(newUser.role, newId);
 
         const userData = {
             username: username || defaultUsername,
@@ -105,7 +120,7 @@ function PhanQuyen() {
             first_name: newUser.first_name,
             last_name: newUser.last_name,
             gioiTinh: newUser.gioiTinh,
-            role: newUser.role
+            role: newUser.role === 'Admin' ? null : newUser.role // Set role to null for Admin
         };
 
         try {
@@ -118,7 +133,9 @@ function PhanQuyen() {
             setUsername('');
             setPassword('');
         } catch (error) {
-            setMessage(error.message);
+            // Hiển thị lỗi chi tiết từ backend
+            const errorMessage = error.response?.data?.detail || error.message;
+            setMessage(errorMessage);
         }
     };
 
@@ -135,7 +152,6 @@ function PhanQuyen() {
         setIsEditUserModalOpen(true);
     };
 
-    // Update handleSaveEditUser function
     const handleSaveEditUser = async () => {
         if (!editUser.first_name || !editUser.last_name || !editUser.gioiTinh || !editUser.role) {
             setMessage('Vui lòng nhập đầy đủ thông tin!');
@@ -148,8 +164,8 @@ function PhanQuyen() {
                 first_name: editUser.first_name,
                 last_name: editUser.last_name,
                 gioiTinh: editUser.gioiTinh,
-                role: editUser.role,
-                password: editUserPassword // Add password to update data
+                role: editUser.role === 'Admin' ? null : editUser.role, // Set role to null for Admin
+                password: editUserPassword
             });
             const updatedUsers = await getUsers();
             setUsers(updatedUsers);
@@ -159,7 +175,9 @@ function PhanQuyen() {
             setEditUserPassword('');
             setShowEditPassword(false);
         } catch (error) {
-            setMessage(error.message);
+            // Hiển thị lỗi chi tiết từ backend
+            const errorMessage = error.response?.data?.detail || error.message || 'Lỗi khi cập nhật người dùng';
+            setMessage(errorMessage);
         }
     };
 
@@ -170,7 +188,9 @@ function PhanQuyen() {
             setUsers(updatedUsers);
             setMessage('Xóa người dùng thành công!');
         } catch (error) {
-            setMessage(error.message);
+            // Hiển thị lỗi chi tiết từ backend
+            const errorMessage = error.response?.data?.detail || error.message || 'Lỗi khi xóa người dùng';
+            setMessage(errorMessage);
         }
     };
 
@@ -221,7 +241,19 @@ function PhanQuyen() {
         setMessage('');
     };
 
-    // Update modal content based on step
+    const resetAddUserForm = () => {
+        setNewUser({ first_name: '', last_name: '', gioiTinh: '', role: '' });
+        setUsername('');
+        setPassword('');
+        setAddUserStep(1);
+        setShowPassword(false);
+    };
+
+    const handleCancelAdd = () => {
+        resetAddUserForm();
+        setIsAddUserModalOpen(false);
+    };
+
     const renderAddUserModalContent = () => {
         if (addUserStep === 1) {
             return (
@@ -255,14 +287,14 @@ function PhanQuyen() {
                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                     >
                         <option value="">Chọn Vai Trò</option>
-                        <option value="NguoiNhap">Người Nhập</option>
-                        <option value="NguoiThu">Người Thu</option>
+                        <option value="NguoiNhap">Kho</option>
+                        <option value="NguoiThu">Thu Ngân</option>
                         <option value="QuanLi">Quản Lý</option>
                         <option value="Admin">Admin</option>
                     </select>
                     <div className="modal-buttons-pq">
                         <button className="apply-button-pq" onClick={handleNextStep}>Tiếp tục</button>
-                        <button className="cancel-button-pq" onClick={() => setIsAddUserModalOpen(false)}>Hủy</button>
+                        <button className="cancel-button-pq" onClick={handleCancelAdd}>Hủy</button>
                     </div>
                 </div>
             );
@@ -303,7 +335,7 @@ function PhanQuyen() {
                 <div className="modal-buttons-pq">
                     <button className="apply-button-pq" onClick={handleAddUser}>Thêm</button>
                     <button className="cancel-button-pq" onClick={() => setAddUserStep(1)}>Quay lại</button>
-                    <button className="cancel-button-pq" onClick={() => setIsAddUserModalOpen(false)}>Hủy</button>
+                    <button className="cancel-button-pq" onClick={handleCancelAdd}>Hủy</button>
                 </div>
             </div>
         );
@@ -464,12 +496,11 @@ function PhanQuyen() {
                                     onChange={e => setEditUser({ ...editUser, role: e.target.value })}
                                 >
                                     <option value="">Chọn Vai Trò</option>
-                                    <option value="NguoiNhap">Người Nhập</option>
-                                    <option value="NguoiThu">Người Thu</option>
+                                    <option value="NguoiNhap">Kho</option>
+                                    <option value="NguoiThu">Thu Ngân</option>
                                     <option value="QuanLi">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
-                                {/* Add password input field */}
                                 <label>Mật khẩu mới (để trống nếu không đổi)</label>
                                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                                     <input
@@ -502,26 +533,8 @@ function PhanQuyen() {
                     </div>
                 )}
 
-                <div className="role-config-block-pq" style={{ position: 'relative' }}>
+                <div className="role-config-block-pq">
                     <h2 className="page-title-pq">Cấu Hình Quyền</h2>
-                    <button
-                        style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: 0,
-                            margin: '8px 16px',
-                            padding: '8px 20px',
-                            background: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
-                        }}
-                        onClick={handleSaveRolePages}
-                    >
-                        Lưu
-                    </button>
                     <table className="role-config-table-pq">
                         <thead>
                             <tr>
@@ -540,6 +553,7 @@ function PhanQuyen() {
                                         <td key={page} style={{ textAlign: 'center' }}>
                                             <input
                                                 type="checkbox"
+                                                className="checkbox-pq"
                                                 checked={rolePages[role]?.includes(page)}
                                                 onChange={() => handlePageAccessChange(role, page)}
                                             />
@@ -548,6 +562,7 @@ function PhanQuyen() {
                                     <td style={{ textAlign: 'center' }}>
                                         <input
                                             type="checkbox"
+                                            className="checkbox-pq"
                                             checked={rolePages[role]?.includes('Phân Quyền')}
                                             onChange={() => handlePageAccessChange(role, 'Phân Quyền')}
                                         />
@@ -556,6 +571,14 @@ function PhanQuyen() {
                             ))}
                         </tbody>
                     </table>
+                    <div className="save-config-container-pq">
+                        <button
+                            className="save-config-button-pq"
+                            onClick={handleSaveRolePages}
+                        >
+                            Lưu
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

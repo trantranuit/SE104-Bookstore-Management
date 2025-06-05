@@ -54,18 +54,29 @@
 
 .user-table-pq,
 .role-config-table-pq {
-    width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
+    width: 100%;
 }
 
 .user-table-pq th,
 .user-table-pq td,
 .role-config-table-pq th,
 .role-config-table-pq td {
-    border: 0.1rem solid #ccc;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
     padding: 0.8rem;
     text-align: center;
+}
+
+.role-config-table-pq th,
+.role-config-table-pq td {
+    width: calc(100% / 10); /* Divide by total number of columns (9 pages + 1 role column + 1 permission column = 11) */
+    min-width: 100px;
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 10px 5px;
 }
 
 .user-table-pq th,
@@ -242,4 +253,55 @@
 
 .cancel-button-pq:hover {
     background-color: #c82333;
+}
+
+.save-config-container-pq {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.save-config-button-pq {
+    padding: 8px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.checkbox-pq {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    outline: none;
+    opacity: 0.6;
+}
+
+.checkbox-pq:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+    opacity: 1;
+}
+
+.checkbox-pq:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 0 0 1px rgba(0,0,0,0.2);
+}
+
+.role-config-table-pq td {
+    padding: 10px;
 }
