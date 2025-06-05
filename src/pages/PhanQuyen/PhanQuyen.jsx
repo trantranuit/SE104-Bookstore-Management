@@ -2,22 +2,11 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
 import { FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
-<<<<<<< HEAD
-=======
 import { getUsers, addUser, updateUser, deleteUser } from '../../services/phanQuyen';
->>>>>>> origin/ngocbich
 
 function PhanQuyen() {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
-<<<<<<< HEAD
-    const [statusFilter, setStatusFilter] = useState('');
-    const [showPassword, setShowPassword] = useState({});
-    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); // State for add user modal
-    const [newUser, setNewUser] = useState({ name: '', phone: '', role: '', maNV: '', email: '' });
-    const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
-    const [editUser, setEditUser] = useState(null);
-=======
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
     const [newUser, setNewUser] = useState({ first_name: '', last_name: '', gioiTinh: '', role: '' });
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
@@ -31,9 +20,7 @@ function PhanQuyen() {
     const [editUserPassword, setEditUserPassword] = useState('');
     const [showEditPassword, setShowEditPassword] = useState(false);
 
->>>>>>> origin/ngocbich
     const [rolePermissions, setRolePermissions] = useState(() => {
-        // Load from localStorage or initialize default
         return JSON.parse(localStorage.getItem('rolePermissions')) || {
             Kho: {},
             'Thu Ngân': {},
@@ -41,17 +28,25 @@ function PhanQuyen() {
             Admin: {}
         };
     });
+    const [rolePages, setRolePages] = useState(() => {
+        return JSON.parse(localStorage.getItem('rolePages')) || {
+            Kho: [],
+            'Thu Ngân': [],
+            'Quản Lý': [],
+            Admin: []
+        };
+    });
 
     const pages = [
         'Trang Chủ',
-        'Tất Cả Sách',
+        'Tra Cứu Sách',
+        'Thêm Sách',
         'Nhập Sách',
-        'Thanh Toán',
         'Khách Hàng',
+        'Thanh Toán',
         'Báo Cáo',
         'Thay Đổi Quy Định'
     ];
-
 
     // Ánh xạ role API sang role ứng dụng
     const roleMapping = {
@@ -79,7 +74,6 @@ function PhanQuyen() {
         (`${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
         (roleFilter === '' || roleMapping[user.role] === roleFilter)
-
     );
 
     const getRolePrefix = (role) => {
@@ -91,7 +85,6 @@ function PhanQuyen() {
             default: return '';
         }
     };
-
 
     const handleAddUser = async () => {
         if (!newUser.first_name || !newUser.last_name || !newUser.gioiTinh || !newUser.role) {
@@ -127,7 +120,6 @@ function PhanQuyen() {
         } catch (error) {
             setMessage(error.message);
         }
-
     };
 
     const handleEditUser = (user) => {
@@ -142,7 +134,6 @@ function PhanQuyen() {
         });
         setIsEditUserModalOpen(true);
     };
-
 
     // Update handleSaveEditUser function
     const handleSaveEditUser = async () => {
@@ -181,7 +172,6 @@ function PhanQuyen() {
         } catch (error) {
             setMessage(error.message);
         }
-
     };
 
     const handlePermissionChange = (role, page, value) => {
@@ -192,7 +182,6 @@ function PhanQuyen() {
         setRolePermissions(updated);
         localStorage.setItem('rolePermissions', JSON.stringify(updated));
     };
-
 
     const handlePageAccessChange = (role, page) => {
         setRolePages(prev => {
@@ -320,12 +309,10 @@ function PhanQuyen() {
         );
     };
 
-
     return (
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
             <div className="content-wrapper content-wrapper-pq">
-
                 {message && (
                     <div style={{
                         position: 'fixed',
@@ -367,7 +354,6 @@ function PhanQuyen() {
                         </div>
                     </div>
                 )}
-
                 <div className="user-list-block-pq">
                     <h2 className="page-title-pq">Danh Sách Người Dùng</h2>
                     <div className="user-list-filters-pq">
@@ -384,27 +370,18 @@ function PhanQuyen() {
                             <option value="Quản Lý">Quản Lý</option>
                             <option value="Admin">Admin</option>
                         </select>
-                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                            <option value="">Lọc theo trạng thái</option>
-                            <option value="Đang hoạt động">Đang hoạt động</option>
-                            <option value="Tạm nghỉ">Tạm nghỉ</option>
-                        </select>
                         <button className="add-user-button-pq" onClick={() => setIsAddUserModalOpen(true)}>Thêm Người Dùng</button>
                     </div>
                     <table className="user-table-pq">
                         <thead>
                             <tr>
                                 <th>No.</th>
-
                                 <th>Username</th>
                                 <th>Họ</th>
                                 <th>Tên</th>
                                 <th>Giới Tính</th>
-
                                 <th>Email</th>
                                 <th>Vai Trò</th>
-                                <th>Trạng Thái</th>
-                                <th>Thời Gian Truy Cập Cuối Cùng</th>
                                 <th>Hành Động</th>
                             </tr>
                         </thead>
@@ -412,14 +389,12 @@ function PhanQuyen() {
                             {filteredUsers.map((user, index) => (
                                 <tr key={user.id}>
                                     <td>{index + 1}</td>
-
                                     <td>{user.username}</td>
                                     <td>{user.last_name}</td>
                                     <td>{user.first_name}</td>
                                     <td>{user.gioiTinh}</td>
                                     <td>{user.email}</td>
                                     <td>{roleMapping[user.role] || user.role}</td>
-
                                     <td>
                                         <div className="action-buttons-pq">
                                             <button className="icon-button-pq" onClick={() => handleEditUser(user)}><FaEdit /></button>
@@ -437,11 +412,9 @@ function PhanQuyen() {
                     )}
                 </div>
 
-                {/* Add User Modal */}
                 {isAddUserModalOpen && (
                     <div className="modal-overlay-pq">
                         <div className="modal-pq">
-
                             <h2 className="modal-title-pq">
                                 {addUserStep === 1 ? 'Thông tin người dùng' : 'Tài khoản đăng nhập'}
                             </h2>
@@ -451,18 +424,15 @@ function PhanQuyen() {
                                 </div>
                             )}
                             {renderAddUserModalContent()}
-
                         </div>
                     </div>
                 )}
 
-                {/* Edit User Modal */}
                 {isEditUserModalOpen && editUser && (
                     <div className="modal-overlay-pq">
                         <div className="modal-pq">
                             <h2 className="modal-title-pq">Sửa Người Dùng</h2>
                             <div className="modal-content-pq">
-
                                 <label>Username</label>
                                 <input type="text" value={editUser.username} disabled />
                                 <label>Họ</label>
@@ -486,7 +456,6 @@ function PhanQuyen() {
                                     <option value="Nam">Nam</option>
                                     <option value="Nữ">Nữ</option>
                                 </select>
-
                                 <label>Email</label>
                                 <input type="email" value={editUser.email} disabled />
                                 <label>Vai Trò</label>
@@ -500,7 +469,6 @@ function PhanQuyen() {
                                     <option value="QuanLi">Quản Lý</option>
                                     <option value="Admin">Admin</option>
                                 </select>
-
                                 {/* Add password input field */}
                                 <label>Mật khẩu mới (để trống nếu không đổi)</label>
                                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -525,7 +493,6 @@ function PhanQuyen() {
                                         {showEditPassword ? <FaEyeSlash /> : <FaEye />}
                                     </button>
                                 </div>
-
                             </div>
                             <div className="modal-buttons-pq">
                                 <button className="apply-button-pq" onClick={handleSaveEditUser}>Lưu</button>
@@ -535,9 +502,26 @@ function PhanQuyen() {
                     </div>
                 )}
 
-                {/* Role Configuration Block */}
-                <div className="role-config-block-pq">
+                <div className="role-config-block-pq" style={{ position: 'relative' }}>
                     <h2 className="page-title-pq">Cấu Hình Quyền</h2>
+                    <button
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: 0,
+                            margin: '8px 16px',
+                            padding: '8px 20px',
+                            background: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer'
+                        }}
+                        onClick={handleSaveRolePages}
+                    >
+                        Lưu
+                    </button>
                     <table className="role-config-table-pq">
                         <thead>
                             <tr>
@@ -545,6 +529,7 @@ function PhanQuyen() {
                                 {pages.map((page) => (
                                     <th key={page}>{page}</th>
                                 ))}
+                                <th>Phân Quyền</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -552,17 +537,21 @@ function PhanQuyen() {
                                 <tr key={role}>
                                     <td>{role}</td>
                                     {pages.map((page) => (
-                                        <td key={page}>
-                                            <select
-                                                value={rolePermissions[role]?.[page] || 'none'}
-                                                onChange={e => handlePermissionChange(role, page, e.target.value)}
-                                            >
-                                                <option value="none">Không</option>
-                                                <option value="view">Chỉ Xem</option>
-                                                <option value="edit">Được Sửa</option>
-                                            </select>
+                                        <td key={page} style={{ textAlign: 'center' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={rolePages[role]?.includes(page)}
+                                                onChange={() => handlePageAccessChange(role, page)}
+                                            />
                                         </td>
                                     ))}
+                                    <td style={{ textAlign: 'center' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={rolePages[role]?.includes('Phân Quyền')}
+                                            onChange={() => handlePageAccessChange(role, 'Phân Quyền')}
+                                        />
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

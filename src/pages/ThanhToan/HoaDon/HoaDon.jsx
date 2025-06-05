@@ -12,14 +12,12 @@ function HoaDon() {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
     const [deletedInvoiceId, setDeletedInvoiceId] = useState('');
-
     const [editTienKhachTraIndex, setEditTienKhachTraIndex] = useState(null);
     const [editTienKhachTraValue, setEditTienKhachTraValue] = useState('');
     const [editTienKhachTraError, setEditTienKhachTraError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const invoicesPerPage = 10;
     const [sortAscending, setSortAscending] = useState(false);
-
     const navigate = useNavigate();
 
     const sortInvoices = (invoices) => {
@@ -166,8 +164,108 @@ function HoaDon() {
         }
     };
 
-    const handleEditInvoice = (invoice) => {
-        navigate('/thanhToan/moi', { state: { invoice } });
+    // Khi bấm Sửa: mở input sửa số tiền khách trả ngay trên bảng
+    const handleEditInvoice = (invoice, index) => {
+        setEditTienKhachTraIndex(index);
+        setEditTienKhachTraValue(invoice.tienKhachTra?.toString() || '');
+        setEditTienKhachTraError('');
+    };
+
+    // Lưu số tiền khách trả mới
+    const handleSaveTienKhachTra = async (invoice, index) => {
+        const value = editTienKhachTraValue.replace(/,/g, '');
+        if (!value || isNaN(value) || Number(value) < 0) {
+            setEditTienKhachTraError('Vui lòng nhập số hợp lệ');
+            return;
+        }
+        try {
+            await thanhToanMoiApi.updateInvoiceTienKhachTra(invoice.maHoaDon, Number(value));
+            // Cập nhật lại danh sách hóa đơn
+            setInvoices(prev =>
+                prev.map((inv, idx) =>
+                    idx === index ? { ...inv, tienKhachTra: Number(value) } : inv
+                )
+            );
+            setEditTienKhachTraIndex(null);
+            setEditTienKhachTraValue('');
+            setEditTienKhachTraError('');
+        } catch (err) {
+            setEditTienKhachTraError('Lưu thất bại!');
+        }
+    };
+
+    // State cho sửa số tiền khách trả trong modal
+    const [modalEditTienKhachTra, setModalEditTienKhachTra] = useState(false);
+    const [modalTienKhachTraValue, setModalTienKhachTraValue] = useState('');
+    const [modalTienKhachTraError, setModalTienKhachTraError] = useState('');
+    const [showConfirmClose, setShowConfirmClose] = useState(false);
+
+    // Khi bấm Sửa trong modal: mở input sửa số tiền khách trả trong modal
+    const handleModalEditTienKhachTra = () => {
+        setModalEditTienKhachTra(true);
+        setModalTienKhachTraValue(selectedInvoice?.tienKhachTra?.toString() || '');
+        setModalTienKhachTraError('');
+    };
+
+    // Lưu số tiền khách trả mới trong modal và cập nhật số nợ khách hàng
+    const handleModalSaveTienKhachTra = async () => {
+        const value = modalTienKhachTraValue.replace(/,/g, '');
+        if (!value || isNaN(value) || Number(value) < 0) {
+            setModalTienKhachTraError('Vui lòng nhập số hợp lệ');
+            return;
+        }
+        try {
+            // Cập nhật số tiền khách trả cho hóa đơn
+            await thanhToanMoiApi.updateInvoiceTienKhachTra(selectedInvoice.maHoaDon, Number(value));
+            // Lấy lại thông tin hóa đơn để tính số nợ mới
+            const invoice = invoices.find(inv => inv.maHoaDon === selectedInvoice.maHoaDon);
+            const customer = await thanhToanMoiApi.getCustomerById(invoice.maKhachHang);
+            const totalAmount = invoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0);
+            const newDebt = Math.max(0, totalAmount - Number(value));
+            await thanhToanMoiApi.updateCustomerDebt(invoice.maKhachHang, newDebt);
+
+            // Cập nhật lại danh sách hóa đơn
+            setInvoices(prev =>
+                prev.map((inv) =>
+                    inv.maHoaDon === selectedInvoice.maHoaDon
+                        ? { ...inv, tienKhachTra: Number(value) }
+                        : inv
+                )
+            );
+            setModalEditTienKhachTra(false);
+            setModalTienKhachTraValue('');
+            setModalTienKhachTraError('');
+            setShowConfirmClose(false);
+            // Cập nhật selectedInvoice nếu cần
+            if (selectedInvoice) {
+                selectedInvoice.tienKhachTra = Number(value);
+            }
+        } catch (err) {
+            setModalTienKhachTraError('Lưu thất bại!');
+        }
+    };
+
+    // Khi bấm Đóng trong modal sửa, hỏi xác nhận
+    const handleModalClose = () => {
+        if (modalEditTienKhachTra) {
+            setShowConfirmClose(true);
+        } else {
+            setSelectedInvoiceIndex(null);
+        }
+    };
+
+    // Xác nhận đóng modal: có lưu
+    const handleConfirmCloseYes = () => {
+        handleModalSaveTienKhachTra();
+    };
+
+    // Xác nhận đóng modal: không lưu
+    const handleConfirmCloseNo = () => {
+        setModalEditTienKhachTra(false);
+        setModalTienKhachTraValue('');
+        setModalTienKhachTraError('');
+        setShowConfirmClose(false);
+        setSelectedInvoiceIndex(null);
     };
 
     const selectedInvoice = selectedInvoiceIndex !== null ? filteredInvoices[selectedInvoiceIndex] : null;
@@ -195,6 +293,7 @@ function HoaDon() {
                             <th>Mã Khách Hàng</th>
                             <th>Tên Khách Hàng</th>
                             <th>Ngày Lập Hóa Đơn</th>
+                            <th>Số Tiền Khách Trả</th>
                             <th>Hành Động</th>
                         </tr>
                     </thead>
@@ -208,6 +307,11 @@ function HoaDon() {
                                 <td>{invoice.maKhachHang}</td>
                                 <td>{invoice.tenKhachHang}</td>
                                 <td>{invoice.ngayLap}</td>
+                                <td>
+                                    {invoice.tienKhachTra !== undefined
+                                        ? Number(invoice.tienKhachTra).toLocaleString() + ' VNĐ'
+                                        : 'Chưa có'}
+                                </td>
                                 <td>
                                     <button
                                         className="icon-button-thd"
@@ -298,15 +402,32 @@ function HoaDon() {
                             <p><strong>Tổng Số Tiền:</strong> {selectedInvoice.danhSachSach.reduce((sum, sach) => sum + sach.soLuong * sach.donGia, 0).toLocaleString()} VNĐ</p>
                             <p>
                                 <strong>Số Tiền Khách Trả:</strong>{' '}
-                                {selectedInvoice.tienKhachTra !== undefined
-                                    ? Number(selectedInvoice.tienKhachTra).toLocaleString() + ' VNĐ'
-                                    : selectedInvoice.tienKhachTra === 0
-                                        ? '0 VNĐ'
-                                        : 'Chưa có'}
+                                {modalEditTienKhachTra ? (
+                                    <span>
+                                        <input
+                                            type="text"
+                                            value={modalTienKhachTraValue}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                                setModalTienKhachTraValue(val);
+                                                setModalTienKhachTraError('');
+                                            }}
+                                            style={{ width: 100, marginRight: 8 }}
+                                        />
+                                        {modalTienKhachTraError && (
+                                            <span style={{ color: 'red', marginLeft: 8 }}>{modalTienKhachTraError}</span>
+                                        )}
+                                    </span>
+                                ) : (
+                                    <span>
+                                        {selectedInvoice.tienKhachTra !== undefined
+                                            ? Number(selectedInvoice.tienKhachTra).toLocaleString() + ' VNĐ'
+                                            : 'Chưa có'}
+                                    </span>
+                                )}
                             </p>
                         </div>
                         <div className="modal-actions-thd">
-
                             <button className="close-button-thd" onClick={handleCloseModal}>Đóng</button>
                         </div>
                     </div>
@@ -320,7 +441,6 @@ function HoaDon() {
                         <div className="confirmation-actions-thd">
                             <button className="confirm-button-thd" onClick={handleConfirmCloseYes}>Có</button>
                             <button className="cancel-button-thd" onClick={handleConfirmCloseNo}>Không</button>
-
                         </div>
                     </div>
                 </div>

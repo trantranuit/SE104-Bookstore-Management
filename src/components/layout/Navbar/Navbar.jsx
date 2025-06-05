@@ -157,7 +157,7 @@ function Navbar() {
         </div>
         <div className="menu-content">
           <ul className="nav-menu-items">
-            {mainMenuItems.map((item, index) => (
+            {filteredMainMenu.map((item, index) => (
               <React.Fragment key={index}>
                 <li className={item.cName}>
                   {item.subNav && item.subNav.length > 0 ? (
@@ -199,7 +199,7 @@ function Navbar() {
             ))}
           </ul>
           <ul className="bottom-items">
-            {bottomMenuItems.map((item, index) => (
+            {filteredBottomMenu.map((item, index) => (
               <li key={`bottom-${index}`} className={item.cName}>
                 <Link
                   to={item.path}

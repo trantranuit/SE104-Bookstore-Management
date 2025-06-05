@@ -14,4 +14,5 @@ export const ROUTES = {
     PERMISSIONS: '/phanquyen',
     LOGOUT: '/dangxuat',
     CHANGE_RULES: '/thaydoiquydinh',
+    ADD_BOOK: '/themsach',
 };
