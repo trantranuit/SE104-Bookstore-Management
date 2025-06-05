@@ -911,7 +911,7 @@ function ThanhToanMoi() {
                             <p><strong>Họ và tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
                             <p><strong>Email:</strong> {customerInfo.email}</p>
-                            <p><strong>Số tiền nợ:</strong> {customerInfo.debt.toLocaleString()}đ</p>
+                            <p><strong>Số tiền nợ:</strong> {customerInfo.debt.toLocaleString()}VNĐ</p>
                         </div>
                     </div>
                     <div className="actions-ttm">
@@ -959,14 +959,14 @@ function ThanhToanMoi() {
                                         <td>{item.tenSach}</td>
                                         <td>{item.donGia.toLocaleString()}đ</td>
                                         <td>{item.soLuongMua}</td>
-                                        <td>{(item.soLuongMua * item.donGia).toLocaleString()}đ</td>
+                                        <td>{(item.soLuongMua * item.donGia).toLocaleString()}VNĐ</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                     <div className="totals-ttm" style={{ marginTop: '2rem', textAlign: 'right' }}>
-                        <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}đ</p>
+                        <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}VNĐ</p>
                         <p>
                             <strong>Tiền khách trả:</strong>
                             <input
@@ -997,11 +997,11 @@ function ThanhToanMoi() {
                                 }}
                                 placeholder="Nhập số tiền trả"
                                 inputMode="numeric"
-                            /> đ
+                            /> VNĐ
                         </p>
                         <p>
                             <strong>Còn lại:</strong>{' '}
-                            {(totalPrice - parseInt(parseNumber(tienKhachTra) || '0')).toLocaleString()}đ
+                            {(totalPrice - parseInt(parseNumber(tienKhachTra) || '0')).toLocaleString()}VNĐ
                         </p>
                     </div>
                     <div className="actions-ttm">

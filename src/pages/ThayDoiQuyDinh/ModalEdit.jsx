@@ -111,15 +111,6 @@ const ModalEdit = ({ isOpen, onClose, onSave, initialData }) => {
         </button>
         <h2>Sửa quy định</h2>
         <form onSubmit={handleSubmit} className="modal-form">
-          <div className="form-group">
-            <label>Mã quy định</label>
-            <input
-              type="text"
-              value={formData.id}
-              disabled
-              className="disabled-input"
-            />
-          </div>
           {initialData.tenQuyDinh.includes("Số lượng nhập") && (
             <div className="form-group">
               <label>Số lượng nhập tối thiểu</label>

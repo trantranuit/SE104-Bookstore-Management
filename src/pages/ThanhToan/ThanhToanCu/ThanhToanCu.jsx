@@ -40,6 +40,7 @@ function ThanhToanCu() {
     const [employeeInfo, setEmployeeInfo] = useState({ id: '', name: '' });
     const [message, setMessage] = useState('');
 
+
     const getNewMaPhieu = async () => {
         try {
             const nextId = await thanhToanCuApi.getNextReceiptId();
@@ -48,6 +49,7 @@ function ThanhToanCu() {
             console.error('Error getting receipt ID:', error);
             setMaPhieuThu('PT001');
         }
+
     };
 
     useEffect(() => {

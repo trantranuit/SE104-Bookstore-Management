@@ -23,9 +23,9 @@ export const getUsers = async () => {
 export const addUser = async (userData) => {
     try {
         const response = await axiosInstance.post("/user/create_staff/", {
-            username: userData.username,
-            password: userData.password,
-            role: userData.role,
+            "username": userData.username,
+            "password": userData.password,
+            "role": userData.role,
             email: userData.email,
             first_name: userData.first_name,
             last_name: userData.last_name,
@@ -33,7 +33,7 @@ export const addUser = async (userData) => {
         });
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.detail || 'Lỗi khi thêm người dùng');
+        throw new Error(error.response?.data?.detail);
     }
 };
 
