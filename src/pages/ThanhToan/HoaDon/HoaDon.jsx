@@ -376,6 +376,7 @@ function HoaDon() {
                         <table className="modal-table-thd">
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Mã Sách</th>
                                     <th>Tên Sách</th>
                                     <th>Số Lượng</th>
@@ -386,6 +387,7 @@ function HoaDon() {
                             <tbody>
                                 {selectedInvoice.danhSachSach.map((sach, index) => (
                                     <tr key={index}>
+                                        <td>{index + 1}</td>
                                         <td>{sach.maSach}</td>
                                         <td>{sach.tenSach}</td>
                                         <td>{sach.soLuong}</td>

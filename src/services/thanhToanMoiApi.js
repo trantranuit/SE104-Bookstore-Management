@@ -207,7 +207,7 @@ const thanhToanMoiApi = {
         const data = {
             MaHD_input: ctHoaDon.MaHD_input.replace(/^HD/, ''),
             MaSach_input: ctHoaDon.MaSach_input.replace(/^S/, ''),
-            TenSach: ctHoaDon.TenSach,
+            
             SLBan: ctHoaDon.SLBan,
             GiaBan: parseFloat(ctHoaDon.GiaBan),
             ThanhTien: parseFloat(ctHoaDon.ThanhTien)
