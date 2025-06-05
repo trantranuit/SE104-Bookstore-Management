@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { PiNotePencil } from "react-icons/pi";
-import { useNavigate } from 'react-router-dom';
 import '../../../styles/PathStyles.css';
 import './PhieuThuTien.css';
 import phieuThuTienApi from '../../../services/phieuThuTienApi';
@@ -8,25 +7,22 @@ import phieuThuTienApi from '../../../services/phieuThuTienApi';
 function PhieuThuTien() {
     const [searchTerm, setSearchTerm] = useState('');
     const [receipts, setReceipts] = useState([]);
-    const [selectedReceiptIndex, setSelectedReceiptIndex] = useState(null);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const [showDeleteNotification, setShowDeleteNotification] = useState(false);
-    const [deletedReceiptId, setDeletedReceiptId] = useState('');
+    const [selectedReceiptId, setSelectedReceiptId] = useState(null);
     const [customerData, setCustomerData] = useState([]);
     const [employeeData, setEmployeeData] = useState([]);
-
-    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
-        // Lấy danh sách phiếu thu từ API
+        // Fetch all receipts
         phieuThuTienApi.getAllReceipts()
             .then(data => setReceipts(data))
             .catch(() => setReceipts([]));
-        // Lấy danh sách khách hàng
+        // Fetch all customers
         phieuThuTienApi.getAllCustomers()
             .then(data => setCustomerData(data))
             .catch(() => setCustomerData([]));
-        // Lấy danh sách nhân viên
+        // Fetch all employees
         phieuThuTienApi.getAllUsers()
             .then(data => setEmployeeData(data))
             .catch(() => setEmployeeData([]));
@@ -37,68 +33,55 @@ function PhieuThuTien() {
         (receipt.NgayThu || '').includes(searchTerm)
     );
 
-    const handleViewReceipt = (index) => {
-        setSelectedReceiptIndex(index);
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredReceipts.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentReceipts = filteredReceipts.slice(startIndex, endIndex);
+
+    const handleViewReceipt = (maPhieuThu) => {
+        setSelectedReceiptId(maPhieuThu);
     };
 
     const handleCloseModal = () => {
-        setSelectedReceiptIndex(null);
+        setSelectedReceiptId(null);
     };
 
-    const handleEditReceipt = () => {
-        const selectedReceipt = filteredReceipts[selectedReceiptIndex];
-        navigate('/thanhtoan/cu', { state: { receipt: selectedReceipt, isEditing: true } });
-    };
-
-    const generateNewReceiptId = () => {
-        const existingReceipts = JSON.parse(localStorage.getItem('receipts') || '[]');
-        let nextIdNumber = existingReceipts.length > 0
-            ? Math.max(...existingReceipts.map(r => parseInt(r.maPhieuThu.replace('PT', '')))) + 1
-            : 1;
-        return `PT${String(nextIdNumber).padStart(3, '0')}`; // Ensure 3-digit format
-    };
-
-    const handleSaveEditedReceipt = (updatedReceipt) => {
-        const requiredFields = ['maPhieuThu', 'nguoiLapPhieu', 'maKhachHang', 'ngayLap', 'soTienTra'];
-        const hasError = requiredFields.some((field) => !updatedReceipt[field]);
-
-        if (hasError) {
-            alert('Vui lòng điền đầy đủ thông tin trước khi lưu.');
-            return;
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
         }
-
-        const newReceiptId = generateNewReceiptId(); // Generate a new unique receipt ID
-        const updatedReceiptWithNewId = { ...updatedReceipt, maPhieuThu: newReceiptId };
-
-        const updatedReceipts = receipts.map((receipt) =>
-            receipt.maPhieuThu === updatedReceipt.maPhieuThu ? updatedReceiptWithNewId : receipt
-        );
-
-        localStorage.setItem('receipts', JSON.stringify(updatedReceipts)); // Save updated receipts to localStorage
-        setReceipts(updatedReceipts); // Update state
-        setSelectedReceiptIndex(null); // Close the modal
     };
 
-    const handleDeleteReceipt = () => {
-        const receiptToDelete = receipts[selectedReceiptIndex];
-        const updatedReceipts = receipts.filter((_, index) => index !== selectedReceiptIndex);
-
-        localStorage.setItem('receipts', JSON.stringify(updatedReceipts));
-        setReceipts(updatedReceipts);
-        setDeletedReceiptId(receiptToDelete.maPhieuThu); // Store the deleted receipt ID
-        setShowDeleteNotification(true); // Show the delete notification
-        setShowDeleteConfirmation(false); // Close the confirmation modal
-        setSelectedReceiptIndex(null); // Close the receipt modal
-
-        // Do not modify 'lastUsedReceiptId' to ensure IDs continue incrementing
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
-    const selectedReceipt = selectedReceiptIndex !== null ? filteredReceipts[selectedReceiptIndex] : null;
+    const selectedReceipt = selectedReceiptId ? filteredReceipts.find(r => r.MaPhieuThu === selectedReceiptId) : null;
 
-    // Hàm lấy thông tin khách hàng từ MaKH
+    // Get customer info by MaKH
     const getCustomerInfo = (maKH) => customerData.find(c => String(c.MaKhachHang) === String(maKH));
-    // Hàm lấy thông tin nhân viên từ NguoiThu
-    const getEmployeeInfo = (nguoiThu) => employeeData.find(e => String(e.id) === String(nguoiThu));
+
+    // Get employee info by NguoiThu (NVxxx format)
+    const getEmployeeInfo = (nguoiThu) => {
+        if (!nguoiThu) return null;
+        // Extract numeric ID by removing 'NV' and leading zeros
+        const numericId = parseInt(nguoiThu.replace(/^NV0*/, ''), 10);
+        // Find employee by numeric ID
+        return employeeData.find(e => e.id === numericId) || null;
+    };
+
+    // Format NguoiThu to NVxxx
+    const formatEmployeeId = (nguoiThu) => {
+        if (!nguoiThu) return 'N/A';
+        // If already in NVxxx format, return as is
+        if (nguoiThu.startsWith('NV') && nguoiThu.length === 5) return nguoiThu;
+        // Extract numeric ID and format as NVxxx
+        const numericId = parseInt(nguoiThu.replace(/^NV0*/, ''), 10);
+        return isNaN(numericId) ? 'N/A' : `NV${numericId.toString().padStart(3, '0')}`;
+    };
 
     return (
         <div className="page-container">
@@ -117,34 +100,63 @@ function PhieuThuTien() {
                     <table className="receipt-table-ptt">
                         <thead>
                             <tr>
-                                <th>Mã Phiếu</th>
+                                <th>No.</th>
+                                <th>Mã Phiếu Thu</th>
+                                <th>Mã Nhân Viên</th>
+                                <th>Tên Nhân Viên</th>
                                 <th>Mã Khách Hàng</th>
-                                <th>Ngày Thu</th>
-                                <th>Số Tiền Thu</th>
-                                <th>Người Thu</th>
+                                <th>Tên Khách Hàng</th>
+                                <th>Ngày Lập</th>
+                                <th>Số Tiền Trả</th>
                                 <th>Hành Động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredReceipts.map((receipt, index) => (
-                                <tr key={receipt.MaPhieuThu}>
-                                    <td>{receipt.MaPhieuThu || 'N/A'}</td>
-                                    <td>{receipt.MaKH || 'N/A'}</td>
-                                    <td>{receipt.NgayThu || 'N/A'}</td>
-                                    <td>{receipt.SoTienThu ? Number(receipt.SoTienThu).toLocaleString() : '0'}đ</td>
-                                    <td>{receipt.NguoiThu || 'N/A'}</td>
-                                    <td>
-                                        <button
-                                            className="icon-button-ptt"
-                                            onClick={() => handleViewReceipt(index)}
-                                        >
-                                            <PiNotePencil />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {currentReceipts.map((receipt, index) => {
+                                const employee = getEmployeeInfo(receipt.NguoiThu);
+                                const customer = getCustomerInfo(receipt.MaKH);
+                                return (
+                                    <tr key={receipt.MaPhieuThu}>
+                                        <td>{startIndex + index + 1}</td>
+                                        <td>{receipt.MaPhieuThu}</td>
+                                        <td>{formatEmployeeId(receipt.NguoiThu)}</td>
+                                        <td>{employee ? `${employee.last_name} ${employee.first_name}` : 'N/A'}</td>
+                                        <td>{receipt.MaKH || 'N/A'}</td>
+                                        <td>{customer ? customer.HoTen : 'N/A'}</td>
+                                        <td>{receipt.NgayThu || 'N/A'}</td>
+                                        <td>{receipt.SoTienThu ? Number(receipt.SoTienThu).toLocaleString('vi-VN') : '0'}đ</td>
+                                        <td>
+                                            <button
+                                                className="icon-button-ptt"
+                                                onClick={() => handleViewReceipt(receipt.MaPhieuThu)}
+                                            >
+                                                <PiNotePencil />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
+                </div>
+                <div className="pagination-controls-ptt" style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <button
+                        className="pagination-button-ptt"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        style={{ marginRight: '10px', padding: '8px 16px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                    >
+                        Trước
+                    </button>
+                    <span>Trang {currentPage} / {totalPages}</span>
+                    <button
+                        className="pagination-button-ptt"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        style={{ marginLeft: '10px', padding: '8px 16px', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                    >
+                        Sau
+                    </button>
                 </div>
             </div>
 
@@ -157,11 +169,9 @@ function PhieuThuTien() {
                                 <h3 className="section-header-ptt">Thông Tin Phiếu Thu</h3>
                                 <p><strong>Ngày Thu:</strong> {selectedReceipt.NgayThu || 'N/A'}</p>
                                 <p><strong>Mã Phiếu Thu:</strong> {selectedReceipt.MaPhieuThu || 'N/A'}</p>
+                                <p><strong>Mã Nhân Viên:</strong> {formatEmployeeId(selectedReceipt.NguoiThu)}</p>
                                 <p>
-                                    <strong>Mã Nhân Viên:</strong> {selectedReceipt.NguoiThu || 'N/A'}
-                                </p>
-                                <p>
-                                    <strong>Họ Tên Nhân Viên:</strong> {(() => {
+                                    <strong>Họ Tên:</strong> {(() => {
                                         const emp = getEmployeeInfo(selectedReceipt.NguoiThu);
                                         return emp ? `${emp.last_name} ${emp.first_name}` : 'N/A';
                                     })()}
@@ -169,7 +179,7 @@ function PhieuThuTien() {
                             </div>
                             <div className="modal-right-ptt">
                                 <h3 className="section-header-ptt">Thông Tin Khách Hàng</h3>
-                                <p><strong>Mã Khách Hàng:</strong> {selectedReceipt.MaKH || 'N/A'}</p>
+                                <p><strong>Mã Khách:</strong> {selectedReceipt.MaKH || 'N/A'}</p>
                                 <p>
                                     <strong>Họ Tên:</strong> {(() => {
                                         const cus = getCustomerInfo(selectedReceipt.MaKH);
@@ -188,35 +198,12 @@ function PhieuThuTien() {
                                         return cus ? cus.Email : 'N/A';
                                     })()}
                                 </p>
-                                <p><strong>Số Tiền Thu:</strong> {selectedReceipt.SoTienThu ? Number(selectedReceipt.SoTienThu).toLocaleString() : '0'}đ</p>
+                                <p><strong>Số Tiền Thu:</strong> {selectedReceipt.SoTienThu ? Number(selectedReceipt.SoTienThu).toLocaleString('vi-VN') : '0'}đ</p>
                             </div>
                         </div>
                         <div className="modal-actions-ptt">
-                            <button className="edit-button-ptt" onClick={handleEditReceipt}>Sửa</button>
-                            <button className="delete-button-ptt" onClick={() => setShowDeleteConfirmation(true)}>Xóa</button>
                             <button className="close-button-ptt" onClick={handleCloseModal}>Đóng</button>
                         </div>
-                    </div>
-                </div>
-            )}
-
-            {showDeleteConfirmation && (
-                <div className="confirmation-modal-ptt">
-                    <div className="confirmation-content-ptt">
-                        <p>Bạn có chắc muốn xóa phiếu thu tiền này không?</p>
-                        <div className="confirmation-actions-ptt">
-                            <button className="confirm-button-ptt" onClick={handleDeleteReceipt}>Có</button>
-                            <button className="cancel-button-ptt" onClick={() => setShowDeleteConfirmation(false)}>Không</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {showDeleteNotification && (
-                <div className="notification-modal-ptt">
-                    <div className="notification-content-ptt">
-                        <p>Phiếu thu tiền <strong>{deletedReceiptId}</strong> đã được xóa thành công!</p>
-                        <button className="close-button-ptt" onClick={() => setShowDeleteNotification(false)}>Đóng</button>
                     </div>
                 </div>
             )}

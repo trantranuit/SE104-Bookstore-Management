@@ -81,19 +81,19 @@
 
 .book-table-block th:nth-child(2),
 .book-table-block td:nth-child(2) {
-    width: 10%;
+    width: 5%;
     /* Fixed width for Mã sách column */
 }
 
 .book-table-block th:nth-child(3),
 .book-table-block td:nth-child(3) {
-    width: 18%;
-    /* Adjusted width for Tên sách column */
+    width: 10%;
+    max-width: 10%;
 }
 
 .book-table-block th:nth-child(4),
 .book-table-block td:nth-child(4) {
-    width: 12%;
+    width: 20%;
     /* Adjusted width for Tác giả column */
 }
 

@@ -1,5 +1,21 @@
 import axiosInstance from "./AxiosConfig";
 
+// Add or modify the method to get next book ID
+const getNextBookId = async () => {
+    const response = await axiosInstance.get("/sach/");
+    const books = response.data;
+    let maxId = 0;
+
+    books.forEach(book => {
+        const numId = parseInt(book.MaSach.replace(/^S/, ''));
+        if (!isNaN(numId) && numId > maxId) {
+            maxId = numId;
+        }
+    });
+
+    return `S${(maxId + 1).toString().padStart(3, '0')}`;
+};
+
 const themSachApi = {
     // Lấy tất cả sách
     getAllBooks: async (params = {}) => {
@@ -37,10 +53,9 @@ const themSachApi = {
         const newMaDauSach = 'DS' + (maxMaDauSach + 1).toString().padStart(3, '0');
 
         const payload = {
-            MaDauSach: newMaDauSach,
-            TenSach: data.TenSach,
-            TenTheLoai: data.TheLoai[0].TenTheLoai, // Lấy tên thể loại từ object thể loại
-            TenTacGia: data.TenTacGia.map(tg => tg.TenTG) // Chuyển đổi mảng object tác giả thành mảng tên tác giả
+            "TenSach": data.TenSach,
+            "TenTheLoai_input": data.TheLoai[0].TenTheLoai, // Lấy tên thể loại từ object thể loại
+            "TenTacGia_input": data.TenTacGia.map(tg => tg.TenTG) // Chuyển đổi mảng object tác giả thành mảng tên tác giả
         };
 
         const addResponse = await axiosInstance.post("/dausach/", payload);
@@ -52,11 +67,9 @@ const themSachApi = {
         // data cần có TenDauSach (tên đầu sách) và MaDauSach
         const payload = {
             ...data,
-            TenDauSach: data.TenDauSach,
-            MaDauSach: data.MaDauSach,
-            NXB: data.NhaXuatBan || data.NXB,
-            NamXB: data.NamXuatBan || data.NamXB,
-            SLTon: data.SoLuongTon !== undefined ? data.SoLuongTon : 0
+            "TenDauSach_input": data.TenSach,
+            "TenNXB_input": data.NhaXuatBan || data.NXB,
+            "NamXB": data.NamXuatBan || data.NamXB,
         };
         // Đảm bảo các trường đúng tên
         delete payload.NhaXuatBan;
@@ -113,7 +126,33 @@ const themSachApi = {
         };
         const addResponse = await axiosInstance.post("/theloai/", payload);
         return addResponse.data;
-    }
+    },
+
+    // Lấy tất cả nhà xuất bản
+    getAllPublishers: async () => {
+        const response = await axiosInstance.get("/nxb/");
+        return response.data;
+    },
+
+    // Thêm nhà xuất bản mới
+    addPublisher: async (publisherName) => {
+        const response = await axiosInstance.get("/nxb/");
+        let maxMaNXB = 0;
+        response.data.forEach(nxb => {
+            const num = parseInt(nxb.MaNXB.replace('NXB', ''), 10);
+            if (!isNaN(num) && num > maxMaNXB) maxMaNXB = num;
+        });
+        const newMaNXB = 'NXB' + (maxMaNXB + 1).toString().padStart(3, '0');
+
+        const payload = {
+            MaNXB: newMaNXB,
+            TenNXB: publisherName
+        };
+        const addResponse = await axiosInstance.post("/nxb/", payload);
+        return addResponse.data;
+    },
+
+    getNextBookId,
 };
 
 export default themSachApi;
