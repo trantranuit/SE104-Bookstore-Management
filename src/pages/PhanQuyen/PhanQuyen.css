@@ -19,18 +19,105 @@
     margin-bottom: 2rem;
 }
 
+.user-list-block-pq {
+    position: relative;
+    height: 37rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-table-pq {
+    width: 100%;
+    /* 100% -> 100rem (giả định chiều rộng cha là 100rem) */
+    table-layout: fixed;
+    margin-bottom: 1rem;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.user-table-pq th,
+.user-table-pq td {
+    height: 3.5rem;
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 0.0625rem solid #ddd;
+    /* 1px -> 0.0625rem */
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-table-pq th:nth-child(1),
+.user-table-pq td:nth-child(1) {
+    width: 5%;
+    /* 5% -> 5rem (dựa trên chiều rộng bảng 100rem) */
+}
+
+.user-table-pq th:nth-child(2),
+.user-table-pq td:nth-child(2) {
+    width: 12%;
+    /* 12% -> 12rem */
+}
+
+.user-table-pq th:nth-child(3),
+.user-table-pq td:nth-child(3) {
+    width: 10%;
+    /* 10% -> 10rem */
+}
+
+.user-table-pq th:nth-child(4),
+.user-table-pq td:nth-child(4) {
+    width: 10%;
+    /* 10% -> 10rem */
+}
+
+.user-table-pq th:nth-child(5),
+.user-table-pq td:nth-child(5) {
+    width: 8%;
+    /* 8% -> 8rem */
+}
+
+.user-table-pq th:nth-child(6),
+.user-table-pq td:nth-child(6) {
+    width: 20%;
+    /* 20% -> 20rem */
+}
+
+.user-table-pq th:nth-child(7),
+.user-table-pq td:nth-child(7) {
+    width: 10%;
+    /* 10% -> 10rem */
+}
+
+.user-table-pq th:nth-child(8),
+.user-table-pq td:nth-child(8) {
+    width: 15%;
+    /* 15% -> 15rem */
+}
+
+.user-table-pq th:nth-child(9),
+.user-table-pq td:nth-child(9) {
+    width: 10%;
+    /* 10% -> 10rem */
+}
+
+.user-table-pq tr {
+    height: 3.5rem;
+}
+
 .user-list-filters-pq {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
     align-items: center;
-    /* Align items vertically */
 }
 
 .user-list-filters-pq input,
 .user-list-filters-pq select {
     padding: 0.8rem;
-    border: 0.1rem solid #ccc;
+    border: 0.0625rem solid #ccc;
+    /* 1px -> 0.0625rem */
     border-radius: 0.5rem;
     font-size: 1rem;
     flex: 1;
@@ -56,14 +143,49 @@
 .role-config-table-pq {
     border-collapse: collapse;
     width: 100%;
+    /* 100% -> 100rem */
+}
+
+.user-table-pq {
+    width: 100%;
+    table-layout: fixed;
+    flex: 1;
+}
+
+.user-table-pq tbody {
+    display: block;
+    max-height: calc(37rem - 10rem);
+    /* Điều chỉnh max-height tương ứng với height mới của user-list-block-pq */
+    overflow-y: auto;
+}
+
+.user-table-pq thead {
+    display: block;
+}
+
+.user-table-pq thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #007bff;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.user-table-pq tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 .user-table-pq th,
 .user-table-pq td,
 .role-config-table-pq th,
 .role-config-table-pq td {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    border-top: 0.0625rem solid #ddd;
+    /* 1px -> 0.0625rem */
+    border-bottom: 0.0625rem solid #ddd;
     border-left: none;
     border-right: none;
     padding: 0.8rem;
@@ -72,11 +194,14 @@
 
 .role-config-table-pq th,
 .role-config-table-pq td {
-    width: calc(100% / 10); /* Divide by total number of columns (9 pages + 1 role column + 1 permission column = 11) */
-    min-width: 100px;
+    width: 10rem;
+    /* calc(100% / 10) -> 10rem */
+    min-width: 6.25rem;
+    /* 100px -> 6.25rem */
     white-space: normal;
     word-wrap: break-word;
-    padding: 10px 5px;
+    padding: 0.625rem 0.3125rem;
+    /* 10px 5px -> 0.625rem 0.3125rem */
 }
 
 .user-table-pq th,
@@ -96,11 +221,8 @@
 .action-buttons-pq {
     display: flex;
     gap: 0.5rem;
-    /* Add spacing between buttons */
     justify-content: center;
-    /* Center align buttons */
     align-items: center;
-    /* Vertically align buttons */
 }
 
 .icon-button-pq {
@@ -118,9 +240,45 @@
 
 .role-config-table-pq select {
     padding: 0.5rem;
-    border: 0.1rem solid #ccc;
+    border: 0.0625rem solid #ccc;
+    /* 1px -> 0.0625rem */
     border-radius: 0.5rem;
     font-size: 1rem;
+}
+
+.pagination-container-pq {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+}
+
+.pagination-nav-button-pq {
+    padding: 0.5rem 1.25rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    min-width: 5rem;
+}
+
+.pagination-nav-button-pq:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-info-pq {
+    font-size: 0.875rem;
+    color: #666;
+    min-width: 6rem;
+    text-align: center;
 }
 
 .modal-title-pq {
@@ -128,28 +286,57 @@
     font-weight: bold;
     color: #333;
     margin-bottom: 1.5rem;
-    /* Add spacing below the title */
     text-align: center;
-    /* Center the title */
 }
 
-.modal-content-pq input,
-.modal-content-pq select {
-    width: 100%;
-    padding: 0.8rem;
-    margin-bottom: 1rem;
+.modal-pq {
+    background: #fff;
     border-radius: 0.5rem;
-    border: 0.1rem solid #ccc;
-    font-size: 1rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 2rem 2.5rem;
+    width: 50rem;
+    /* 70rem -> 50rem (giảm để hợp lý hơn với hệ thống rem) */
+    min-height: 20rem;
+    /* 30rem -> 20rem */
+    max-height: 50rem;
+    /* 80vh -> 50rem */
+    overflow-y: auto;
+    text-align: center;
+}
+
+.modal-content-pq {
+    text-align: left;
+    width: 100%;
+    /* 100% -> 100rem */
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    margin: 0 auto;
+}
+
+.modal-column-pq {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-column-pq label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+.modal-column-pq input,
+.modal-column-pq select {
+    width: 100%;
+    /* 100% -> 100rem */
+    margin-bottom: 1rem;
 }
 
 .modal-buttons-pq {
     display: flex;
     justify-content: center;
-    /* Center the buttons horizontally */
     gap: 1rem;
     margin-top: 1rem;
-    /* Add spacing above the buttons */
 }
 
 .apply-button-pq,
@@ -184,7 +371,9 @@
     top: 0;
     left: 0;
     width: 100vw;
+    /* 100vw -> 100rem */
     height: 100vh;
+    /* 100vh -> 100rem */
     background: rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
@@ -197,10 +386,10 @@
     border-radius: 0.5rem;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
     padding: 2rem 2.5rem;
-    min-width: 340px;
-    max-width: 95vw;
-    width: 100%;
-    max-width: 400px;
+    width: 50rem;
+    min-height: 20rem;
+    max-height: 50rem;
+    overflow-y: auto;
     text-align: center;
 }
 
@@ -216,7 +405,7 @@
     padding: 0.8rem;
     margin-bottom: 1rem;
     border-radius: 0.5rem;
-    border: 0.1rem solid #ccc;
+    border: 0.0625rem solid #ccc;
     font-size: 1rem;
     box-sizing: border-box;
 }
@@ -258,50 +447,165 @@
 .save-config-container-pq {
     display: flex;
     justify-content: flex-end;
-    margin-top: 16px;
+    margin-top: 1rem;
+    padding-right: 1rem;
 }
 
 .save-config-button-pq {
-    padding: 8px 20px;
+    padding: 0.5rem 2rem;
     background: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
-    font-weight: bold;
+    border-radius: 0.25rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.save-config-button-pq:hover {
+    background: #0056b3;
+    transform: translateY(-0.0625rem);
+    /* 1px -> 0.0625rem */
 }
 
 .checkbox-pq {
-    width: 16px;
-    height: 16px;
+    width: 1.25rem;
+    /* 20px -> 1.25rem */
+    height: 1.25rem;
     cursor: pointer;
-    border: 1px solid #e0e0e0;
+    position: relative;
     appearance: none;
     -webkit-appearance: none;
-    -moz-appearance: none;
-    position: relative;
-    outline: none;
-    opacity: 0.6;
+    background: #ffffff;
+    border: 0.125rem solid #b0bec5;
+    /* 2px -> 0.125rem */
+    border-radius: 0.375rem;
+    /* 6px -> 0.375rem */
+    transition: all 0.3s ease;
 }
 
 .checkbox-pq:checked {
-    background-color: #007bff;
-    border-color: #007bff;
-    opacity: 1;
+    background: #4fc3f7;
+    border-color: #4fc3f7;
+    transform: scale(1.1);
+    animation: checkScale 0.3s ease;
 }
 
 .checkbox-pq:checked::after {
-    content: '✓';
+    content: '';
     position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    text-shadow: 0 0 1px rgba(0,0,0,0.2);
+    left: 0.375rem;
+    /* 6px -> 0.375rem (điều chỉnh để cân đối) */
+    top: 0.125rem;
+    /* 2px -> 0.125rem */
+    width: 0.25rem;
+    /* 4px -> 0.25rem (làm nhỏ) */
+    height: 0.5rem;
+    /* 8px -> 0.5rem (làm nhỏ) */
+    border: solid white;
+    border-width: 0 0.125rem 0.125rem 0;
+    /* 2px -> 0.125rem */
+    transform: rotate(45deg);
+    animation: drawCheck 0.3s ease forwards;
+}
+
+.checkbox-pq:hover {
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0.5rem rgba(79, 195, 247, 0.3);
+    /* 8px -> 0.5rem */
+}
+
+@keyframes checkScale {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes drawCheck {
+    0% {
+        width: 0;
+        height: 0;
+    }
+
+    50% {
+        width: 0;
+        height: 0.5rem;
+    }
+
+    /* 8px -> 0.5rem */
+    100% {
+        width: 0.25rem;
+        height: 0.5rem;
+    }
+
+    /* 4px -> 0.25rem, 8px -> 0.5rem */
 }
 
 .role-config-table-pq td {
-    padding: 10px;
+    padding: 0.625rem;
+    /* 10px -> 0.625rem */
+}
+
+.status-badge-pq {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    line-height: 1.2;
+    border-radius: 0.75rem;
+    /* 12px -> 0.75rem */
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-badge-pq.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge-pq.stopped {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status-badge-pq.inactive {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 0.25rem 0.5rem;
+    /* 4px 8px -> 0.25rem 0.5rem */
+    border-radius: 0.75rem;
+    /* 12px -> 0.75rem */
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Thêm class mới cho modal thêm người dùng */
+.add-user-modal-content-pq {
+    text-align: left;
+    width: 100%;
+    max-width: 30rem;
+    margin: 0 auto;
+}
+
+.add-user-modal-content-pq label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.add-user-modal-content-pq input,
+.add-user-modal-content-pq select {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
 }

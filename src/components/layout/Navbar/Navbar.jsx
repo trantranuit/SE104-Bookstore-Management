@@ -98,12 +98,12 @@ function Navbar() {
     fetchUserData();
   }, []);
 
-  const getPosition = (id) => {
-    switch (id) {
-      case 1: return 'Quản Lý';
-      case 2: return 'Thu Ngân';
-      case 3: return 'Người Nhập';
-      default: return 'Nhân Viên';
+  const getPosition = (role) => {
+    switch (role) {
+      case 'NguoiNhap': return 'Kho';
+      case "NguoiThu": return 'Thu Ngân';
+      case "QuanLi": return 'Quản Lí';
+      default: return 'Admin';
     }
   };
 
@@ -145,7 +145,7 @@ function Navbar() {
               </div>
               <div className="info">
                 <h1 className="name">{userData.username}</h1>
-                <h2 className="position">{getPosition(userData.id)}</h2>
+                <h2 className="position">{getPosition(userData.role)}</h2>
               </div>
             </>
           )}

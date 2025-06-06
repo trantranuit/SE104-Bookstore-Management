@@ -12,7 +12,8 @@ export const getUsers = async () => {
             first_name: user.first_name,
             last_name: user.last_name,
             gioiTinh: user.gioiTinh,
-            role: user.role
+            role: user.role,
+            is_active: user.is_active
         }));
     } catch (error) {
         throw new Error(error.response?.data?.detail || 'Lỗi khi lấy danh sách người dùng');
@@ -49,11 +50,18 @@ export const updateUser = async (id, userData) => {
             role: userData.role
         });
 
-        // Nếu có mật khẩu mới, thực hiện cập nhật mật khẩu
+        // Xử lý trạng thái
+        if (userData.is_active !== undefined) {
+            if (userData.is_active) {
+                await reactivateUser(id);
+            } else {
+                await deactivateUser(id);
+            }
+        }
+
+        // Xử lý mật khẩu
         if (userData.password) {
-            await axiosInstance.post(`/user/${id}/change_password/`, {
-                new_password: userData.password
-            });
+            await changeUserPassword(id, userData.password);
         }
 
         return response.data;
@@ -79,5 +87,23 @@ export const changeUserPassword = async (id, newPassword) => {
         });
     } catch (error) {
         throw new Error(error.response?.data?.detail || 'Lỗi khi đổi mật khẩu');
+    }
+};
+
+// Hàm kích hoạt người dùng
+export const reactivateUser = async (id) => {
+    try {
+        await axiosInstance.post(`/user/${id}/reactivate/`);
+    } catch (error) {
+        throw new Error(error.response?.data?.detail || 'Lỗi khi kích hoạt người dùng');
+    }
+};
+
+// Hàm vô hiệu hóa người dùng
+export const deactivateUser = async (id) => {
+    try {
+        await axiosInstance.post(`/user/${id}/deactivate/`);
+    } catch (error) {
+        throw new Error(error.response?.data?.detail || 'Lỗi khi vô hiệu hóa người dùng');
     }
 };
