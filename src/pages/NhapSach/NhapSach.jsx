@@ -6,15 +6,12 @@ import ModalChiTietNhapSach from "./ModalChiTietNhapSach";
 import Notification from "./Notification";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 
-// Helper function to normalize date formats for comparison
 const normalizeDate = (dateStr) => {
   if (!dateStr || typeof dateStr !== "string") return "";
-  // Handle dd/mm/yyyy format
   if (dateStr.includes("/")) {
     const [day, month, year] = dateStr.split("/");
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   }
-  // Handle yyyy-mm-dd format
   const [year, month, day] = dateStr.split("-");
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 };
@@ -46,18 +43,12 @@ const NhapSach = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [ctNhapSach, phieuNhap, sachData, dauSachData, tacGiaData] =
-        await Promise.all([
-          phieuNhapSachApi.getCTNhapSach(),
-          phieuNhapSachApi.getPhieuNhapSach(),
-          phieuNhapSachApi.getSach(),
-          phieuNhapSachApi.getDauSach(),
-          phieuNhapSachApi.getTheLoai(),
-          phieuNhapSachApi.getTacGia(),
-        ]);
-
-      console.log("sachData:", sachData);
-      console.log("dauSachData:", dauSachData);
+      const [ctNhapSach, phieuNhap, sachData, dauSachData] = await Promise.all([
+        phieuNhapSachApi.getCTNhapSach(),
+        phieuNhapSachApi.getPhieuNhapSach(),
+        phieuNhapSachApi.getSach(),
+        phieuNhapSachApi.getDauSach(),
+      ]);
 
       const uniqueNguoiNhap = [
         ...new Set(phieuNhap.map((p) => p.NguoiNhap_input)),
@@ -77,17 +68,14 @@ const NhapSach = () => {
           const sach = sachData.find((s) => s.MaSach === item.MaSach);
           if (!sach) return null;
 
-          console.log("sach for MaSach", item.MaSach, ":", sach);
-
           const dauSach = dauSachData.find(
             (ds) => ds.MaDauSach === sach.MaDauSach
           );
           if (!dauSach) return null;
 
-          const tacGia = tacGiaData.find(
-            (tg) =>
-              Array.isArray(dauSach.MaTG) && dauSach.MaTG.includes(tg.MaTG)
-          );
+          const tacGia = dauSach.TenTacGia
+            ? dauSach.TenTacGia.join(", ")
+            : "Không xác định";
 
           return {
             maPhieuNhap: item.MaPhieuNhap,
@@ -95,9 +83,9 @@ const NhapSach = () => {
             MaNguoiNhap: pn.NguoiNhap_input || pn.NguoiNhap || "Không xác định",
             TenNguoiNhap: pn.NguoiNhap || "Không xác định",
             maSach: item.MaSach,
-            tenSach: dauSach.TenSach,
+            tenSach: sach.TenDauSach || dauSach.TenSach,
             theLoai: dauSach.TenTheLoai || "Không xác định",
-            tacGia: tacGia ? tacGia.TenTG : "Không xác định",
+            tacGia: tacGia,
             nhaXuatBan: sach.TenNXB || "Không xác định",
             namXuatBan: sach.NamXB,
             giaNhap: item.GiaNhap,
@@ -154,8 +142,6 @@ const NhapSach = () => {
 
   const applyFilters = () => {
     let filtered = [...data];
-
-    // Lọc theo ngày nhập
     if (filters.ngayNhap) {
       const filterDate = normalizeDate(filters.ngayNhap);
       filtered = filtered.filter((item) => {
@@ -163,21 +149,16 @@ const NhapSach = () => {
         return itemDate === filterDate;
       });
     }
-
-    // Lọc theo Mã người nhập
     if (filters.MaNguoiNhap.length > 0) {
       filtered = filtered.filter((item) =>
         filters.MaNguoiNhap.includes(item.MaNguoiNhap)
       );
     }
-
-    // Lọc theo Mã phiếu nhập
     if (filters.maPhieuNhap.length > 0) {
       filtered = filtered.filter((item) =>
         filters.maPhieuNhap.includes(item.maPhieuNhap)
       );
     }
-
     setFilteredData(filtered);
     setFilters((prev) => ({
       ...prev,
@@ -217,6 +198,7 @@ const NhapSach = () => {
   const handleCloseModalChiTiet = () => {
     setIsModalChiTietOpen(false);
     setCurrentPhieuNhap(null);
+    setCurrentItem(null);
   };
 
   const handleSavePhieuNhap = async (formData) => {
@@ -224,38 +206,29 @@ const NhapSach = () => {
       if (!formData.ngayNhap || formData.ngayNhap.trim() === "") {
         throw new Error("Vui lòng chọn ngày nhập!");
       }
-
       const dateParts = formData.ngayNhap.split("-");
-      const formattedNgayNhap = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; // dd/mm/yyyy
-
+      const formattedNgayNhap = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
       const maNguoiNhap = formData.MaNguoiNhap;
       if (!maNguoiNhap || maNguoiNhap.trim() === "") {
         throw new Error("Mã người nhập không được để trống!");
       }
-
       const payload = {
         NgayNhap: formattedNgayNhap,
         NguoiNhap_input: maNguoiNhap,
       };
-
-      console.log("Payload gửi đi:", payload);
       const phieuResponse = await phieuNhapSachApi.addPhieuNhapSach(
         null,
         payload
       );
-      console.log("Phản hồi từ server:", phieuResponse);
-
       setCurrentPhieuNhap({
         maPhieuNhap: phieuResponse.MaPhieuNhap,
         ngayNhap: formattedNgayNhap,
         MaNguoiNhap: maNguoiNhap,
         TenNguoiNhap: phieuResponse.NguoiNhap || "Không xác định",
       });
-
       setIsModalPhieuNhapOpen(false);
       setIsModalChiTietOpen(true);
     } catch (err) {
-      console.error("Phản hồi lỗi từ server:", err.response?.data);
       setNotification({
         message: `Lỗi khi tạo phiếu nhập: ${err.message}`,
         type: "error",
@@ -267,12 +240,18 @@ const NhapSach = () => {
     try {
       const soLuong = parseInt(formData.soLuong);
       const giaNhap = parseFloat(formData.giaNhap);
+      if (!formData.maSach || soLuong <= 0 || giaNhap <= 0) {
+        throw new Error(
+          "Vui lòng nhập đầy đủ mã sách, số lượng và giá nhập hợp lệ!"
+        );
+      }
 
-      if (currentItem) {
+      if (currentItem && currentItem.ctNhapId) {
+        // Cập nhật chi tiết nhập sách
         await phieuNhapSachApi.updateCTNhapSach(
           formData.maCTNhapSach,
-          currentItem.maPhieuNhap,
-          parseInt(formData.maSach),
+          { MaPhieuNhap_input: formData.maPhieuNhap },
+          { MaSach_input: formData.maSach },
           soLuong,
           giaNhap
         );
@@ -283,88 +262,41 @@ const NhapSach = () => {
         setIsModalChiTietOpen(false);
         setCurrentItem(null);
       } else {
-        let maTheLoai;
-        const theLoaiList = await phieuNhapSachApi.getTheLoai();
-        const existingTheLoai = theLoaiList.find(
-          (tl) => tl.TenTheLoai === formData.theLoai
-        );
-        if (!existingTheLoai && formData.theLoai) {
-          const newTheLoai = await phieuNhapSachApi.addTheLoai(
-            formData.theLoai
-          );
-          maTheLoai = newTheLoai.MaTheLoai;
-        } else {
-          maTheLoai =
-            existingTheLoai?.MaTheLoai || theLoaiList[0]?.MaTheLoai || 1;
-        }
-
-        let maTacGia;
-        const tacGiaList = await phieuNhapSachApi.getTacGia();
-        const existingTacGia = tacGiaList.find(
-          (tg) => tg.TenTG === formData.tacGia
-        );
-        if (!existingTacGia && formData.tacGia) {
-          const newTacGia = await phieuNhapSachApi.addTacGia(formData.tacGia);
-          maTacGia = newTacGia.MaTG;
-        } else {
-          maTacGia = existingTacGia?.MaTG || tacGiaList[0]?.MaTG || 1;
-        }
-
-        let maDauSach;
-        const dauSachList = await phieuNhapSachApi.getDauSach();
-        const existingDauSach = dauSachList.find(
-          (ds) => ds.TenSach === formData.tenSach
-        );
-        if (!existingDauSach && formData.tenSach) {
-          const newDauSach = await phieuNhapSachApi.addDauSach(
-            formData.tenSach,
-            maTheLoai,
-            maTacGia
-          );
-          maDauSach = newDauSach.MaDauSach;
-        } else {
-          maDauSach =
-            existingDauSach?.MaDauSach || dauSachList[0]?.MaDauSach || 1;
-        }
-
-        const sachList = await phieuNhapSachApi.getSach();
-        const existingSach = sachList.find((s) => s.MaSach === formData.maSach);
-        if (!existingSach) {
-          await phieuNhapSachApi.addSach(
-            formData.maSach,
-            formData.nhaXuatBan,
-            parseInt(formData.namXuatBan),
-            maDauSach
-          );
-        }
-
+        // Thêm chi tiết nhập sách mới
         const ctResponse = await phieuNhapSachApi.addCTNhapSach(
-          currentPhieuNhap.maPhieuNhap,
-          formData.maSach,
+          { MaPhieuNhap_input: formData.maPhieuNhap },
+          { MaSach_input: formData.maSach },
           soLuong,
           giaNhap
         );
-        setCurrentItem({
-          ...currentItem,
+        const updatedItem = {
           ctNhapId: ctResponse.MaCT_NhapSach || "",
+          maPhieuNhap: formData.maPhieuNhap,
           maSach: formData.maSach,
           soLuong: soLuong,
           giaNhap: giaNhap,
-        });
-
+          tenSach: formData.tenSach,
+          theLoai: formData.theLoai,
+          tacGia: formData.tacGia,
+          nhaXuatBan: formData.nhaXuatBan,
+          namXuatBan: formData.namXuatBan,
+        };
+        setCurrentItem(updatedItem);
         setNotification({
           message: "Thêm chi tiết nhập sách thành công!",
           type: "success",
         });
-
         if (action === "continue") {
           resetForm();
+          setCurrentItem(null); // Reset currentItem để modal mở lại với dữ liệu mới
+          setIsModalChiTietOpen(false);
+          setTimeout(() => setIsModalChiTietOpen(true), 0); // Mở lại modal
         } else {
           setIsModalChiTietOpen(false);
           setCurrentPhieuNhap(null);
+          setCurrentItem(null);
         }
       }
-
       await fetchData();
     } catch (err) {
       setNotification({
@@ -430,7 +362,6 @@ const NhapSach = () => {
           + Thêm phiếu nhập
         </button>
         <TableNhapSach data={filteredData} onEdit={handleEdit} />
-
         {isFilterModalOpen && (
           <div className="modal-overlay">
             <div className="filter-modal-content">
@@ -482,7 +413,6 @@ const NhapSach = () => {
           </div>
         )}
       </div>
-
       {isModalPhieuNhapOpen && (
         <ModalNhapSach
           isOpen={isModalPhieuNhapOpen}
@@ -490,17 +420,15 @@ const NhapSach = () => {
           onSave={handleSavePhieuNhap}
         />
       )}
-
       {isModalChiTietOpen && (
         <ModalChiTietNhapSach
           isOpen={isModalChiTietOpen}
           onClose={handleCloseModalChiTiet}
           onSave={handleSaveChiTiet}
           initialData={currentItem}
-          maPhieuNhap={currentPhieuNhap?.MaPhieuNhap}
+          maPhieuNhap={currentPhieuNhap?.maPhieuNhap}
         />
       )}
-
       {notification && (
         <Notification
           message={notification.message}
