@@ -99,17 +99,16 @@
     background-color: #e6f2ff;
 }
 
-.pagination {
+.pagination-bct {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: -3.5rem;
+    right: -1rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 0.25rem;
     padding: 0.75rem 2.8rem;
     z-index: 10;
-    min-width: 250px;
     transform: translateX(1%);
     
 }
@@ -210,11 +209,60 @@
     text-align: center !important;
 }
 
-.bct-report-table th:first-child,
-.bct-report-table td:first-child {
-    width: 50px !important;
-    max-width: 50px !important;
-    min-width: 50px !important;
-    padding: 0.5rem 0.25rem !important;
-    text-align: center !important;
+/* Định nghĩa chiều rộng cho từng cột */
+.bct-report-table th:nth-child(1),
+.bct-report-table td:nth-child(1) {
+    width: 2.5rem; /* STT */
+    min-width: 3rem;
+    max-width: 4rem;
+}
+
+.bct-report-table th:nth-child(2),
+.bct-report-table td:nth-child(2) {
+    width: 4rem; /* Mã Sách */
+    min-width: 6rem;
+    max-width: 8rem;
+}
+
+.bct-report-table th:nth-child(3),
+.bct-report-table td:nth-child(3) {
+    width: 8rem; /* Tên Sách */
+    min-width: 10rem;
+    max-width: 14rem;
+    text-align: left;
+}
+
+.bct-report-table th:nth-child(4),
+.bct-report-table td:nth-child(4) {
+    width: 6rem; /* NXB */
+    min-width: 8rem;
+    max-width: 11rem;
+}
+
+.bct-report-table th:nth-child(5),
+.bct-report-table td:nth-child(5) {
+    width: 4rem; /* Năm XB */
+    min-width: 8rem;
+    max-width: 11rem;
+}
+
+.bct-report-table th:nth-child(6),
+.bct-report-table td:nth-child(6) {
+    width: 4rem; /* Tồn đầu */
+    min-width: 4rem;
+    max-width: 6rem;
+}
+
+.bct-report-table th:nth-child(7),
+.bct-report-table td:nth-child(7) {
+    width: 4rem; /* Phát sinh */
+    min-width: 5rem;
+    max-width: 7rem;
+}
+
+.bct-report-table th:nth-child(8),
+.bct-report-table td:nth-child(8) {
+    width: 4rem; /* Tồn cuối */
+    min-width: 5rem;
+    max-width: 7rem;
 }

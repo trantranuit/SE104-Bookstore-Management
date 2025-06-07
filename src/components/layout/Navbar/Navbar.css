@@ -17,7 +17,8 @@
     padding: 1.25rem 0 0 0;
     min-height: 100vh;
     width: calc(100% - var(--sidebar-width));
-    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
 }
 
 
@@ -28,7 +29,8 @@
 .thanhtoan,
 .khachhang,
 .baocao {
-    padding: 2rem; /* Dùng rem để đảm bảo tính tương đối */
+    padding: 2rem;
+    /* Dùng rem để đảm bảo tính tương đối */
 }
 
 .navbar {
@@ -55,7 +57,7 @@
 }
 
 .avatar {
-    width: 1.8rem; 
+    width: 1.8rem;
     height: 1.8rem;
 }
 
@@ -67,7 +69,7 @@
 }
 
 .info {
-    line-height: 2em; 
+    line-height: 2em;
     font-size: 0.5rem;
 }
 
@@ -97,18 +99,17 @@
     position: fixed;
     top: 0;
     left: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
     padding: 0;
     margin: 0;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 
 .nav-menu-items {
     width: 100%;
+    height: 90vh;
     padding: 0;
-    margin-top: 8rem;
+    margin-top: 0;
     overflow-y: auto;
 }
 
@@ -116,7 +117,7 @@
 .nav-menu-link.active,
 .nav-menu-link:hover {
     background-color: #1a83ff;
-    color:white
+    color: white
 }
 
 .nav-menu-link.active svg,
@@ -126,9 +127,9 @@
 
 .nav-text {
     display: flex;
-    justify-content: flex-start; 
+    justify-content: flex-start;
     align-items: center;
-    padding: 0.25rem 1rem; 
+    padding: 0.25rem 1rem;
     list-style: none;
     height: 3rem;
     white-space: nowrap;
@@ -149,9 +150,12 @@
 
 .nav-text svg,
 .nav-menu-link svg {
-    font-size: 1rem; /* Adjust the size as needed */
-    min-width: 1rem; /* Ensure consistent width */
-    min-height: 1rem; /* Ensure consistent height */
+    font-size: 1rem;
+    /* Adjust the size as needed */
+    min-width: 1rem;
+    /* Ensure consistent width */
+    min-height: 1rem;
+    /* Ensure consistent height */
 }
 
 .nav-text a.active,
@@ -182,13 +186,13 @@ span {
 
 .logo-container {
     width: 100%;
+    height: 10vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    top: 8vh; 
-    left: 0;
-    z-index: 2;
+    position: relative;
+    margin-top: 3rem;
+    margin-bottom: 0.5rem;
 }
 
 .subnav-items {
@@ -201,9 +205,10 @@ span {
 }
 
 .subnav-item span {
-    font-size: 12px !important; 
+    font-size: 12px !important;
 }
-.nav-text.active + .subnav-items {
+
+.nav-text.active+.subnav-items {
     display: block;
 }
 
@@ -217,16 +222,20 @@ span {
 .bottom-items {
     padding: 1rem 0;
     width: 100%;
-    position: absolute; /* Change to absolute positioning */
-    bottom: 0; /* Stick to the bottom */
+    position: absolute;
+    /* Change to absolute positioning */
+    bottom: 0;
+    /* Stick to the bottom */
     left: 0;
     background: white;
-    border-top: 0.063rem solid #e0e0e0; /* Add a border for separation */
+    border-top: 0.063rem solid #e0e0e0;
+    /* Add a border for separation */
 }
 
 @media screen and (max-width: 768px) {
     :root {
-        --sidebar-width: 4rem; /* Adjust sidebar width */
+        --sidebar-width: 4rem;
+        /* Adjust sidebar width */
         --header-height: 3rem;
     }
 
@@ -237,12 +246,15 @@ span {
     }
 
     .nav-menu {
-        width: var(--sidebar-width); /* Use CSS variable */
+        width: var(--sidebar-width);
+        /* Use CSS variable */
     }
 
     .container {
-        margin-left: var(--sidebar-width); /* Use CSS variable */
-        width: calc(100% - var(--sidebar-width)); /* Use CSS variable */
+        margin-left: var(--sidebar-width);
+        /* Use CSS variable */
+        width: calc(100% - var(--sidebar-width));
+        /* Use CSS variable */
     }
 
     .profile-card {
@@ -256,7 +268,21 @@ span {
     }
 
     .bottom-items {
-        position: relative; /* Change to relative */
-        margin-top: 0; /* Reset margin-top */
+        position: relative;
+        /* Change to relative */
+        margin-top: 0;
+        /* Reset margin-top */
     }
+.menu-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10rem;
+    height: 90vh
+}
 }

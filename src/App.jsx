@@ -16,6 +16,7 @@ import DangXuat from './pages/DangXuat/DangXuat';
 import ThayDoiQuyDinh from './pages/ThayDoiQuyDinh/ThayDoiQuyDinh';  
 import Login from './pages/DangNhap/DangNhap';
 import PrivateRoute from './components/PrivateRoute';
+import ThemSach from "./pages/ThemSach/ThemSach";
 import { ROUTES } from './constants';
 
 function App() {
@@ -51,6 +52,17 @@ function App() {
             </PrivateRoute>
           } />
           
+          <Route path={ROUTES.ADD_BOOK} element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="container">
+                  <ThemSach />
+                </div>
+              </>
+            </PrivateRoute>
+          } />
+
           <Route path={ROUTES.IMPORT_BOOKS} element={
             <PrivateRoute>
               <>

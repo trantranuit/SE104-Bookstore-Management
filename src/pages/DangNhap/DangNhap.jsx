@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants';
-import authService from '../../services/authService'; // Import authService
+import authService from '../../services/authService';
 import './DangNhap.css';
 import logo from '../../assets/imgs/logo.svg';
 
-// Wrapper function để sử dụng hook useNavigate với class component
+// Wrapper để sử dụng useNavigate với class component
 function LoginWithNavigate(props) {
     const navigate = useNavigate();
     return <Login {...props} navigate={navigate} />;
@@ -21,39 +21,27 @@ class Login extends Component {
             password: '',
             showPassword: false,
             loading: false,
-            error: ''
+            error: '',
         };
     }
 
     handleOnChangeEmail = (event) => {
-        this.setState({
-            email: event.target.value
-        });
-    }
+        this.setState({ email: event.target.value });
+    };
 
     handleOnChangePassword = (event) => {
-        this.setState({
-            password: event.target.value
-        });
-    }
-
-    handleRoleChange = (event) => {
-        this.setState({
-            role: event.target.value
-        });
-    }
+        this.setState({ password: event.target.value });
+    };
 
     toggleShowPassword = () => {
-        this.setState({
-            showPassword: !this.state.showPassword
-        });
-    }
+        this.setState({ showPassword: !this.state.showPassword });
+    };
 
     handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             this.handleLogin();
         }
-    }
+    };
 
     handleLogin = async () => {
         this.setState({ loading: true, error: '' });
@@ -64,25 +52,21 @@ class Login extends Component {
                 this.setState({ error: 'Vui lòng nhập đầy đủ thông tin đăng nhập', loading: false });
                 return;
             }
-            
-            // Gọi API đăng nhập qua authService
-            await authService.login(
-                this.state.email, 
-                this.state.password, 
-                this.state.role
-            );
-            
+            // Gọi API đăng nhập
+            await authService.login(this.state.email, this.state.password);
+
             // Chuyển hướng đến trang chủ
             this.props.navigate(ROUTES.HOME);
         } catch (error) {
             console.error('Lỗi đăng nhập:', error);
-            // Hiển thị thông báo lỗi
-            this.setState({ 
-                error: 'Vui lòng kiểm tra tên đăng nhập và mật khẩu.', 
-                loading: false 
+
+            this.setState({
+                error: error.response?.data?.detail || 'Sai email hoặc mật khẩu. Vui lòng thử lại.',
+                loading: false,
+
             });
         }
-    }
+    };
 
     render() {
         return (
@@ -93,8 +77,9 @@ class Login extends Component {
                             <img src={logo} alt="Logo" className="dangnhap-logo" />
                         </div>
                         <div className="col-12 login-text">Đăng Nhập</div>
-                        
-                        {/* Hiển thị thông báo lỗi nếu có */}
+
+
+
                         {this.state.error && (
                             <div className="col-12 error-message-login" style={{color: 'red', textAlign: 'center', marginBottom: '10px'}}>
                                 {this.state.error}
@@ -103,10 +88,12 @@ class Login extends Component {
                         
                         <div className="col-12 form-group login-input">
                             <label>Username:</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Enter your username" 
+
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Nhập username của bạn"
+
                                 value={this.state.email}
                                 onChange={this.handleOnChangeEmail}
                                 onKeyPress={this.handleKeyPress}
@@ -116,20 +103,21 @@ class Login extends Component {
 
                         <div className="col-12 form-group login-input">
                             <label>Mật khẩu:</label>
-                            <div className="custom-input-password" >
+                            <div className="custom-input-password">
                                 <input
                                     className="form-control"
                                     type={this.state.showPassword ? "text" : "password"}
-                                    placeholder="Enter your password" 
+
+                                    placeholder="Nhập mật khẩu"
+
                                     value={this.state.password}
                                     onChange={this.handleOnChangePassword}
                                     onKeyPress={this.handleKeyPress}
                                     disabled={this.state.loading}
                                 />
-                                <span 
-                                    className="password-icon" 
-                                    onClick={this.toggleShowPassword}
-                                >
+
+                                <span className="password-icon" onClick={this.toggleShowPassword}>
+
                                     <FontAwesomeIcon icon={this.state.showPassword ? faEye : faEyeSlash} />
                                 </span>
                             </div>

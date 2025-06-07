@@ -1,4 +1,3 @@
-import axios from "axios";
 import axiosInstance from "./AxiosConfig";
 
 const BASE_URL = "http://localhost:8000/api";
@@ -6,63 +5,92 @@ const BASE_URL = "http://localhost:8000/api";
 const baoCaoCongNoService = {
   getBaoCaoCongNo: async (month, year) => {
     try {
-      // 1. Lấy dữ liệu báo cáo công nợ
+      console.log(`Fetching debt report for month ${month}, year ${year}`);
+
+      // Format month to match API (e.g., "01/2024")
+      const formattedMonth = month.toString().padStart(2, "0");
+      const formattedMonthYear = `${formattedMonth}/${year}`;
+
+      // Fetch reports from baocaocongno
       const reportResponse = await axiosInstance.get(
         `${BASE_URL}/baocaocongno/`
       );
       console.log("API Response (baocaocongno):", reportResponse.data);
 
-      // Lọc báo cáo theo tháng và năm
-      const filteredReports = reportResponse.data.filter(
-        (report) => report.Thang === month && report.Nam === year
-      );
-
-      if (!filteredReports.length) {
-        console.log("No reports found for specified month/year");
+      if (!reportResponse.data || !Array.isArray(reportResponse.data)) {
+        console.log("No reports found");
         return [];
       }
 
-      // 2. Lấy dữ liệu chi tiết công nợ
+      // Find report matching the selected month and year
+      const report = reportResponse.data.find(
+        (r) => r.Thang === formattedMonthYear
+      );
+
+      if (!report) {
+        console.log(`No report found for ${formattedMonthYear}`);
+        return [];
+      }
+
+      // Fetch details from ctbccongno
       const detailsResponse = await axiosInstance.get(
         `${BASE_URL}/ctbccongno/`
       );
       console.log("API Response (ctbccongno):", detailsResponse.data);
 
-      // Tạo map để tra cứu thông tin khách hàng nhanh hơn
-      const customerMap = new Map();
-      detailsResponse.data.forEach((detail) => {
-        customerMap.set(detail.MaKH.MaKhachHang, {
-          id: detail.MaKH.MaKhachHang,
-          name: detail.MaKH.HoTen || "Không xác định",
-          phone: detail.MaKH.DienThoai || "N/A",
-          email: detail.MaKH.Email || "N/A",
-          startDebt: parseFloat(detail.NoDau) || 0,
-          change: parseFloat(detail.PhatSinh) || 0,
-          endDebt: parseFloat(detail.NoCuoi) || 0,
-        });
-      });
-
-      // Xử lý dữ liệu chi tiết từ báo cáo
-      const allDetails = [];
-      for (const report of filteredReports) {
-        if (report.chitiet && Array.isArray(report.chitiet)) {
-          for (const item of report.chitiet) {
-            const customer = customerMap.get(item.MaKH.MaKhachHang);
-            if (customer) {
-              allDetails.push({
-                ...customer,
-                month: report.Thang,
-                year: report.Nam,
-              });
-            }
-          }
-        }
+      if (!detailsResponse.data || !Array.isArray(detailsResponse.data)) {
+        console.log("No details found");
+        return [];
       }
 
-      console.log("Final processed data:", allDetails);
-      return allDetails;
+      // Fetch customer data from khachhang
+      const khachHangResponse = await axiosInstance.get(
+        `${BASE_URL}/khachhang/`
+      );
+      console.log("API Response (khachhang):", khachHangResponse.data);
+
+      // Create a map of MaKhachHang to DienThoai and Email
+      const khachHangMap = {};
+      if (khachHangResponse.data && Array.isArray(khachHangResponse.data)) {
+        khachHangResponse.data.forEach((kh) => {
+          khachHangMap[kh.MaKhachHang] = {
+            DienThoai: kh.DienThoai || "N/A",
+            Email: kh.Email || "N/A",
+          };
+        });
+      }
+
+      // Filter details by MaBCCN and ensure month/year match, then map with customer data
+      const filteredDetails = detailsResponse.data
+        .filter(
+          (detail) =>
+            detail.MaBCCN === report.MaBCCN &&
+            parseInt(detail.Thang) === month &&
+            parseInt(detail.Nam) === year
+        )
+        .map((detail) => ({
+          id: detail.id,
+          MaKH: detail.MaKH,
+          TenKH: detail.TenKH,
+          DienThoai: khachHangMap[detail.MaKH]?.DienThoai || "N/A",
+          Email: khachHangMap[detail.MaKH]?.Email || "N/A",
+          NoDau: parseFloat(detail.NoDau) || 0,
+          PhatSinh: parseFloat(detail.PhatSinh) || 0,
+          NoCuoi: parseFloat(detail.NoCuoi) || 0,
+        }));
+
+      console.log("Final processed data:", filteredDetails);
+      return filteredDetails;
     } catch (error) {
       console.error("Error fetching debt report:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      } else if (error.request) {
+        console.error("No response received. Backend may be down.");
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
       throw error;
     }
   },

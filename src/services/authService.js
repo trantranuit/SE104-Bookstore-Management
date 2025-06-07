@@ -5,25 +5,28 @@ const API_URL = "http://localhost:8000/api";
 const authService = {
   login: async (email, password) => {
     try {
-      // Gọi API đăng nhập từ backend
+      // Gọi API đăng nhập
       const response = await axios.post(`${API_URL}/token/`, {
-        username: email, // Hoặc sử dụng email tùy theo API backend
+        username: email,
         password: password,
       });
 
-      console.log("Login response:", response.data); // Debug
+      console.log("Login response:", response.data);
 
       if (response.data.access) {
-        // Lưu thông tin đăng nhập vào localStorage
+        // Lấy role từ user object, mặc định là "Kho" nếu không có
+        const role = response.data.user?.role || "Kho";
         const userData = {
           email: email,
           token: response.data.access,
           refreshToken: response.data.refresh,
-          user: response.data.user, // Store the full user object
+          user: response.data.user,
+          role: role,
         };
 
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("currentRole", role);
 
         return response.data;
       }
@@ -34,14 +37,15 @@ const authService = {
   },
 
   logout: () => {
-    console.log("Logging out, clearing localStorage"); // Debug
+    console.log("Logging out, clearing localStorage");
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentRole");
   },
 
   getCurrentUser: () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log("getCurrentUser:", user); // Debug
+    console.log("getCurrentUser:", user);
     return user;
   },
 
@@ -58,10 +62,9 @@ const authService = {
         refresh: user.refreshToken,
       });
 
-      console.log("Refresh token response:", response.data); // Debug
+      console.log("Refresh token response:", response.data);
 
       if (response.data.access) {
-        // Cập nhật token mới vào localStorage
         const updatedUser = {
           ...user,
           token: response.data.access,
@@ -71,11 +74,7 @@ const authService = {
         return response.data.access;
       }
     } catch (error) {
-      console.error(
-        "Lỗi làm mới token:",
-        error.response?.data || error.message
-      );
-      // Nếu refresh token hết hạn, đăng xuất người dùng
+      console.error("Lỗi làm mới token:", error.response?.data || error.message);
       authService.logout();
       throw error;
     }

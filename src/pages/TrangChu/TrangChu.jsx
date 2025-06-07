@@ -12,6 +12,7 @@ import {
 import { Line } from "react-chartjs-2";
 import "./TrangChu.css";
 import "../../styles/PathStyles.css";
+import trangChuApi from "../../services/trangChuApi";
 
 ChartJS.register(
   CategoryScale,
@@ -24,23 +25,142 @@ ChartJS.register(
 );
 
 function TrangChu() {
-  const [month, setMonth] = useState("3");
-  const [year, setYear] = useState("2020");
-  const [totalBooks] = useState(1000);
-  const [totalSold] = useState(258);
+  const [selectedMonth, setSelectedMonth] = useState("12");
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [applyMonth, setApplyMonth] = useState("12");
+  const [applyYear, setApplyYear] = useState("2024");
+  const [totalBooks, setTotalBooks] = useState(0);
+  const [totalSold, setTotalSold] = useState(0);
   const [dailySales, setDailySales] = useState([]);
+  const [monthlySales, setMonthlySales] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Tạo dữ liệu mẫu cho biểu đồ
+  const parseDate = (dateString) => {
+    if (dateString && dateString.includes("/")) {
+      const [day, month, year] = dateString.split("/");
+      return new Date(`${year}-${month}-${day}`);
+    }
+    return new Date(dateString);
+  };
+
   useEffect(() => {
-    generateDailySalesData(parseInt(month), parseInt(year));
-  }, [month, year]);
+    if (!applyMonth || !applyYear) {
+      setError("Vui lòng chọn tháng và năm hợp lệ");
+      return;
+    }
 
-  const generateDailySalesData = (month, year) => {
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const newData = Array.from({ length: daysInMonth }, () =>
-      Math.floor(Math.random() * 20)
-    );
-    setDailySales(newData);
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setError(
+            "Không tìm thấy token! Vui lòng lưu token vào localStorage với key 'authToken'."
+          );
+          console.warn("Token not found, skipping API calls.");
+          setLoading(false);
+          return;
+        }
+
+        const books = await trangChuApi.getAllBooks();
+        console.log("Books data:", books);
+        if (!books || books.length === 0)
+          throw new Error("Không có dữ liệu sách.");
+        const totalBooksValue = books.reduce(
+          (sum, book) => sum + (book.SLTon || 0),
+          0
+        );
+        setTotalBooks(totalBooksValue);
+
+        const cthoadons = await trangChuApi.getAllCTHoaDon();
+        const hoadons = await trangChuApi.getAllHoaDon();
+        console.log("CTHoaDon data:", cthoadons);
+        console.log("HoaDon data:", hoadons);
+
+        if (!cthoadons.length || !hoadons.length) {
+          setError("Không có dữ liệu hóa đơn hoặc chi tiết hóa đơn.");
+          setLoading(false);
+          return;
+        }
+
+        const totalSoldValue = cthoadons.reduce(
+          (sum, ct) => sum + Math.floor(ct.SLBan || 0), // Đảm bảo số nguyên
+          0
+        );
+        setTotalSold(totalSoldValue);
+
+        const daysInMonth = new Date(
+          parseInt(applyYear),
+          parseInt(applyMonth),
+          0
+        ).getDate();
+        const dailySalesArray = Array(daysInMonth).fill(0);
+
+        let hasData = false;
+        cthoadons.forEach((ct) => {
+          const hoadon = hoadons.find((hd) => hd.MaHD === ct.MaHD);
+          if (hoadon) {
+            console.log(
+              "Processing MaHD:",
+              ct.MaHD,
+              "NgayLap:",
+              hoadon.NgayLap
+            );
+            const date = parseDate(hoadon.NgayLap);
+            if (
+              !isNaN(date.getTime()) &&
+              date.getMonth() + 1 === parseInt(applyMonth) &&
+              date.getFullYear() === parseInt(applyYear)
+            ) {
+              const day = date.getDate() - 1;
+              dailySalesArray[day] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
+              hasData = true;
+            }
+          }
+        });
+        console.log(
+          `Daily Sales for ${applyMonth}/${applyYear}:`,
+          dailySalesArray
+        );
+        setDailySales(dailySalesArray);
+
+        const monthlySalesArray = Array(12).fill(0);
+        cthoadons.forEach((ct) => {
+          const hoadon = hoadons.find((hd) => hd.MaHD === ct.MaHD);
+          if (hoadon) {
+            const date = parseDate(hoadon.NgayLap);
+            if (
+              !isNaN(date.getTime()) &&
+              date.getFullYear() === parseInt(applyYear)
+            ) {
+              monthlySalesArray[date.getMonth()] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
+            }
+          }
+        });
+        console.log(`Monthly Sales for ${applyYear}:`, monthlySalesArray);
+        setMonthlySales(monthlySalesArray);
+
+        if (!hasData) {
+          setError(
+            `Không có dữ liệu bán hàng cho tháng ${applyMonth} năm ${applyYear}. Vui lòng chọn tháng 12/2024.`
+          );
+        }
+      } catch (err) {
+        setError(`Lỗi: ${err.message}. Vui lòng kiểm tra console.`);
+        console.error("Lỗi API:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [applyMonth, applyYear]);
+
+  const handleApplyDate = () => {
+    setApplyMonth(selectedMonth);
+    setApplyYear(selectedYear);
   };
 
   const chartData = {
@@ -52,7 +172,7 @@ function TrangChu() {
         fill: true,
         borderColor: "rgb(75, 192, 192)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        tension: 0.4,
+        tension: 0.1, // Giảm tension để đường cong ít mượt hơn
       },
     ],
   };
@@ -61,40 +181,82 @@ function TrangChu() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-      },
+      legend: { position: "top" },
       title: {
         display: true,
-        text: `Biểu đồ số sách bán ra tháng ${month} năm ${year}`,
+        text: `Biểu đồ số sách bán ra tháng ${applyMonth} năm ${applyYear}`,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: "Số lượng sách",
+        title: { display: true, text: "Số lượng sách" },
+        ticks: {
+          stepSize: 1, // Chỉ hiển thị số nguyên
+          precision: 0, // Không hiển thị thập phân
         },
       },
-      x: {
-        title: {
-          display: true,
-          text: "Ngày",
-        },
-      },
+      x: { title: { display: true, text: "Ngày" } },
     },
   };
 
-  const handleMonthChange = (e) => {
-    const selectedMonth = e.target.value;
-    setMonth(selectedMonth);
+  const monthlyChartData = {
+    labels: [
+      "Tháng 1",
+      "Tháng 2",
+      "Tháng 3",
+      "Tháng 4",
+      "Tháng 5",
+      "Tháng 6",
+      "Tháng 7",
+      "Tháng 8",
+      "Tháng 9",
+      "Tháng 10",
+      "Tháng 11",
+      "Tháng 12",
+    ],
+    datasets: [
+      {
+        label: "Số sách bán ra theo tháng",
+        data: monthlySales,
+        fill: true,
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        tension: 0.1, // Giảm tension
+      },
+    ],
   };
 
-  const handleYearChange = (e) => {
-    const selectedYear = e.target.value;
-    setYear(selectedYear);
+  const monthlyChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top" },
+      title: {
+        display: true,
+        text: `Biểu đồ số sách bán ra năm ${applyYear}`,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Số lượng sách" },
+        ticks: {
+          stepSize: 1, // Chỉ hiển thị số nguyên
+          precision: 0, // Không hiển thị thập phân
+        },
+      },
+      x: { title: { display: true, text: "Tháng" } },
+    },
   };
+
+  if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
+  if (error)
+    return (
+      <div className="page-container" style={{ color: "red" }}>
+        Lỗi: {error}
+      </div>
+    );
 
   return (
     <div className="page-container">
@@ -103,20 +265,31 @@ function TrangChu() {
         <div className="overview-header">
           <h2 className="overview-title">Tổng quan</h2>
           <div className="date-selectors">
-            <select value={month} onChange={handleMonthChange}>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              style={{ padding: "8px", marginRight: "10px" }}
+            >
               {Array.from({ length: 12 }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
+                <option key={i + 1} value={(i + 1).toString()}>
                   Tháng {i + 1}
                 </option>
               ))}
             </select>
-            <select value={year} onChange={handleYearChange}>
-              {Array.from({ length: 5 }, (_, i) => (
-                <option key={2020 + i} value={2020 + i}>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              style={{ padding: "8px", marginRight: "10px" }}
+            >
+              {Array.from({ length: 6 }, (_, i) => (
+                <option key={2020 + i} value={(2020 + i).toString()}>
                   Năm {2020 + i}
                 </option>
               ))}
             </select>
+            <button onClick={handleApplyDate} style={{ padding: "8px 16px" }}>
+              Áp dụng
+            </button>
           </div>
         </div>
         <div className="overview-stats">
@@ -132,6 +305,11 @@ function TrangChu() {
         <div className="stat-item">
           <div style={{ height: "400px", padding: "20px" }}>
             <Line data={chartData} options={chartOptions} />
+          </div>
+        </div>
+        <div className="stat-item">
+          <div style={{ height: "400px", padding: "20px" }}>
+            <Line data={monthlyChartData} options={monthlyChartOptions} />
           </div>
         </div>
       </div>
