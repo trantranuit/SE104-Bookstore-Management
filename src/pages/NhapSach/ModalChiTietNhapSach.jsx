@@ -1,4 +1,3 @@
-// ModalChiTietNhapSach.jsx
 import React, { useState, useEffect } from "react";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 
@@ -10,7 +9,7 @@ const ModalChiTietNhapSach = ({
   maPhieuNhap,
 }) => {
   const [formData, setFormData] = useState({
-    maPhieuNhap: maPhieuNhap || "",
+    maPhieuNhap: "",
     maSach: "",
     soLuong: "",
     giaNhap: "",
@@ -21,6 +20,8 @@ const ModalChiTietNhapSach = ({
     namXuatBan: "",
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     if (initialData) {
@@ -35,14 +36,20 @@ const ModalChiTietNhapSach = ({
         nhaXuatBan: initialData.nhaXuatBan || "",
         namXuatBan: initialData.namXuatBan || "",
       });
+    } else if (maPhieuNhap) {
+      setFormData((prev) => ({ ...prev, maPhieuNhap: maPhieuNhap }));
     }
   }, [initialData, maPhieuNhap]);
 
   const fetchSachInfo = async (maSach) => {
     try {
       setError(null);
+      setLoading(true);
       const sachData = await phieuNhapSachApi.getSach();
       const dauSachData = await phieuNhapSachApi.getDauSach();
+
+      console.log("Dữ liệu sách:", sachData);
+      console.log("Dữ liệu đầu sách:", dauSachData);
 
       const sach = sachData.find((s) => s.MaSach === maSach);
       if (!sach) {
@@ -67,6 +74,7 @@ const ModalChiTietNhapSach = ({
         namXuatBan: sach.NamXB || "Không xác định",
       }));
     } catch (err) {
+      console.error("Lỗi fetchSachInfo:", err);
       setError(err.message);
       setFormData((prev) => ({
         ...prev,
@@ -76,24 +84,43 @@ const ModalChiTietNhapSach = ({
         nhaXuatBan: "",
         namXuatBan: "",
       }));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleMaSachBlur = () => {
-    if (formData.maSach.trim() !== "") {
-      fetchSachInfo(formData.maSach);
+    if (name === "maSach") {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+
+      if (value.trim() !== "") {
+        const timeout = setTimeout(() => {
+          fetchSachInfo(value);
+        }, 500);
+        setDebounceTimeout(timeout);
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          tenSach: "",
+          theLoai: "",
+          tacGia: "",
+          nhaXuatBan: "",
+          namXuatBan: "",
+        }));
+        setError(null);
+      }
     }
   };
 
   const handleSubmit = (action) => {
     onSave(formData, action, () => {
-      setFormData({
-        maPhieuNhap: maPhieuNhap || "",
+      setFormData((prev) => ({
+        ...prev,
         maSach: "",
         soLuong: "",
         giaNhap: "",
@@ -102,8 +129,11 @@ const ModalChiTietNhapSach = ({
         tacGia: "",
         nhaXuatBan: "",
         namXuatBan: "",
-      });
+        // Giữ nguyên maPhieuNhap
+        maPhieuNhap: prev.maPhieuNhap || maPhieuNhap || "",
+      }));
       setError(null);
+      setLoading(false);
     });
   };
 
@@ -117,6 +147,11 @@ const ModalChiTietNhapSach = ({
           * Lưu ý: Mã chi tiết nhập sẽ được tự động tạo sau khi bạn lưu thông
           tin chi tiết.
         </p>
+        {loading && (
+          <p style={{ color: "blue", fontSize: "0.9em" }}>
+            Đang tải thông tin sách...
+          </p>
+        )}
         {error && <p style={{ color: "red", fontSize: "0.9em" }}>{error}</p>}
         <div className="form-group">
           <label>Mã phiếu nhập:</label>
@@ -135,7 +170,6 @@ const ModalChiTietNhapSach = ({
             name="maSach"
             value={formData.maSach}
             onChange={handleChange}
-            onBlur={handleMaSachBlur}
             className="form-input"
           />
         </div>

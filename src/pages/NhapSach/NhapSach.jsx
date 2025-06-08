@@ -3,6 +3,7 @@ import "./NhapSach.css";
 import TableNhapSach from "./TableNhapSach";
 import ModalNhapSach from "./ModalNhapSach";
 import ModalChiTietNhapSach from "./ModalChiTietNhapSach";
+import ModalEditChiTietNhapSach from "./ModalEditChiTietNhapSach";
 import Notification from "./Notification";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 
@@ -90,7 +91,7 @@ const NhapSach = () => {
             namXuatBan: sach.NamXB,
             giaNhap: item.GiaNhap,
             soLuong: item.SLNhap,
-            ctNhapId: item.MaCT_NhapSach,
+            maCTNhapSach: item.MaCT_NhapSach, // Đảm bảo đúng trường ID
           };
         })
         .filter((item) => item !== null);
@@ -181,10 +182,10 @@ const NhapSach = () => {
     setFilteredData(data);
     setIsFilterModalOpen(false);
   };
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const handleEdit = (item) => {
     setCurrentItem(item);
-    setIsModalChiTietOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleOpenModalPhieuNhap = () => {
@@ -201,6 +202,10 @@ const NhapSach = () => {
     setCurrentItem(null);
   };
 
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setCurrentItem(null);
+  };
   const handleSavePhieuNhap = async (formData) => {
     try {
       if (!formData.ngayNhap || formData.ngayNhap.trim() === "") {
@@ -220,12 +225,14 @@ const NhapSach = () => {
         null,
         payload
       );
+      console.log("PhieuResponse:", phieuResponse);
       setCurrentPhieuNhap({
         maPhieuNhap: phieuResponse.MaPhieuNhap,
         ngayNhap: formattedNgayNhap,
         MaNguoiNhap: maNguoiNhap,
         TenNguoiNhap: phieuResponse.NguoiNhap || "Không xác định",
       });
+      setCurrentItem(null);
       setIsModalPhieuNhapOpen(false);
       setIsModalChiTietOpen(true);
     } catch (err) {
@@ -236,71 +243,91 @@ const NhapSach = () => {
     }
   };
 
-  const handleSaveChiTiet = async (formData, action, resetForm) => {
+  const handleAddChiTiet = async (formData, action, resetForm) => {
     try {
-      const soLuong = parseInt(formData.soLuong);
-      const giaNhap = parseFloat(formData.giaNhap);
-      if (!formData.maSach || soLuong <= 0 || giaNhap <= 0) {
+      const soLuong = formData.soLuong ? parseInt(formData.soLuong) : null;
+      const giaNhap = formData.giaNhap ? parseInt(formData.giaNhap) : null;
+      const maPhieuNhap = formData.maPhieuNhap || currentPhieuNhap?.maPhieuNhap;
+
+      // Validation
+      if (
+        !formData.maSach ||
+        !soLuong ||
+        !giaNhap ||
+        soLuong <= 0 ||
+        giaNhap <= 0
+      ) {
         throw new Error(
           "Vui lòng nhập đầy đủ mã sách, số lượng và giá nhập hợp lệ!"
         );
       }
-
-      if (currentItem && currentItem.ctNhapId) {
-        // Cập nhật chi tiết nhập sách
-        await phieuNhapSachApi.updateCTNhapSach(
-          formData.maCTNhapSach,
-          { MaPhieuNhap_input: formData.maPhieuNhap },
-          { MaSach_input: formData.maSach },
-          soLuong,
-          giaNhap
-        );
-        setNotification({
-          message: "Cập nhật chi tiết nhập sách thành công!",
-          type: "success",
-        });
-        setIsModalChiTietOpen(false);
-        setCurrentItem(null);
-      } else {
-        // Thêm chi tiết nhập sách mới
-        const ctResponse = await phieuNhapSachApi.addCTNhapSach(
-          { MaPhieuNhap_input: formData.maPhieuNhap },
-          { MaSach_input: formData.maSach },
-          soLuong,
-          giaNhap
-        );
-        const updatedItem = {
-          ctNhapId: ctResponse.MaCT_NhapSach || "",
-          maPhieuNhap: formData.maPhieuNhap,
-          maSach: formData.maSach,
-          soLuong: soLuong,
-          giaNhap: giaNhap,
-          tenSach: formData.tenSach,
-          theLoai: formData.theLoai,
-          tacGia: formData.tacGia,
-          nhaXuatBan: formData.nhaXuatBan,
-          namXuatBan: formData.namXuatBan,
-        };
-        setCurrentItem(updatedItem);
-        setNotification({
-          message: "Thêm chi tiết nhập sách thành công!",
-          type: "success",
-        });
-        if (action === "continue") {
-          resetForm();
-          setCurrentItem(null); // Reset currentItem để modal mở lại với dữ liệu mới
-          setIsModalChiTietOpen(false);
-          setTimeout(() => setIsModalChiTietOpen(true), 0); // Mở lại modal
-        } else {
-          setIsModalChiTietOpen(false);
-          setCurrentPhieuNhap(null);
-          setCurrentItem(null);
-        }
+      if (!maPhieuNhap) {
+        throw new Error("Mã phiếu nhập không được để trống!");
       }
+
+      // Thêm mới chi tiết
+      const ctResponse = await phieuNhapSachApi.addCTNhapSach(
+        maPhieuNhap,
+        formData.maSach,
+        soLuong,
+        giaNhap
+      );
+
+      setNotification({
+        message: `Thêm chi tiết nhập sách thành công! Mã chi tiết: ${
+          ctResponse.MaCT_NhapSach || "Tự động tạo"
+        }`,
+        type: "success",
+      });
+
+      if (action === "continue") {
+        resetForm();
+      } else {
+        setIsModalChiTietOpen(false);
+        setCurrentPhieuNhap(null);
+      }
+
       await fetchData();
     } catch (err) {
+      console.error("Lỗi khi thêm:", err);
       setNotification({
-        message: `Lỗi khi lưu chi tiết nhập sách: ${err.message}`,
+        message: `Lỗi khi thêm chi tiết nhập sách: ${err.message}`,
+        type: "error",
+      });
+    }
+  };
+
+  const handleEditChiTiet = async (formData) => {
+    try {
+      const soLuong = formData.soLuong ? parseInt(formData.soLuong) : null;
+      const giaNhap = formData.giaNhap ? parseInt(formData.giaNhap) : null;
+
+      // Validation - only check soLuong and giaNhap
+      if (!soLuong || !giaNhap || soLuong <= 0 || giaNhap <= 0) {
+        throw new Error("Vui lòng nhập số lượng và giá nhập hợp lệ!");
+      }
+
+      // Use currentItem for unchanged fields
+      await phieuNhapSachApi.updateCTNhapSach(
+        currentItem.maCTNhapSach,
+        currentItem.maPhieuNhap,
+        currentItem.maSach,
+        soLuong,
+        giaNhap
+      );
+
+      setNotification({
+        message: "Cập nhật chi tiết nhập sách thành công!",
+        type: "success",
+      });
+
+      setIsEditModalOpen(false);
+      setCurrentItem(null);
+      await fetchData();
+    } catch (err) {
+      console.error("Lỗi khi sửa:", err);
+      setNotification({
+        message: `Lỗi khi cập nhật chi tiết nhập sách: ${err.message}`,
         type: "error",
       });
     }
@@ -424,9 +451,17 @@ const NhapSach = () => {
         <ModalChiTietNhapSach
           isOpen={isModalChiTietOpen}
           onClose={handleCloseModalChiTiet}
-          onSave={handleSaveChiTiet}
-          initialData={currentItem}
+          onSave={handleAddChiTiet}
           maPhieuNhap={currentPhieuNhap?.maPhieuNhap}
+        />
+      )}
+
+      {isEditModalOpen && (
+        <ModalEditChiTietNhapSach
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onSave={handleEditChiTiet}
+          initialData={currentItem}
         />
       )}
       {notification && (

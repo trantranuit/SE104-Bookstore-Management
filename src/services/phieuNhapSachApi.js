@@ -217,12 +217,14 @@ const phieuNhapSachApi = {
       if (soLuong <= 0 || giaNhap <= 0) {
         throw new Error("Số lượng và giá nhập phải lớn hơn 0");
       }
-      const response = await axiosInstance.post("/ctnhapsach/", {
-        MaPhieuNhap: maPhieuNhap,
-        MaSach: maSach,
+      const payload = {
+        MaPhieuNhap_input: maPhieuNhap,
+        MaSach_input: maSach,
         SLNhap: soLuong,
         GiaNhap: giaNhap,
-      });
+      };
+      console.log("Payload gửi lên API:", payload); // Debug payload
+      const response = await axiosInstance.post("/ctnhapsach/", payload);
       return response.data;
     } catch (error) {
       console.error(
@@ -237,15 +239,16 @@ const phieuNhapSachApi = {
       if (!id || !maPhieuNhap || !maSach || !soLuong || !giaNhap) {
         throw new Error("Thiếu thông tin cập nhật chi tiết nhập sách");
       }
-      if (soLuong <= 0 || giaNhap <= 0) {
-        throw new Error("Số lượng và giá nhập phải lớn hơn 0");
-      }
-      const response = await axiosInstance.put(`/ctnhapsach/${id}/`, {
-        MaPhieuNhap: maPhieuNhap,
-        MaSach: maSach,
+
+      const payload = {
+        MaCT_NhapSach: id,
+        MaPhieuNhap_input: maPhieuNhap,
+        MaSach_input: maSach,
         SLNhap: parseInt(soLuong),
         GiaNhap: parseFloat(giaNhap),
-      });
+      };
+
+      const response = await axiosInstance.put(`/ctnhapsach/${id}/`, payload);
       return response.data;
     } catch (error) {
       console.error(
