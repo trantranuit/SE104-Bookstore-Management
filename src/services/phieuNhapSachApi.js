@@ -239,21 +239,35 @@ const phieuNhapSachApi = {
       if (!id || !maPhieuNhap || !maSach || !soLuong || !giaNhap) {
         throw new Error("Thiếu thông tin cập nhật chi tiết nhập sách");
       }
+      if (soLuong <= 0 || giaNhap <= 0) {
+        throw new Error("Số lượng và giá nhập phải lớn hơn 0");
+      }
 
-      const payload = {
-        MaCT_NhapSach: id,
+      console.log("API Call - Update CTNhapSach:", {
+        url: `/ctnhapsach/${id}/`,
+        payload: {
+          MaPhieuNhap_input: maPhieuNhap,
+          MaSach_input: maSach,
+          SLNhap: parseInt(soLuong),
+          GiaNhap: parseFloat(giaNhap),
+        },
+      });
+
+      const response = await axiosInstance.put(`/ctnhapsach/${id}/`, {
         MaPhieuNhap_input: maPhieuNhap,
         MaSach_input: maSach,
         SLNhap: parseInt(soLuong),
         GiaNhap: parseFloat(giaNhap),
-      };
-
-      const response = await axiosInstance.put(`/ctnhapsach/${id}/`, payload);
+      });
       return response.data;
     } catch (error) {
       console.error(
         "Lỗi khi cập nhật chi tiết nhập sách:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
+        "Status:",
+        error.response?.status,
+        "Request Data:",
+        error.response?.config?.data
       );
       throw error;
     }

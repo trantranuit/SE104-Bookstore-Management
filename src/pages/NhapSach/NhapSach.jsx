@@ -78,6 +78,8 @@ const NhapSach = () => {
             ? dauSach.TenTacGia.join(", ")
             : "Không xác định";
 
+          const numericId = item.MaCT_NhapSach.match(/\d+/)?.[0] || "0"; // Chỉ trích số, không padding
+
           return {
             maPhieuNhap: item.MaPhieuNhap,
             ngayNhap: pn.NgayNhap || "01/01/1900",
@@ -91,7 +93,7 @@ const NhapSach = () => {
             namXuatBan: sach.NamXB,
             giaNhap: item.GiaNhap,
             soLuong: item.SLNhap,
-            maCTNhapSach: item.MaCT_NhapSach, // Đảm bảo đúng trường ID
+            maCTNhapSach: numericId, // Sử dụng số trích xuất
           };
         })
         .filter((item) => item !== null);
@@ -299,17 +301,34 @@ const NhapSach = () => {
 
   const handleEditChiTiet = async (formData) => {
     try {
-      const soLuong = formData.soLuong ? parseInt(formData.soLuong) : null;
-      const giaNhap = formData.giaNhap ? parseInt(formData.giaNhap) : null;
+      const soLuong = parseInt(formData.soLuong);
+      const giaNhap = parseInt(formData.giaNhap);
 
-      // Validation - only check soLuong and giaNhap
       if (!soLuong || !giaNhap || soLuong <= 0 || giaNhap <= 0) {
         throw new Error("Vui lòng nhập số lượng và giá nhập hợp lệ!");
       }
 
-      // Use currentItem for unchanged fields
+      // Đảm bảo currentItem.maCTNhapSach là số
+      const maCTNhapSach = parseInt(currentItem.maCTNhapSach);
+      if (isNaN(maCTNhapSach)) {
+        throw new Error("Mã chi tiết nhập sách không hợp lệ!");
+      }
+
+      // Kiểm tra dữ liệu trước khi gửi
+      if (!currentItem.maPhieuNhap || !currentItem.maSach) {
+        throw new Error("Thông tin phiếu nhập hoặc mã sách không hợp lệ!");
+      }
+
+      console.log("Debug - Update CTNhapSach:", {
+        id: maCTNhapSach,
+        maPhieuNhap: currentItem.maPhieuNhap,
+        maSach: currentItem.maSach,
+        soLuong: soLuong,
+        giaNhap: giaNhap,
+      });
+
       await phieuNhapSachApi.updateCTNhapSach(
-        currentItem.maCTNhapSach,
+        maCTNhapSach,
         currentItem.maPhieuNhap,
         currentItem.maSach,
         soLuong,
