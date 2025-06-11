@@ -3,9 +3,8 @@ import axiosInstance from "./AxiosConfig";
 const trangChuApi = {
   getAllBooks: async () => {
     try {
-      const response = await axiosInstance.get("/sach/", {
-        headers: { "Content-Type": "application/json" },
-      });
+      // No token headers required - using the default configuration from axiosInstance
+      const response = await axiosInstance.get("/sach/");
       console.log("API /sach/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu sách không hợp lệ hoặc rỗng");
@@ -22,9 +21,8 @@ const trangChuApi = {
 
   getAllCTHoaDon: async () => {
     try {
-      const response = await axiosInstance.get("/cthoadon/", {
-        headers: { "Content-Type": "application/json" },
-      });
+      // No token headers required
+      const response = await axiosInstance.get("/cthoadon/");
       console.log("API /cthoadon/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu chi tiết hóa đơn không hợp lệ hoặc rỗng");
@@ -43,9 +41,8 @@ const trangChuApi = {
 
   getAllHoaDon: async () => {
     try {
-      const response = await axiosInstance.get("/hoadon/", {
-        headers: { "Content-Type": "application/json" },
-      });
+      // No token headers required
+      const response = await axiosInstance.get("/hoadon/");
       console.log("API /hoadon/ response:", response.data);
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Dữ liệu hóa đơn không hợp lệ hoặc rỗng");
