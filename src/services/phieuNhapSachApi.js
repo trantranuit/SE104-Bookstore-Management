@@ -1,10 +1,12 @@
 import axiosInstance from "./AxiosConfig";
 
 const phieuNhapSachApi = {
-  // Lấy danh sách thể loại
   getTheLoai: async () => {
     try {
       const response = await axiosInstance.get("/theloai/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu thể loại không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -14,14 +16,14 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm thể loại mới
   addTheLoai: async (tenTheLoai) => {
     try {
+      if (!tenTheLoai || typeof tenTheLoai !== "string") {
+        throw new Error("Tên thể loại không hợp lệ");
+      }
       const response = await axiosInstance.post("/theloai/", {
         TenTheLoai: tenTheLoai,
       });
-      console.log("Thêm thể loại thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -31,11 +33,12 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Lấy danh sách tác giả
   getTacGia: async () => {
     try {
       const response = await axiosInstance.get("/tacgia/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu tác giả không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -45,14 +48,14 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm tác giả mới
   addTacGia: async (tenTacGia) => {
     try {
+      if (!tenTacGia || typeof tenTacGia !== "string") {
+        throw new Error("Tên tác giả không hợp lệ");
+      }
       const response = await axiosInstance.post("/tacgia/", {
         TenTG: tenTacGia,
       });
-      console.log("Thêm tác giả thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -62,11 +65,12 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Lấy danh sách đầu sách
   getDauSach: async () => {
     try {
       const response = await axiosInstance.get("/dausach/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu đầu sách không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -76,16 +80,16 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm đầu sách mới
   addDauSach: async (tenSach, maTheLoai, maTacGia) => {
     try {
+      if (!tenSach || !maTheLoai || !maTacGia) {
+        throw new Error("Thiếu thông tin đầu sách");
+      }
       const response = await axiosInstance.post("/dausach/", {
         TenSach: tenSach,
         MaTheLoai: maTheLoai,
-        MaTG: [maTacGia],
+        MaTG: Array.isArray(maTacGia) ? maTacGia : [maTacGia],
       });
-      console.log("Thêm đầu sách thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -95,11 +99,12 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Lấy danh sách sách
   getSach: async () => {
     try {
       const response = await axiosInstance.get("/sach/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu sách không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -109,10 +114,11 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm sách mới
   addSach: async (maSach, nxb, namXB, maDauSach) => {
     try {
+      if (!maSach || !nxb || !namXB || !maDauSach) {
+        throw new Error("Thiếu thông tin sách");
+      }
       const response = await axiosInstance.post("/sach/", {
         MaSach: maSach,
         NXB: nxb,
@@ -120,7 +126,6 @@ const phieuNhapSachApi = {
         SLTon: 0,
         MaDauSach: maDauSach,
       });
-      console.log("Thêm sách thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -130,15 +135,15 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Cập nhật sách
   updateSach: async (maSach, data) => {
     try {
+      if (!maSach || !data) {
+        throw new Error("Thiếu thông tin cập nhật sách");
+      }
       const response = await axiosInstance.put(`/sach/${maSach}/`, {
         MaSach: maSach,
         ...data,
       });
-      console.log("Cập nhật sách thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -148,11 +153,12 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Lấy danh sách phiếu nhập sách
   getPhieuNhapSach: async () => {
     try {
       const response = await axiosInstance.get("/phieunhapsach/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu phiếu nhập không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -162,15 +168,15 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm phiếu nhập sách mới
   addPhieuNhapSach: async (maPhieuNhap, data) => {
     try {
+      if (!data.NgayNhap || !data.NguoiNhap_input) {
+        throw new Error("Thiếu thông tin phiếu nhập");
+      }
       const response = await axiosInstance.post("/phieunhapsach/", {
         NgayNhap: data.NgayNhap,
-        NguoiNhap_input: data.NguoiNhap_input, // Sử dụng NguoiNhap_input
+        NguoiNhap_input: data.NguoiNhap_input,
       });
-      console.log("Thêm phiếu nhập thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -180,10 +186,11 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Cập nhật phiếu nhập sách
   updatePhieuNhapSach: async (maPhieuNhap, data) => {
     try {
+      if (!maPhieuNhap || !data.NgayNhap || !data.NguoiNhap) {
+        throw new Error("Thiếu thông tin cập nhật phiếu nhập");
+      }
       const response = await axiosInstance.put(
         `/phieunhapsach/${maPhieuNhap}/`,
         {
@@ -193,7 +200,6 @@ const phieuNhapSachApi = {
           MaSach: data.MaSach,
         }
       );
-      console.log("Cập nhật phiếu nhập thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
@@ -203,17 +209,22 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Thêm chi tiết nhập sách
   addCTNhapSach: async (maPhieuNhap, maSach, soLuong, giaNhap) => {
     try {
-      const response = await axiosInstance.post("/ctnhapsach/", {
-        MaPhieuNhap: maPhieuNhap,
-        MaSach: maSach,
+      if (!maPhieuNhap || !maSach || !soLuong || !giaNhap) {
+        throw new Error("Thiếu thông tin chi tiết nhập sách");
+      }
+      if (soLuong <= 0 || giaNhap <= 0) {
+        throw new Error("Số lượng và giá nhập phải lớn hơn 0");
+      }
+      const payload = {
+        MaPhieuNhap_input: maPhieuNhap,
+        MaSach_input: maSach,
         SLNhap: soLuong,
         GiaNhap: giaNhap,
-      });
-      console.log("Thêm chi tiết nhập sách thành công:", response.data);
+      };
+      console.log("Payload gửi lên API:", payload); // Debug payload
+      const response = await axiosInstance.post("/ctnhapsach/", payload);
       return response.data;
     } catch (error) {
       console.error(
@@ -223,37 +234,50 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Cập nhật chi tiết nhập sách
   updateCTNhapSach: async (id, maPhieuNhap, maSach, soLuong, giaNhap) => {
     try {
-      if (!id || !soLuong || !giaNhap) {
-        throw new Error("Thiếu thông tin bắt buộc: id, soLuong, hoặc giaNhap");
+      if (!id || !maPhieuNhap || !maSach || !soLuong || !giaNhap) {
+        throw new Error("Thiếu thông tin cập nhật chi tiết nhập sách");
       }
       if (soLuong <= 0 || giaNhap <= 0) {
         throw new Error("Số lượng và giá nhập phải lớn hơn 0");
       }
+
+      console.log("API Call - Update CTNhapSach:", {
+        url: `/ctnhapsach/${id}/`,
+        payload: {
+          MaPhieuNhap_input: maPhieuNhap,
+          MaSach_input: maSach,
+          SLNhap: parseInt(soLuong),
+          GiaNhap: parseFloat(giaNhap),
+        },
+      });
+
       const response = await axiosInstance.put(`/ctnhapsach/${id}/`, {
-        MaPhieuNhap: maPhieuNhap,
-        MaSach: maSach,
+        MaPhieuNhap_input: maPhieuNhap,
+        MaSach_input: maSach,
         SLNhap: parseInt(soLuong),
         GiaNhap: parseFloat(giaNhap),
       });
-      console.log("Cập nhật chi tiết nhập sách thành công:", response.data);
       return response.data;
     } catch (error) {
       console.error(
         "Lỗi khi cập nhật chi tiết nhập sách:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
+        "Status:",
+        error.response?.status,
+        "Request Data:",
+        error.response?.config?.data
       );
       throw error;
     }
   },
-
-  // Lấy chi tiết nhập sách
   getCTNhapSach: async () => {
     try {
       const response = await axiosInstance.get("/ctnhapsach/");
+      if (!Array.isArray(response.data)) {
+        throw new Error("Dữ liệu chi tiết nhập sách không hợp lệ");
+      }
       return response.data;
     } catch (error) {
       console.error(
@@ -263,8 +287,6 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-
-  // Lấy thông số (nếu có)
   getThamSo: async () => {
     try {
       const response = await axiosInstance.get("/thamso/");

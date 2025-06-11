@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./ModalChiTietNhapSach.css";
+import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 
 const ModalChiTietNhapSach = ({
   isOpen,
@@ -9,62 +9,132 @@ const ModalChiTietNhapSach = ({
   maPhieuNhap,
 }) => {
   const [formData, setFormData] = useState({
-    maCTNhapSach: "",
+    maPhieuNhap: "",
     maSach: "",
     soLuong: "",
     giaNhap: "",
+    tenSach: "",
     theLoai: "",
     tacGia: "",
-    tenSach: "",
     nhaXuatBan: "",
     namXuatBan: "",
   });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        maCTNhapSach: initialData.ctNhapId || "", // Lấy từ backend, ví dụ MaCT_NhapSach
+        maPhieuNhap: initialData.maPhieuNhap || maPhieuNhap || "",
         maSach: initialData.maSach || "",
         soLuong: initialData.soLuong || "",
         giaNhap: initialData.giaNhap || "",
+        tenSach: initialData.tenSach || "",
         theLoai: initialData.theLoai || "",
         tacGia: initialData.tacGia || "",
-        tenSach: initialData.tenSach || "",
         nhaXuatBan: initialData.nhaXuatBan || "",
         namXuatBan: initialData.namXuatBan || "",
       });
-    } else {
-      setFormData({
-        maCTNhapSach: "", // Reset khi tạo mới
-        maSach: "",
-        soLuong: "",
-        giaNhap: "",
+    } else if (maPhieuNhap) {
+      setFormData((prev) => ({ ...prev, maPhieuNhap: maPhieuNhap }));
+    }
+  }, [initialData, maPhieuNhap]);
+
+  const fetchSachInfo = async (maSach) => {
+    try {
+      setError(null);
+      setLoading(true);
+      const sachData = await phieuNhapSachApi.getSach();
+      const dauSachData = await phieuNhapSachApi.getDauSach();
+
+      console.log("Dữ liệu sách:", sachData);
+      console.log("Dữ liệu đầu sách:", dauSachData);
+
+      const sach = sachData.find((s) => s.MaSach === maSach);
+      if (!sach) {
+        throw new Error("Không tìm thấy sách với mã này!");
+      }
+
+      const dauSach = dauSachData.find((ds) => ds.MaDauSach === sach.MaDauSach);
+      if (!dauSach) {
+        throw new Error("Không tìm thấy đầu sách tương ứng!");
+      }
+
+      const tacGia = dauSach.TenTacGia
+        ? dauSach.TenTacGia.join(", ")
+        : "Không xác định";
+
+      setFormData((prev) => ({
+        ...prev,
+        tenSach: sach.TenDauSach || dauSach.TenSach || "Không xác định",
+        theLoai: dauSach.TenTheLoai || "Không xác định",
+        tacGia: tacGia,
+        nhaXuatBan: sach.TenNXB || "Không xác định",
+        namXuatBan: sach.NamXB || "Không xác định",
+      }));
+    } catch (err) {
+      console.error("Lỗi fetchSachInfo:", err);
+      setError(err.message);
+      setFormData((prev) => ({
+        ...prev,
+        tenSach: "",
         theLoai: "",
         tacGia: "",
-        tenSach: "",
         nhaXuatBan: "",
         namXuatBan: "",
-      });
+      }));
+    } finally {
+      setLoading(false);
     }
-  }, [initialData]);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "maSach") {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+
+      if (value.trim() !== "") {
+        const timeout = setTimeout(() => {
+          fetchSachInfo(value);
+        }, 500);
+        setDebounceTimeout(timeout);
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          tenSach: "",
+          theLoai: "",
+          tacGia: "",
+          nhaXuatBan: "",
+          namXuatBan: "",
+        }));
+        setError(null);
+      }
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(formData, "save", () =>
-      setFormData({ ...formData, soLuong: "", giaNhap: "" })
-    ); // Reset soLuong và giaNhap sau khi lưu
-  };
-
-  const handleContinue = (e) => {
-    e.preventDefault();
-    onSave(formData, "continue", () =>
-      setFormData({ ...formData, soLuong: "", giaNhap: "" })
-    ); // Reset soLuong và giaNhap để tiếp tục
+  const handleSubmit = (action) => {
+    onSave(formData, action, () => {
+      setFormData((prev) => ({
+        ...prev,
+        maSach: "",
+        soLuong: "",
+        giaNhap: "",
+        tenSach: "",
+        theLoai: "",
+        tacGia: "",
+        nhaXuatBan: "",
+        namXuatBan: "",
+        // Giữ nguyên maPhieuNhap
+        maPhieuNhap: prev.maPhieuNhap || maPhieuNhap || "",
+      }));
+      setError(null);
+      setLoading(false);
+    });
   };
 
   if (!isOpen) return null;
@@ -73,110 +143,116 @@ const ModalChiTietNhapSach = ({
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>Chi tiết nhập sách</h2>
-        <form>
-          <div className="form-group">
-            <label>Mã chi tiết nhập sách:</label>
-            <input
-              type="text"
-              name="maCTNhapSach"
-              value={formData.maCTNhapSach}
-              onChange={handleChange}
-              readOnly
-            />
-          </div>
-          <div className="form-group">
-            <label>Mã sách:</label>
-            <input
-              type="text"
-              name="maSach"
-              value={formData.maSach}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Số lượng:</label>
-            <input
-              type="number"
-              name="soLuong"
-              value={formData.soLuong}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Giá nhập:</label>
-            <input
-              type="number"
-              name="giaNhap"
-              value={formData.giaNhap}
-              onChange={handleChange}
-              step="0.01"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Thể loại:</label>
-            <input
-              type="text"
-              name="theLoai"
-              value={formData.theLoai}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Tác giả:</label>
-            <input
-              type="text"
-              name="tacGia"
-              value={formData.tacGia}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Tên sách:</label>
-            <input
-              type="text"
-              name="tenSach"
-              value={formData.tenSach}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Nhà xuất bản:</label>
-            <input
-              type="text"
-              name="nhaXuatBan"
-              value={formData.nhaXuatBan}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Năm xuất bản:</label>
-            <input
-              type="number"
-              name="namXuatBan"
-              value={formData.namXuatBan}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="modal-actions">
-            <button type="button" onClick={onClose}>
-              Hủy
-            </button>
-            <button type="button" onClick={handleContinue}>
-              Tiếp tục
-            </button>
-            <button type="button" onClick={handleSubmit}>
-              Lưu
-            </button>
-          </div>
-        </form>
+        <p style={{ color: "gray", fontSize: "0.9em" }}>
+          * Lưu ý: Mã chi tiết nhập sẽ được tự động tạo sau khi bạn lưu thông
+          tin chi tiết.
+        </p>
+        {loading && (
+          <p style={{ color: "blue", fontSize: "0.9em" }}>
+            Đang tải thông tin sách...
+          </p>
+        )}
+        {error && <p style={{ color: "red", fontSize: "0.9em" }}>{error}</p>}
+        <div className="form-group">
+          <label>Mã phiếu nhập:</label>
+          <input
+            type="text"
+            name="maPhieuNhap"
+            value={formData.maPhieuNhap}
+            readOnly
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label>Mã sách:</label>
+          <input
+            type="text"
+            name="maSach"
+            value={formData.maSach}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label>Tên sách:</label>
+          <input
+            type="text"
+            name="tenSach"
+            value={formData.tenSach}
+            onChange={handleChange}
+            className="form-input"
+            readOnly
+          />
+        </div>
+        <div className="form-group">
+          <label>Thể loại:</label>
+          <input
+            type="text"
+            name="theLoai"
+            value={formData.theLoai}
+            onChange={handleChange}
+            className="form-input"
+            readOnly
+          />
+        </div>
+        <div className="form-group">
+          <label>Tác giả:</label>
+          <input
+            type="text"
+            name="tacGia"
+            value={formData.tacGia}
+            onChange={handleChange}
+            className="form-input"
+            readOnly
+          />
+        </div>
+        <div className="form-group">
+          <label>Nhà xuất bản:</label>
+          <input
+            type="text"
+            name="nhaXuatBan"
+            value={formData.nhaXuatBan}
+            onChange={handleChange}
+            className="form-input"
+            readOnly
+          />
+        </div>
+        <div className="form-group">
+          <label>Năm xuất bản:</label>
+          <input
+            type="text"
+            name="namXuatBan"
+            value={formData.namXuatBan}
+            onChange={handleChange}
+            className="form-input"
+            readOnly
+          />
+        </div>
+        <div className="form-group">
+          <label>Số lượng:</label>
+          <input
+            type="number"
+            name="soLuong"
+            value={formData.soLuong}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label>Giá nhập:</label>
+          <input
+            type="number"
+            name="giaNhap"
+            value={formData.giaNhap}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+        <div className="modal-actions">
+          <button onClick={() => handleSubmit("continue")}>Tiếp tục</button>
+          <button onClick={() => handleSubmit("finish")}>Hoàn tất</button>
+          <button onClick={onClose}>Đóng</button>
+        </div>
       </div>
     </div>
   );
