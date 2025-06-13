@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
 import "./ModalChiTietNhapSach.css";
 
-const ModalChiTietNhapSach = ({
-  isOpen,
-  onClose,
-  onSave,
-  initialData,
-  maPhieuNhap,
-}) => {
+const ModalChiTietNhapSach = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    maPhieuNhap: "",
     maSach: "",
     soLuong: "",
     giaNhap: "",
@@ -24,33 +17,12 @@ const ModalChiTietNhapSach = ({
   const [loading, setLoading] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        maPhieuNhap: initialData.maPhieuNhap || maPhieuNhap || "",
-        maSach: initialData.maSach || "",
-        soLuong: initialData.soLuong || "",
-        giaNhap: initialData.giaNhap || "",
-        tenSach: initialData.tenSach || "",
-        theLoai: initialData.theLoai || "",
-        tacGia: initialData.tacGia || "",
-        nhaXuatBan: initialData.nhaXuatBan || "",
-        namXuatBan: initialData.namXuatBan || "",
-      });
-    } else if (maPhieuNhap) {
-      setFormData((prev) => ({ ...prev, maPhieuNhap: maPhieuNhap }));
-    }
-  }, [initialData, maPhieuNhap]);
-
   const fetchSachInfo = async (maSach) => {
     try {
       setError(null);
       setLoading(true);
       const sachData = await phieuNhapSachApi.getSach();
       const dauSachData = await phieuNhapSachApi.getDauSach();
-
-      console.log("Dữ liệu sách:", sachData);
-      console.log("Dữ liệu đầu sách:", dauSachData);
 
       const sach = sachData.find((s) => s.MaSach === maSach);
       if (!sach) {
@@ -119,6 +91,10 @@ const ModalChiTietNhapSach = ({
   };
 
   const handleSubmit = (action) => {
+    if (!formData.maSach || !formData.soLuong || !formData.giaNhap) {
+      setError("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
     onSave(formData, action, () => {
       setFormData((prev) => ({
         ...prev,
@@ -130,11 +106,8 @@ const ModalChiTietNhapSach = ({
         tacGia: "",
         nhaXuatBan: "",
         namXuatBan: "",
-        // Giữ nguyên maPhieuNhap
-        maPhieuNhap: prev.maPhieuNhap || maPhieuNhap || "",
       }));
       setError(null);
-      setLoading(false);
     });
   };
 
@@ -144,26 +117,12 @@ const ModalChiTietNhapSach = ({
     <div className="modal-overlay-ctns">
       <div className="modal-content-ctns">
         <h2>Chi tiết nhập sách</h2>
-        <p style={{ color: "gray", fontSize: "0.9em" }}>
-          * Lưu ý: Mã chi tiết nhập sẽ được tự động tạo sau khi bạn lưu thông
-          tin chi tiết.
-        </p>
         {loading && (
           <p style={{ color: "blue", fontSize: "0.9em" }}>
             Đang tải thông tin sách...
           </p>
         )}
         {error && <p style={{ color: "red", fontSize: "0.9em" }}>{error}</p>}
-        <div className="form-group-ctns">
-          <label>Mã phiếu nhập:</label>
-          <input
-            type="text"
-            name="maPhieuNhap"
-            value={formData.maPhieuNhap}
-            readOnly
-            className="form-input-ctns"
-          />
-        </div>
         <div className="form-group-ctns">
           <label>Mã sách:</label>
           <input

@@ -170,22 +170,48 @@ const phieuNhapSachApi = {
   },
   addPhieuNhapSach: async (maPhieuNhap, data) => {
     try {
-      if (!data.NgayNhap || !data.NguoiNhap_input) {
-        throw new Error("Thiếu thông tin phiếu nhập");
-      }
-      const response = await axiosInstance.post("/phieunhapsach/", {
+      const payload = {
         NgayNhap: data.NgayNhap,
         NguoiNhap_input: data.NguoiNhap_input,
-      });
+      };
+      console.log("Creating phieu nhap:", payload);
+      const response = await axiosInstance.post("/phieunhapsach/", payload);
+      if (!response.data || !response.data.MaPhieuNhap) {
+        throw new Error("Không nhận được mã phiếu nhập từ server");
+      }
       return response.data;
     } catch (error) {
       console.error(
-        "Lỗi khi thêm phiếu nhập:",
+        "Error creating phieu nhap:",
         error.response?.data || error.message
       );
       throw error;
     }
   },
+
+  addCTNhapSach: async (maPhieuNhap, maSach, soLuong, giaNhap) => {
+    try {
+      const payload = {
+        MaPhieuNhap_input: maPhieuNhap,
+        MaSach_input: maSach,
+        SLNhap: soLuong,
+        GiaNhap: giaNhap,
+      };
+      console.log("Adding chi tiet:", payload);
+      const response = await axiosInstance.post("/ctnhapsach/", payload);
+      if (!response.data || !response.data.MaCT_NhapSach) {
+        throw new Error("Không nhận được mã chi tiết từ server");
+      }
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error adding chi tiet:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
   updatePhieuNhapSach: async (maPhieuNhap, data) => {
     try {
       if (!maPhieuNhap || !data.NgayNhap || !data.NguoiNhap) {
@@ -209,31 +235,7 @@ const phieuNhapSachApi = {
       throw error;
     }
   },
-  addCTNhapSach: async (maPhieuNhap, maSach, soLuong, giaNhap) => {
-    try {
-      if (!maPhieuNhap || !maSach || !soLuong || !giaNhap) {
-        throw new Error("Thiếu thông tin chi tiết nhập sách");
-      }
-      if (soLuong <= 0 || giaNhap <= 0) {
-        throw new Error("Số lượng và giá nhập phải lớn hơn 0");
-      }
-      const payload = {
-        MaPhieuNhap_input: maPhieuNhap,
-        MaSach_input: maSach,
-        SLNhap: soLuong,
-        GiaNhap: giaNhap,
-      };
-      console.log("Payload gửi lên API:", payload); // Debug payload
-      const response = await axiosInstance.post("/ctnhapsach/", payload);
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Lỗi khi thêm chi tiết nhập sách:",
-        error.response?.data || error.message
-      );
-      throw error;
-    }
-  },
+
   updateCTNhapSach: async (id, maPhieuNhap, maSach, soLuong, giaNhap) => {
     try {
       if (!id || !maPhieuNhap || !maSach || !soLuong || !giaNhap) {
@@ -296,6 +298,18 @@ const phieuNhapSachApi = {
         "Lỗi khi lấy thông số:",
         error.response?.data || error.message
       );
+      throw error;
+    }
+  },
+  getNextMaPhieuNhap: async () => {
+    try {
+      const response = await axiosInstance.get("/phieunhapsach/next-id/");
+      if (!response.data || !response.data.MaPhieuNhap_input) {
+        throw new Error("Không nhận được mã phiếu nhập tiếp theo từ server");
+      }
+      return response.data.MaPhieuNhap_input;
+    } catch (error) {
+      console.error("Lỗi khi lấy mã phiếu nhập tiếp theo:", error);
       throw error;
     }
   },
