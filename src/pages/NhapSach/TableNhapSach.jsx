@@ -1,11 +1,15 @@
 import React from "react";
+import "./TableNhapSach.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const TableNhapSach = ({ data, onEdit }) => {
   return (
-    <div className="table-container">
-      <table className="nhap-sach-table">
+    <div className="table-container-tns">
+      <table className="nhap-sach-table-tns">
         <thead>
           <tr>
+            <th>No.</th>
             <th>Mã phiếu nhập</th>
             <th>Ngày nhập</th>
             <th>Tên người nhập</th>{" "}
@@ -23,13 +27,14 @@ const TableNhapSach = ({ data, onEdit }) => {
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan="11" style={{ textAlign: "center" }}>
+              <td colSpan="12" style={{ textAlign: "center" }}>
                 Không có dữ liệu
               </td>
             </tr>
           ) : (
-            data.map((item) => (
+            data.map((item, index) => (
               <tr key={item.ctNhapId}>
+                <td>{index + 1}</td>
                 <td>{item.maPhieuNhap}</td>
                 <td>{item.ngayNhap}</td>
                 <td>{item.TenNguoiNhap}</td> {/* Hiển thị TenNguoiNhap */}
@@ -41,7 +46,13 @@ const TableNhapSach = ({ data, onEdit }) => {
                 <td>{item.giaNhap}</td>
                 <td>{item.soLuong}</td>
                 <td>
-                  <button onClick={() => onEdit(item)}>Sửa</button>
+                  <div className="nhap-sach-action-buttons-tns">
+                    <FontAwesomeIcon
+                      icon={faEdit}
+                      className="nhap-sach-edit-icon-tns"
+                      onClick={() => onEdit(item)}
+                    />
+                  </div>
                 </td>
               </tr>
             ))

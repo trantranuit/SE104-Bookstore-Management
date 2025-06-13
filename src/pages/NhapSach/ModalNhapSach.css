@@ -1,4 +1,4 @@
-.modal-overlay {
+.modal-overlay-mns {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 1000;
 }
 
-.modal-content {
+.modal-content-mns {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
@@ -20,7 +20,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.modal-content h2 {
+.modal-content-mns h2 {
   margin-top: 0;
   font-size: 1.5rem;
   color: #333;
@@ -28,18 +28,18 @@
   margin-bottom: 20px;
 }
 
-.form-group {
+.form-group-mns {
   margin-bottom: 15px;
 }
 
-.form-group label {
+.form-group-mns label {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
   color: #555;
 }
 
-.form-group input {
+.form-group-mns input {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -48,20 +48,20 @@
   font-size: 1rem;
 }
 
-.form-group input:focus {
+.form-group-mns input:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-.modal-actions {
+.modal-actions-mns {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
 }
 
-.modal-actions button {
+.modal-actions-mns button {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -69,20 +69,20 @@
   font-size: 1rem;
 }
 
-.modal-actions button:first-child {
+.modal-actions-mns button:first-child {
   background-color: #dc3545;
   color: #fff;
 }
 
-.modal-actions button:first-child:hover {
+.modal-actions-mns button:first-child:hover {
   background-color: #c82333;
 }
 
-.modal-actions button:last-child {
+.modal-actions-mns button:last-child {
   background-color: #007bff;
   color: #fff;
 }
 
-.modal-actions button:last-child:hover {
+.modal-actions-mns button:last-child:hover {
   background-color: #0056b3;
 }

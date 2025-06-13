@@ -263,13 +263,14 @@ function TatCaSach() {
     return (
         <div className="page-container">
             <h1 className="page-title">Tất Cả Sách</h1>
-            <div className="content-container">
+            <div className="content-wrapper">
+
                 {/* Search Bar */}
-                <div className="search-filter-block">
+                <div className="search-filter-block-tcs">
                     <input
                         type="text"
                         placeholder="Tìm kiếm sách theo mã hoặc tên sách"
-                        className="search-bar"
+                        className="search-bar-tcs"
                         value={searchTerm}
                         onChange={e => {
                             setSearchTerm(e.target.value);
@@ -277,37 +278,37 @@ function TatCaSach() {
                         }}
                     />
                     <button
-                        className={`filter-button ${selectedAuthors.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedAuthors.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsAuthorModalOpen(true)}
                     >
                         Lọc theo tác giả
                     </button>
                     <button
-                        className={`filter-button ${selectedGenres.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedGenres.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsGenreModalOpen(true)}
                     >
                         Lọc theo thể loại
                     </button>
                     <button
-                        className={`filter-button ${selectedPublishers.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedPublishers.length > 0 ? 'active-filter' : ''}`}
                         onClick={() => setIsPublisherModalOpen(true)}
                     >
                         Lọc theo nhà xuất bản
                     </button>
                     <button
-                        className={`filter-button ${selectedYears.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedYears.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsYearModalOpen(true)}
                     >
                         Lọc theo năm xuất bản
                     </button>
                     <button
-                        className={`filter-button ${selectedStocks.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedStocks.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsStockModalOpen(true)}
                     >
                         Lọc theo số lượng tồn
                     </button>
                     <button
-                        className={`filter-button ${selectedPrices.length > 0 ? 'active-filter' : ''}`}
+                        className={`filter-button-tcs ${selectedPrices.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsPriceModalOpen(true)}
                     >
                         Lọc theo đơn giá bán
@@ -316,42 +317,42 @@ function TatCaSach() {
 
                 {/* Author Modal */}
                 {isAuthorModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo tác giả</h2>
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo tác giả</h2>
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm tác giả"
-                                className="author-search-bar"
+                                className="author-search-bar-tcs"
                                 value={authorSearchTerm}
                                 onChange={e => setAuthorSearchTerm(e.target.value)}
                             />
-                            <div className="author-list">
+                            <div className="author-list-tcs">
                                 {filteredAuthors.map(author => (
                                     <div
                                         key={author}
-                                        className={`author-item ${tempSelectedAuthors.includes(author) ? 'selected' : ''}`}
+                                        className={`author-item-tcs ${tempSelectedAuthors.includes(author) ? 'selected-tcs' : ''}`}
                                         onClick={() => handleSelection(author, setTempSelectedAuthors)}
                                     >
                                         {author}
                                     </div>
                                 ))}
                             </div>
-                            <div className="modal-buttons">
+                            <div className="modal-buttons-tcs">
                                 <button
-                                    className="apply-button"
+                                    className="apply-button-tcs"
                                     onClick={() => applyFilter(setSelectedAuthors, tempSelectedAuthors, setIsAuthorModalOpen)}
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button-new"
+                                    className="cancel-button-new-tcs"
                                     onClick={() => cancelFilter(setTempSelectedAuthors, setSelectedAuthors, setIsAuthorModalOpen)}
                                 >
                                     Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button-new"
+                                    className="close-button-new-tcs"
                                     onClick={() => setIsAuthorModalOpen(false)}
                                 >
                                     Đóng
@@ -363,42 +364,42 @@ function TatCaSach() {
 
                 {/* Genre Modal */}
                 {isGenreModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo thể loại</h2>
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo thể loại</h2>
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm thể loại"
-                                className="author-search-bar"
+                                className="author-search-bar-tcs"
                                 value={genreSearchTerm}
                                 onChange={e => setGenreSearchTerm(e.target.value)}
                             />
-                            <div className="author-list">
+                            <div className="author-list-tcs">
                                 {filteredGenres.map(genre => (
                                     <div
                                         key={genre}
-                                        className={`author-item ${tempSelectedGenres.includes(genre) ? 'selected' : ''}`}
+                                        className={`author-item-tcs ${tempSelectedGenres.includes(genre) ? 'selected-tcs' : ''}`}
                                         onClick={() => handleSelection(genre, setTempSelectedGenres)}
                                     >
                                         {genre}
                                     </div>
                                 ))}
                             </div>
-                            <div className="modal-buttons">
+                            <div className="modal-buttons-tcs">
                                 <button
-                                    className="apply-button"
+                                    className="apply-button-tcs"
                                     onClick={() => applyFilter(setSelectedGenres, tempSelectedGenres, setIsGenreModalOpen)}
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button-new"
+                                    className="cancel-button-new-tcs"
                                     onClick={() => cancelFilter(setTempSelectedGenres, setSelectedGenres, setIsGenreModalOpen)}
                                 >
                                     Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button-new"
+                                    className="close-button-new-tcs"
                                     onClick={() => setIsGenreModalOpen(false)}
                                 >
                                     Đóng
@@ -410,42 +411,42 @@ function TatCaSach() {
 
                 {/* Publisher Modal */}
                 {isPublisherModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo nhà xuất bản</h2>
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo nhà xuất bản</h2>
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm nhà xuất bản"
-                                className="author-search-bar"
+                                className="author-search-bar-tcs"
                                 value={publisherSearchTerm}
                                 onChange={e => setPublisherSearchTerm(e.target.value)}
                             />
-                            <div className="author-list">
+                            <div className="author-list-tcs">
                                 {filteredPublishers.map(publisher => (
                                     <div
                                         key={publisher}
-                                        className={`author-item ${tempSelectedPublishers[0] === publisher ? 'selected' : ''}`}
+                                        className={`author-item-tcs ${tempSelectedPublishers[0] === publisher ? 'selected-tcs' : ''}`}
                                         onClick={() => handlePublisherSelection(publisher)}
                                     >
                                         {publisher}
                                     </div>
                                 ))}
                             </div>
-                            <div className="modal-buttons">
+                            <div className="modal-buttons-tcs">
                                 <button
-                                    className="apply-button"
+                                    className="apply-button-tcs"
                                     onClick={() => applyFilter(setSelectedPublishers, tempSelectedPublishers, setIsPublisherModalOpen)}
                                 >
                                     Áp Dụng
                                 </button>
                                 <button
-                                    className="cancel-button-new"
+                                    className="cancel-button-new-tcs"
                                     onClick={() => cancelFilter(setTempSelectedPublishers, setSelectedPublishers, setIsPublisherModalOpen)}
                                 >
                                     Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button-new"
+                                    className="close-button-new-tcs"
                                     onClick={() => setIsPublisherModalOpen(false)}
                                 >
                                     Đóng
@@ -457,12 +458,12 @@ function TatCaSach() {
 
                 {/* Year Modal */}
                 {isYearModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo năm xuất bản</h2>
-                            <div className="year-filter-inputs">
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo năm xuất bản</h2>
+                            <div className="year-filter-inputs-tcs">
                                 <h3>Nhập khoảng năm:</h3>
-                                <div className="year-range-inputs">
+                                <div className="year-range-inputs-tcs">
                                     <input
                                         type="number"
                                         placeholder="Năm bắt đầu"
@@ -484,15 +485,15 @@ function TatCaSach() {
                                     onChange={e => setSpecificYears(e.target.value)}
                                 />
                             </div>
-                            <div className="modal-buttons">
-                                <button className="apply-button" onClick={applyYearFilter}>
+                            <div className="modal-buttons-tcs">
+                                <button className="apply-button-tcs" onClick={applyYearFilter}>
                                     Áp Dụng
                                 </button>
-                                <button className="cancel-button-new" onClick={cancelYearFilter}>
+                                <button className="cancel-button-new-tcs" onClick={cancelYearFilter}>
                                     Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button-new"
+                                    className="close-button-new-tcs"
                                     onClick={() => setIsYearModalOpen(false)}
                                 >
                                     Đóng
@@ -504,12 +505,12 @@ function TatCaSach() {
 
                 {/* Stock Modal */}
                 {isStockModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo số lượng tồn</h2>
-                            <div className="year-filter-inputs">
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo số lượng tồn</h2>
+                            <div className="year-filter-inputs-tcs">
                                 <h3>Nhập khoảng số lượng:</h3>
-                                <div className="year-range-inputs">
+                                <div className="year-range-inputs-tcs">
                                     <input
                                         type="number"
                                         placeholder="Số lượng tối thiểu"
@@ -531,15 +532,15 @@ function TatCaSach() {
                                     onChange={e => setSpecificStocks(e.target.value)}
                                 />
                             </div>
-                            <div className="modal-buttons">
-                                <button className="apply-button" onClick={applyStockFilter}>
+                            <div className="modal-buttons-tcs">
+                                <button className="apply-button-tcs" onClick={applyStockFilter}>
                                     Áp Dụng
                                 </button>
-                                <button className="cancel-button-new" onClick={cancelStockFilter}>
+                                <button className="cancel-button-new-tcs" onClick={cancelStockFilter}>
                                     Hủy Áp Dụng
                                 </button>
                                 <button
-                                    className="close-button-new"
+                                    className="close-button-new-tcs"
                                     onClick={() => setIsStockModalOpen(false)}
                                 >
                                     Đóng
@@ -551,12 +552,12 @@ function TatCaSach() {
 
                 {/* Price Modal */}
                 {isPriceModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal-new">
-                            <h2 className="modal-title-new">Lọc theo đơn giá bán</h2>
-                            <div className="price-filter-inputs">
+                    <div className="modal-overlay-tcs">
+                        <div className="modal-new-tcs">
+                            <h2 className="modal-title-new-tcs">Lọc theo đơn giá bán</h2>
+                            <div className="price-filter-inputs-tcs">
                                 <h3>Nhập khoảng giá:</h3>
-                                <div className="price-range-inputs">
+                                <div className="price-range-inputs-tcs">
                                     <input
                                         type="number"
                                         placeholder="Giá tối thiểu"
@@ -578,17 +579,14 @@ function TatCaSach() {
                                     onChange={e => setSpecificPrices(e.target.value)}
                                 />
                             </div>
-                            <div className="modal-buttons">
-                                <button className="apply-button" onClick={applyPriceFilter}>
+                            <div className="modal-buttons-tcs">
+                                <button className="apply-button-tcs" onClick={applyPriceFilter}>
                                     Áp Dụng
                                 </button>
-                                <button className="cancel-button-new" onClick={cancelPriceFilter}>
+                                <button className="cancel-button-new-tcs" onClick={cancelPriceFilter}>
                                     Hủy Áp Dụng
                                 </button>
-                                <button
-                                    className="close-button-new"
-                                    onClick={() => setIsPriceModalOpen(false)}
-                                >
+                                <button className="close-button-new-tcs" onClick={() => setIsPriceModalOpen(false)}>
                                     Đóng
                                 </button>
                             </div>
@@ -597,7 +595,7 @@ function TatCaSach() {
                 )}
 
                 {/* Table of Books */}
-                <div className="book-table-block">
+                <div className="book-table-block-tcs">
                     <table>
                         <thead>
                             <tr>
@@ -638,7 +636,7 @@ function TatCaSach() {
                 </div>
 
                 {/* Pagination Buttons */}
-                <div className="pagination-buttons">
+                <div className="pagination-buttons-tcs">
                     <button onClick={handlePreviousPage} disabled={currentPage === 1}>
                         Trước
                     </button>

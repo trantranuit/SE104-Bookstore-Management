@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
+import "./ModalChiTietNhapSach.css";
 
 const ModalChiTietNhapSach = ({
   isOpen,
@@ -140,8 +141,8 @@ const ModalChiTietNhapSach = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay-ctns">
+      <div className="modal-content-ctns">
         <h2>Chi tiết nhập sách</h2>
         <p style={{ color: "gray", fontSize: "0.9em" }}>
           * Lưu ý: Mã chi tiết nhập sẽ được tự động tạo sau khi bạn lưu thông
@@ -153,102 +154,102 @@ const ModalChiTietNhapSach = ({
           </p>
         )}
         {error && <p style={{ color: "red", fontSize: "0.9em" }}>{error}</p>}
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Mã phiếu nhập:</label>
           <input
             type="text"
             name="maPhieuNhap"
             value={formData.maPhieuNhap}
             readOnly
-            className="form-input"
+            className="form-input-ctns"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Mã sách:</label>
           <input
             type="text"
             name="maSach"
             value={formData.maSach}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Tên sách:</label>
           <input
             type="text"
             name="tenSach"
             value={formData.tenSach}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
             readOnly
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Thể loại:</label>
           <input
             type="text"
             name="theLoai"
             value={formData.theLoai}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
             readOnly
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Tác giả:</label>
           <input
             type="text"
             name="tacGia"
             value={formData.tacGia}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
             readOnly
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Nhà xuất bản:</label>
           <input
             type="text"
             name="nhaXuatBan"
             value={formData.nhaXuatBan}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
             readOnly
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Năm xuất bản:</label>
           <input
             type="text"
             name="namXuatBan"
             value={formData.namXuatBan}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
             readOnly
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Số lượng:</label>
           <input
             type="number"
             name="soLuong"
             value={formData.soLuong}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Giá nhập:</label>
           <input
             type="number"
             name="giaNhap"
             value={formData.giaNhap}
             onChange={handleChange}
-            className="form-input"
+            className="form-input-ctns"
           />
         </div>
-        <div className="modal-actions">
+        <div className="modal-actions-ctns">
           <button onClick={() => handleSubmit("continue")}>Tiếp tục</button>
           <button onClick={() => handleSubmit("finish")}>Hoàn tất</button>
           <button onClick={onClose}>Đóng</button>

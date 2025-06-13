@@ -27,41 +27,41 @@ const ModalEditChiTietNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay-ctns">
+      <div className="modal-content-ctns">
         <h2>Sửa chi tiết nhập sách</h2>
 
         {/* Readonly Fields */}
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Mã phiếu nhập:</label>
           <input
             type="text"
             value={initialData?.maPhieuNhap || ""}
             disabled
-            className="form-input readonly"
+            className="form-input-ctns readonly-ctns"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Mã sách:</label>
           <input
             type="text"
             value={initialData?.maSach || ""}
             disabled
-            className="form-input readonly"
+            className="form-input readonly-ctns"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Tên sách:</label>
           <input
             type="text"
             value={initialData?.tenSach || ""}
             disabled
-            className="form-input readonly"
+            className="form-input readonly-ctns"
           />
         </div>
 
         {/* Editable Fields */}
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Số lượng:</label>
           <input
             type="number"
@@ -72,7 +72,7 @@ const ModalEditChiTietNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             className="form-input"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group-ctns">
           <label>Giá nhập:</label>
           <input
             type="number"
@@ -80,11 +80,11 @@ const ModalEditChiTietNhapSach = ({ isOpen, onClose, onSave, initialData }) => {
             value={formData.giaNhap}
             onChange={handleChange}
             min="1"
-            className="form-input"
+            className="form-input-ctns"
           />
         </div>
 
-        <div className="modal-actions">
+        <div className="modal-actions-ctns">
           <button onClick={handleSubmit}>Lưu thay đổi</button>
           <button onClick={onClose}>Hủy</button>
         </div>

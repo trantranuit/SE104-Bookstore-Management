@@ -276,9 +276,8 @@ const NhapSach = () => {
       );
 
       setNotification({
-        message: `Thêm chi tiết nhập sách thành công! Mã chi tiết: ${
-          ctResponse.MaCT_NhapSach || "Tự động tạo"
-        }`,
+        message: `Thêm chi tiết nhập sách thành công! Mã chi tiết: ${ctResponse.MaCT_NhapSach || "Tự động tạo"
+          }`,
         type: "success",
       });
 
@@ -362,18 +361,18 @@ const NhapSach = () => {
     <div className="page-container">
       <h1>Nhập sách</h1>
       <div className="content-wrapper">
-        <div className="search-bar">
+        <div className="search-bar-ns">
           <input
             type="text"
             placeholder="Tìm kiếm Phiếu nhập theo Mã sách, Tên sách hoặc Mã phiếu nhập..."
             value={searchQuery}
             onChange={handleSearch}
-            className="search-input"
+            className="search-input-ns"
           />
         </div>
-        <div className="filter-bar">
+        <div className="filter-bar-ns">
           <button
-            className="filter-button"
+            className="filter-button-ns"
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("maPhieuNhap");
@@ -381,7 +380,7 @@ const NhapSach = () => {
           >
             Lọc theo Mã phiếu nhập
           </button>
-          <div className="filter-group">
+          <div className="filter-group-ns">
             <label>Lọc theo Ngày nhập:</label>
             <input
               type="date"
@@ -391,11 +390,11 @@ const NhapSach = () => {
                 setFilters((prev) => ({ ...prev, ngayNhap: e.target.value }));
                 applyFilters();
               }}
-              className="filter-input"
+              className="filter-input-ns"
             />
           </div>
           <button
-            className="filter-button"
+            className="filter-button-ns"
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("MaNguoiNhap");
@@ -404,20 +403,20 @@ const NhapSach = () => {
             Lọc theo Người nhập
           </button>
         </div>
-        <button className="add-button" onClick={handleOpenModalPhieuNhap}>
+        <button className="add-button-ns" onClick={handleOpenModalPhieuNhap}>
           + Thêm phiếu nhập
         </button>
         <TableNhapSach data={filteredData} onEdit={handleEdit} />
         {isFilterModalOpen && (
-          <div className="modal-overlay">
-            <div className="filter-modal-content">
+          <div className="modal-overlay-ns">
+            <div className="filter-modal-content-ns">
               <h2>
                 {selectedFilterType === "maPhieuNhap"
                   ? "Lọc theo Mã phiếu nhập"
                   : "Lọc theo Người nhập"}
               </h2>
               {selectedFilterType === "maPhieuNhap" && (
-                <div className="filter-options">
+                <div className="filter-options-ns">
                   {phieuNhapOptions.map((option) => (
                     <label key={option}>
                       <input
@@ -433,7 +432,7 @@ const NhapSach = () => {
                 </div>
               )}
               {selectedFilterType === "MaNguoiNhap" && (
-                <div className="filter-options">
+                <div className="filter-options-ns">
                   {nguoiNhapOptions.map((option) => (
                     <label key={option}>
                       <input
@@ -448,7 +447,7 @@ const NhapSach = () => {
                   ))}
                 </div>
               )}
-              <div className="modal-actions">
+              <div className="modal-actions-ns">
                 <button onClick={applyFilters}>Áp dụng</button>
                 <button onClick={resetFilters}>Hủy áp dụng</button>
                 <button onClick={() => setIsFilterModalOpen(false)}>

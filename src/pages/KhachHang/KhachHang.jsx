@@ -54,7 +54,7 @@ function KhachHang() {
       <h1 className="page-title">Khách Hàng</h1>
       {error && <div className="error-message">{error}</div>}
       
-      <div className="content-wrapper content-wrapper-kh">
+      <div className="content-wrapper">
         <div className="kh-action-bar">
           <input
             type="text"
@@ -89,11 +89,11 @@ function KhachHang() {
         )}
 
         {showSuccessModal && (
-          <div className="success-modal">
-            <div className="success-modal-content">
+          <div className="success-modal-kh">
+            <div className="success-modal-content-kh">
               <h3>Thông báo</h3>
               <p>{successMessage}</p>
-              <button className="success-modal-button" onClick={handleCloseSuccessModal}>
+              <button className="success-modal-button-kh" onClick={handleCloseSuccessModal}>
                 OK
               </button>
             </div>

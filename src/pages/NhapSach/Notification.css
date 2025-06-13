@@ -1,4 +1,4 @@
-.notification-container {
+.notification-container-nons {
   background-color: #fff;
   border-radius: 10px;
   padding: 20px;
@@ -13,28 +13,28 @@
   z-index: 1001;
 }
 
-.notification-container.success {
+.notification-container-nons.success {
   border-top: 5px solid #4880ff; /* Màu xanh cho thành công */
 }
 
-.notification-container.error {
+.notification-container-nons.error {
   border-top: 5px solid #ff6666; /* Màu đỏ cho thất bại */
 }
 
-.notification-message {
+.notification-message-nons {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 20px;
   color: #333;
 }
 
-.notification-actions {
+.notification-actions-nons {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
 
-.notification-btn {
+.notification-btn-nons {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -43,29 +43,29 @@
   transition: background-color 0.3s ease;
 }
 
-.success-btn {
+.success-btn-nons {
   background-color: #4880ff;
   color: #fff;
 }
 
-.success-btn:hover {
+.success-btn-nons:hover {
   background-color: #0056b3;
 }
 
-.retry-btn {
+.retry-btn-nons {
   background-color: #ff6666;
   color: #fff;
 }
 
-.retry-btn:hover {
+.retry-btn-nons:hover {
   background-color: #cc0000;
 }
 
-.close-btn {
+.close-btn-nons {
   background-color: #888;
   color: #fff;
 }
 
-.close-btn:hover {
+.close-btn-nons:hover {
   background-color: #555;
 }

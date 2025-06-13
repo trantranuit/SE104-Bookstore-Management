@@ -78,6 +78,12 @@ function TableKhachHang({
   }, [searchTerm, refreshTrigger]);
 
   const columns = [
+    {
+      header: "No.",
+      accessorKey: "index",
+      size: 80,
+      cell: ({ row }) => (pagination.pageIndex * pagination.pageSize) + row.index + 1
+    },
     { header: "Mã KH", accessorKey: "MaKhachHang", size: 150 },
     { header: "Tên khách hàng", accessorKey: "name" },
     { header: "Số điện thoại", accessorKey: "phone" },
@@ -229,19 +235,19 @@ function TableKhachHang({
       </div>
 
       {showDeleteConfirmation && (
-        <div className="confirmation-modal">
-          <div className="confirmation-content">
+        <div className="confirmation-modal-kh">
+          <div className="confirmation-content-kh">
             <p>Bạn có chắc muốn xóa khách hàng này không?</p>
-            <div className="confirmation-actions">
+            <div className="confirmation-actions-kh">
               <button
-                className="delete-button"
+                className="delete-button-kh"
                 onClick={confirmDelete}
                 disabled={loading}
               >
                 {loading ? "Đang xóa..." : "Xóa"}
               </button>
               <button
-                className="cancel-button"
+                className="cancel-button-kh"
                 onClick={() => setShowDeleteConfirmation(false)}
                 disabled={loading}
               >

@@ -20,11 +20,11 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay-mns">
+      <div className="modal-content-mns">
         <h2>Phiếu nhập sách</h2>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="form-group-mns">
             <label>Ngày nhập sách:</label>
             <input
               type="date"
@@ -34,7 +34,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group-mns">
             <label>Mã người nhập sách:</label>
             <input
               type="text"
@@ -44,7 +44,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
               required
             />
           </div>
-          <div className="modal-actions">
+          <div className="modal-actions-mns">
             <button type="button" onClick={onClose}>
               Hủy
             </button>
