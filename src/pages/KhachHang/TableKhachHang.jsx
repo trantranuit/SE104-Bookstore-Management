@@ -43,15 +43,16 @@ function TableKhachHang({
       setError(null);
       try {
         const data = await customerService.getAllCustomers(searchTerm);
-        // Transform and filter the data locally as well for redundancy
+        // Thêm chỉ số vào dữ liệu gốc để sử dụng cho cột No.
         const transformedData = data
-          .map((customer) => ({
-            MaKhachHang: customer.MaKhachHang.toString(), // Keep as string to handle KH001 format
+          .map((customer, index) => ({
+            MaKhachHang: customer.MaKhachHang.toString(),
+            _index: index, // Thêm chỉ số gốc vào dữ liệu
             name: customer.HoTen,
             phone: customer.DienThoai,
             email: customer.Email,
             address: customer.DiaChi,
-            debtAmount: parseInt(customer.SoTienNo) || 0, // Convert string to number for display
+            debtAmount: parseInt(customer.SoTienNo) || 0,
           }))
           .filter(
             (customer) =>
@@ -80,9 +81,12 @@ function TableKhachHang({
   const columns = [
     {
       header: "No.",
-      accessorKey: "index",
+      accessorKey: "index", 
       size: 80,
-      cell: ({ row }) => (pagination.pageIndex * pagination.pageSize) + row.index + 1
+      cell: ({ row }) => {
+        // Sử dụng index của dòng trong mảng gốc để tính số thứ tự
+        return row.original._index + 1; // Sử dụng _index từ dữ liệu gốc
+      },
     },
     { header: "Mã KH", accessorKey: "MaKhachHang", size: 150 },
     { header: "Tên khách hàng", accessorKey: "name" },
@@ -170,6 +174,20 @@ function TableKhachHang({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: false,
   });
+
+  // Thêm debug để kiểm tra pagination sau khi khởi tạo table
+  useEffect(() => {
+    console.log("Pagination state:", pagination);
+    console.log("Customers data length:", customers.length);
+  }, [pagination, customers]);
+
+  // Thêm log để theo dõi sự thay đổi pagination khi chuyển trang
+  useEffect(() => {
+    console.log("Table state after page change:", {
+      tablePagination: table?.getState()?.pagination,
+      componentPagination: pagination
+    });
+  }, [pagination, table]);
 
   return (
     <div className="kh-table-container">
