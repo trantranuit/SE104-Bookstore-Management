@@ -9,11 +9,11 @@ function TableCongNo({ data }) {
       cell: (info) => <div className="stt-cell">{info.getValue()}</div>,
     },
     {
-      header: "Mã KH",
+      header: "Mã khách hàng",
       accessorKey: "MaKH",
     },
     {
-      header: "Tên KH",
+      header: "Tên khách hàng",
       accessorKey: "TenKH",
     },
     {
@@ -82,21 +82,21 @@ function TableCongNo({ data }) {
         </tbody>
       </table>
       {data.length > 0 && (
-        <div className="pagination">
+        <div className="pagination-bccn">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="pagination-button"
+            className="pagination-button-bccn"
           >
             ←
           </button>
-          <span className="pagination-info">
+          <span className="pagination-info-bccn">
             Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
           </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="pagination-button"
+            className="pagination-button-bccn"
           >
             →
           </button>

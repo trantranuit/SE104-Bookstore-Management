@@ -23,8 +23,11 @@
 }
 
 .search-section-ptt {
-    width: 100%;
-    margin: 0 auto 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .search-bar-ptt {
@@ -43,30 +46,100 @@
 }
 
 .receipt-table-container-ptt {
-    overflow-x: auto;
-    /* Enable horizontal scrolling if needed */
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem; /* Thêm padding-bottom để tránh đè lên */
 }
 
 .receipt-table-ptt {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: transparent;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.receipt-table-ptt table {
+          width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  /* Center-align all content */
+  table-layout: fixed;
+  /* Enable fixed column widths */
+  font-size: 0.8rem;
+  /* Reduce font size to 80% */
 }
 
 .receipt-table-ptt th {
-    background-color: #007bff;
+        background-color: #007bff;
+    /* Blue background */
     color: white;
-    text-align: center;
-    padding: 0.75rem;
+    /* White text */
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
 }
 
 .receipt-table-ptt td {
-    text-align: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid #ddd;
+    padding: 1.2rem;
+    /* Increase padding for better height */
+    border-bottom: 0.1rem solid #ccc;
+    /* Only horizontal borders */
 }
+
+.receipt-table-ptt th, 
+.receipt-table-ptt td {
+        text-align: center;
+    /* Center-align cell content */
+    font-size: 0.8rem;
+}
+
+.receipt-table-ptt th:nth-child(1),
+.receipt-table-ptt td:nth-child(1) {
+    width: 5%;
+    /* Light gray background for even rows */
+}
+
+.receipt-table-ptt th:nth-child(2),
+.receipt-table-ptt td:nth-child(2) {
+    width: 10%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(3),
+.receipt-table-ptt td:nth-child(3) {
+    width: 10%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(4),
+.receipt-table-ptt td:nth-child(4) {
+    width: 15%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(5),
+.receipt-table-ptt td:nth-child(5) {
+    width: 10%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(6),
+.receipt-table-ptt td:nth-child(6) {
+    width: 20%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(7),
+.receipt-table-ptt td:nth-child(7) {
+    width: 10%;
+    /* Light gray background for even rows */
+}   
+.receipt-table-ptt th:nth-child(8),
+.receipt-table-ptt td:nth-child(8) {
+    width: 10%;
+    /* Light gray background for even rows */
+}
+.receipt-table-ptt th:nth-child(9),
+.receipt-table-ptt td:nth-child(9) {
+    width: 10%;
+    /* Light gray background for even rows */
+}   
 
 .icon-button-ptt {
     background-color: #007bff;
@@ -238,23 +311,22 @@
     background-color: #45a049;
     /* Darker green on hover */
 }
-
+.edit-buttons-ptt{
+      display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
 .edit-button-ptt {
-    background-color: #007bff;
-    /* Blue background */
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem; /* Canh giữa nút trong ô */
 }
 
 .edit-button-ptt:hover {
-    background-color: #0056b3;
-    /* Darker blue on hover */
+  color: #0056b3;
 }
 
+/* Các style khác của PhieuThuTien */
 .delete-button-ptt {
     background-color: #dc3545;
     /* Red background */
@@ -318,7 +390,7 @@
     margin-bottom: 1.5rem;
 }
 
-confirmation-actions-ptt {
+.confirmation-actions-ptt {
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -402,4 +474,74 @@ confirmation-actions-ptt {
 .notification-content-ptt .close-button-ptt:hover {
     background-color: #0056b3;
     /* Darker blue on hover */
+}
+
+/* Thanh tìm kiếm - giống với TatCaSach */
+.search-filter-block-ptt {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-filter-block-ptt input {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    min-width: 300px;
+}
+
+/* Pagination buttons - giống với TatCaSach */
+.pagination-buttons-ptt {
+  position: absolute;
+  bottom: 0;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  background-color: white; /* Thêm background để tránh trong suốt */
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
+}
+
+.pagination-button-ptt-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
+  line-height: 1;
+}
+
+.pagination-button-ptt-button:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
+}
+
+.pagination-button-ptt-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.pagination-info-ptt {
+  margin: 0;
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px;
+  text-align: center;
 }

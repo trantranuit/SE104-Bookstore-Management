@@ -298,21 +298,16 @@ function ThanhToanCu() {
                             <span className="label-name-ttc">Mã phiếu thu</span>
                             <span className="colon-ttc">:</span>
                             <span className="value-ttc">{maPhieuThu}</span>
-                        </div>
-                        <div className="line-ttc">
+                        </div>                        <div className="line-ttc">
                             <span className="label-name-ttc">Ngày lập</span>
                             <span className="colon-ttc">:</span>
                             <span className="value-ttc">
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input
-                                        type="date"
-                                        value={formatDateForInput(ngayLap)}
-                                        onChange={handleNgayLapChange}
-                                        className="custom-input-ttc"
-                                        style={{ marginRight: '10px' }}
-                                    />
-                                    <span>{ngayLap}</span>
-                                </div>
+                                <input
+                                    type="date"
+                                    value={formatDateForInput(ngayLap)}
+                                    onChange={handleNgayLapChange}
+                                    className="custom-input-ttc date-input-ttc"
+                                />
                             </span>
                         </div>
                     </div>

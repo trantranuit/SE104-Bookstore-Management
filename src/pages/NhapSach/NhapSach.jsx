@@ -370,22 +370,18 @@ const NhapSach = () => {
 
   if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
 
-  return (
-    <div className="page-container">
-      <h1>Nhập sách</h1>
+  return (    <div className="page-container">
+      <h1 className="page-title">Nhập sách</h1>
       <div className="content-wrapper">
-        <div className="search-bar-ns">
+        <div className="search-filter-block-ns">
           <input
             type="text"
             placeholder="Tìm kiếm Phiếu nhập theo Mã sách, Tên sách hoặc Mã phiếu nhập..."
             value={searchQuery}
             onChange={handleSearch}
-            className="search-input-ns"
           />
-        </div>
-        <div className="filter-bar-ns">
           <button
-            className="filter-button-ns"
+            className={`filter-button-ns ${filters.maPhieuNhap.length > 0 ? 'active-filter-ns' : ''}`}
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("maPhieuNhap");
@@ -393,21 +389,17 @@ const NhapSach = () => {
           >
             Lọc theo Mã phiếu nhập
           </button>
-          <div className="filter-group-ns">
-            <label>Lọc theo Ngày nhập:</label>
-            <input
-              type="date"
-              name="ngayNhap"
-              value={filters.ngayNhap}
-              onChange={(e) => {
-                setFilters((prev) => ({ ...prev, ngayNhap: e.target.value }));
-                applyFilters();
-              }}
-              className="filter-input-ns"
-            />
-          </div>
           <button
-            className="filter-button-ns"
+            className={`filter-button-ns ${filters.ngayNhap ? 'active-filter-ns' : ''}`}
+            onClick={() => {
+              setIsFilterModalOpen(true);
+              setSelectedFilterType("ngayNhap");
+            }}
+          >
+            Lọc theo Ngày nhập
+          </button>
+          <button
+            className={`filter-button-ns ${filters.MaNguoiNhap.length > 0 ? 'active-filter-ns' : ''}`}
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("MaNguoiNhap");
@@ -415,55 +407,145 @@ const NhapSach = () => {
           >
             Lọc theo Người nhập
           </button>
+          <button className="add-button-ns" onClick={handleOpenModalPhieuNhap}>
+            + Thêm phiếu nhập
+          </button>
         </div>
-        <button className="add-button-ns" onClick={handleOpenModalPhieuNhap}>
-          + Thêm phiếu nhập
-        </button>
-        <TableNhapSach data={filteredData} onEdit={handleEdit} />
-        {isFilterModalOpen && (
+        {(filters.maPhieuNhap.length > 0 || filters.MaNguoiNhap.length > 0 || filters.ngayNhap) && (
+          <div className="active-filters-ns">
+            {filters.maPhieuNhap.map((filter) => (
+              <div key={filter} className="active-filter-tag-ns">
+                Mã PNS: {filter}
+                <button
+                  className="remove-filter-ns"
+                  onClick={() => {
+                    setFilters(prev => ({
+                      ...prev,
+                      maPhieuNhap: prev.maPhieuNhap.filter(f => f !== filter)
+                    }));
+                    setSelectedFilters(prev => ({
+                      ...prev,
+                      maPhieuNhap: prev.maPhieuNhap.filter(f => f !== filter)
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {filters.MaNguoiNhap.map((filter) => (
+              <div key={filter} className="active-filter-tag-ns">
+                Người nhập: {filter}
+                <button
+                  className="remove-filter-ns"
+                  onClick={() => {
+                    setFilters(prev => ({
+                      ...prev,
+                      MaNguoiNhap: prev.MaNguoiNhap.filter(f => f !== filter)
+                    }));
+                    setSelectedFilters(prev => ({
+                      ...prev,
+                      MaNguoiNhap: prev.MaNguoiNhap.filter(f => f !== filter)
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {filters.ngayNhap && (
+              <div className="active-filter-tag-ns">
+                Ngày: {filters.ngayNhap}
+                <button
+                  className="remove-filter-ns"
+                  onClick={() => {
+                    setFilters(prev => ({ ...prev, ngayNhap: '' }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        <TableNhapSach data={filteredData} onEdit={handleEdit} />        {isFilterModalOpen && (
           <div className="modal-overlay-ns">
-            <div className="filter-modal-content-ns">
-              <h2>
-                {selectedFilterType === "maPhieuNhap"
-                  ? "Lọc theo Mã phiếu nhập"
-                  : "Lọc theo Người nhập"}
+            <div className="modal-new-ns">
+              <h2 className="modal-title-new-ns">
+                {selectedFilterType === "maPhieuNhap" && "Lọc theo Mã phiếu nhập"}
+                {selectedFilterType === "MaNguoiNhap" && "Lọc theo Người nhập"}
+                {selectedFilterType === "ngayNhap" && "Lọc theo Ngày nhập"}
               </h2>
+              
               {selectedFilterType === "maPhieuNhap" && (
-                <div className="filter-options-ns">
+                <div className="author-list-ns">
                   {phieuNhapOptions.map((option) => (
-                    <label key={option}>
-                      <input
-                        type="checkbox"
-                        name="maPhieuNhap"
-                        value={option}
-                        checked={selectedFilters.maPhieuNhap.includes(option)}
-                        onChange={handleFilterChange}
-                      />
+                    <div
+                      key={option}
+                      className={`author-item-ns ${
+                        selectedFilters.maPhieuNhap.includes(option) ? "selected-ns" : ""
+                      }`}
+                      onClick={() => handleFilterChange({
+                        target: {
+                          name: "maPhieuNhap",
+                          value: option,
+                          checked: !selectedFilters.maPhieuNhap.includes(option)
+                        }
+                      })}
+                    >
                       {option}
-                    </label>
+                    </div>
                   ))}
                 </div>
               )}
+              
               {selectedFilterType === "MaNguoiNhap" && (
-                <div className="filter-options-ns">
+                <div className="author-list-ns">
                   {nguoiNhapOptions.map((option) => (
-                    <label key={option}>
-                      <input
-                        type="checkbox"
-                        name="MaNguoiNhap"
-                        value={option}
-                        checked={selectedFilters.MaNguoiNhap.includes(option)}
-                        onChange={handleFilterChange}
-                      />
+                    <div
+                      key={option}
+                      className={`author-item-ns ${
+                        selectedFilters.MaNguoiNhap.includes(option) ? "selected-ns" : ""
+                      }`}
+                      onClick={() => handleFilterChange({
+                        target: {
+                          name: "MaNguoiNhap",
+                          value: option,
+                          checked: !selectedFilters.MaNguoiNhap.includes(option)
+                        }
+                      })}
+                    >
                       {option}
-                    </label>
+                    </div>
                   ))}
                 </div>
               )}
-              <div className="modal-actions-ns">
-                <button onClick={applyFilters}>Áp dụng</button>
-                <button onClick={resetFilters}>Hủy áp dụng</button>
-                <button onClick={() => setIsFilterModalOpen(false)}>
+              
+              {selectedFilterType === "ngayNhap" && (
+                <div className="year-filter-inputs-ns">
+                  <input
+                    type="date"
+                    name="ngayNhap"
+                    value={filters.ngayNhap}
+                    onChange={(e) => {
+                      setFilters((prev) => ({ ...prev, ngayNhap: e.target.value }));
+                    }}
+                    placeholder="Chọn ngày nhập"
+                  />
+                </div>
+              )}
+              
+              <div className="modal-buttons">
+                <button className="apply-button-ns" onClick={applyFilters}>
+                  Áp dụng
+                </button>
+                <button className="cancel-button-new-ns" onClick={resetFilters}>
+                  Hủy áp dụng
+                </button>
+                <button
+                  className="close-button-new-ns"
+                  onClick={() => setIsFilterModalOpen(false)}
+                >
                   Đóng
                 </button>
               </div>

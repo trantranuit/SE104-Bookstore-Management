@@ -146,13 +146,14 @@
     flex-wrap: wrap;
     gap: 0.375rem;
     /* 6px */
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.1rem;
+    padding-left:0.3rem;
     /* 4px 8px */
-    border: 0.063rem solid #ccc;
+    /* border: 0.063rem solid #ccc; */
     /* 1px */
     border-radius: 0.313rem;
     /* 5px */
-    background: #f8f8f8;
+    /* background: #f8f8f8; */
     min-height: 2.25rem;
     /* 36px */
     align-items: center;
@@ -252,9 +253,6 @@
 }
 
 .author-input-tsm {
-    border: none;
-    outline: none;
-    background: none;
     flex: 1;
     min-width: 6.25rem;
     /* 100px */

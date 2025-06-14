@@ -159,92 +159,150 @@
     /* Adjust this value to change the spacing between divs */
 }
 
+/* Thanh tìm kiếm - giống với PhieuThuTien */
+.search-filter-block-thd {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-filter-block-thd input {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    min-width: 300px;
+}
+
+/* Giữ lại phần search-section-thd cũ để tương thích ngược */
 .search-section-thd {
-    width: 90%;
-    /* Match the width of the table in ThanhToanMoi */
-    margin: 0 auto 2rem;
-    /* Center the search bar and add 2rem spacing below */
-    display: block;
-    /* Ensure it behaves as a block element */
-    margin-top: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .search-bar-thd {
     width: 100%;
-    /* Match the width of the table */
     padding: 0.75rem;
-    /* Add padding for better usability */
     border: 1px solid #ccc;
-    /* Light gray border */
     border-radius: 4px;
-    /* Rounded corners */
-    font-size: 0.8rem;
-    /* Adjust font size for readability */
-    margin-top: 1rem;
-    /* Add spacing above */
-    margin-bottom: 0.5rem;
-    /* Add spacing below */
-    display: block;
-    /* Ensure it spans the full width */
+    font-size: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow */
 }
 
 .search-bar-thd:focus {
     outline: none;
-    /* Remove default outline */
     border-color: #007bff;
-    /* Blue border on focus */
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    /* Blue glow on focus */
 }
 
-.search-bar-thd::placeholder {
-    color: #888;
-    /* Light gray placeholder text */
-    font-style: italic;
-    /* Italicize placeholder text */
+
+.invoice-table-container-thd {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 4rem; /* Thêm padding-bottom để tránh đè lên */
 }
 
 .invoice-table-thd {
-    width: 90%;
-    /* Match the width of the table in ThanhToanMoi */
-    margin: 0 auto;
-    /* Center the table */
-    border-collapse: collapse;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    background-color: transparent;
-    /* Remove background */
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.invoice-table-thd table {
+      width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  /* Center-align all content */
+  table-layout: fixed;
+  /* Enable fixed column widths */
+  font-size: 0.8rem;
+  /* Reduce font size to 80% */
 }
 
 .invoice-table-thd th {
-    background-color: #007bff;
+        background-color: #007bff;
     /* Blue background */
     color: white;
     /* White text */
-    text-align: center;
-    /* Center-align header text */
-    padding: 0.75rem;
-    /* Add padding for spacing */
     font-weight: bold;
-    /* Make text bold */
-    border-bottom: 1px solid #ddd;
-    /* Add a border below the header */
 }
+
 
 .invoice-table-thd th,
 .invoice-table-thd td {
     text-align: center;
-    /* Center-align text */
-    vertical-align: middle;
-    /* Vertically align text in the middle */
-    padding: 0.75rem;
-    /* Add padding for spacing */
-    border-bottom: 1px solid #ddd;
-    /* Add a border below each row */
+    /* Center-align cell content */
     font-size: 0.8rem;
-    /* Adjust font size for readability */
+}
+
+.invoice-table-thd td {
+    padding: 1.2rem;
+    /* Increase padding for better height */
+    border-bottom: 0.01rem solid #ccc;
+    /* Only horizontal borders */
+}
+
+.invoice-table-thd th:nth-child(1),
+.invoice-table-thd td:nth-child(1) {
+    width: 5%;
+    /* Set width for the first column */
+}
+
+.invoice-table-thd th:nth-child(2),
+.invoice-table-thd td:nth-child(2) {
+    width: 10%;
+    /* Set width for the second column */
+}
+
+.invoice-table-thd th:nth-child(3),
+.invoice-table-thd td:nth-child(3) {
+    width: 10%;
+    /* Set width for the third column */
+}
+
+.invoice-table-thd th:nth-child(4),
+.invoice-table-thd td:nth-child(4) {
+    width: 15%;
+    /* Set width for the fourth column */
+}
+
+.invoice-table-thd th:nth-child(5),
+.invoice-table-thd td:nth-child(5) {
+    width: 10%;
+    /* Set width for the fifth column */
+}
+
+.invoice-table-thd th:nth-child(6),
+.invoice-table-thd td:nth-child(6) {
+    width: 20%;
+    /* Set width for the sixth column */
+}
+
+.invoice-table-thd th:nth-child(7),
+.invoice-table-thd td:nth-child(7) {
+    width: 10%;
+    /* Set width for the seventh column */
+}
+
+.invoice-table-thd th:nth-child(8),
+.invoice-table-thd td:nth-child(8) {
+    width: 10%;
+    /* Set width for the eighth column */
+}
+
+.invoice-table-thd th:nth-child(9),
+.invoice-table-thd td:nth-child(9) {
+    width: 10%;
+    /* Set width for the ninth column */
 }
 
 .view-button-thd {
@@ -317,47 +375,58 @@
     /* Center the title */
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 2rem !important;
+    margin-bottom: 0.5rem;
     /* Add spacing below the title */
 }
 
 .modal-left-thd {
-    margin-left: 1rem;
-    /* Align content with the left edge of the book list table */
+    flex: 1;
+    text-align: left;
+    /* Align text to the left */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: transparent;
+    /* Remove background color */
+    color: #333;
+    /* Default text color */
 }
 
+.edit-button-thd {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto; /* Canh giữa nút trong ô */
+}
+
+.edit-button-thd:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.edit-button-thd svg {
+    font-size: 16px;
+}
+
+/* Giữ lại style cũ cho icon-button-thd để tương thích ngược */
 .icon-button-thd {
     background-color: #007bff;
-    /* Blue background */
     color: white;
-    /* White icon color */
     border: none;
-    /* Remove border */
     padding: 0.5rem;
-    /* Add padding for better usability */
-    border-radius: 10%;
+    border-radius: 4px;
     cursor: pointer;
-    /* Pointer cursor for better UX */
-    font-size: 1.2rem;
-    /* Increase icon size */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    /* Add subtle shadow */
-    transition: transform 0.2s ease, background-color 0.3s ease;
-    /* Smooth transition */
-}
-
-.icon-button-thd:hover {
-    background-color: #0056b3;
-    /* Darker blue on hover */
-    transform: scale(1.1);
-    /* Slightly enlarge the button on hover */
-}
-
-.icon-button-thd:active {
-    background-color: #003f7f;
-    /* Even darker blue on active */
-    transform: scale(0.95);
-    /* Slightly shrink the button on click */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-table-thd {
@@ -418,6 +487,60 @@
     /* Add spacing above the buttons */
 }
 
+/* Pagination buttons - giống với PhieuThuTien */
+.pagination-buttons-thd {
+  position: absolute;
+  bottom: 0;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  background-color: white; /* Thêm background để tránh trong suốt */
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
+}
+
+.pagination-buttons-thd-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
+  line-height: 1;
+}
+
+.pagination-buttons-thd-button:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
+}
+
+.pagination-buttons-thd-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.pagination-info-thd {
+  margin: 0;
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Giữ lại các class cũ để tương thích ngược */
 .pagination-button-thd {
     padding: 0.5rem 1rem;
     border: none;
@@ -430,12 +553,6 @@
 .pagination-button-thd:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-}
-
-.pagination-info {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
 }
 
 .sort-button-thd {
@@ -455,4 +572,21 @@
 
 .sort-button-thd:active {
     background-color: #004085 !important;
+}
+
+.action-buttons-thd {
+          display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.action-button-thd {
+    cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem; /* Canh giữa nút trong ô */
+}
+
+.action-button-thd:hover {
+    color: #0056b3;
+    /* Darker blue on hover */
 }

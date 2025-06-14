@@ -9,7 +9,7 @@ function TableTon({ month, year }) {
 
   const columns = [
     {
-      header: "STT",
+      header: "No.",
       accessorFn: (row, index) => index + 1,
       cell: (info) => <div className="stt-cell">{info.getValue()}</div>,
     },
@@ -23,12 +23,12 @@ function TableTon({ month, year }) {
       cell: (info) => info.getValue() || "Không có tên",
     },
     {
-      header: "NXB",
+      header: "Nhà xuất bản",
       accessorKey: "NXB",
       cell: (info) => info.getValue() || "Không có",
     },
     {
-      header: "Năm XB",
+      header: "Năm xuất bản",
       accessorKey: "NamXB",
       cell: (info) => info.getValue() || "-",
     },
@@ -119,17 +119,17 @@ function TableTon({ month, year }) {
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="pagination-button"
+            className="pagination-button-bct"
           >
             ←
           </button>
-          <span className="pagination-info">
+          <span className="pagination-info-bct">
             Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
           </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="pagination-button"
+            className="pagination-button-bct"
           >
             →
           </button>

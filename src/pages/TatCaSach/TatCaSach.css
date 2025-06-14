@@ -1,43 +1,226 @@
 .search-filter-block-tcs {
     margin-bottom: 2rem;
     display: flex;
-    /* Arrange buttons horizontally */
+    align-items: center;
     gap: 1rem;
-    /* Add spacing between buttons */
     flex-wrap: wrap;
-    /* Allow wrapping if buttons overflow */
+}
+
+.search-input-container-tcs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 300px;
 }
 
 .search-filter-block-tcs input {
-    width: 100%;
+    flex: 1;
     padding: 1rem;
-    margin-bottom: 1rem;
     border-radius: 0.5rem;
     border: 0.1rem solid #ccc;
 }
 
+.filter-icon-tcs {
+    padding: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    min-width: 50px;
+    height: 50px;
+}
+
+.filter-icon-tcs:hover {
+    background-color: #0056b3;
+}
+
+.filter-icon-tcs.active-tcs {
+    background-color: #28a745;
+}
+
+.filter-dropdown-tcs {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.filter-container-tcs {
+    position: relative;
+}
+
+.filter-section-tcs {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.1rem solid #eee;
+}
+
+.filter-section-tcs:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.filter-section-title-tcs {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.filter-options-tcs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-option-tcs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-option-tcs:hover {
+    background-color: #f8f9fa;
+}
+
+.filter-option-tcs input[type="checkbox"] {
+    margin: 0;
+}
+
+.filter-option-tcs label {
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #333;
+}
+
+.range-inputs-tcs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.range-inputs-tcs input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.range-separator-tcs {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.filter-actions-tcs {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 0.1rem solid #eee;
+}
+
+.apply-filter-btn-tcs {
+    flex: 1;
+    padding: 0.8rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.apply-filter-btn-tcs:hover {
+    background-color: #218838;
+}
+
+.clear-filter-btn-tcs {
+    flex: 1;
+    padding: 0.8rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.clear-filter-btn-tcs:hover {
+    background-color: #5a6268;
+}
+
+.active-filters-tcs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.active-filter-tag-tcs {
+    background-color: #007bff;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.remove-filter-tcs {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-filter-tcs:hover {
+    color: #ccc;
+}
+
 .book-table-block-tcs {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-    /* Center-align all content */
-    max-height: none;
-    /* Remove height restriction and scrolling */
-    overflow-y: visible;
-    /* Remove height restriction and scrolling */
-    overflow: hidden;
-    table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-bottom: 20px;
+  flex: 1;
 }
 
 .book-table-block-tcs table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-    /* Center-align all content */
-    table-layout: fixed;
-    /* Enable fixed column widths */
-    font-size: 0.8rem;
-    /* Reduce font size to 80% */
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  /* Center-align all content */
+  table-layout: fixed;
+  /* Enable fixed column widths */
+  font-size: 0.8rem;
+  /* Reduce font size to 80% */
 }
 
 .book-table-block-tcs th,
@@ -52,7 +235,7 @@
 
     padding: 1.2rem;
     /* Increase padding for better height */
-    border-bottom: 0.1rem solid #ccc;
+    border-bottom: 0.01rem solid #ccc;
     /* Only horizontal borders */
 }
 
@@ -118,28 +301,81 @@
     /* Fixed width for Đơn giá bán column */
 }
 
+.book-table-block-container-tcs {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem; 
+    /* Enable vertical scrolling */
+}
+
+.pagination-button-container-tcs{
+      position: absolute;
+  bottom: 0;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  background-color: white; /* Thêm background để tránh trong suốt */
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
+}
 .pagination-buttons-tcs {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
+  position: absolute;
+  bottom: 0;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  background-color: white; /* Thêm background để tránh trong suốt */
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
 }
 
-.pagination-buttons-tcs button {
-    padding: 0.5rem 1rem;
-    width: 4rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-size: 0.8rem;
-    text-align: center;
+.pagination-buttons-tcs-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
+  line-height: 1;
 }
 
-.pagination-buttons-tcs button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.pagination-buttons-tcs-button:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
 }
+
+.pagination-buttons-tcs-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.pagination-info-tcs {
+  margin: 0;
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px;
+  text-align: center;
+}
+
 
 /* Modal Styles */
 .modal-new-tcs {
@@ -276,6 +512,8 @@
     /* Yellow background */
     color: black;
     /* Black text */
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .cancel-button-new-tcs:hover {

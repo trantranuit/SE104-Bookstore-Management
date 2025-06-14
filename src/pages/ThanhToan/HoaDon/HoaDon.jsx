@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PiNotePencil } from "react-icons/pi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
 import thanhToanMoiApi from '../../../services/thanhToanMoiApi';
 import '../../../styles/PathStyles.css';
@@ -283,6 +284,7 @@ function HoaDon() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                <div className="invoice-table-container-thd">
                 <table className="invoice-table-thd">
                     <thead>
                         <tr>
@@ -313,12 +315,15 @@ function HoaDon() {
                                         : 'Chưa có'}
                                 </td>
                                 <td>
-                                    <button
-                                        className="icon-button-thd"
+                                    <div className="action-buttons-thd">
+                                    <FontAwesomeIcon
+                                        icon={faEdit}
+                                        className="action-button-thd"
                                         onClick={() => handleViewInvoice(invoice.maHoaDon)}
-                                    >
-                                        <PiNotePencil />
-                                    </button>
+                                    />
+    
+                                   
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -326,29 +331,25 @@ function HoaDon() {
                 </table>
 
                 {/* Add pagination buttons */}
-                <div className="pagination-wrapper" style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '1rem',
-                    marginTop: '1rem'
-                }}>
+                <div className="pagination-buttons-thd">
                     <button
                         onClick={handlePrevPage}
                         disabled={currentPage === 1}
-                        className="pagination-button-thd"
+                        className="pagination-buttons-thd-button"
                     >
-                        Trước
+                        ←
                     </button>
-                    <span className="pagination-info">
+                    <span className="pagination-info-thd">
                         Trang {currentPage} / {totalPages}
                     </span>
                     <button
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages}
-                        className="pagination-button-thd"
+                        className="pagination-buttons-thd-button"
                     >
-                        Sau
+                        →
                     </button>
+                </div>
                 </div>
             </div>
 

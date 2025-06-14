@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PiNotePencil } from "react-icons/pi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import '../../../styles/PathStyles.css';
 import './PhieuThuTien.css';
 import phieuThuTienApi from '../../../services/phieuThuTienApi';
@@ -85,12 +86,10 @@ function PhieuThuTien() {
 
     return (
         <div className="page-container">
-            <h1 className="page-title">Danh Sách Phiếu Thu Tiền</h1>
-            <div className="receipt-section-ptt">
-                <div className="search-section-ptt">
+            <h1 className="page-title">Danh Sách Phiếu Thu Tiền</h1>            <div className="content-wrapper">
+                <div className="search-filter-block-ptt">
                     <input
                         type="text"
-                        className="search-bar-ptt"
                         placeholder="Tìm kiếm phiếu thu tiền..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -126,40 +125,40 @@ function PhieuThuTien() {
                                         <td>{receipt.NgayThu || 'N/A'}</td>
                                         <td>{receipt.SoTienThu ? Number(receipt.SoTienThu).toLocaleString('vi-VN') : '0'}đ</td>
                                         <td>
-                                            <button
-                                                className="icon-button-ptt"
+                                            <div className="edit-buttons-ptt">
+                                            <FontAwesomeIcon
+                                                icon={faEdit}
+                                                className="edit-button-ptt"
                                                 onClick={() => handleViewReceipt(receipt.MaPhieuThu)}
-                                            >
-                                                <PiNotePencil />
-                                            </button>
+                                            />
+                                            </div>
                                         </td>
                                     </tr>
                                 );
                             })}
                         </tbody>
                     </table>
-                </div>
-                <div className="pagination-controls-ptt" style={{ marginTop: '20px', textAlign: 'center' }}>
-                    <button
-                        className="pagination-button-ptt"
-                        onClick={handlePreviousPage}
+                               <div className="pagination-buttons-ptt">
+                    <button 
+                        onClick={handlePreviousPage} 
                         disabled={currentPage === 1}
-                        style={{ marginRight: '10px', padding: '8px 16px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                        className="pagination-button-ptt-button"
                     >
-                        Trước
+                        ←
                     </button>
-                    <span>Trang {currentPage} / {totalPages}</span>
-                    <button
-                        className="pagination-button-ptt"
-                        onClick={handleNextPage}
+                    <span className="pagination-info-ptt">
+                        Trang {currentPage}/{totalPages}
+                    </span>
+                    <button 
+                        onClick={handleNextPage} 
                         disabled={currentPage === totalPages}
-                        style={{ marginLeft: '10px', padding: '8px 16px', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                        className="pagination-button-ptt-button"
                     >
-                        Sau
+                        →
                     </button>
                 </div>
             </div>
-
+            </div> 
             {selectedReceipt && (
                 <div className="modal-ptt">
                     <div className="modal-content-ptt">
@@ -208,6 +207,7 @@ function PhieuThuTien() {
                 </div>
             )}
         </div>
+       
     );
 }
 

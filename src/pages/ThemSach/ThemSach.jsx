@@ -4,7 +4,8 @@ import './ThemSach.css';
 import themSachApi from '../../services/themSachApi';
 
 function ThemSach() {
-    const [step, setStep] = useState(1);
+    // Removed unused state
+    const [, setStep] = useState(1);
     const [maSachMoi, setMaSachMoi] = useState('');
     const [tenSach, setTenSach] = useState('');
     const [tenTacGia, setTenTacGia] = useState([]); // Array of selected author objects { MaTG, TenTG }

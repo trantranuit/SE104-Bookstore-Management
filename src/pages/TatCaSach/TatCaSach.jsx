@@ -288,9 +288,8 @@ function TatCaSach() {
                         onClick={() => setIsGenreModalOpen(true)}
                     >
                         Lọc theo thể loại
-                    </button>
-                    <button
-                        className={`filter-button-tcs ${selectedPublishers.length > 0 ? 'active-filter' : ''}`}
+                    </button>                    <button
+                        className={`filter-button-tcs ${selectedPublishers.length > 0 ? 'active-filter-tcs' : ''}`}
                         onClick={() => setIsPublisherModalOpen(true)}
                     >
                         Lọc theo nhà xuất bản
@@ -595,6 +594,7 @@ function TatCaSach() {
                 )}
 
                 {/* Table of Books */}
+                <div className="book-table-block-container-tcs">
                 <div className="book-table-block-tcs">
                     <table>
                         <thead>
@@ -634,15 +634,17 @@ function TatCaSach() {
                         </tbody>
                     </table>
                 </div>
-
-                {/* Pagination Buttons */}
-                <div className="pagination-buttons-tcs">
-                    <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                        Trước
-                    </button>
-                    <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-                        Sau
-                    </button>
+                             {/* Pagination Buttons */}
+                    <div className="pagination-buttons-tcs">
+                        <button onClick={handlePreviousPage} disabled={currentPage === 1} className="pagination-buttons-tcs-button">
+                            ←
+                        </button>                    <span className="pagination-info-tcs">
+                            Trang {currentPage}/{totalPages}
+                        </span>
+                        <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-buttons-tcs-button">
+                            →
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
