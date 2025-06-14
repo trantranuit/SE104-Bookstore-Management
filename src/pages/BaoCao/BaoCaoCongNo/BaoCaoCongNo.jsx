@@ -66,9 +66,6 @@ function BaoCaoCongNo() {
               ))}
             </select>
           </div>
-          <button className="submit-button" onClick={() => fetchData(selectedMonth, selectedYear)}>
-            Hiển Thị
-          </button>
         </div>
 
         {loading && <div className="loading-container">Đang tải dữ liệu...</div>}

@@ -8,7 +8,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import customerService from "../../services/customerService";
 import "./KhachHang.css";
 
@@ -107,11 +107,7 @@ function TableKhachHang({
               setIsModalOpen(true);
             }}
           />
-          <FontAwesomeIcon
-            icon={faTrash}
-            className="khachhang-delete-icon"
-            onClick={() => handleDeleteCustomer(row.original.MaKhachHang)}
-          />
+
         </div>
       ),
     },

@@ -41,14 +41,6 @@ function BaoCaoTon() {
               ))}
             </select>
           </div>
-          <button
-            className="submit-button"
-            onClick={() => {
-              // Trigger TableTon re-render by passing new props
-            }}
-          >
-            Hiển Thị
-          </button>
         </div>
         <TableTon month={parseInt(selectedMonth)} year={parseInt(selectedYear)} />
       </div>

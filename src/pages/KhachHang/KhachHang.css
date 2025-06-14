@@ -361,7 +361,7 @@
   background-color: #5a6268;
 }
 
-.success-modal {
+.success-modal-kh {
     position: fixed;
     top: 0;
     left: 0;
@@ -374,7 +374,7 @@
     z-index: 3000;
 }
 
-.success-modal-content {
+.success-modal-content-kh {
     background-color: white;
     padding: 2rem;
     border-radius: 0.5rem;
@@ -402,7 +402,7 @@
     color: #333;
 }
 
-.success-modal-button {
+.success-modal-button-kh {
     margin-top: 1rem;
     padding: 0.6rem 3rem;
     background-color: #c18bd7;
@@ -445,8 +445,9 @@
   padding: 8px 15px;
   border-radius: 4px;
   cursor: pointer;
+  display: block; 
+  margin: 0 auto; 
 }
-
 .error-modal-button:hover {
   background-color: #c0392b;
 }
@@ -466,4 +467,14 @@
 .submit-button-kh:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.search-filter-block-tcs input {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid #ccc;
+    width: 100%;      
+    min-width: 100% ;     
+    box-sizing: border-box;
 }

@@ -153,23 +153,6 @@
   text-align: center;
 }
 
-.submit-button {
-    padding: 0.5rem 1.25rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    min-width: 6.25rem;
-    height: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 @media (max-width: 1200px) {
     .pagination {
         transform: translateX(1%);

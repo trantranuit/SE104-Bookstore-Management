@@ -1,4 +1,6 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const TableQuyDinh = ({ data, onEdit }) => {
   return (
@@ -18,9 +20,12 @@ const TableQuyDinh = ({ data, onEdit }) => {
             <td>{item.thamSo}</td>
             <td>{item.giaTri}</td>
             <td>
-              <button className="edit-btn" onClick={() => onEdit(item)}>
-                ✏️
-              </button>
+              <FontAwesomeIcon
+                icon={faEdit}
+                className="edit-btn"
+                style={{ cursor: "pointer" }}
+                onClick={() => onEdit(item)}
+              />
             </td>
           </tr>
         ))}
