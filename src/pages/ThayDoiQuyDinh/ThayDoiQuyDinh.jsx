@@ -71,7 +71,7 @@ const ThayDoiQuyDinh = () => {
         const formattedData = formatApiData(response[0]);
         console.log("Formatted Data:", formattedData);
         setData(formattedData);
-        showNotification("Dữ liệu đã được tải thành công!", "success");
+        // showNotification("Dữ liệu đã được tải thành công!", "success");
       } catch (err) {
         console.error("Lỗi chi tiết:", err.message);
         showNotification(

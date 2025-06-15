@@ -1,31 +1,52 @@
 .notification-container-nons {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1001;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
 }
 
+.notification-icon-nons{
+      background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    min-width: 350px;
+    box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
+    animation: fadeInUp 0.4s ease-out;
+    position: relative; /* Ensure it's positioned correctly */
+}
+
+.notitifitciaon-content-nons {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    min-width: 350px;
+    box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
+    animation: fadeInUp 0.4s ease-out;
+    position: relative; /* Ensure it's positioned correctly */
+}
 .notification-container-nons.success {
-  border-top: 5px solid #4880ff; /* Màu xanh cho thành công */
+  border-top: None; /* Màu xanh cho thành công */
 }
 
 .notification-container-nons.error {
-  border-top: 5px solid #ff6666; /* Màu đỏ cho thất bại */
+  border-top: None; /* Màu đỏ cho thất bại */
 }
 
 .notification-message-nons {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  margin-top: 0;
+  font-size: 1.5rem;
   color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight:bold;
 }
 
 .notification-actions-nons {
@@ -35,12 +56,15 @@
 }
 
 .notification-btn-nons {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    padding: 0.5rem 1rem;
+    background-color: #6C757D;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
 }
 
 .success-btn-nons {

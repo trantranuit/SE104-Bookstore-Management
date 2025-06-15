@@ -44,13 +44,22 @@ function ThanhToanMoi() {
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
     const [showPaymentErrorModal, setShowPaymentErrorModal] = useState(false);
+    const [showConfirmSaveModal, setShowConfirmSaveModal] = useState(false);
+    const [ngayLap, setNgayLap] = useState(() => {
+        const today = new Date();
+        today.setHours(today.getHours() + 7);
+        const day = today.getDate().toString().padStart(2, '0');
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const year = today.getFullYear();
+        return `${day}/${month}/${year}`;
+    });
 
     const formatNumber = (value) => {
         if (!value) return '';
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     };
 
-    const parseNumber = (value) => value.replace(/,/g, '');
+    const parseNumber = (value) => value.replace(/\./g, '');
 
     const calculatePrice = (sach, ctNhapSachList, thamSo) => {
         const ctNhapSach = [...ctNhapSachList]
@@ -58,6 +67,22 @@ function ThanhToanMoi() {
             .sort((a, b) => b.MaPhieuNhap.localeCompare(a.MaPhieuNhap))[0];
         const giaNhap = ctNhapSach ? parseFloat(ctNhapSach.GiaNhap) : 0;
         return thamSo ? Math.round(giaNhap * parseFloat(thamSo.TiLe)) : 0;
+    };
+
+    const formatDateForInput = (dateStr) => {
+        if (!dateStr) return '';
+        const [day, month, year] = dateStr.split('/');
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleNgayLapChange = (e) => {
+        const selectedDate = new Date(e.target.value + 'T00:00:00+07:00');
+        if (!isNaN(selectedDate.getTime())) {
+            const day = selectedDate.getDate().toString().padStart(2, '0');
+            const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = selectedDate.getFullYear();
+            setNgayLap(`${day}/${month}/${year}`);
+        }
     };
 
     useEffect(() => {
@@ -74,7 +99,7 @@ function ThanhToanMoi() {
                 const booksData = sachList.map(sach => {
                     const dauSach = dauSachList.find(ds => ds.MaDauSach === sach.MaDauSach);
                     return {
-                        maSach: sach.MaSach, // Sử dụng MaSach trực tiếp từ API (Sxxx)
+                        maSach: sach.MaSach,
                         tenSach: sach.TenDauSach,
                         tacGia: dauSach && Array.isArray(dauSach.TenTacGia) ? dauSach.TenTacGia.join(', ') : '',
                         nhaXuatBan: sach.TenNXB,
@@ -84,7 +109,6 @@ function ThanhToanMoi() {
                         maDauSach: sach.MaDauSach
                     };
                 });
-                console.log('Danh sách sách:', booksData);
                 setBooks(booksData);
                 setCart(prevCart => prevCart.filter(item => booksData.some(b => b.maSach === item.maSach)));
                 if (!invoice) {
@@ -150,6 +174,15 @@ function ThanhToanMoi() {
             setNewInvoiceId(invoice.MaHD);
             setShowInvoice(true);
             setFinalInvoice(true);
+            if (invoice.NgayLap) {
+                const dateParts = invoice.NgayLap.includes('-') ? invoice.NgayLap.split('-') : invoice.NgayLap.split('/');
+                if (dateParts.length === 3) {
+                    const [year, month, day] = invoice.NgayLap.includes('-') ? [dateParts[0], dateParts[1], dateParts[2]] : [dateParts[2], dateParts[1], dateParts[0]];
+                    setNgayLap(`${day}/${month}/${year}`);
+                } else {
+                    setNgayLap(invoice.NgayLap);
+                }
+            }
         } else {
             setCart([]);
             setCustomerInfo({
@@ -166,6 +199,12 @@ function ThanhToanMoi() {
             setShowInvoice(false);
             setFinalInvoice(false);
             setNewInvoiceId(null);
+            const today = new Date();
+            today.setHours(today.getHours() + 7);
+            const day = today.getDate().toString().padStart(2, '0');
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const year = today.getFullYear();
+            setNgayLap(`${day}/${month}/${year}`);
         }
     }, [invoice]);
 
@@ -176,12 +215,10 @@ function ThanhToanMoi() {
             const bookExists = books.find(b => b.maSach === book.maSach);
             if (!bookExists) {
                 alert(`Sách ${book.tenSach} (Mã: ${book.maSach}) không tồn tại trong danh sách!`);
-                console.log('Sách không tồn tại:', book);
                 return;
             }
             if (!book.maSach.match(/^S\d{3}$/)) {
                 alert(`Mã sách ${book.maSach} không đúng định dạng Sxxx!`);
-                console.log('Lỗi định dạng mã sách:', book.maSach);
                 return;
             }
             const existing = cart.find(item => item.maSach === book.maSach);
@@ -290,12 +327,10 @@ function ThanhToanMoi() {
     const totalPrice = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
 
     const handleCustomerIdChange = async (e) => {
-        const input = e.target.value;
-        const customerId = input.toString().replace(/^KH0*/, '').replace(/^0*/, '');
-        const displayValue = customerId ? `KH${customerId.padStart(3, '0')}` : '';
-        setCustomerInfo({ ...customerInfo, id: displayValue });
+        const input = e.target.value.toUpperCase();
+        setCustomerInfo({ ...customerInfo, id: input });
 
-        if (!customerId) {
+        if (!input) {
             setCustomerInfo({ id: '', name: '', phone: '', email: '', debt: 0 });
             if (finalInvoice) {
                 setFinalInvoice(false);
@@ -304,33 +339,18 @@ function ThanhToanMoi() {
         }
 
         try {
-            const customer = await thanhToanMoiApi.getCustomerById(customerId);
+            const customer = await thanhToanMoiApi.getCustomerById(input.replace(/^KH/, ''));
             const updatedCustomerInfo = {
-                id: `KH${customerId.padStart(3, '0')}`,
+                id: input,
                 name: customer.HoTen,
                 phone: customer.DienThoai,
                 email: customer.Email,
                 debt: customer.SoTienNo,
             };
             setCustomerInfo(updatedCustomerInfo);
-
-            const thamSoList = await thanhToanMoiApi.getAllThamSo();
-            const thamSo = thamSoList[0];
-            if (!thamSo) {
-                console.error('Không tìm thấy tham số NoTD');
-                alert('Lỗi hệ thống: Không tìm thấy tham số nợ tối đa.');
-                return;
-            }
-
-            if (customer.SoTienNo >= thamSo.NoTD) { // Check current debt only
-                setShowDebtNotification(true);
-                if (finalInvoice) {
-                    setFinalInvoice(false);
-                }
-            }
         } catch (error) {
             console.error('Lỗi khi lấy thông tin khách hàng:', error);
-            setCustomerInfo({ id: displayValue, name: '', phone: '', email: '', debt: 0 });
+            setCustomerInfo({ id: input, name: '', phone: '', email: '', debt: 0 });
             if (finalInvoice) {
                 setFinalInvoice(false);
             }
@@ -338,24 +358,22 @@ function ThanhToanMoi() {
     };
 
     const handleEmployeeIdChange = async (e) => {
-        const input = e.target.value;
-        const employeeId = input.toString().replace(/^NV0*/, '').replace(/^0*/, '');
-        const displayValue = employeeId ? `NV${employeeId.padStart(3, '0')}` : '';
-        setEmployeeInfo({ ...employeeInfo, id: displayValue });
+        const input = e.target.value.toUpperCase();
+        setEmployeeInfo({ ...employeeInfo, id: input });
 
-        if (!employeeId) {
+        if (!input) {
             setEmployeeInfo({ id: '', name: '' });
             return;
         }
 
         try {
-            const employee = await thanhToanMoiApi.getUserById(employeeId);
+            const employee = await thanhToanMoiApi.getUserById(input.replace(/^NV/, ''));
             setEmployeeInfo({
-                id: `NV${employeeId.padStart(3, '0')}`,
+                id: input,
                 name: `${employee.last_name} ${employee.first_name}`,
             });
         } catch {
-            setEmployeeInfo({ id: displayValue, name: '' });
+            setEmployeeInfo({ id: input, name: '' });
         }
     };
 
@@ -371,13 +389,6 @@ function ThanhToanMoi() {
             return;
         }
 
-        const formattedCustomerId = customerInfo.id.replace(/^KH0*/, '');
-        const formattedEmployeeId = employeeInfo.id.replace(/^NV0*/, '');
-        if (!formattedCustomerId || !formattedEmployeeId) {
-            alert('Mã khách hàng hoặc mã nhân viên không hợp lệ.');
-            return;
-        }
-
         try {
             const thamSoList = await thanhToanMoiApi.getAllThamSo();
             const thamSo = thamSoList[0];
@@ -387,7 +398,7 @@ function ThanhToanMoi() {
                 return;
             }
 
-            if (customerInfo.debt >= thamSo.NoTD) { // Changed from > to >=
+            if (customerInfo.debt >= thamSo.NoTD) {
                 setShowDebtNotification(true);
                 return;
             }
@@ -411,40 +422,39 @@ function ThanhToanMoi() {
 
     const handleSaveInvoice = async () => {
         try {
-            // Kiểm tra dữ liệu đầu vào
+            if (!tienKhachTra) {
+                setShowPaymentErrorModal(true);
+                setTienKhachTraError(true);
+                setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
+                return;
+            }
+
             if (!employeeInfo.id || !employeeInfo.name) {
                 setShowEmployeeNotification(true);
-                console.log('Lỗi kiểm tra: Thông tin nhân viên không hợp lệ', employeeInfo);
                 return;
             }
             if (!customerInfo.id || !customerInfo.name || !customerInfo.phone || !customerInfo.email) {
                 setShowCustomerNotification(true);
-                console.log('Lỗi kiểm tra: Thông tin khách hàng không hợp lệ', customerInfo);
                 return;
             }
             if (cart.length === 0) {
                 alert('Giỏ hàng đang trống!');
-                console.log('Lỗi kiểm tra: Giỏ hàng rỗng');
                 return;
             }
-            console.log('Giỏ hàng:', cart);
             const totalAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
             const amountPaid = parseInt(parseNumber(tienKhachTra) || '0');
-            if (!tienKhachTra || amountPaid < 0) {
+            if (amountPaid < 0) {
                 setTienKhachTraError(true);
-                setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả hợp lệ!');
-                console.log('Lỗi kiểm tra: Số tiền khách trả không hợp lệ', tienKhachTra);
+                setTienKhachTraErrorMsg('Số tiền khách trả không hợp lệ!');
                 return;
             }
             if (amountPaid > totalAmount) {
-                setTienKhachTraError(true);
-                setTienKhachTraErrorMsg('Số tiền khách trả không được vượt quá tổng tiền sách!');
-                console.log('Lỗi kiểm tra: Số tiền khách trả vượt quá tổng tiền', { amountPaid, totalAmount });
+                setTienKhachTra(totalAmount.toString());
+                setTienKhachTraError(false);
+                setTienKhachTraErrorMsg('');
                 return;
             }
 
-            // Lấy tham số
-            console.log('Đang lấy tham số...');
             const thamSoList = await thanhToanMoiApi.getAllThamSo();
             const thamSo = thamSoList[0];
             if (!thamSo) {
@@ -452,37 +462,34 @@ function ThanhToanMoi() {
                 alert('Lỗi hệ thống: Không tìm thấy tham số.');
                 return;
             }
-            console.log('Tham số:', thamSo);
 
-            // Kiểm tra số lượng mua tối thiểu và tồn kho
+            if (customerInfo.debt > thamSo.NoTD) {
+                setShowDebtNotification(true);
+                return;
+            }
+
             for (const item of cart) {
                 if (thamSo.SLBanTT && item.soLuongMua < thamSo.SLBanTT) {
                     alert(`Số lượng mua tối thiểu cho sách ${item.tenSach} là ${thamSo.SLBanTT}!`);
-                    console.log('Lỗi kiểm tra: Số lượng mua không đạt tối thiểu', { item, SLBanTT: thamSo.SLBanTT });
                     return;
                 }
                 if (!item.maSach.match(/^S\d{3}$/)) {
                     alert(`Mã sách ${item.maSach} không đúng định dạng Sxxx!`);
-                    console.log('Lỗi định dạng mã sách:', item.maSach);
                     return;
                 }
                 const bookInList = books.find(b => b.maSach === item.maSach);
                 if (!bookInList) {
                     alert(`Sách ${item.tenSach} (Mã: ${item.maSach}) không tồn tại trong danh sách sách!`);
-                    console.log('Lỗi kiểm tra: Sách không có trong danh sách', { maSach: item.maSach });
                     return;
                 }
-                console.log(`Đang kiểm tra sách với ID ${item.maSach}...`);
                 try {
-                    const book = await thanhToanMoiApi.getBookById(item.maSach);
+                    const book = await thanhToanMoiApi.getBookById(item.maSach.replace(/^S/, ''));
                     if (!book) {
                         alert(`Sách ${item.tenSach} (Mã: ${item.maSach}) không tồn tại!`);
-                        console.log('Lỗi kiểm tra: Không tìm thấy sách', { maSach: item.maSach });
                         return;
                     }
                     if (book.SLTon < item.soLuongMua) {
                         alert(`Sách ${item.tenSach} không đủ số lượng tồn (còn: ${book.SLTon})!`);
-                        console.log('Lỗi kiểm tra: Không đủ tồn kho', { maSach: item.maSach, SLTon: book.SLTon, soLuongMua: item.soLuongMua });
                         return;
                     }
                 } catch (error) {
@@ -492,129 +499,116 @@ function ThanhToanMoi() {
                 }
             }
 
-            // Kiểm tra giới hạn nợ
-            const remaining = totalAmount - amountPaid;
-            const newDebt = customerInfo.debt + remaining;
-            if (customerInfo.debt > thamSo.NoTD) { // Changed from > to >=
-                setShowDebtNotification(true);
-                console.log('Lỗi kiểm tra: Vượt giới hạn nợ', { newDebt, NoTD: thamSo.NoTD });
-                return;
-            }
+            // Hiển thị modal xác nhận
+            setShowConfirmSaveModal(true);
+        } catch (err) {
+            console.error('Lỗi khi kiểm tra dữ liệu hóa đơn:', err);
+            alert('Không thể kiểm tra dữ liệu hóa đơn. Vui lòng thử lại.');
+        }
+    };
 
-            // Định dạng ID khách hàng và nhân viên
-            const formattedCustomerId = customerInfo.id.replace(/^KH0*/, '');
-            const formattedEmployeeId = employeeInfo.id.replace(/^NV0*/, '');
+    const confirmSaveInvoice = async () => {
+        try {
+            const totalAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
+            const amountPaid = parseInt(parseNumber(tienKhachTra) || '0');
+            const remaining = totalAmount - amountPaid;
+            const formattedCustomerId = customerInfo.id.replace(/^KH/, '');
+            const formattedEmployeeId = employeeInfo.id.replace(/^NV/, '');
+
             if (!formattedCustomerId) {
                 setShowCustomerNotification(true);
-                console.log('Lỗi kiểm tra: Mã khách hàng không hợp lệ', customerInfo.id);
+                setShowConfirmSaveModal(false);
                 return;
             }
             if (!formattedEmployeeId) {
                 setShowEmployeeNotification(true);
-                console.log('Lỗi kiểm tra: Mã nhân viên không hợp lệ', employeeInfo.id);
+                setShowConfirmSaveModal(false);
                 return;
             }
-            console.log('ID đã định dạng:', { formattedCustomerId, formattedEmployeeId });
 
-            // Kiểm tra khách hàng
-            console.log(`Đang kiểm tra khách hàng với ID ${formattedCustomerId}...`);
             try {
                 const customer = await thanhToanMoiApi.getCustomerById(formattedCustomerId);
                 if (!customer) {
                     alert('Khách hàng không tồn tại!');
-                    console.log('Lỗi kiểm tra: Không tìm thấy khách hàng', formattedCustomerId);
+                    setShowConfirmSaveModal(false);
                     return;
                 }
             } catch (error) {
                 console.error(`Lỗi khi kiểm tra khách hàng ${formattedCustomerId}:`, error);
                 alert('Không tìm thấy khách hàng!');
+                setShowConfirmSaveModal(false);
                 return;
             }
 
-            // Kiểm tra nhân viên
-            console.log(`Đang kiểm tra nhân viên với ID ${formattedEmployeeId}...`);
             try {
                 const employee = await thanhToanMoiApi.getUserById(formattedEmployeeId);
                 if (!employee) {
                     alert('Nhân viên không tồn tại!');
-                    console.log('Lỗi kiểm tra: Không tìm thấy nhân viên', formattedEmployeeId);
+                    setShowConfirmSaveModal(false);
                     return;
                 }
             } catch (error) {
                 console.error(`Lỗi khi kiểm tra nhân viên ${formattedEmployeeId}:`, error);
                 alert('Không tìm thấy nhân viên!');
+                setShowConfirmSaveModal(false);
                 return;
             }
 
-            // Định dạng ngày theo DD/MM/YYYY
-            const today = new Date();
-            const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-
-            // Tạo dữ liệu hóa đơn
             const invoiceData = {
                 MaKH_input: formattedCustomerId,
-                NgayLap: formattedDate,
+                NgayLap: ngayLap,
                 NguoiLapHD_input: formattedEmployeeId,
                 SoTienTra: amountPaid.toString(),
                 TongTien: totalAmount.toString(),
                 ConLai: remaining.toString()
             };
-            console.log('Đang gửi dữ liệu hóa đơn:', invoiceData);
 
-            // Gửi yêu cầu tạo hóa đơn
             const invoiceResponse = await thanhToanMoiApi.createInvoice(invoiceData);
             if (!invoiceResponse || !invoiceResponse.MaHD) {
-                console.error('Phản hồi hóa đơn không hợp lệ:', invoiceResponse);
                 throw new Error('Phản hồi hóa đơn không hợp lệ');
             }
             const newInvoiceId = invoiceResponse.MaHD;
-            console.log('Hóa đơn đã được tạo với ID:', newInvoiceId);
 
-            // Lưu chi tiết hóa đơn
             for (const item of cart) {
                 const ctHoaDon = {
-                    MaHD_input: newInvoiceId.replace(/^HD/, ''), // Remove HD prefix
-                    MaSach_input: item.maSach.replace(/^S/, ''), // Remove S prefix
+                    MaHD_input: newInvoiceId.replace(/^HD/, ''),
+                    MaSach_input: item.maSach.replace(/^S/, ''),
                     SLBan: item.soLuongMua,
                     GiaBan: item.donGia,
                     ThanhTien: item.soLuongMua * item.donGia
                 };
 
-                console.log(`Đang lưu chi tiết hóa đơn cho sách ${item.maSach}:`, ctHoaDon);
                 try {
-                    const response = await thanhToanMoiApi.createCTHoaDon(ctHoaDon);
-                    console.log(`Chi tiết hóa đơn cho sách ${item.maSach} đã được lưu:`, response);
+                    await thanhToanMoiApi.createCTHoaDon(ctHoaDon);
                 } catch (error) {
                     console.error(`Lỗi khi lưu chi tiết hóa đơn cho sách ${item.maSach}:`, error.response?.data);
-                    alert(`Không thể lưu chi tiết hóa đơn cho sách ${item.tenSach}! Lỗi: ${JSON.stringify(error.response?.data)}`);
+                    alert(`Không thể lưu chi tiết hóa đơn cho sách ${item.tenSach}!`);
+                    setShowConfirmSaveModal(false);
                     return;
                 }
 
-                // Cập nhật tồn kho
-                console.log(`Đang cập nhật tồn kho cho sách ${item.maSach}...`);
                 try {
                     const newStock = Math.max(0, item.soLuongTon - item.soLuongMua);
-                    await thanhToanMoiApi.updateBookStock(item.maSach, newStock);
-                    console.log(`Tồn kho sách ${item.maSach} đã được cập nhật: ${newStock}`);
+                    await thanhToanMoiApi.updateBookStock(item.maSach.replace(/^S/, ''), newStock);
                 } catch (error) {
                     console.error(`Lỗi khi cập nhật tồn kho cho sách ${item.maSach}:`, error);
                     alert(`Không thể cập nhật tồn kho cho sách ${item.tenSach}!`);
+                    setShowConfirmSaveModal(false);
                     return;
                 }
             }
 
-            // Cập nhật nợ khách hàng
-            console.log(`Đang cập nhật nợ cho khách hàng ${formattedCustomerId}...`);
             try {
+                const newDebt = customerInfo.debt + remaining;
                 await thanhToanMoiApi.updateCustomerDebt(formattedCustomerId, newDebt);
-                console.log(`Nợ khách hàng ${formattedCustomerId} đã được cập nhật: ${newDebt}`);
             } catch (error) {
                 console.error(`Lỗi khi cập nhật nợ khách hàng ${formattedCustomerId}:`, error);
                 alert('Không thể cập nhật nợ khách hàng!');
+                setShowConfirmSaveModal(false);
                 return;
             }
 
-            // Hiển thị thông báo thành công và reset form
+            setShowConfirmSaveModal(false);
             setShowSaveNotification(true);
             setTienKhachTra('');
             setTienKhachTraError(false);
@@ -625,7 +619,6 @@ function ThanhToanMoi() {
             setShowInvoice(false);
             setFinalInvoice(false);
             setNewInvoiceId(null);
-            console.log('Hóa đơn đã được lưu thành công!');
         } catch (err) {
             console.error('Lỗi tổng quát khi lưu hóa đơn:', err);
             let errorMessage = 'Không thể tạo hóa đơn. Vui lòng kiểm tra lại thông tin và thử lại.';
@@ -633,6 +626,7 @@ function ThanhToanMoi() {
                 errorMessage = `Lỗi: ${JSON.stringify(err.response.data)}`;
             }
             alert(errorMessage);
+            setShowConfirmSaveModal(false);
         }
     };
 
@@ -681,7 +675,7 @@ function ThanhToanMoi() {
             {showEmployeeNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
-                        <p>Vui lòng nhập đầy đủ thông tin nhân viên.</p>
+                        <p>Vui lòng nhập đầy đủ thông tin nhân viên!</p>
                         <button className="close-button-ttm" onClick={() => setShowEmployeeNotification(false)}>Đóng</button>
                     </div>
                 </div>
@@ -690,7 +684,7 @@ function ThanhToanMoi() {
             {showCustomerNotification && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
-                        <p>Vui lòng nhập đầy đủ thông tin khách hàng.</p>
+                        <p>Vui lòng nhập đầy đủ thông tin khách hàng!</p>
                         <button className="close-button-ttm" onClick={() => setShowCustomerNotification(false)}>Đóng</button>
                     </div>
                 </div>
@@ -708,13 +702,39 @@ function ThanhToanMoi() {
             {showPaymentErrorModal && (
                 <div className="notification-modal-ttm">
                     <div className="notification-content-ttm">
-                        <p>Số tiền khách trả không được vượt quá tổng tiền sách!</p>
+                        <p>{tienKhachTraErrorMsg || 'Số tiền khách trả không được vượt quá tổng tiền sách!'}</p>
                         <button
                             className="close-button-ttm"
-                            onClick={() => setShowPaymentErrorModal(false)}
+                            onClick={() => {
+                                setShowPaymentErrorModal(false);
+                                setTienKhachTraError(false);
+                                setTienKhachTraErrorMsg('');
+                            }}
                         >
                             Đóng
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {showConfirmSaveModal && (
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm noti-sua-ttm">
+                        <p>Bạn có chắc muốn lưu hóa đơn không?</p>
+                        <div className="notification-actions-ttm">
+                            <button
+                                className="finalize-button-ttm"
+                                onClick={confirmSaveInvoice}
+                            >
+                                Có
+                            </button>
+                            <button
+                                className="finalize-button-ttm close-button-ttm-hoi"
+                                onClick={() => setShowConfirmSaveModal(false)}
+                            >
+                                Không
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -739,25 +759,27 @@ function ThanhToanMoi() {
                 <table className="book-table-ttm">
                     <thead>
                         <tr>
+                            <th>No.</th>
                             <th>Mã sách</th>
                             <th>Tên sách</th>
                             <th>Tác giả</th>
-                            <th>Nhà XB</th>
-                            <th>Năm XB</th>
+                            <th>Nhà xuất bản</th>
+                            <th>Năm xuất bản</th>
                             <th>Đơn giá</th>
                             <th>Tồn</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody className="book-table-wrapper-ttm">
-                        {displayedBooks.map((book) => (
+                        {displayedBooks.map((book, index) => (
                             <tr key={book.maSach}>
+                                <td>{(currentPage - 1) * booksPerPage + index + 1}</td>
                                 <td>{book.maSach}</td>
                                 <td>{book.tenSach}</td>
                                 <td>{book.tacGia}</td>
                                 <td>{book.nhaXuatBan}</td>
                                 <td>{book.namXuatBan}</td>
-                                <td>{book.donGia.toLocaleString()}đ</td>
+                                <td>{formatNumber(book.donGia)} VNĐ</td>
                                 <td>{book.soLuongTon}</td>
                                 <td>
                                     <button
@@ -801,11 +823,12 @@ function ThanhToanMoi() {
                 <h2 className="cart-header-ttm">Giỏ hàng</h2>
                 <div className="cart-summary-ttm">
                     <span>Tổng số sách đã chọn: {totalQuantity} quyển</span>
-                    <span>Tổng số tiền: {totalPrice.toLocaleString()} VNĐ</span>
+                    <span>Tổng số tiền: {formatNumber(totalPrice)} VNĐ</span>
                 </div>
                 <table className="cart-table-ttm">
                     <thead>
                         <tr>
+                            <th>No.</th>
                             <th>Mã sách</th>
                             <th>Tên sách</th>
                             <th>Đơn giá</th>
@@ -815,11 +838,12 @@ function ThanhToanMoi() {
                         </tr>
                     </thead>
                     <tbody>
-                        {cart.map((item) => (
+                        {cart.map((item, index) => (
                             <tr key={item.maSach}>
+                                <td>{index + 1}</td>
                                 <td>{item.maSach}</td>
                                 <td>{item.tenSach}</td>
-                                <td>{item.donGia.toLocaleString()}đ</td>
+                                <td>{formatNumber(item.donGia)}đ</td>
                                 <td>
                                     <div className="quantity-wrapper-ttm">
                                         <button
@@ -851,7 +875,7 @@ function ThanhToanMoi() {
                                         </button>
                                     </div>
                                 </td>
-                                <td>{(item.soLuongMua * item.donGia).toLocaleString()}đ</td>
+                                <td>{formatNumber(item.soLuongMua * item.donGia)}đ</td>
                                 <td>
                                     <button className="icon-button-ttm" onClick={() => handleRemove(item.maSach)}><IoTrashBin /></button>
                                 </td>
@@ -884,11 +908,21 @@ function ThanhToanMoi() {
                     <div className="details-ttm">
                         <div className="left-ttm">
                             <div className="input-group-ttm">
+                                <label htmlFor="invoice-date">Ngày lập hóa đơn:</label>
+                                <input
+                                    id="invoice-date"
+                                    type="date"
+                                    value={formatDateForInput(ngayLap)}
+                                    onChange={handleNgayLapChange}
+                                    required
+                                />
+                            </div>
+                            <div className="input-group-ttm">
                                 <label htmlFor="employee-id">Mã nhân viên:</label>
                                 <input
                                     id="employee-id"
                                     type="text"
-                                    placeholder="Nhập mã nhân viên"
+                                    placeholder="Nhập mã nhân viên (NVxxx)"
                                     value={employeeInfo.id}
                                     onChange={handleEmployeeIdChange}
                                     required
@@ -902,7 +936,7 @@ function ThanhToanMoi() {
                                 <input
                                     id="customer-id"
                                     type="text"
-                                    placeholder="Nhập mã khách hàng"
+                                    placeholder="Nhập mã khách hàng (KHxxx)"
                                     value={customerInfo.id}
                                     onChange={handleCustomerIdChange}
                                     required
@@ -911,7 +945,7 @@ function ThanhToanMoi() {
                             <p><strong>Họ và tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
                             <p><strong>Email:</strong> {customerInfo.email}</p>
-                            <p><strong>Số tiền nợ:</strong> {customerInfo.debt.toLocaleString()}VNĐ</p>
+                            <p><strong>Số tiền nợ:</strong> {formatNumber(customerInfo.debt)}VNĐ</p>
                         </div>
                     </div>
                     <div className="actions-ttm">
@@ -929,7 +963,7 @@ function ThanhToanMoi() {
                     </div>
                     <div className="info-section-ttm" style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', lineHeight: '2' }}>
                         <div className="left-info-ttm" style={{ flex: 1 }}>
-                            <p><strong>Ngày lập hóa đơn:</strong> {new Date().toLocaleDateString('vi-VN')}</p>
+                            <p><strong>Ngày lập hóa đơn:</strong> {ngayLap}</p>
                             <p><strong>Mã hóa đơn:</strong> {invoice ? invoice.MaHD : newInvoiceId || 'Đang tạo...'}</p>
                             <p><strong>Mã nhân viên:</strong> {employeeInfo.id}</p>
                             <p><strong>Tên nhân viên:</strong> {employeeInfo.name}</p>
@@ -945,6 +979,7 @@ function ThanhToanMoi() {
                         <table className="invoice-table-ttm">
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Mã sách</th>
                                     <th>Tên sách</th>
                                     <th>Đơn giá</th>
@@ -953,20 +988,22 @@ function ThanhToanMoi() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {cart.map((item) => (
+                                {cart.map((item, index) => (
                                     <tr key={item.maSach}>
+                                        <td>{index + 1}</td>
                                         <td>{item.maSach}</td>
                                         <td>{item.tenSach}</td>
-                                        <td>{item.donGia.toLocaleString()}đ</td>
+                                        <td>{formatNumber(item.donGia)}đ</td>
                                         <td>{item.soLuongMua}</td>
-                                        <td>{(item.soLuongMua * item.donGia).toLocaleString()}VNĐ</td>
+                                        <td>{formatNumber(item.soLuongMua * item.donGia)}VNĐ</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                     <div className="totals-ttm" style={{ marginTop: '2rem', textAlign: 'right' }}>
-                        <p><strong>Tổng tiền sách:</strong> {totalPrice.toLocaleString()}VNĐ</p>
+                        <p><strong>Tổng số sách:</strong> {totalQuantity} quyển</p>
+                        <p><strong>Tổng tiền sách:</strong> {formatNumber(totalPrice)} VNĐ</p>
                         <p>
                             <strong>Tiền khách trả:</strong>
                             <input
@@ -977,7 +1014,7 @@ function ThanhToanMoi() {
                                     padding: '0.3rem 0.5rem',
                                     fontSize: '1rem',
                                     border: '0.1% solid #ccc',
-                                    borderRadius: '10%',
+                                    borderRadius: '5%',
                                     textAlign: 'right'
                                 }}
                                 value={formatNumber(tienKhachTra)}
@@ -987,8 +1024,9 @@ function ThanhToanMoi() {
                                         setTienKhachTraError(true);
                                         setTienKhachTraErrorMsg('Vui lòng nhập số tiền khách trả!');
                                     } else if (parseInt(raw) > totalPrice) {
-                                        setShowPaymentErrorModal(true);
                                         setTienKhachTra(totalPrice.toString());
+                                        setTienKhachTraError(false);
+                                        setTienKhachTraErrorMsg('');
                                     } else {
                                         setTienKhachTraError(false);
                                         setTienKhachTraErrorMsg('');
@@ -997,11 +1035,11 @@ function ThanhToanMoi() {
                                 }}
                                 placeholder="Nhập số tiền trả"
                                 inputMode="numeric"
-                            /> VNĐ
+                            />  VNĐ
                         </p>
                         <p>
                             <strong>Còn lại:</strong>{' '}
-                            {(totalPrice - parseInt(parseNumber(tienKhachTra) || '0')).toLocaleString()}VNĐ
+                            {formatNumber(Math.max(0, totalPrice - parseInt(parseNumber(tienKhachTra) || '0')))} VNĐ
                         </p>
                     </div>
                     <div className="actions-ttm">

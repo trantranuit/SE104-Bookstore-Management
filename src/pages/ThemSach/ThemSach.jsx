@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/PathStyles.css';
 import './ThemSach.css';
 import themSachApi from '../../services/themSachApi';
@@ -200,7 +200,6 @@ function ThemSach() {
             if (dauSachResult && dauSachResult.MaDauSach) {
                 setMaDauSach(dauSachResult.MaDauSach);
                 setShowCreateDauSach(false);
-                // setMessage('Đã thêm đầu sách mới thành công!');
                 setShowBookForm(true); // Show form nhập thông tin sách
             }
         } catch (error) {
@@ -253,6 +252,7 @@ function ThemSach() {
         setTheLoai([]);
         setNhaXuatBan('');
         setNamXuatBan('');
+        setSelectedNXB([]); // Reset publisher selection
         setStep(1);
 
         // Cập nhật mã sách mới
@@ -275,9 +275,10 @@ function ThemSach() {
     };
 
     // Xử lý click ngoài dropdown
-    const dropdownRef = React.useRef(null);
-    const modalRef = React.useRef(null);
-    const genreDropdownRef = React.useRef(null);
+    const dropdownRef = useRef(null);
+    const modalRef = useRef(null);
+    const genreDropdownRef = useRef(null);
+    const nxbDropdownRef = useRef(null);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -290,6 +291,9 @@ function ThemSach() {
             }
             if (genreDropdownRef.current && !genreDropdownRef.current.contains(event.target)) {
                 setShowTheLoaiDropdown(false);
+            }
+            if (nxbDropdownRef.current && !nxbDropdownRef.current.contains(event.target)) {
+                setShowNXBDropdown(false);
             }
         }
 
@@ -354,7 +358,7 @@ function ThemSach() {
                                                 <div
                                                     key={idx}
                                                     className="dropdown-item-tsm"
-                                                    onMouseDown={() => {
+                                                    onClick={() => {
                                                         setTenTacGia([...tenTacGia, tg]);
                                                         setNewTacGia('');
                                                         setShowTacGiaDropdown(false);
@@ -365,7 +369,8 @@ function ThemSach() {
                                             ))}
                                         <div
                                             className="dropdown-add-button-tsm"
-                                            onMouseDown={() => {
+                                            onClick={() => {
+                                                console.log('Clicked Thêm tác giả mới'); // Debug log
                                                 setShowTacGiaDropdown(false);
                                                 setShowAddTacGiaInput(true);
                                             }}
@@ -416,7 +421,7 @@ function ThemSach() {
                                                 <div
                                                     key={idx}
                                                     className="dropdown-item-tsm"
-                                                    onMouseDown={() => {
+                                                    onClick={() => {
                                                         setTheLoai([...theLoai, tl]);
                                                         setNewTheLoai('');
                                                         setShowTheLoaiDropdown(false);
@@ -427,7 +432,7 @@ function ThemSach() {
                                             ))}
                                         <div
                                             className="dropdown-add-button-tsm"
-                                            onMouseDown={() => {
+                                            onClick={() => {
                                                 setShowTheLoaiDropdown(false);
                                                 setShowAddTheLoaiInput(true);
                                             }}
@@ -440,7 +445,7 @@ function ThemSach() {
                         </div>
                         <div className="form-row-tsm">
                             <label>Nhà Xuất Bản:</label>
-                            <div style={{ position: 'relative', width: '100%' }}>
+                            <div style={{ position: 'relative', width: '100%' }} ref={nxbDropdownRef}>
                                 <div className="authors-input-container-tsm">
                                     <div className="selected-authors-tsm">
                                         {selectedNXB.map((pub, index) => (
@@ -448,7 +453,10 @@ function ThemSach() {
                                                 {pub.TenNXB}
                                                 <button
                                                     className="remove-author-chip-tsm"
-                                                    onClick={() => setSelectedNXB([])}
+                                                    onClick={() => {
+                                                        setSelectedNXB([]);
+                                                        setNhaXuatBan('');
+                                                    }}
                                                 >
                                                     ×
                                                 </button>
@@ -476,7 +484,7 @@ function ThemSach() {
                                                 <div
                                                     key={idx}
                                                     className="dropdown-item-tsm"
-                                                    onMouseDown={() => {
+                                                    onClick={() => {
                                                         setSelectedNXB([nxb]);
                                                         setNewNXB('');
                                                         setShowNXBDropdown(false);
@@ -488,7 +496,7 @@ function ThemSach() {
                                             ))}
                                         <div
                                             className="dropdown-add-button-tsm"
-                                            onMouseDown={() => {
+                                            onClick={() => {
                                                 setShowNXBDropdown(false);
                                                 setShowAddNXBInput(true);
                                             }}
@@ -524,7 +532,6 @@ function ThemSach() {
                 {showCreateDauSach && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
-
                             <h2>Thông Tin Đầu Sách Mới</h2>
                             <div className="modal-them-sach-container-tsm" style={{ marginBottom: '20px' }}>
                                 <div>Tên Sách: {tenSach}</div>
@@ -551,9 +558,7 @@ function ThemSach() {
                                 <div>Thể Loại: {theLoai.map(genre => genre.TenTheLoai).join(', ')}</div>
                                 <div>Nhà Xuất Bản: {nhaXuatBan}</div>
                                 <div>Năm Xuất Bản: {namXuatBan}</div>
-
                             </div>
-
                             <div className="modal-buttons-container-tsm">
                                 <button className="adds-button-tsm" onClick={handleSaveBook}>Thêm</button>
                                 <button className="cancel-button-tsm" onClick={() => setShowBookForm(false)}>Hủy</button>
@@ -572,6 +577,7 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal thêm tác giả mới */}
                 {showAddTacGiaInput && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm" ref={modalRef}>
@@ -588,7 +594,7 @@ function ThemSach() {
                             </div>
                             <div className="modal-buttons-container-tsm">
                                 <button
-                                    className="button-tsm"
+                                    className="adds-button-tsm"
                                     onClick={() => {
                                         if (newTacGia.trim()) {
                                             setShowConfirmAddAuthor(true);
@@ -599,7 +605,7 @@ function ThemSach() {
                                     Thêm
                                 </button>
                                 <button
-                                    className="button-tsm cancel-button-tsm"
+                                    className="cancel-button-tsm"
                                     onClick={() => {
                                         setShowAddTacGiaInput(false);
                                         setNewTacGia('');
@@ -612,6 +618,7 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal xác nhận thêm tác giả */}
                 {showConfirmAddAuthor && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
@@ -619,7 +626,7 @@ function ThemSach() {
                             <p>Bạn có chắc muốn thêm tác giả "{newTacGia}" không?</p>
                             <div className="modal-buttons-container-tsm">
                                 <button
-                                    className="button-tsm"
+                                    className="adds-button-tsm"
                                     onClick={() => {
                                         if (newTacGia.trim() && !allTacGia.some(tg => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase())) {
                                             handleAddAuthorSuccess(newTacGia.trim());
@@ -630,7 +637,7 @@ function ThemSach() {
                                     Có
                                 </button>
                                 <button
-                                    className="button-tsm cancel-button-tsm"
+                                    className="cancel-button-tsm"
                                     onClick={() => setShowConfirmAddAuthor(false)}
                                 >
                                     Không
@@ -640,6 +647,7 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal thêm thể loại mới */}
                 {showAddTheLoaiInput && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm" ref={modalRef}>
@@ -679,25 +687,27 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal xác nhận thêm thể loại */}
                 {showConfirmAddGenre && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
                             <h2>Xác nhận thêm thể loại</h2>
                             <p>Bạn có chắc muốn thêm thể loại "{newTheLoai}" không?</p>
-                            <div style={{ marginTop: '20px' }}>
+                            <div className="modal-buttons-container-tsm">
                                 <button
                                     onClick={() => {
                                         if (newTheLoai.trim() && !allTheLoai.some(tl => tl.TenTheLoai.toLowerCase() === newTheLoai.trim().toLowerCase())) {
                                             handleAddGenreSuccess(newTheLoai.trim());
                                         }
                                     }}
+                                    className="adds-button-tsm"
                                     style={{ marginRight: '10px' }}
                                 >
                                     Có
                                 </button>
                                 <button
                                     onClick={() => setShowConfirmAddGenre(false)}
-                                    style={{ background: '#6c757d' }}
+                                    className="cancel-button-tsm"
                                 >
                                     Không
                                 </button>
@@ -706,6 +716,7 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal thêm nhà xuất bản mới */}
                 {showAddNXBInput && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
@@ -745,25 +756,27 @@ function ThemSach() {
                     </div>
                 )}
 
+                {/* Modal xác nhận thêm nhà xuất bản */}
                 {showConfirmAddPublisher && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
                             <h2>Xác nhận thêm nhà xuất bản</h2>
                             <p>Bạn có chắc muốn thêm nhà xuất bản "{newNXB}" không?</p>
-                            <div style={{ marginTop: '20px' }}>
+                            <div className="modal-buttons-container-tsm">
                                 <button
                                     onClick={() => {
                                         if (newNXB.trim() && !allNXB.some(nxb => nxb.TenNXB.toLowerCase() === newNXB.trim().toLowerCase())) {
                                             handleAddPublisherSuccess(newNXB.trim());
                                         }
                                     }}
+                                    className="adds-button-tsm"
                                     style={{ marginRight: '10px' }}
                                 >
                                     Có
                                 </button>
                                 <button
                                     onClick={() => setShowConfirmAddPublisher(false)}
-                                    style={{ background: '#6c757d' }}
+                                    className="cancel-button-tsm"
                                 >
                                     Không
                                 </button>

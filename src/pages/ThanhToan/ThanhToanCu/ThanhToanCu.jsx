@@ -24,6 +24,7 @@ function ThanhToanCu() {
     const [maPhieuThu, setMaPhieuThu] = useState('PT001');
     const [showValidationModal, setShowValidationModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showConfirmSaveModal, setShowConfirmSaveModal] = useState(false);
     const [savedReceiptId, setSavedReceiptId] = useState('');
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
@@ -40,6 +41,10 @@ function ThanhToanCu() {
     const [employeeInfo, setEmployeeInfo] = useState({ id: '', name: '' });
     const [message, setMessage] = useState('');
 
+    const formatNumber = (value) => {
+        if (!value && value !== 0) return '';
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
 
     const getNewMaPhieu = async () => {
         try {
@@ -49,7 +54,6 @@ function ThanhToanCu() {
             console.error('Error getting receipt ID:', error);
             setMaPhieuThu('PT001');
         }
-
     };
 
     useEffect(() => {
@@ -98,24 +102,46 @@ function ThanhToanCu() {
             });
     }, []);
 
-    const handleMaKhachHangChange = (e) => {
-        const value = e.target.value;
+    const handleMaKhachHangChange = async (e) => {
+        const value = e.target.value.toUpperCase();
         setMaKhachHang(value);
+        setCustomerInfo({ ...customerInfo, id: value });
+
+        if (!value) {
+            setCustomerInfo({ id: '', name: '', phone: '', email: '', debt: 0, SoTienNo: 0 });
+            return;
+        }
+
+        try {
+            const customerId = value.replace(/^KH/, '');
+            const customer = await thanhToanCuApi.getCustomerById(customerId);
+            const soTienNo = parseInt(customer.SoTienNo || '0');
+            setCustomerInfo({
+                id: value,
+                name: customer.HoTen || '',
+                phone: customer.DienThoai || '',
+                email: customer.Email || '',
+                debt: soTienNo,
+                SoTienNo: soTienNo
+            });
+        } catch (error) {
+            console.error('Error fetching customer:', error);
+            setCustomerInfo({ id: value, name: '', phone: '', email: '', debt: 0, SoTienNo: 0 });
+        }
     };
 
     const handleTienKhachTraChange = (e) => {
         const rawValue = e.target.value.replace(/\D/g, '');
         const tienKhachTraNum = parseInt(rawValue || '0');
         if (customerInfo?.SoTienNo && tienKhachTraNum > customerInfo.SoTienNo) {
-            setTienKhachTraError(true);
-
-            setMessage('Số tiền trả không được lớn hơn số tiền khách đang nợ!');
-            setShowValidationModal(true);
+            setTienKhachTra(customerInfo.SoTienNo.toString());
+            setTienKhachTraError(false);
+            setTienKhachTraErrorMsg('');
         } else {
+            setTienKhachTra(rawValue);
             setTienKhachTraError(false);
             setTienKhachTraErrorMsg('');
         }
-        setTienKhachTra(rawValue);
     };
 
     const handleNgayLapChange = (e) => {
@@ -135,86 +161,64 @@ function ThanhToanCu() {
     };
 
     const handleEmployeeIdChange = async (e) => {
-        const input = e.target.value;
-        const employeeId = input.toString().replace(/^NV0*/, '').replace(/^0*/, '');
-        const displayValue = employeeId ? `NV${employeeId.padStart(3, '0')}` : '';
-        setMaNhanVien(displayValue);
-        setEmployeeInfo({ ...employeeInfo, id: displayValue });
+        const value = e.target.value.toUpperCase();
+        setMaNhanVien(value);
+        setEmployeeInfo({ ...employeeInfo, id: value });
 
-        if (!employeeId) {
+        if (!value) {
             setEmployeeInfo({ id: '', name: '' });
-            setMaNhanVien('');
             return;
         }
 
         try {
+            const employeeId = value.replace(/^NV/, '');
             const employee = await thanhToanCuApi.getUserById(employeeId);
             setEmployeeInfo({
-                id: `NV${employeeId.padStart(3, '0')}`,
+                id: value,
                 name: `${employee.last_name} ${employee.first_name}`
             });
-            setMaNhanVien(`NV${employeeId.padStart(3, '0')}`);
         } catch {
-            setEmployeeInfo({ id: displayValue, name: '' });
+            setEmployeeInfo({ id: value, name: '' });
         }
     };
 
-    const handleCustomerIdChange = async (e) => {
-        const input = e.target.value;
-        const customerId = input.toString().replace(/^KH0*/, '').replace(/^0*/, '');
-        const displayValue = customerId ? `KH${customerId.padStart(3, '0')}` : '';
-        setMaKhachHang(displayValue);
-        setCustomerInfo({ ...customerInfo, id: displayValue });
-
-        if (!customerId) {
-            setCustomerInfo({ id: '', name: '', phone: '', email: '', debt: 0, SoTienNo: 0 });
+    const handleSavePayment = () => {
+        // Check if all required fields are filled
+        if (!maKhachHang || !tienKhachTra || !maNhanVien || !ngayLap) {
+            setMessage('Vui lòng điền đầy đủ thông tin!');
+            setShowValidationModal(true);
             return;
         }
 
-        try {
-            const customer = await thanhToanCuApi.getCustomerById(customerId);
-            const soTienNo = parseInt(customer.SoTienNo || '0');
-            setCustomerInfo({
-                id: displayValue,
-                name: customer.HoTen || '',
-                phone: customer.DienThoai || '',
-                email: customer.Email || '',
-                debt: soTienNo,
-                SoTienNo: soTienNo
-            });
-        } catch (error) {
-            console.error('Error fetching customer:', error);
-            setCustomerInfo({ id: displayValue, name: '', phone: '', email: '', debt: 0, SoTienNo: 0 });
+        // Validate maKhachHang and maNhanVien format
+        if (!maKhachHang.match(/^KH\d{3}$/) || !maNhanVien.match(/^NV\d{3}$/)) {
+            setMessage('Mã khách hàng hoặc mã nhân viên không đúng định dạng (KHxxx hoặc NVxxx)!');
+            setShowValidationModal(true);
+            return;
         }
-    };
 
-    const handleSavePayment = async () => {
         // Check if customer debt is 0
         if (customerInfo?.SoTienNo === 0) {
-            setMessage('Không thể lập phiếu thu tiền khi khách hàng không có nợ!');
+            setMessage('Không thể lập phiếu thu tiền cho số nợ là 0!');
             setShowValidationModal(true);
             return;
         }
 
         // Check if payment amount is 0 or empty
-        if (!tienKhachTra || parseInt(tienKhachTra) === 0) {
+        if (parseInt(tienKhachTra) === 0) {
             setMessage('Số tiền trả phải lớn hơn 0!');
             setShowValidationModal(true);
             return;
         }
 
-        if (!maKhachHang || !tienKhachTra || !maNhanVien || !ngayLap) {
-            setMessage('Vui lòng nhập đủ các thông tin trước khi lưu.');
-            setShowValidationModal(true);
-            return;
-        }
-        if (tienKhachTraError) {
-            return;
-        }
+        // Show confirmation modal
+        setShowConfirmSaveModal(true);
+    };
 
+    const confirmSavePayment = async () => {
         try {
-            const formattedCustomerId = customerInfo.id.replace(/^KH0*/, '');
-            const formattedEmployeeId = employeeInfo.id.replace(/^NV0*/, '');
+            const formattedCustomerId = maKhachHang.replace(/^KH/, '');
+            const formattedEmployeeId = maNhanVien.replace(/^NV/, '');
 
             const receiptData = {
                 SoTienThu: parseInt(tienKhachTra),
@@ -231,11 +235,14 @@ function ThanhToanCu() {
 
                 setSavedReceiptId(newReceipt.MaPhieuThu);
                 setShowSuccessModal(true);
+                setShowConfirmSaveModal(false);
                 resetForm();
             }
         } catch (error) {
             console.error('Error saving receipt:', error);
             setMessage(error.response?.data?.message || 'Có lỗi xảy ra khi lưu phiếu thu');
+            setShowValidationModal(true);
+            setShowConfirmSaveModal(false);
         }
     };
 
@@ -285,7 +292,7 @@ function ThanhToanCu() {
                                     value={employeeInfo.id}
                                     onChange={handleEmployeeIdChange}
                                     className={getInputClass()}
-                                    placeholder="Nhập mã nhân viên"
+                                    placeholder="Nhập mã nhân viên (NVxxx)"
                                 />
                             </span>
                         </div>
@@ -298,7 +305,8 @@ function ThanhToanCu() {
                             <span className="label-name-ttc">Mã phiếu thu</span>
                             <span className="colon-ttc">:</span>
                             <span className="value-ttc">{maPhieuThu}</span>
-                        </div>                        <div className="line-ttc">
+                        </div>
+                        <div className="line-ttc">
                             <span className="label-name-ttc">Ngày lập</span>
                             <span className="colon-ttc">:</span>
                             <span className="value-ttc">
@@ -320,9 +328,9 @@ function ThanhToanCu() {
                                 <input
                                     type="text"
                                     value={customerInfo.id}
-                                    onChange={handleCustomerIdChange}
+                                    onChange={handleMaKhachHangChange}
                                     className={getInputClass()}
-                                    placeholder="Nhập mã khách hàng"
+                                    placeholder="Nhập mã khách hàng (KHxxx)"
                                 />
                             </span>
                         </div>
@@ -350,7 +358,7 @@ function ThanhToanCu() {
                         <span className="colon-ttc">:</span>
                         <span className="value-ttc">
                             {(typeof customerInfo.SoTienNo === 'number')
-                                ? customerInfo.SoTienNo.toLocaleString('vi-VN').replace(/\./g, ',') + ' VNĐ'
+                                ? formatNumber(customerInfo.SoTienNo) + ' VNĐ'
                                 : '0 VNĐ'}
                         </span>
                     </div>
@@ -362,25 +370,14 @@ function ThanhToanCu() {
                                 <input
                                     type="text"
                                     className={`${getInputClass()} ${tienKhachTraError ? 'error' : ''}`}
-                                    value={
-                                        tienKhachTra
-                                            ? (
-                                                customerInfo?.SoTienNo === 0
-                                                    ? '0'
-                                                    : (customerInfo?.SoTienNo && parseInt(tienKhachTra.replace(/\D/g, '')) > customerInfo.SoTienNo
-                                                        ? customerInfo.SoTienNo.toLocaleString('vi-VN').replace(/\./g, ',')
-                                                        : parseInt(tienKhachTra.replace(/\D/g, '')).toLocaleString('vi-VN').replace(/\./g, ',')
-                                                    )
-                                            )
-                                            : ''
-                                    }
+                                    value={tienKhachTra ? formatNumber(parseInt(tienKhachTra.replace(/\D/g, ''))) : ''}
                                     onChange={handleTienKhachTraChange}
                                     onFocus={() => setIsFocused({ ...isFocused, tien: true })}
                                     onBlur={() => setIsFocused({ ...isFocused, tien: false })}
                                     placeholder="Nhập số tiền trả"
                                     disabled={!maKhachHang}
                                 />
-                                <span className="vnd-label-ttc">VNĐ</span>
+                                <span className="vnd-label-ttc"> VNĐ</span>
                             </div>
                             {tienKhachTraError && (
                                 <div style={{ color: '#ff4d4d', fontWeight: 'bold', marginTop: '0.2rem' }}>
@@ -394,8 +391,7 @@ function ThanhToanCu() {
                         <span className="colon-ttc">:</span>
                         <span className="value-ttc">
                             {tienKhachTra
-                                ? (Math.max(0, customerInfo.SoTienNo - parseInt(tienKhachTra.replace(/\D/g, ''))))
-                                    .toLocaleString('vi-VN').replace(/\./g, ',') + ' VNĐ'
+                                ? formatNumber(Math.max(0, customerInfo.SoTienNo - parseInt(tienKhachTra.replace(/\D/g, '')))) + ' VNĐ'
                                 : ''}
                         </span>
                     </div>
@@ -426,13 +422,35 @@ function ThanhToanCu() {
                 {showSuccessModal && (
                     <div className="success-modal-ttc">
                         <div className="success-modal-content-ttc">
-                            <p>Hóa đơn mã <strong>{savedReceiptId}</strong> đã được lưu thành công!</p>
+                            <p>Phiếu thu tiền đã được lưu thành công!</p>
                             <button
                                 className="close-modal-button-ttc"
                                 onClick={() => setShowSuccessModal(false)}
                             >
                                 Đóng
                             </button>
+                        </div>
+                    </div>
+                )}
+
+                {showConfirmSaveModal && (
+                    <div className="validation-modal-ttc">
+                        <div className="validation-modal-content-ttc">
+                            <p>Bạn có chắc muốn lưu phiếu thu tiền này không?</p>
+                            <div className="modal-actions-ttc">
+                                <button
+                                    className="confirm-button-ttc"
+                                    onClick={confirmSavePayment}
+                                >
+                                    Có
+                                </button>
+                                <button
+                                    className="close-modals-button-ttc"
+                                    onClick={() => setShowConfirmSaveModal(false)}
+                                >
+                                    Không
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
