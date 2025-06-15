@@ -104,67 +104,67 @@ const ModalEdit = ({ isOpen, onClose, onSave, initialData }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close-btn" onClick={onClose}>
+    <div className="modal-overlay-tdqd" onClick={onClose}>
+      <div className="modal-container-tdqd" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-btn-tdqd" onClick={onClose}>
           ×
         </button>
         <h2>Sửa quy định</h2>
-        <form onSubmit={handleSubmit} className="modal-form">
+        <form onSubmit={handleSubmit} className="modal-form-tdqd">
           {initialData.tenQuyDinh.includes("Số lượng nhập") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Số lượng nhập tối thiểu</label>
               <input
                 type="number"
                 name="SLNhapTT"
                 value={formData.SLNhapTT}
                 onChange={handleInputChange}
-                className="edit-input"
+                className="edit-input-tdqd"
               />
               {errors.SLNhapTT && <p className="error">{errors.SLNhapTT}</p>}
             </div>
           )}
           {initialData.tenQuyDinh.includes("Số lượng tồn tối đa") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Số lượng tồn tối đa</label>
               <input
                 type="number"
                 name="TonTD"
                 value={formData.TonTD}
                 onChange={handleInputChange}
-                className="edit-input"
+                className="edit-input-tdqd"
               />
-              {errors.TonTD && <p className="error">{errors.TonTD}</p>}
+              {errors.TonTD && <p className="error-tdqd">{errors.TonTD}</p>}
             </div>
           )}
           {initialData.tenQuyDinh.includes("Nợ tối đa") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Nợ tối đa (VND)</label>
               <input
                 type="text"
                 name="NoTD"
                 value={formData.NoTD}
                 onChange={handleInputChange}
-                className="edit-input"
+                className="edit-input-tdqd"
               />
-              {errors.NoTD && <p className="error">{errors.NoTD}</p>}
+              {errors.NoTD && <p className="error-tdqd">{errors.NoTD}</p>}
             </div>
           )}
           {initialData.tenQuyDinh.includes("Số lượng tồn tối thiểu") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Số lượng tồn tối thiểu</label>
               <input
                 type="number"
                 name="TonTT"
                 value={formData.TonTT}
                 onChange={handleInputChange}
-                className="edit-input"
+                className="edit-input-tdqd"
               />
-              {errors.TonTT && <p className="error">{errors.TonTT}</p>}
+              {errors.TonTT && <p className="error-tdqd">{errors.TonTT}</p>}
             </div>
           )}
           {initialData.tenQuyDinh.includes("Tỷ lệ") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Tỷ lệ đơn giá bán</label>
               <input
                 type="number"
@@ -176,28 +176,39 @@ const ModalEdit = ({ isOpen, onClose, onSave, initialData }) => {
                 onChange={handleInputChange}
                 className="edit-input"
               />
-              {errors.TiLe && <p className="error">{errors.TiLe}</p>}
+              {errors.TiLe && <p className="error-tdqd">{errors.TiLe}</p>}
             </div>
           )}
           {initialData.tenQuyDinh.includes("Số tiền thu") && (
-            <div className="form-group">
+            <div className="form-group-tdqd">
               <label>Áp dụng điều kiện</label>
-              <input
-                type="checkbox"
+              <select
                 name="SDQD4"
-                checked={formData.SDQD4}
-                onChange={handleInputChange}
-                className="edit-checkbox"
-              />
+                value={formData.SDQD4}
+                onChange={(e) => {
+                  handleInputChange({
+                    target: {
+                      name: "SDQD4",
+                      type: "checkbox",
+                      checked: e.target.value === "true"
+                    }
+                  });
+                }}
+                className="edit-input-tdqd"
+              >
+                <option value="true">Có</option>
+                <option value="false">Không</option>
+              </select>
             </div>
           )}
-          <div className="button-group">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+          <div className="button-group-tdqd">
+            <button type="submit" className="save-btn-tdqd">
+              Lưu
+            </button>
+            <button type="button" className="cancel-btn-tdqd" onClick={onClose}>
               Hủy
             </button>
-            <button type="submit" className="save-btn">
-              Lưu thay đổi
-            </button>
+
           </div>
         </form>
       </div>

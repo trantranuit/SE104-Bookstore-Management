@@ -1,38 +1,142 @@
-.page-container {
-  padding: 20px;
-  background-color: #f9f9f9; /* Màu xám nhạt */
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.table-container-tdqd {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem;
 }
 
-.table-wrapper {
-  background-color: #fff; /* Khung trắng bao quanh bảng */
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 20px; /* Tạo khoảng cách giữa tiêu đề và bảng */
-  overflow-x: auto; /* Đảm bảo bảng không bị tràn */
-}
-.table-quy-dinh {
+.table-tdqd {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  text-align: center;
+  /* Center-align all content */
+  table-layout: fixed;
+  /* Enable fixed column widths */
+  font-size: 0.85rem;
+  /* Reduce font size to 80% */
 }
 
-.table-quy-dinh th,
-.table-quy-dinh td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
+/* Add styles for No. column and units column */
+.table-tdqd th:nth-child(1),
+.table-tdqd td:nth-child(1) {
+  width: 10%;
 }
 
-.table-quy-dinh th {
-  background-color: #f4f4f4;
+.table-tdqd th:nth-child(4),
+.table-tdqd td:nth-child(4) {
+  width: 15%;
+}
+
+.table-tdqd th:last-child,
+.table-tdqd td:last-child {
+  width: 10%;
+}
+
+.table-tdqd th,
+.table-tdqd td {
+  text-align: center;
+  /* Center-align cell content */
+  font-size: 0.85rem;
+}
+
+.table-tdqd td {
+  padding: 1.2rem;
+  border-bottom: 0.01rem solid #ccc;
+}
+
+.table-tdqd th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+
+  /* transition: background-color 0.2s; */
+  /* border-bottom: 1px solid #e0e0e0; Chỉ giữ lại border bottom */
+}
+
+.edit-btn-tdqd {
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem;
+}
+
+.edit-btn-tdqd:hover {
+  color: #0056b3;
+}
+
+.radio-group-tdqd {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.radio-label-tdqd {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.radio-label-tdqd input[type="radio"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.notification-modal-tdqd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.notification-content-tdqd {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  min-width: 350px;
+  box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
+  animation: fadeInUp 0.4s ease-out;
+  position: relative;
+  /* Ensure it's positioned correctly */
+}
+
+.notification-content-tdqd.success p {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
   font-weight: bold;
 }
 
-.table-quy-dinh input {
-  width: 100%;
-  padding: 5px;
-  box-sizing: border-box;
+.notification-content-tdqd.error p {
+  color: #dc3545;
+  margin-top: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.close-notification-btn-tdqd {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #6C757D;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.close-notification-btn-tdqd:hover {
+  background-color: #5d636b
 }

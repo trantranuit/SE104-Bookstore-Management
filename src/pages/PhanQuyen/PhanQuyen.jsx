@@ -3,6 +3,8 @@ import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
 import { FaEdit, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { getUsers, addUser, updateUser } from '../../services/phanQuyen';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function PhanQuyen() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -353,16 +355,7 @@ function PhanQuyen() {
                             {message}
                             <button
                                 onClick={() => setMessage('')}
-                                style={{
-                                    padding: '8px 24px',
-                                    fontSize: '16px',
-                                    cursor: 'pointer',
-                                    backgroundColor: '#007bff',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    marginTop: '10px'
-                                }}
+                                className="dong-pq"
                             >
                                 Đóng
                             </button>
@@ -392,9 +385,10 @@ function PhanQuyen() {
                                 setIsAddUserModalOpen(true);
                             }}
                         >
-                            Thêm Người Dùng
+                            + Thêm Người Dùng
                         </button>
                     </div>
+                    <div className="user-table-container-pq">
                     <table className="user-table-pq">
                         <thead>
                             <tr>
@@ -426,7 +420,9 @@ function PhanQuyen() {
                                     </td>
                                     <td>
                                         <div className="action-buttons-pq">
-                                            <button className="icon-button-pq" onClick={() => handleEditUser(user)}><FaEdit /></button>
+                                                                                                    <FontAwesomeIcon
+                                            icon={faEdit}
+                                            className="icon-button-pq" onClick={() => handleEditUser(user)}/>
                                         </div>
                                     </td>
                                 </tr>
@@ -446,7 +442,7 @@ function PhanQuyen() {
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                         >
-                            Trước
+                            ←
                         </button>
 
                         <div className="pagination-info-pq">
@@ -458,8 +454,9 @@ function PhanQuyen() {
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                         >
-                            Sau
+                            →
                         </button>
+                    </div>
                     </div>
                 </div>
 
@@ -547,7 +544,8 @@ function PhanQuyen() {
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            {showEditPassword ? <FaEyeSlash /> : <FaEye />}
+                                            {showEditPassword ? <FaEyeSlash /> : <FaEye 
+                                            />}
                                         </button>
                                     </div>
                                 </div>

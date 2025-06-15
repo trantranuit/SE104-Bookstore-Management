@@ -91,10 +91,9 @@ function KhachHang() {
         {showSuccessModal && (
           <div className="success-modal-kh">
             <div className="success-modal-content-kh">
-              <h3>Thông báo</h3>
-              <p>{successMessage}</p>
+              <h2>{successMessage}</h2>
               <button className="success-modal-button-kh" onClick={handleCloseSuccessModal}>
-                OK
+                Đóng
               </button>
             </div>
           </div>

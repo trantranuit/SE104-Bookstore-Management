@@ -48,7 +48,7 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
             <button type="button" onClick={onClose}>
               Hủy
             </button>
-            <button type="submit">Lưu</button>
+            <button type="submit">Tiếp theo</button>
           </div>
         </form>
       </div>

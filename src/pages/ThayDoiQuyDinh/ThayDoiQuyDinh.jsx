@@ -9,6 +9,7 @@ const ThayDoiQuyDinh = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({ message: "", type: "" });
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const getGiaTriForKey = useCallback((item, key) => {
     const values = {
@@ -70,22 +71,18 @@ const ThayDoiQuyDinh = () => {
         const formattedData = formatApiData(response[0]);
         console.log("Formatted Data:", formattedData);
         setData(formattedData);
-        setNotification({
-          message: "Dữ liệu đã được tải thành công!",
-          type: "success",
-        });
+        showNotification("Dữ liệu đã được tải thành công!", "success");
       } catch (err) {
         console.error("Lỗi chi tiết:", err.message);
-        setNotification({
-          message: `Lỗi khi tải dữ liệu: ${
-            err.message.includes("404")
-              ? "Không tìm thấy API. Vui lòng kiểm tra endpoint!"
-              : err.message.includes("401") || err.message.includes("token")
+        showNotification(
+          `Lỗi khi tải dữ liệu: ${err.message.includes("404")
+            ? "Không tìm thấy API. Vui lòng kiểm tra endpoint!"
+            : err.message.includes("401") || err.message.includes("token")
               ? "Vui lòng đăng nhập hoặc kiểm tra token!"
               : err.message
           }`,
-          type: "error",
-        });
+          "error"
+        );
       } finally {
         setLoading(false);
       }
@@ -166,22 +163,18 @@ const ThayDoiQuyDinh = () => {
       const response = await thamSoApi.getThamSo();
       const formattedData = formatApiData(response[0]);
       setData(formattedData);
-      setNotification({
-        message: "Cập nhật quy định thành công!",
-        type: "success",
-      });
+      showNotification("Cập nhật quy định thành công!", "success");
     } catch (err) {
       console.error("Lỗi chi tiết khi cập nhật:", err);
-      setNotification({
-        message: `Lỗi khi cập nhật quy định: ${
-          err.response?.status === 400
-            ? "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị nhập vào!"
-            : err.response?.status === 401
+      showNotification(
+        `Lỗi khi cập nhật quy định: ${err.response?.status === 400
+          ? "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị nhập vào!"
+          : err.response?.status === 401
             ? "Vui lòng đăng nhập hoặc kiểm tra token!"
             : err.message
         }`,
-        type: "error",
-      });
+        "error"
+      );
     }
     handleCloseModal();
   };
@@ -191,16 +184,16 @@ const ThayDoiQuyDinh = () => {
     setCurrentItem(null);
   };
 
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setShowNotificationModal(true);
+  };
+
   return (
     <div className="page-container">
       <h1 className="page-title">Thay đổi quy định</h1>
 
       <div className="content-wrapper">
-        {notification.message && (
-          <div className={`notification ${notification.type}`}>
-            {notification.message}
-          </div>
-        )}
         {loading ? (
           <p>Đang tải dữ liệu...</p>
         ) : data.length === 0 ? (
@@ -215,6 +208,21 @@ const ThayDoiQuyDinh = () => {
             onSave={handleSave}
             initialData={currentItem}
           />
+        )}
+        {showNotificationModal && (
+          <div className="modal-overlay-tdqd">
+            <div className="notification-modal-tdqd">
+              <div className={`notification-content-tdqd ${notification.type}`}>
+                <p>{notification.message}</p>
+                <button
+                  className="close-notification-btn-tdqd"
+                  onClick={() => setShowNotificationModal(false)}
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -79,25 +79,6 @@ const themSachApi = {
         return response.data;
     },
 
-    // Thêm tác giả mới
-    addAuthor: async (authorName) => {
-        // Lấy MaTG lớn nhất để sinh MaTG mới
-        const response = await axiosInstance.get("/tacgia/");
-        let maxMaTG = 0;
-        response.data.forEach(tg => {
-            const num = parseInt(tg.MaTG.replace('TG', ''), 10);
-            if (!isNaN(num) && num > maxMaTG) maxMaTG = num;
-        });
-        const newMaTG = 'TG' + (maxMaTG + 1).toString().padStart(3, '0');
-
-        const payload = {
-            MaTG: newMaTG,
-            TenTG: authorName
-        };
-        const addResponse = await axiosInstance.post("/tacgia/", payload);
-        return addResponse.data;
-    },
-
     // Lấy tất cả tác giả
     getAllAuthors: async () => {
         const response = await axiosInstance.get("/tacgia/");
@@ -149,6 +130,24 @@ const themSachApi = {
             TenNXB: publisherName
         };
         const addResponse = await axiosInstance.post("/nxb/", payload);
+        return addResponse.data;
+    },
+
+    // Thêm tác giả mới
+    addAuthor: async (authorName) => {
+        const response = await axiosInstance.get("/tacgia/");
+        let maxMaTG = 0;
+        response.data.forEach(tg => {
+            const num = parseInt(tg.MaTG.replace('TG', ''), 10);
+            if (!isNaN(num) && num > maxMaTG) maxMaTG = num;
+        });
+        const newMaTG = 'TG' + (maxMaTG + 1).toString().padStart(3, '0');
+
+        const payload = {
+            "TenTG_input": authorName
+        };
+
+        const addResponse = await axiosInstance.post("/tacgia/", payload);
         return addResponse.data;
     },
 

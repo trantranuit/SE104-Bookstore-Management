@@ -1,183 +1,185 @@
 .table-container-tns {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 4rem; /* Thêm padding-bottom để tránh đè lên */
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 4rem;
+    /* Thêm padding-bottom để tránh đè lên */
 }
 
 .nhap-sach-table-tns {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  margin-bottom: 20px;
-  flex: 1;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-bottom: 20px;
+    flex: 1;
 }
 
 .nhap-sach-table-tns table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  /* Center-align all content */
-  table-layout: fixed;
-  /* Enable fixed column widths */
-  font-size: 0.8rem;
-  /* Reduce font size to 80% */
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    /* Center-align all content */
+    table-layout: fixed;
+    /* Enable fixed column widths */
+    font-size: 0.8rem;
+    /* Reduce font size to 80% */
 }
 
 .nhap-sach-table-tns th,
 .nhap-sach-table-tns td {
-  text-align: center;
-  /* Center-align cell content */
-  font-size: 0.8rem;
+    text-align: center;
+    /* Center-align cell content */
+    font-size: 0.8rem;
 }
 
 .nhap-sach-table-tns th {
-  background-color: #007bff;
-  /* Blue background */
-  color: white;
-  /* White text */
-  font-weight: bold;
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White text */
+    font-weight: bold;
 }
 
 .nhap-sach-table-tns th:nth-child(1),
 .nhap-sach-table-tns td:nth-child(1) {
-  width: 5%;
-  /* Fixed width for No. column */
+    width: 5%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(2),
 .nhap-sach-table-tns td:nth-child(2) {
-  width: 8%;
-  /* Fixed width for No. column */
+    width: 8%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(3),
 .nhap-sach-table-tns td:nth-child(3) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(4),
 .nhap-sach-table-tns td:nth-child(4) {
-  width: 10%;
-  /* Fixed width for No. column */
+    width: 10%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(5),
 .nhap-sach-table-tns td:nth-child(5) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(6),
 .nhap-sach-table-tns td:nth-child(6) {
-  width: 18%;
-  /* Fixed width for No. column */
+    width: 18%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(7),
 .nhap-sach-table-tns td:nth-child(7) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(8),
 .nhap-sach-table-tns td:nth-child(8) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(9),
 .nhap-sach-table-tns td:nth-child(9) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(10),
 .nhap-sach-table-tns td:nth-child(10) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(11),
 .nhap-sach-table-tns td:nth-child(11) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-table-tns th:nth-child(12),
 .nhap-sach-table-tns td:nth-child(12) {
-  width: 7%;
-  /* Fixed width for No. column */
+    width: 7%;
+    /* Fixed width for No. column */
 }
 
 .nhap-sach-action-buttons-tns {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
 }
 
 .nhap-sach-edit-icon-tns {
-  cursor: pointer;
-  transition: color 0.2s;
-  font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-size: 0.9rem;
 }
 
 .nhap-sach-edit-icon-tns:hover {
-  color: #0056b3;
+    color: #0056b3;
 }
 
 .nhap-sach-pagination {
-  position: absolute;
-  bottom: 0;
-  right: 0.2rem;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.75rem 2.8rem;
-  background-color: white; /* Thêm background để tránh trong suốt */
-  z-index: 10;
-  min-width: 250px;
-  transform: translateX(1%);
+    position: absolute;
+    bottom: 0;
+    right: 0.2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.75rem 2.8rem;
+    background-color: white;
+    /* Thêm background để tránh trong suốt */
+    z-index: 10;
+    min-width: 250px;
+    transform: translateX(1%);
 }
 
 .nhap-sach-pagination-info {
-  margin: 0;
-  font-size: 0.8rem;
-  padding: 0 0.25rem;
-  min-width: 50px;
-  text-align: center;
+    margin: 0;
+    font-size: 0.8rem;
+    padding: 0 0.25rem;
+    min-width: 50px;
+    text-align: center;
 }
 
 .nhap-sach-pagination-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.35rem 0.5rem;
-  border-radius: 0.2rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.85rem;
-  min-width: 32px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0;
-  line-height: 1;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    min-width: 32px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0;
+    line-height: 1;
 }
 
 .nhap-sach-pagination-button:hover:not(:disabled) {
-  background-color: #5a92d6;
-  transform: translateY(-1px);
+    background-color: #5a92d6;
+    transform: translateY(-1px);
 }
 
 .nhap-sach-pagination-button:disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
 }
 
 /* .pagination-container {

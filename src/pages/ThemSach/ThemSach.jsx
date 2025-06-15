@@ -4,7 +4,6 @@ import './ThemSach.css';
 import themSachApi from '../../services/themSachApi';
 
 function ThemSach() {
-    // Removed unused state
     const [, setStep] = useState(1);
     const [maSachMoi, setMaSachMoi] = useState('');
     const [tenSach, setTenSach] = useState('');
@@ -25,10 +24,6 @@ function ThemSach() {
     const [newTheLoai, setNewTheLoai] = useState('');
     const [showTacGiaDropdown, setShowTacGiaDropdown] = useState(false);
     const [showTheLoaiDropdown, setShowTheLoaiDropdown] = useState(false);
-    const [showAddTacGiaInput, setShowAddTacGiaInput] = useState(false);
-    const [showAddTheLoaiInput, setShowAddTheLoaiInput] = useState(false);
-    const [showConfirmAddAuthor, setShowConfirmAddAuthor] = useState(false);
-    const [showConfirmAddGenre, setShowConfirmAddGenre] = useState(false);
 
     // Danh sách nhà xuất bản
     const [allNXB, setAllNXB] = useState([]);
@@ -37,6 +32,28 @@ function ThemSach() {
     const [showNXBDropdown, setShowNXBDropdown] = useState(false);
     const [showAddNXBInput, setShowAddNXBInput] = useState(false);
     const [showConfirmAddPublisher, setShowConfirmAddPublisher] = useState(false);
+    const [showAddTacGiaInput, setShowAddTacGiaInput] = useState(false);
+    const [showConfirmAddAuthor, setShowConfirmAddAuthor] = useState(false);
+    const [showAddTheLoaiInput, setShowAddTheLoaiInput] = useState(false);
+    const [showConfirmAddGenre, setShowConfirmAddGenre] = useState(false);
+
+    // Thêm tác giả mới
+    const handleAddAuthorSuccess = async (newAuthorName) => {
+        try {
+            const newAuthor = await themSachApi.addAuthor(newAuthorName);
+            setAllTacGia([...allTacGia, newAuthor]);
+            setTenTacGia([...tenTacGia, newAuthor]);
+            setNewTacGia('');
+            setShowConfirmAddAuthor(false);
+            setShowAddTacGiaInput(false);
+            setMessage(`Đã thêm tác giả "${newAuthor.TenTG}" thành công!`);
+            setShowTacGiaDropdown(true);
+            setTimeout(() => setMessage(''), 3000);
+        } catch (error) {
+            console.error('Error adding author:', error);
+            setMessage('Có lỗi khi thêm tác giả: ' + (error.response?.data?.message || error.message));
+        }
+    };
 
     // Lấy mã sách mới tự động và danh sách tác giả/thể loại
     useEffect(() => {
@@ -79,24 +96,6 @@ function ThemSach() {
         }
         fetchInit();
     }, []);
-
-    // Thêm tác giả mới
-    const handleAddAuthorSuccess = async (newAuthorName) => {
-        try {
-            const newAuthor = await themSachApi.addAuthor(newAuthorName);
-            setAllTacGia([...allTacGia, newAuthor]);
-            setTenTacGia([...tenTacGia, newAuthor]);
-            setNewTacGia('');
-            setShowConfirmAddAuthor(false);
-            setShowAddTacGiaInput(false);
-            setMessage(`Đã thêm tác giả "${newAuthor.TenTG}" thành công!`);
-            setShowTacGiaDropdown(true);
-            setTimeout(() => setMessage(''), 3000);
-        } catch (error) {
-            console.error('Error adding author:', error);
-            setMessage('Có lỗi khi thêm tác giả: ' + (error.response?.data?.message || error.message));
-        }
-    };
 
     // Thêm thể loại mới
     const handleAddGenreSuccess = async (newGenreName) => {
@@ -201,7 +200,7 @@ function ThemSach() {
             if (dauSachResult && dauSachResult.MaDauSach) {
                 setMaDauSach(dauSachResult.MaDauSach);
                 setShowCreateDauSach(false);
-                setMessage('Đã thêm đầu sách mới thành công!');
+                // setMessage('Đã thêm đầu sách mới thành công!');
                 setShowBookForm(true); // Show form nhập thông tin sách
             }
         } catch (error) {
@@ -525,13 +524,16 @@ function ThemSach() {
                 {showCreateDauSach && (
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
+
                             <h2>Thông Tin Đầu Sách Mới</h2>
-                            <div>Tên Sách: {tenSach}</div>
-                            <div>Tên Tác Giả: {tenTacGia.map(author => author.TenTG).join(', ')}</div>
-                            <div>Thể Loại: {theLoai.map(genre => genre.TenTheLoai).join(', ')}</div>
+                            <div className="modal-them-sach-container-tsm" style={{ marginBottom: '20px' }}>
+                                <div>Tên Sách: {tenSach}</div>
+                                <div>Tên Tác Giả: {tenTacGia.map(author => author.TenTG).join(', ')}</div>
+                                <div>Thể Loại: {theLoai.map(genre => genre.TenTheLoai).join(', ')}</div>
+                            </div>
                             <div className="modal-buttons-container-tsm">
-                                <button className="button-tsm" onClick={handleAddDauSach}>Thêm</button>
-                                <button className="button-tsm cancel-button-tsm" onClick={handleCancelCreateDauSach}>Hủy</button>
+                                <button className="adds-button-tsm" onClick={handleAddDauSach}>Thêm</button>
+                                <button className="cancel-button-tsm" onClick={handleCancelCreateDauSach}>Hủy</button>
                             </div>
                         </div>
                     </div>
@@ -542,36 +544,19 @@ function ThemSach() {
                     <div className="modal-overlay-them-sach-tsm">
                         <div className="modal-them-sach-tsm">
                             <h2>Thông Tin Sách Mới</h2>
-                            <div className="form-row-tsm">
-                                <label>Mã Sách:</label>
-                                <input type="text" value={maSachMoi} disabled />
+                            <div className="modal-them-sach-container-tsm" style={{ marginBottom: '20px' }}>
+                                <div>Mã Sách: {maSachMoi}</div>
+                                <div>Tên Sách: {tenSach}</div>
+                                <div>Tác Giả: {tenTacGia.map(author => author.TenTG).join(', ')}</div>
+                                <div>Thể Loại: {theLoai.map(genre => genre.TenTheLoai).join(', ')}</div>
+                                <div>Nhà Xuất Bản: {nhaXuatBan}</div>
+                                <div>Năm Xuất Bản: {namXuatBan}</div>
+
                             </div>
-                            <div className="form-row-tsm">
-                                <label>Tên Sách:</label>
-                                <input type="text" value={tenSach} disabled />
-                            </div>
-                            <div className="form-row-tsm">
-                                <label>Nhà Xuất Bản:</label>
-                                <input
-                                    type="text"
-                                    value={nhaXuatBan}
-                                    onChange={e => setNhaXuatBan(e.target.value)}
-                                    placeholder="Nhập tên nhà xuất bản"
-                                />
-                            </div>
-                            <div className="form-row-tsm">
-                                <label>Năm Xuất Bản:</label>
-                                <input
-                                    type="text"
-                                    value={namXuatBan}
-                                    onChange={e => setNamXuatBan(e.target.value)}
-                                    placeholder="Nhập năm xuất bản"
-                                />
-                            </div>
-                            {message && <div className="message-tsm">{message}</div>}
+
                             <div className="modal-buttons-container-tsm">
-                                <button className="button-tsm" onClick={handleSaveBook}>Lưu</button>
-                                <button className="button-tsm cancel-button-tsm" onClick={() => setShowBookForm(false)}>Hủy</button>
+                                <button className="adds-button-tsm" onClick={handleSaveBook}>Thêm</button>
+                                <button className="cancel-button-tsm" onClick={() => setShowBookForm(false)}>Hủy</button>
                             </div>
                         </div>
                     </div>
@@ -603,6 +588,7 @@ function ThemSach() {
                             </div>
                             <div className="modal-buttons-container-tsm">
                                 <button
+                                    className="button-tsm"
                                     onClick={() => {
                                         if (newTacGia.trim()) {
                                             setShowConfirmAddAuthor(true);
@@ -613,11 +599,11 @@ function ThemSach() {
                                     Thêm
                                 </button>
                                 <button
+                                    className="button-tsm cancel-button-tsm"
                                     onClick={() => {
                                         setShowAddTacGiaInput(false);
                                         setNewTacGia('');
                                     }}
-                                    className="cancel-button-tsm"
                                 >
                                     Hủy
                                 </button>
@@ -631,8 +617,9 @@ function ThemSach() {
                         <div className="modal-them-sach-tsm">
                             <h2>Xác nhận thêm tác giả</h2>
                             <p>Bạn có chắc muốn thêm tác giả "{newTacGia}" không?</p>
-                            <div style={{ marginTop: '20px' }}>
+                            <div className="modal-buttons-container-tsm">
                                 <button
+                                    className="button-tsm"
                                     onClick={() => {
                                         if (newTacGia.trim() && !allTacGia.some(tg => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase())) {
                                             handleAddAuthorSuccess(newTacGia.trim());
@@ -643,8 +630,8 @@ function ThemSach() {
                                     Có
                                 </button>
                                 <button
+                                    className="button-tsm cancel-button-tsm"
                                     onClick={() => setShowConfirmAddAuthor(false)}
-                                    style={{ background: '#6c757d' }}
                                 >
                                     Không
                                 </button>
@@ -674,7 +661,7 @@ function ThemSach() {
                                             setShowConfirmAddGenre(true);
                                         }
                                     }}
-                                    style={{ marginRight: '10px' }}
+                                    className="adds-button-tsm"
                                 >
                                     Thêm
                                 </button>
@@ -740,7 +727,7 @@ function ThemSach() {
                                             setShowConfirmAddPublisher(true);
                                         }
                                     }}
-                                    style={{ marginRight: '10px' }}
+                                    className="adds-button-tsm"
                                 >
                                     Thêm
                                 </button>

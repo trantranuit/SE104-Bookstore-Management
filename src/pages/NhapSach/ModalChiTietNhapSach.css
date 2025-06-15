@@ -67,8 +67,8 @@
 
 .modal-actions-ctns {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: center;
+  gap: 1rem;
   margin-top: 20px;
 }
 
@@ -90,19 +90,19 @@
 }
 
 .modal-actions-ctns button:nth-child(2) {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.modal-actions-ctns button:nth-child(2):hover {
-  background-color: #218838;
-}
-
-.modal-actions-ctns button:last-child {
   background-color: #007bff;
   color: #fff;
 }
 
+.modal-actions-ctns button:nth-child(2):hover {
+  background-color: #007bff;
+}
+
+.modal-actions-ctns button:last-child {
+  background-color: #6c747D;
+  color: #fff;
+}
+
 .modal-actions-ctns button:last-child:hover {
-  background-color: #0056b3;
+  background-color: #5d636b;
 }

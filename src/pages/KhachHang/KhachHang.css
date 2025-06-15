@@ -42,6 +42,7 @@
 
 .add-customer-button:hover {
   background-color: #5a92d6;
+  color: white;
 }
 
 .kh-table-container {
@@ -151,7 +152,7 @@
 }
 
 .khachhang-edit-icon:hover {
-  color: #19e169;
+  color: #0056b3;
 }
 .khachhang-delete-icon:hover {
   color: #cf150f;
@@ -230,46 +231,64 @@
   min-width: 400px;
 }
 
+.kh-modal-content h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 8px;
   border: 1px solid #ddd;
-  border-radius: 0.3rem;
-  font-size: 0.9rem;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 .modal-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 40px;
 }
 
 .modal-buttons button {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border: none;
-  border-radius: 0.3rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .modal-buttons button[type="submit"] {
   background-color: #007bff;
-  color: white;
+  color: #fff;
 }
 
 .modal-buttons button[type="button"] {
-  background-color: #ddd;
+  background-color: #dc3545;
+  color: #fff;
 }
 
 .modal-buttons button:hover {
@@ -390,22 +409,25 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.success-modal-content h3 {
-    margin-top: 0;
-    color: #c18bd7;
-    font-size: 1.5rem;
+.success-modal-content h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .success-modal-content p {
     margin: 1.5rem 0;
     font-size: 1.1rem;
     color: #333;
+    margin-bottom: 1rem
 }
 
 .success-modal-button-kh {
     margin-top: 1rem;
-    padding: 0.6rem 3rem;
-    background-color: #c18bd7;
+    padding: 0.5rem 1rem;
+    background-color: #6C757D;
     color: white;
     border: none;
     border-radius: 0.25rem;
@@ -416,7 +438,7 @@
 }
 
 .success-modal-button:hover {
-    background-color: #bd43ad;
+    background-color: #5d636b
 }
 
 /* Error Modal Styles */
@@ -478,3 +500,4 @@
     min-width: 100% ;     
     box-sizing: border-box;
 }
+

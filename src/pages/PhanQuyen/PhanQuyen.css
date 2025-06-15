@@ -1,3 +1,4 @@
+/* để nhờ */
 .content-wrapper-pq {
     background: none;
     padding: 0;
@@ -21,32 +22,11 @@
 
 .user-list-block-pq {
     position: relative;
-    height: 37rem;
+    height: auto;
     display: flex;
     flex-direction: column;
 }
 
-.user-table-pq {
-    width: 100%;
-    /* 100% -> 100rem (giả định chiều rộng cha là 100rem) */
-    table-layout: fixed;
-    margin-bottom: 1rem;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.user-table-pq th,
-.user-table-pq td {
-    height: 3.5rem;
-    padding: 0.75rem;
-    vertical-align: middle;
-    border-bottom: 0.0625rem solid #ddd;
-    /* 1px -> 0.0625rem */
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 .user-table-pq th:nth-child(1),
 .user-table-pq td:nth-child(1) {
@@ -124,25 +104,34 @@
 }
 
 .add-user-button-pq {
-    padding: 0.8rem 1.5rem;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+  background-color: #f1f4f9;
+  color: #4880ff;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(115, 173, 239, 0.12);
 }
 
 .add-user-button-pq:hover {
-    background-color: #218838;
+  background-color: #5a92d6;
+  color: white
 }
 
 .user-table-pq,
 .role-config-table-pq {
+      width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  /* Center-align all content */
+  table-layout: fixed;
+  /* Enable fixed column widths */
+  font-size: 1rem;
+  /* Reduce font size to 80% */
     border-collapse: collapse;
-    width: 100%;
     /* 100% -> 100rem */
 }
 
@@ -183,32 +172,48 @@
 .user-table-pq td,
 .role-config-table-pq th,
 .role-config-table-pq td {
-    border-top: 0.0625rem solid #ddd;
-    /* 1px -> 0.0625rem */
-    border-bottom: 0.0625rem solid #ddd;
-    border-left: none;
-    border-right: none;
-    padding: 0.8rem;
-    text-align: center;
+  text-align: center;
+  /* Center-align cell content */
+  font-size: 0.9rem;
 }
 
-.role-config-table-pq th,
-.role-config-table-pq td {
-    width: 10rem;
-    /* calc(100% / 10) -> 10rem */
-    min-width: 6.25rem;
-    /* 100px -> 6.25rem */
-    white-space: normal;
-    word-wrap: break-word;
-    padding: 0.625rem 0.3125rem;
-    /* 10px 5px -> 0.625rem 0.3125rem */
+.user-table-pq td, .role-config-table-pq td
+{  padding: 1.2rem;
+  border-bottom: 0.01rem solid #ccc;}
+
+.role-config-table-pq th:nth-child(1),
+.role-config-table-pq td:nth-child(1) {
+    width: 7%;
+    /* 5% -> 5rem (dựa trên chiều rộng bảng 100rem) */
 }
+
+.role-config-table-pq th:nth-child(8),
+.role-config-table-pq td:nth-child(8) {
+    width: 10%;
+    /* 5% -> 5rem (dựa trên chiều rộng bảng 100rem) */
+}
+
+.role-config-table-pq th:nth-child(9),
+.role-config-table-pq td:nth-child(9) {
+    width: 13%;
+    /* 5% -> 5rem (dựa trên chiều rộng bảng 100rem) */
+}
+
+
 
 .user-table-pq th,
 .role-config-table-pq th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.user-table-container-pq {
+      position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem; 
 }
 
 .password-cell-pq {
@@ -226,12 +231,9 @@
 }
 
 .icon-button-pq {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #007bff;
-    transition: color 0.3s ease;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.9rem;
 }
 
 .icon-button-pq:hover {
@@ -240,60 +242,69 @@
 
 .role-config-table-pq select {
     padding: 0.5rem;
-    border: 0.0625rem solid #ccc;
+    border: 0.01rem solid #ccc;
     /* 1px -> 0.0625rem */
     border-radius: 0.5rem;
     font-size: 1rem;
 }
 
 .pagination-container-pq {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0.5rem 0;
-    position: absolute;
-    bottom: 1rem;
-    left: 0;
-    right: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0.2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 2.8rem;
+  background-color: white; /* Thêm background để tránh trong suốt */
+  z-index: 10;
+  min-width: 250px;
+  transform: translateX(1%);
 }
 
 .pagination-nav-button-pq {
-    padding: 0.5rem 1.25rem;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-    min-width: 5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
+  line-height: 1;
+}
+
+.pagination-nav-button-pq:hover:not(:disabled) {
+  background-color: #5a92d6;
+  transform: translateY(-1px);
 }
 
 .pagination-nav-button-pq:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
-
 .pagination-info-pq {
-    font-size: 0.875rem;
-    color: #666;
-    min-width: 6rem;
-    text-align: center;
+  margin: 0;
+  font-size: 0.8rem;
+  padding: 0 0.25rem;
+  min-width: 50px;
+  text-align: center;
 }
 
-.modal-title-pq {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
 
-.modal-pq {
+.modal-content-pq {
     background: #fff;
     border-radius: 0.5rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
-    padding: 2rem 2.5rem;
+    /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2); */
+    /* padding: 2rem 2.5rem; */
     width: 50rem;
     /* 70rem -> 50rem (giảm để hợp lý hơn với hệ thống rem) */
     min-height: 20rem;
@@ -304,32 +315,33 @@
     text-align: center;
 }
 
-.modal-content-pq {
-    text-align: left;
-    width: 100%;
-    /* 100% -> 100rem */
-    display: flex;
-    flex-direction: row;
-    gap: 3rem;
-    margin: 0 auto;
+.modal-content-pq h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    margin-top:1rem;
 }
 
 .modal-column-pq {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+
 }
 
 .modal-column-pq label {
-    text-align: left;
-    margin-bottom: 0.5rem;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
 }
 
 .modal-column-pq input,
 .modal-column-pq select {
-    width: 100%;
-    /* 100% -> 100rem */
-    margin-bottom: 1rem;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
 }
 
 .modal-buttons-pq {
@@ -367,47 +379,50 @@
 }
 
 .modal-overlay-pq {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    /* 100vw -> 100rem */
-    height: 100vh;
-    /* 100vh -> 100rem */
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-pq {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
-    padding: 2rem 2.5rem;
-    width: 50rem;
-    min-height: 20rem;
-    max-height: 50rem;
-    overflow-y: auto;
-    text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .modal-title-pq {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    font-weight: bold;
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .modal-content-pq input,
 .modal-content-pq select {
-    width: 100%;
-    padding: 0.8rem;
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-    border: 0.0625rem solid #ccc;
-    font-size: 1rem;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.modal-content-pq input:focus,
+.modal-content-pq select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 .modal-buttons-pq {
@@ -427,12 +442,12 @@
 }
 
 .apply-button-pq {
-    background-color: #28a745;
+    background-color: #007bff;
     color: white;
 }
 
 .apply-button-pq:hover {
-    background-color: #218838;
+    background-color: #007bff;
 }
 
 .cancel-button-pq {
@@ -448,18 +463,19 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
-    padding-right: 1rem;
+    
 }
 
 .save-config-button-pq {
-    padding: 0.5rem 2rem;
-    background: #007bff;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 0.25rem;
-    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 1rem;
 }
 
 .save-config-button-pq:hover {
@@ -594,9 +610,12 @@
 }
 
 .add-user-modal-content-pq label {
-    text-align: left;
-    margin-bottom: 0.5rem;
-    display: block;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+  margin-left: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .add-user-modal-content-pq input,
@@ -604,6 +623,108 @@
     width: 100%;
     margin-bottom: 1rem;
     padding: 0.8rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.dong-pq {
+        margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #6C757D;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.modal-title-pq {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.modal-pq {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 2rem 2.5rem;
+    width: 50rem;
+    /* 70rem -> 50rem (giảm để hợp lý hơn với hệ thống rem) */
+    min-height: 20rem;
+    /* 30rem -> 20rem */
+    max-height: 50rem;
+    /* 80vh -> 50rem */
+    overflow-y: auto;
+    text-align: center;
+}
+
+.modal-content-pq {
+    text-align: left;
+    width: 100%;
+    /* 100% -> 100rem */
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    margin: 0 auto;
+}
+
+.modal-column-pq {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-column-pq label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    margin-top:0.5rem;
+}
+
+.modal-overlay-pq {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* 100vw -> 100rem */
+    height: 100vh;
+    /* 100vh -> 100rem */
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-pq {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 2rem 2.5rem;
+    width: 50rem;
+    min-height: 20rem;
+    max-height: 50rem;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.modal-title-pq {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.modal-content-pq input,
+.modal-content-pq select {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
     border-radius: 0.5rem;
     border: 0.0625rem solid #ccc;
     font-size: 1rem;

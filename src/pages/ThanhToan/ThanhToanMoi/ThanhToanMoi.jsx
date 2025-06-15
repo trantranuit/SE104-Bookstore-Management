@@ -800,8 +800,8 @@ function ThanhToanMoi() {
             <div className="cart-section-ttm">
                 <h2 className="cart-header-ttm">Giỏ hàng</h2>
                 <div className="cart-summary-ttm">
-                    <span>Tổng số sách đã chọn: {totalQuantity}</span>
-                    <span>Tổng số tiền: {totalPrice.toLocaleString()}đ</span>
+                    <span>Tổng số sách đã chọn: {totalQuantity} quyển</span>
+                    <span>Tổng số tiền: {totalPrice.toLocaleString()} VNĐ</span>
                 </div>
                 <table className="cart-table-ttm">
                     <thead>

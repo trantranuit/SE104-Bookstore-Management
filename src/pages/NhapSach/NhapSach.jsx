@@ -535,7 +535,7 @@ const NhapSach = () => {
                 </div>
               )}
               
-              <div className="modal-buttons">
+              <div className="modal-buttons-ns">
                 <button className="apply-button-ns" onClick={applyFilters}>
                   Áp dụng
                 </button>
