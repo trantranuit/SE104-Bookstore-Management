@@ -6,6 +6,7 @@ import ModalChiTietNhapSach from "./ModalChiTietNhapSach";
 import ModalEditChiTietNhapSach from "./ModalEditChiTietNhapSach";
 import Notification from "./Notification";
 import phieuNhapSachApi from "../../services/phieuNhapSachApi";
+import userApi from "../../services/userApi";
 
 const normalizeDate = (dateStr) => {
   if (!dateStr || typeof dateStr !== "string") return "";
@@ -42,25 +43,31 @@ const NhapSach = () => {
   const [pendingPhieuNhap, setPendingPhieuNhap] = useState(null); // Lưu thông tin phiếu nhập chờ
   const [pendingChiTiet, setPendingChiTiet] = useState([]); // Lưu danh sách chi tiết chờ
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [users, setUsers] = useState([]);
 
+  // Update fetchData to get user names
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [ctNhapSach, phieuNhap, sachData, dauSachData] = await Promise.all([
-        phieuNhapSachApi.getCTNhapSach(),
-        phieuNhapSachApi.getPhieuNhapSach(),
-        phieuNhapSachApi.getSach(),
-        phieuNhapSachApi.getDauSach(),
-      ]);
+      const [ctNhapSach, phieuNhap, sachData, dauSachData, userData] =
+        await Promise.all([
+          phieuNhapSachApi.getCTNhapSach(),
+          phieuNhapSachApi.getPhieuNhapSach(),
+          phieuNhapSachApi.getSach(),
+          phieuNhapSachApi.getDauSach(),
+          userApi.getAllUsers(),
+        ]);
 
-      const uniqueNguoiNhap = [
-        ...new Set(phieuNhap.map((p) => p.NguoiNhap_input)),
-      ].filter(Boolean);
+      setUsers(userData);
+
+      // Set unique nguoi nhap options using full names
+      const uniqueNguoiNhap = userData.map((user) => user.fullName);
+      setNguoiNhapOptions(uniqueNguoiNhap);
+
       const uniquePhieuNhap = [
         ...new Set(phieuNhap.map((p) => p.MaPhieuNhap)),
       ].filter(Boolean);
 
-      setNguoiNhapOptions(uniqueNguoiNhap);
       setPhieuNhapOptions(uniquePhieuNhap);
 
       const formattedData = ctNhapSach
@@ -133,45 +140,111 @@ const NhapSach = () => {
   const handleFilterChange = (e) => {
     const { name, checked, value } = e.target;
     setSelectedFilters((prev) => {
-      const newValues = checked
-        ? [...prev[name], value]
-        : prev[name].filter((v) => v !== value);
-      return { ...prev, [name]: newValues };
+      // Only update the current filter type
+      if (name === selectedFilterType) {
+        const newValues = checked
+          ? [...prev[name], value]
+          : prev[name].filter((v) => v !== value);
+        return { ...prev, [name]: newValues };
+      }
+      return prev;
     });
   };
 
   const applyFilters = () => {
     let filtered = [...data];
-    if (filters.ngayNhap) {
+    const newFilters = {
+      ...filters, // Keep existing filters
+    };
+
+    // Apply all filters in sequence
+    if (
+      selectedFilterType === "maPhieuNhap" &&
+      selectedFilters.maPhieuNhap.length > 0
+    ) {
+      filtered = filtered.filter((item) =>
+        selectedFilters.maPhieuNhap.includes(item.maPhieuNhap)
+      );
+      newFilters.maPhieuNhap = selectedFilters.maPhieuNhap;
+    }
+
+    if (
+      selectedFilterType === "MaNguoiNhap" &&
+      selectedFilters.MaNguoiNhap.length > 0
+    ) {
+      filtered = filtered.filter((item) =>
+        selectedFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
+      );
+      newFilters.MaNguoiNhap = selectedFilters.MaNguoiNhap;
+    }
+
+    if (selectedFilterType === "ngayNhap" && filters.ngayNhap) {
+      const filterDate = normalizeDate(filters.ngayNhap);
+      filtered = filtered.filter(
+        (item) => normalizeDate(item.ngayNhap) === filterDate
+      );
+      newFilters.ngayNhap = filters.ngayNhap;
+    }
+
+    // Apply existing filters that weren't modified
+    if (
+      selectedFilterType !== "maPhieuNhap" &&
+      filters.maPhieuNhap.length > 0
+    ) {
+      filtered = filtered.filter((item) =>
+        filters.maPhieuNhap.includes(item.maPhieuNhap)
+      );
+    }
+    if (
+      selectedFilterType !== "MaNguoiNhap" &&
+      filters.MaNguoiNhap.length > 0
+    ) {
+      filtered = filtered.filter((item) =>
+        filters.MaNguoiNhap.includes(item.MaNguoiNhap)
+      );
+    }
+    if (selectedFilterType !== "ngayNhap" && filters.ngayNhap) {
       const filterDate = normalizeDate(filters.ngayNhap);
       filtered = filtered.filter(
         (item) => normalizeDate(item.ngayNhap) === filterDate
       );
     }
-    if (filters.MaNguoiNhap.length > 0) {
-      filtered = filtered.filter((item) =>
-        filters.MaNguoiNhap.includes(item.MaNguoiNhap)
-      );
+
+    if (filtered.length === 0) {
+      let activeFilters = [];
+      if (newFilters.maPhieuNhap.length > 0)
+        activeFilters.push(`mã phiếu ${newFilters.maPhieuNhap.join(", ")}`);
+      if (newFilters.MaNguoiNhap.length > 0)
+        activeFilters.push(`người nhập ${newFilters.MaNguoiNhap.join(", ")}`);
+      if (newFilters.ngayNhap)
+        activeFilters.push(`ngày ${newFilters.ngayNhap}`);
+
+      // setNotification({
+      //   message: `Không có chi tiết nào khớp với: ${activeFilters.join(
+      //     " và "
+      //   )}`,
+      //   type: "info",
+      // });
     }
-    if (filters.maPhieuNhap.length > 0) {
-      filtered = filtered.filter((item) =>
-        filters.maPhieuNhap.includes(item.maPhieuNhap)
-      );
-    }
+
     setFilteredData(filtered);
-    setFilters((prev) => ({
-      ...prev,
-      MaNguoiNhap: selectedFilters.MaNguoiNhap,
-      maPhieuNhap: selectedFilters.maPhieuNhap,
-    }));
+    setFilters(newFilters); // Update with new filters while keeping others
     setIsFilterModalOpen(false);
+    setSelectedFilters({ MaNguoiNhap: [], maPhieuNhap: [] }); // Only reset current selections
   };
 
   const resetFilters = () => {
+    // Reset all filters
     setSelectedFilters({ MaNguoiNhap: [], maPhieuNhap: [] });
     setFilters({ ngayNhap: "", MaNguoiNhap: [], maPhieuNhap: [] });
     setFilteredData(data);
+    setNotification(null);
     setIsFilterModalOpen(false);
+  };
+
+  const closeFilterModal = () => {
+    setIsFilterModalOpen(false);
+    setSelectedFilters({ MaNguoiNhap: [], maPhieuNhap: [] }); // Reset selections when closing
   };
 
   const handleEdit = (item) => {
@@ -370,18 +443,21 @@ const NhapSach = () => {
 
   if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
 
-  return (    <div className="page-container">
+  return (
+    <div className="page-container">
       <h1 className="page-title">Nhập sách</h1>
       <div className="content-wrapper">
         <div className="search-filter-block-ns">
           <input
             type="text"
-            placeholder="Tìm kiếm Phiếu nhập theo Mã sách, Tên sách hoặc Mã phiếu nhập..."
+            placeholder="Tìm kiếm Phiếu nhập theo Mã sách hoặc Tên sách..."
             value={searchQuery}
             onChange={handleSearch}
           />
           <button
-            className={`filter-button-ns ${filters.maPhieuNhap.length > 0 ? 'active-filter-ns' : ''}`}
+            className={`filter-button-ns ${
+              filters.maPhieuNhap.length > 0 ? "active-filter-ns" : ""
+            }`}
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("maPhieuNhap");
@@ -390,7 +466,9 @@ const NhapSach = () => {
             Lọc theo Mã phiếu nhập
           </button>
           <button
-            className={`filter-button-ns ${filters.ngayNhap ? 'active-filter-ns' : ''}`}
+            className={`filter-button-ns ${
+              filters.ngayNhap ? "active-filter-ns" : ""
+            }`}
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("ngayNhap");
@@ -399,7 +477,9 @@ const NhapSach = () => {
             Lọc theo Ngày nhập
           </button>
           <button
-            className={`filter-button-ns ${filters.MaNguoiNhap.length > 0 ? 'active-filter-ns' : ''}`}
+            className={`filter-button-ns ${
+              filters.MaNguoiNhap.length > 0 ? "active-filter-ns" : ""
+            }`}
             onClick={() => {
               setIsFilterModalOpen(true);
               setSelectedFilterType("MaNguoiNhap");
@@ -411,7 +491,9 @@ const NhapSach = () => {
             + Thêm phiếu nhập
           </button>
         </div>
-        {(filters.maPhieuNhap.length > 0 || filters.MaNguoiNhap.length > 0 || filters.ngayNhap) && (
+        {(filters.maPhieuNhap.length > 0 ||
+          filters.MaNguoiNhap.length > 0 ||
+          filters.ngayNhap) && (
           <div className="active-filters-ns">
             {filters.maPhieuNhap.map((filter) => (
               <div key={filter} className="active-filter-tag-ns">
@@ -419,13 +501,13 @@ const NhapSach = () => {
                 <button
                   className="remove-filter-ns"
                   onClick={() => {
-                    setFilters(prev => ({
+                    setFilters((prev) => ({
                       ...prev,
-                      maPhieuNhap: prev.maPhieuNhap.filter(f => f !== filter)
+                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
                     }));
-                    setSelectedFilters(prev => ({
+                    setSelectedFilters((prev) => ({
                       ...prev,
-                      maPhieuNhap: prev.maPhieuNhap.filter(f => f !== filter)
+                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
                     }));
                   }}
                 >
@@ -439,13 +521,13 @@ const NhapSach = () => {
                 <button
                   className="remove-filter-ns"
                   onClick={() => {
-                    setFilters(prev => ({
+                    setFilters((prev) => ({
                       ...prev,
-                      MaNguoiNhap: prev.MaNguoiNhap.filter(f => f !== filter)
+                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
                     }));
-                    setSelectedFilters(prev => ({
+                    setSelectedFilters((prev) => ({
                       ...prev,
-                      MaNguoiNhap: prev.MaNguoiNhap.filter(f => f !== filter)
+                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
                     }));
                   }}
                 >
@@ -459,7 +541,7 @@ const NhapSach = () => {
                 <button
                   className="remove-filter-ns"
                   onClick={() => {
-                    setFilters(prev => ({ ...prev, ngayNhap: '' }));
+                    setFilters((prev) => ({ ...prev, ngayNhap: "" }));
                   }}
                 >
                   ×
@@ -468,59 +550,80 @@ const NhapSach = () => {
             )}
           </div>
         )}
-        <TableNhapSach data={filteredData} onEdit={handleEdit} />        {isFilterModalOpen && (
+        {filteredData.length === 0 && !loading ? (
+          <div
+            className="no-results-message"
+            style={{ textAlign: "center", padding: "20px" }}
+          >
+            Không có chi tiết nào khớp với điều kiện lọc
+          </div>
+        ) : (
+          <TableNhapSach data={filteredData} onEdit={handleEdit} />
+        )}
+        {isFilterModalOpen && (
           <div className="modal-overlay-ns">
             <div className="modal-new-ns">
               <h2 className="modal-title-new-ns">
-                {selectedFilterType === "maPhieuNhap" && "Lọc theo Mã phiếu nhập"}
+                {selectedFilterType === "maPhieuNhap" &&
+                  "Lọc theo Mã phiếu nhập"}
                 {selectedFilterType === "MaNguoiNhap" && "Lọc theo Người nhập"}
                 {selectedFilterType === "ngayNhap" && "Lọc theo Ngày nhập"}
               </h2>
-              
+
               {selectedFilterType === "maPhieuNhap" && (
                 <div className="author-list-ns">
                   {phieuNhapOptions.map((option) => (
                     <div
                       key={option}
                       className={`author-item-ns ${
-                        selectedFilters.maPhieuNhap.includes(option) ? "selected-ns" : ""
+                        selectedFilters.maPhieuNhap.includes(option)
+                          ? "selected-ns"
+                          : ""
                       }`}
-                      onClick={() => handleFilterChange({
-                        target: {
-                          name: "maPhieuNhap",
-                          value: option,
-                          checked: !selectedFilters.maPhieuNhap.includes(option)
-                        }
-                      })}
+                      onClick={() =>
+                        handleFilterChange({
+                          target: {
+                            name: "maPhieuNhap",
+                            value: option,
+                            checked:
+                              !selectedFilters.maPhieuNhap.includes(option),
+                          },
+                        })
+                      }
                     >
                       {option}
                     </div>
                   ))}
                 </div>
               )}
-              
+
               {selectedFilterType === "MaNguoiNhap" && (
                 <div className="author-list-ns">
-                  {nguoiNhapOptions.map((option) => (
+                  {nguoiNhapOptions.map((fullName) => (
                     <div
-                      key={option}
+                      key={fullName}
                       className={`author-item-ns ${
-                        selectedFilters.MaNguoiNhap.includes(option) ? "selected-ns" : ""
+                        selectedFilters.MaNguoiNhap.includes(fullName)
+                          ? "selected-ns"
+                          : ""
                       }`}
-                      onClick={() => handleFilterChange({
-                        target: {
-                          name: "MaNguoiNhap",
-                          value: option,
-                          checked: !selectedFilters.MaNguoiNhap.includes(option)
-                        }
-                      })}
+                      onClick={() =>
+                        handleFilterChange({
+                          target: {
+                            name: "MaNguoiNhap",
+                            value: fullName,
+                            checked:
+                              !selectedFilters.MaNguoiNhap.includes(fullName),
+                          },
+                        })
+                      }
                     >
-                      {option}
+                      {fullName}
                     </div>
                   ))}
                 </div>
               )}
-              
+
               {selectedFilterType === "ngayNhap" && (
                 <div className="year-filter-inputs-ns">
                   <input
@@ -528,13 +631,16 @@ const NhapSach = () => {
                     name="ngayNhap"
                     value={filters.ngayNhap}
                     onChange={(e) => {
-                      setFilters((prev) => ({ ...prev, ngayNhap: e.target.value }));
+                      setFilters((prev) => ({
+                        ...prev,
+                        ngayNhap: e.target.value,
+                      }));
                     }}
                     placeholder="Chọn ngày nhập"
                   />
                 </div>
               )}
-              
+
               <div className="modal-buttons-ns">
                 <button className="apply-button-ns" onClick={applyFilters}>
                   Áp dụng
@@ -544,7 +650,7 @@ const NhapSach = () => {
                 </button>
                 <button
                   className="close-button-new-ns"
-                  onClick={() => setIsFilterModalOpen(false)}
+                  onClick={closeFilterModal}
                 >
                   Đóng
                 </button>

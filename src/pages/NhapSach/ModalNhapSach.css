@@ -86,3 +86,25 @@
 .modal-actions-mns button:last-child:hover {
   background-color: #0056b3;
 }
+
+.error-message-mns {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+input[readonly] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+input.valid {
+  background-color: #e8f5e9;
+  border-color: #28a745;
+}
+
+input::placeholder {
+  color: #6c757d;
+  font-size: 0.875rem;
+}

@@ -1,19 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ModalNhapSach.css";
+import userApi from "../../services/userApi";
 
 const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     ngayNhap: "",
     MaNguoiNhap: "",
+    tenNguoiNhap: "",
   });
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const userData = await userApi.getAllUsers();
+        console.log("Fetched users:", userData); // For debugging
+        setUsers(userData.filter((user) => user.role === "NguoiNhap"));
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    };
+    if (isOpen) {
+      fetchUsers();
+    }
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "MaNguoiNhap") {
+      const userId = parseInt(value);
+      const user = users.find((u) => u.id === userId);
+
+      if (!value) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+          tenNguoiNhap: "",
+        }));
+        setError("");
+      } else {
+        if (user) {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+            tenNguoiNhap: `${user.last_name} ${user.first_name}`.trim(),
+          }));
+          setError("");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+            tenNguoiNhap: "",
+          }));
+          setError("ID không hợp lệ hoặc không phải người nhập sách!");
+        }
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.tenNguoiNhap) {
+      setError("Vui lòng nhập ID người nhập hợp lệ!");
+      return;
+    }
     onSave(formData);
   };
 
@@ -41,14 +94,28 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
               name="MaNguoiNhap"
               value={formData.MaNguoiNhap}
               onChange={handleChange}
+              placeholder="Vui lòng nhập ID (1,2,3...)"
               required
             />
           </div>
+          <div className="form-group-mns">
+            <label>Tên người nhập:</label>
+            <input
+              type="text"
+              value={formData.tenNguoiNhap}
+              readOnly
+              placeholder="Tên sẽ tự động điền khi nhập ID hợp lệ"
+              className={formData.tenNguoiNhap ? "valid" : ""}
+            />
+          </div>
+          {error && <div className="error-message-mns">{error}</div>}
           <div className="modal-actions-mns">
             <button type="button" onClick={onClose}>
               Hủy
             </button>
-            <button type="submit">Tiếp theo</button>
+            <button type="submit" disabled={!!error}>
+              Tiếp theo
+            </button>
           </div>
         </form>
       </div>
