@@ -72,6 +72,29 @@ const baoCaoTonService = {
       throw error;
     }
   },
+
+  updateBaoCaoTon: async (month, year) => {
+    try {
+      console.log(`Updating inventory report for month ${month}, year ${year}`);
+
+      // Format month and year to match the API's expected format
+      const formattedMonthYear = `${String(month).padStart(2, "0")}/${year}`;
+
+      // Make a POST request to the baocaoton API to trigger the update
+      const response = await axiosInstance.post(
+        `${BASE_URL}/baocaoton/update/`,
+        {
+          month: formattedMonthYear, // Send the month and year in the request body
+        }
+      );
+
+      console.log("Inventory report update triggered:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating inventory report:", error);
+      throw error;
+    }
+  },
 };
 
 export default baoCaoTonService;
