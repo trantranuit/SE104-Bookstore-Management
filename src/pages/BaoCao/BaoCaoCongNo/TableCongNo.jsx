@@ -4,7 +4,7 @@ import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } fro
 function TableCongNo({ data }) {
   const columns = [
     {
-      header: "STT",
+      header: "No.",
       accessorFn: (row, index) => index + 1,
       cell: (info) => <div className="stt-cell">{info.getValue()}</div>,
     },
