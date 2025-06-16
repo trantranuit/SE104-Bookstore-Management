@@ -44,25 +44,25 @@ const NhapSach = () => {
   const [pendingChiTiet, setPendingChiTiet] = useState([]); // Lưu danh sách chi tiết chờ
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
 
   // Update fetchData to get user names
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [ctNhapSach, phieuNhap, sachData, dauSachData, userData] =
+      const [ctNhapSach, phieuNhap, sachData, dauSachData, nguoiNhapData] =
         await Promise.all([
           phieuNhapSachApi.getCTNhapSach(),
           phieuNhapSachApi.getPhieuNhapSach(),
           phieuNhapSachApi.getSach(),
           phieuNhapSachApi.getDauSach(),
-          userApi.getAllUsers(),
+          userApi.getUsersByRole("NguoiNhap"), // Get only NguoiNhap users
         ]);
 
-      setUsers(userData);
-
-      // Set unique nguoi nhap options using full names
-      const uniqueNguoiNhap = userData.map((user) => user.fullName);
+      // Set nguoi nhap options from users with NguoiNhap role
+      const uniqueNguoiNhap = nguoiNhapData.map((user) => user.fullName);
       setNguoiNhapOptions(uniqueNguoiNhap);
+      setUsers(nguoiNhapData);
 
       const uniquePhieuNhap = [
         ...new Set(phieuNhap.map((p) => p.MaPhieuNhap)),
@@ -74,6 +74,12 @@ const NhapSach = () => {
         .map((item) => {
           const pn = phieuNhap.find((p) => p.MaPhieuNhap === item.MaPhieuNhap);
           if (!pn) return null;
+
+          // Find the user who created this phieu nhap
+          const nguoiNhap = pn.NguoiNhap
+            ? pn.NguoiNhap.trim()
+            : "Không xác định";
+
           const sach = sachData.find((s) => s.MaSach === item.MaSach);
           if (!sach) return null;
           const dauSach = dauSachData.find(
@@ -87,8 +93,8 @@ const NhapSach = () => {
           return {
             maPhieuNhap: item.MaPhieuNhap,
             ngayNhap: pn.NgayNhap || "01/01/1900",
-            MaNguoiNhap: pn.NguoiNhap_input || pn.NguoiNhap || "Không xác định",
-            TenNguoiNhap: pn.NguoiNhap || "Không xác định",
+            MaNguoiNhap: nguoiNhap,
+            TenNguoiNhap: nguoiNhap,
             maSach: item.MaSach,
             tenSach: sach.TenDauSach || dauSach.TenSach,
             theLoai: dauSach.TenTheLoai || "Không xác định",
@@ -126,14 +132,37 @@ const NhapSach = () => {
   }, []);
 
   const handleSearch = (e) => {
-    const query = e.target.value.toLowerCase();
+    const query = e.target.value;
     setSearchQuery(query);
-    const filtered = data.filter(
-      (item) =>
-        item.maSach.toString().toLowerCase().includes(query) ||
-        item.tenSach.toLowerCase().includes(query) ||
-        item.maPhieuNhap.toString().toLowerCase().includes(query)
-    );
+    setCurrentPage(1); // Reset to first page when searching
+
+    if (!query) {
+      setFilteredData(data);
+      return;
+    }
+
+    const filtered = data.filter((item) => {
+      const maSach = String(item.maSach || "");
+      const tenSach = String(item.tenSach || "");
+      const queryLower = query.toLowerCase();
+
+      // Tách query thành các từ riêng lẻ để tìm kiếm
+      const searchWords = queryLower
+        .split(" ")
+        .filter((word) => word.length > 0);
+      const tenSachWords = tenSach.toLowerCase().split(" ");
+
+      // Kiểm tra mã sách
+      if (maSach.toLowerCase().startsWith(queryLower)) {
+        return true;
+      }
+
+      // Kiểm tra từng từ trong tên sách
+      return searchWords.every((searchWord) =>
+        tenSachWords.some((word) => word.startsWith(searchWord))
+      );
+    });
+
     setFilteredData(filtered);
   };
 
@@ -152,12 +181,22 @@ const NhapSach = () => {
   };
 
   const applyFilters = () => {
+    setCurrentPage(1); // Reset to first page when applying filters
     let filtered = [...data];
-    const newFilters = {
-      ...filters, // Keep existing filters
-    };
+    const newFilters = { ...filters };
 
-    // Apply all filters in sequence
+    if (
+      selectedFilterType === "MaNguoiNhap" &&
+      selectedFilters.MaNguoiNhap.length > 0
+    ) {
+      filtered = filtered.filter((item) =>
+        selectedFilters.MaNguoiNhap.some(
+          (name) => item.TenNguoiNhap.trim() === name.trim()
+        )
+      );
+      newFilters.MaNguoiNhap = selectedFilters.MaNguoiNhap;
+    }
+
     if (
       selectedFilterType === "maPhieuNhap" &&
       selectedFilters.maPhieuNhap.length > 0
@@ -166,16 +205,6 @@ const NhapSach = () => {
         selectedFilters.maPhieuNhap.includes(item.maPhieuNhap)
       );
       newFilters.maPhieuNhap = selectedFilters.maPhieuNhap;
-    }
-
-    if (
-      selectedFilterType === "MaNguoiNhap" &&
-      selectedFilters.MaNguoiNhap.length > 0
-    ) {
-      filtered = filtered.filter((item) =>
-        selectedFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
-      );
-      newFilters.MaNguoiNhap = selectedFilters.MaNguoiNhap;
     }
 
     if (selectedFilterType === "ngayNhap" && filters.ngayNhap) {
@@ -234,6 +263,7 @@ const NhapSach = () => {
   };
 
   const resetFilters = () => {
+    setCurrentPage(1); // Reset to first page when resetting filters
     // Reset all filters
     setSelectedFilters({ MaNguoiNhap: [], maPhieuNhap: [] });
     setFilters({ ngayNhap: "", MaNguoiNhap: [], maPhieuNhap: [] });
@@ -294,19 +324,6 @@ const NhapSach = () => {
 
   const handleAddChiTiet = async (formData, action, resetForm) => {
     try {
-      const soLuong = parseInt(formData.soLuong);
-      const giaNhap = parseInt(formData.giaNhap);
-
-      if (
-        !formData.maSach ||
-        !soLuong ||
-        !giaNhap ||
-        soLuong <= 0 ||
-        giaNhap <= 0
-      ) {
-        throw new Error("Vui lòng nhập đầy đủ thông tin hợp lệ!");
-      }
-
       const newChiTiet = {
         maSach: formData.maSach,
         soLuong: parseInt(formData.soLuong),
@@ -314,29 +331,21 @@ const NhapSach = () => {
       };
 
       if (action === "finish") {
-        // Add current chi tiet to list first
         const allChiTiet = [...pendingChiTiet];
         if (formData.maSach) {
           allChiTiet.push(newChiTiet);
         }
 
-        if (allChiTiet.length === 0) {
-          throw new Error("Vui lòng nhập ít nhất một chi tiết!");
-        }
-
         try {
-          // Create phieu nhap first
           const phieuNhapResponse = await phieuNhapSachApi.addPhieuNhapSach(
             null,
             pendingPhieuNhap
           );
           const maPhieuNhap = phieuNhapResponse.MaPhieuNhap;
 
-          // Add chi tiet sequentially
           let successCount = 0;
           let errorMessages = [];
 
-          // Process each chi tiet one at a time
           for (let i = 0; i < allChiTiet.length; i++) {
             const chiTiet = allChiTiet[i];
             try {
@@ -348,25 +357,19 @@ const NhapSach = () => {
               );
               successCount++;
             } catch (error) {
-              errorMessages.push(
-                `Sách ${chiTiet.maSach}: ${
-                  error.response?.data?.message || error.message
-                }`
-              );
-            }
-            // Add small delay between requests
-            if (i < allChiTiet.length - 1) {
-              await new Promise((resolve) => setTimeout(resolve, 500));
+              // Extract error message from backend response
+              if (error.response?.data) {
+                // Get first error message from any field
+                const errorMessage = Object.values(error.response.data)[0][0];
+                errorMessages.push(errorMessage);
+              } else {
+                errorMessages.push(error.message);
+              }
             }
           }
 
-          // Show final result
           if (errorMessages.length > 0) {
-            throw new Error(
-              `Thêm ${successCount}/${
-                allChiTiet.length
-              } chi tiết thành công.\nLỗi:\n${errorMessages.join("\n")}`
-            );
+            throw new Error(errorMessages[0]); // Show first error message
           }
 
           setNotification({
@@ -374,7 +377,6 @@ const NhapSach = () => {
             type: "success",
           });
 
-          // Reset states
           setPendingPhieuNhap(null);
           setPendingChiTiet([]);
           setIsModalChiTietOpen(false);
@@ -383,7 +385,6 @@ const NhapSach = () => {
           throw error;
         }
       } else {
-        // Just add to pending list and continue
         setPendingChiTiet((prev) => [...prev, newChiTiet]);
         resetForm();
         setNotification({
@@ -393,7 +394,7 @@ const NhapSach = () => {
       }
     } catch (err) {
       setNotification({
-        message: `Lỗi: ${err.message}`,
+        message: err.message,
         type: "error",
       });
     }
@@ -441,6 +442,17 @@ const NhapSach = () => {
     setNotification(null);
   };
 
+  // Add these constants and pagination logic
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Ensure currentPage is valid after filtering
+  useEffect(() => {
+    if (currentPage > Math.ceil(filteredData.length / itemsPerPage)) {
+      setCurrentPage(1);
+    }
+  }, [filteredData, currentPage]);
+
   if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
 
   return (
@@ -450,9 +462,11 @@ const NhapSach = () => {
         <div className="search-filter-block-ns">
           <input
             type="text"
-            placeholder="Tìm kiếm Phiếu nhập theo Mã sách hoặc Tên sách..."
+            placeholder="Tìm kiếm sách theo mã hoặc tên sách..."
             value={searchQuery}
             onChange={handleSearch}
+            className="search-input-ns"
+            autoComplete="off"
           />
           <button
             className={`filter-button-ns ${
@@ -558,7 +572,13 @@ const NhapSach = () => {
             Không có chi tiết nào khớp với điều kiện lọc
           </div>
         ) : (
-          <TableNhapSach data={filteredData} onEdit={handleEdit} />
+          <TableNhapSach
+            data={filteredData}
+            onEdit={handleEdit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+          />
         )}
         {isFilterModalOpen && (
           <div className="modal-overlay-ns">

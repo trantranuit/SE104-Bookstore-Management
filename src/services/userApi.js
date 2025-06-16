@@ -15,6 +15,22 @@ const userApi = {
       throw error;
     }
   },
+
+  getUsersByRole: async (role) => {
+    try {
+      const response = await axiosInstance.get("/user/");
+      return response.data
+        .filter((user) => user.role === role)
+        .map((user) => ({
+          id: user.id,
+          fullName: `${user.last_name} ${user.first_name}`.trim(),
+          role: user.role,
+        }));
+    } catch (error) {
+      console.error("Error fetching users by role:", error);
+      throw error;
+    }
+  },
 };
 
 export default userApi;
