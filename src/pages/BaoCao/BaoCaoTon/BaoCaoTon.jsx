@@ -21,6 +21,7 @@ function BaoCaoTon() {
         return;
       }
 
+      // Call the updateBaoCaoTon function from the service
       await baoCaoTonService.updateBaoCaoTon(month, year);
       alert(`Báo cáo tồn cho tháng ${month}/${year} đã được cập nhật.`);
     } catch (error) {
