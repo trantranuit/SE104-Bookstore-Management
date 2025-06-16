@@ -1,11 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel } from "@tanstack/react-table";
 import baoCaoTonService from "../../../services/baoCaoTonService";
 
-function TableTon({ month, year }) {
+const TableTon = forwardRef(({ month, year }, ref) => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const reports = await baoCaoTonService.getBaoCaoTon(month, year);
+      if (reports && reports.length > 0) {
+        setData(reports);
+      } else {
+        setData([]);
+        setError(`Không có dữ liệu báo cáo tồn cho tháng ${month}/${year}`);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Có lỗi xảy ra khi tải dữ liệu");
+      setData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [month, year]);
+
+  // Expose refreshData method to parent component
+  useImperativeHandle(ref, () => ({
+    refreshData: fetchData
+  }), [fetchData]);
 
   const columns = [
     {
@@ -62,30 +87,10 @@ function TableTon({ month, year }) {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const reports = await baoCaoTonService.getBaoCaoTon(month, year);
-        if (reports && reports.length > 0) {
-          setData(reports);
-        } else {
-          setData([]);
-          setError(`Không có dữ liệu báo cáo tồn cho tháng ${month}/${year}`);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Có lỗi xảy ra khi tải dữ liệu");
-        setData([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (month && year) {
       fetchData();
     }
-  }, [month, year]);
+  }, [month, year, fetchData]);
 
   if (isLoading) return <div className="loading-container">Đang tải dữ liệu...</div>;
   if (error) return <div className="error-container">{error}</div>;
@@ -137,6 +142,6 @@ function TableTon({ month, year }) {
       )}
     </div>
   );
-}
+});
 
 export default TableTon;
