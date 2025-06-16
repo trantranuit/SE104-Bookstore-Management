@@ -357,19 +357,36 @@ const NhapSach = () => {
               );
               successCount++;
             } catch (error) {
-              // Extract error message from backend response
               if (error.response?.data) {
-                // Get first error message from any field
                 const errorMessage = Object.values(error.response.data)[0][0];
                 errorMessages.push(errorMessage);
-              } else {
-                errorMessages.push(error.message);
               }
             }
           }
 
           if (errorMessages.length > 0) {
-            throw new Error(errorMessages[0]); // Show first error message
+            throw new Error(errorMessages[0]);
+          }
+
+          // Đợi fetchData hoàn tất để có dữ liệu mới nhất
+          await fetchData();
+
+          // Tìm vị trí của phiếu nhập mới trong dữ liệu đã được cập nhật
+          const newData = [...data].sort((a, b) =>
+            a.maPhieuNhap.localeCompare(b.maPhieuNhap)
+          );
+
+          const targetIndex = newData.findIndex(
+            (item) => item.maPhieuNhap === maPhieuNhap
+          );
+
+          if (targetIndex !== -1) {
+            // Tính toán trang mới và cập nhật ngay lập tức
+            const newPage = Math.floor(targetIndex / itemsPerPage) + 1;
+            setCurrentPage(newPage);
+
+            // Đảm bảo scrolling về đầu trang sau khi chuyển trang
+            window.scrollTo(0, 0);
           }
 
           setNotification({
@@ -380,7 +397,6 @@ const NhapSach = () => {
           setPendingPhieuNhap(null);
           setPendingChiTiet([]);
           setIsModalChiTietOpen(false);
-          await fetchData();
         } catch (error) {
           throw error;
         }

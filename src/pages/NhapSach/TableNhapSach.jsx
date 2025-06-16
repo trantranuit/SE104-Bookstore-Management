@@ -10,9 +10,11 @@ const TableNhapSach = ({
   setCurrentPage,
   itemsPerPage,
 }) => {
+  // Tính toán các chỉ số cho pagination
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = data.slice(startIndex, startIndex + itemsPerPage);
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = data.slice(startIndex, endIndex);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
