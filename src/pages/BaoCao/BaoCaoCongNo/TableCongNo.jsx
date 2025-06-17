@@ -1,7 +1,36 @@
-import React from "react";
+import React, { useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
+import baoCaoCongNoService from "../../../services/baoCaoCongNoService";
 
-function TableCongNo({ data }) {
+const TableCongNo = forwardRef(({ month, year }, ref) => {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const reports = await baoCaoCongNoService.getBaoCaoCongNo(month, year);
+      if (reports && reports.length > 0) {
+        setData(reports);
+      } else {
+        setData([]);
+        setError(`Không có dữ liệu báo cáo công nợ cho tháng ${month}/${year}`);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Có lỗi xảy ra khi tải dữ liệu");
+      setData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [month, year]);
+
+  // Expose refreshData method to parent component
+  useImperativeHandle(ref, () => ({
+    refreshData: fetchData
+  }), [fetchData]);
   const columns = [
     {
       header: "No.",
@@ -55,6 +84,10 @@ function TableCongNo({ data }) {
     },
   });
 
+  if (isLoading) return <div className="loading-container">Đang tải dữ liệu...</div>;
+  if (error && data.length === 0) return <div className="error-container">{error}</div>;
+  if (data.length === 0) return <div className="empty-container">Vui lòng bấm nút "Xuất báo cáo" để xem báo cáo công nợ</div>;
+
   return (
     <div className="bccn-table-container">
       <table className="bccn-report-table">
@@ -104,6 +137,6 @@ function TableCongNo({ data }) {
       )}
     </div>
   );
-}
+});
 
 export default TableCongNo;

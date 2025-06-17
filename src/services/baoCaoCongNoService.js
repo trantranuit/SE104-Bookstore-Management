@@ -94,6 +94,32 @@ const baoCaoCongNoService = {
       throw error;
     }
   },
+
+  updateBaoCaoCongNo: async (month, year) => {
+    try {
+      console.log(`Updating debt report for month ${month}, year ${year}`);
+
+      // Make a POST request to trigger the update
+      const response = await axiosInstance.post(`${BASE_URL}/baocaocongno/`, {
+        Thang_input: month,
+        Nam_input: year,
+      });
+
+      console.log("Debt report update triggered:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating debt report:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      } else if (error.request) {
+        console.error("No response received. Backend may be down.");
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+      throw error;
+    }
+  },
 };
 
 export default baoCaoCongNoService;
