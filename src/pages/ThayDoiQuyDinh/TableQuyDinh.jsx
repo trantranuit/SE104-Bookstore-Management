@@ -17,8 +17,8 @@ const TableQuyDinh = ({ data, onEdit }) => {
         return "quyển";
       case 4:
         return "%";
-      case 5:
-        return "";
+      // case 5:
+      //   return "";
       default:
         return "";
     }

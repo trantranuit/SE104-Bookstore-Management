@@ -108,3 +108,8 @@ input::placeholder {
   color: #6c757d;
   font-size: 0.875rem;
 }
+
+.readonly-date {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}

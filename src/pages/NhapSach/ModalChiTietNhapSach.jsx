@@ -26,8 +26,8 @@ const ModalChiTietNhapSach = ({
   const [loading, setLoading] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const [currentItem, setCurrentItem] = useState(null); // Track current editing item
-  const [editingIndex, setEditingIndex] = useState(null); // Add this line
-  const [notification, setNotification] = useState(null); // Add notification state
+  const [editingIndex, setEditingIndex] = useState(null); // Track index being edited
+  const [notification, setNotification] = useState(null);
 
   const fetchSachInfo = async (maSach) => {
     try {
@@ -83,8 +83,12 @@ const ModalChiTietNhapSach = ({
         clearTimeout(debounceTimeout);
       }
 
-      // First check for duplicate mã sách
-      if (pendingChiTiet.some((item) => item.maSach === value)) {
+      // Check for duplicate mã sách, excluding the current editing item
+      if (
+        pendingChiTiet.some(
+          (item, idx) => idx !== editingIndex && item.maSach === value
+        )
+      ) {
         setError("Mã sách trùng. Vui lòng nhập mã sách khác");
         setFormData((prev) => ({
           ...prev,
@@ -125,7 +129,6 @@ const ModalChiTietNhapSach = ({
       soLuong: itemToEdit.soLuong.toString(),
       giaNhap: itemToEdit.giaNhap.toString(),
     }));
-    // Fetch full book info to update UI
     fetchSachInfo(itemToEdit.maSach);
   };
 
@@ -151,19 +154,16 @@ const ModalChiTietNhapSach = ({
         throw new Error("Mã sách đã tồn tại trong danh sách!");
       }
 
-      // Create a copy of the pending list
-      let newList = [...pendingChiTiet];
-
-      // Update the item at editingIndex with new values
-      newList[editingIndex] = {
-        ...newList[editingIndex],
+      // Create new list with updated item at the editing index
+      const updatedList = [...pendingChiTiet];
+      updatedList[editingIndex] = {
         maSach: formData.maSach,
         soLuong: soLuong,
         giaNhap: giaNhap,
       };
 
-      // Call onEditPending to update the parent component's state
-      onEditPending([...newList]);
+      // Notify parent to update the list
+      onEditPending(updatedList);
 
       // Reset form and edit state
       setEditingIndex(null);
@@ -244,23 +244,6 @@ const ModalChiTietNhapSach = ({
     }
   };
 
-  // Remove or modify this useEffect
-  useEffect(() => {
-    // Only populate form if editing an existing item
-    if (currentItem && pendingChiTiet && pendingChiTiet.length > 0) {
-      const itemToEdit = pendingChiTiet[currentItem.editIndex];
-      if (itemToEdit) {
-        setFormData((prev) => ({
-          ...prev,
-          maSach: itemToEdit.maSach,
-          soLuong: itemToEdit.soLuong.toString(),
-          giaNhap: itemToEdit.giaNhap.toString(),
-        }));
-        fetchSachInfo(itemToEdit.maSach);
-      }
-    }
-  }, [currentItem, pendingChiTiet]);
-
   if (!isOpen) return null;
 
   return (
@@ -281,7 +264,7 @@ const ModalChiTietNhapSach = ({
                 <div className="pending-actions-ctns">
                   {editingIndex === index ? (
                     <>
-                      <button onClick={() => handleSaveEdit()}>Lưu</button>
+                      <button onClick={handleSaveEdit}>Lưu</button>
                       <button onClick={() => setEditingIndex(null)}>Hủy</button>
                     </>
                   ) : (
@@ -392,7 +375,6 @@ const ModalChiTietNhapSach = ({
           <button onClick={onClose}>Đóng</button>
         </div>
 
-        {/* Add notification component */}
         {notification && (
           <Notification
             message={notification.message}
