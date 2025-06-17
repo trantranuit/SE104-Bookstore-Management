@@ -25,10 +25,10 @@ ChartJS.register(
 );
 
 function TrangChu() {
-  const [selectedMonth, setSelectedMonth] = useState("12");
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [applyMonth, setApplyMonth] = useState("12");
-  const [applyYear, setApplyYear] = useState("2024");
+  const [selectedMonth, setSelectedMonth] = useState("6");
+  const [selectedYear, setSelectedYear] = useState("2025");
+  const [applyMonth, setApplyMonth] = useState("6");
+  const [applyYear, setApplyYear] = useState("2025");
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
   const [dailySales, setDailySales] = useState([]);
