@@ -202,14 +202,11 @@
 
 /* Style for disabled excel button */
 .excel-button.disabled {
-    background-color: #6c757d !important;
-    cursor: not-allowed !important;
-    opacity: 0.6;
-}
-
-.excel-button.disabled:hover {
-    background-color: #6c757d !important;
-    transform: none !important;
+    background: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
 @media (max-width: 1200px) {

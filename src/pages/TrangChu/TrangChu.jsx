@@ -35,6 +35,7 @@ function TrangChu() {
   const [totalSold, setTotalSold] = useState(0);
   const [dailySales, setDailySales] = useState([]);
   const [monthlySales, setMonthlySales] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]); // Thêm state cho doanh thu theo tháng
   const [topBooks, setTopBooks] = useState([]); // Thêm state cho top sách
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -143,6 +144,27 @@ function TrangChu() {
         console.log(`Monthly Sales for ${applyYear}:`, monthlySalesArray);
         setMonthlySales(monthlySalesArray);
 
+        // Calculate monthly revenue
+        const monthlyRevenueArray = Array(12).fill(0);
+
+        cthoadons.forEach((ct) => {
+          const hoadon = hoadons.find((hd) => hd.MaHD === ct.MaHD);
+          if (hoadon) {
+            const date = parseDate(hoadon.NgayLap);
+            if (
+              !isNaN(date.getTime()) &&
+              date.getFullYear() === parseInt(applyYear)
+            ) {
+              // Sử dụng SoTienTra từ hóa đơn để tính doanh thu
+              const revenue = parseFloat(hoadon.SoTienTra) || 0;
+              monthlyRevenueArray[date.getMonth()] += revenue;
+            }
+          }
+        });
+
+        console.log(`Monthly Revenue for ${applyYear}:`, monthlyRevenueArray);
+        setMonthlyRevenue(monthlyRevenueArray);
+
         // Tính toán top sách bán chạy theo tháng
         const bookSales = {}; // Object để tổng hợp dữ liệu bán theo mã sách
 
@@ -189,6 +211,7 @@ function TrangChu() {
           );
           setDailySales(Array(daysInMonth).fill(0));
           setMonthlySales(Array(12).fill(0));
+          setMonthlyRevenue(Array(12).fill(0));
           setTopBooks([]);
         }
       } catch (err) {
@@ -245,8 +268,16 @@ function TrangChu() {
           stepSize: 1, // Chỉ hiển thị số nguyên
           precision: 0, // Không hiển thị thập phân
         },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục Y
+        },
       },
-      x: { title: { display: true, text: "Ngày" } },
+      x: { 
+        title: { display: true, text: "Ngày" },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục X
+        },
+      },
     },
   };
 
@@ -288,20 +319,22 @@ function TrangChu() {
           stepSize: 1, // Chỉ hiển thị số nguyên
           precision: 0, // Không hiển thị thập phân
         },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục Y
+        },
       },
-      x: { title: { display: true, text: "Tháng" } },
+      x: { 
+        title: { display: true, text: "Tháng" },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục X
+        },
+      },
     },
   };
 
   // Data cho biểu đồ top sách bán chạy
   const topBooksChartData = {
-    labels: topBooks.map((book) => {
-      // Rút gọn tên nếu quá dài
-      if (book.name.length > 25) {
-        return book.name.substring(0, 22) + "...";
-      }
-      return book.name;
-    }),
+    labels: topBooks.map((book) => book.name), // Hiển thị đầy đủ tên sách
     datasets: [
       {
         label: "Số lượng bán",
@@ -333,12 +366,50 @@ function TrangChu() {
           label: function (context) {
             return `Đã bán: ${context.raw} quyển`;
           },
+          title: function (context) {
+            // Hiển thị đầy đủ tên sách trong tooltip
+            return context[0].label;
+          },
         },
       },
     },
     scales: {
       y: {
         title: { display: true, text: "Tên sách" },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục Y
+        },
+        ticks: {
+          // Cấu hình để hiển thị đầy đủ text
+          maxRotation: 0,
+          minRotation: 0,
+          font: {
+            size: 12,
+          },
+          // Tự động wrap text nếu quá dài
+          callback: function(value, index) {
+            const label = this.getLabelForValue(value);
+            if (label.length > 40) {
+              // Chia thành nhiều dòng nếu quá dài
+              const words = label.split(' ');
+              const lines = [];
+              let currentLine = '';
+              
+              words.forEach(word => {
+                if ((currentLine + word).length > 40) {
+                  if (currentLine) lines.push(currentLine.trim());
+                  currentLine = word + ' ';
+                } else {
+                  currentLine += word + ' ';
+                }
+              });
+              
+              if (currentLine) lines.push(currentLine.trim());
+              return lines;
+            }
+            return label;
+          },
+        },
       },
       x: {
         beginAtZero: true,
@@ -346,6 +417,68 @@ function TrangChu() {
         ticks: {
           stepSize: 1,
           precision: 0,
+        },
+        grid: {
+          display: false, // Bỏ đường kẻ lưới trục X
+        },
+      },
+    },
+  };
+
+  // Data cho biểu đồ doanh thu theo tháng
+  const monthlyRevenueChartData = {
+    labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    datasets: [
+      {
+        label: "Doanh thu theo tháng (VND)",
+        data: monthlyRevenue,
+        fill: true,
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const monthlyRevenueChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top" },
+      title: {
+        display: true,
+        text: `Biểu đồ doanh thu theo tháng năm ${applyYear}`,
+        font: {
+          size: 20,
+          weight: "bold",
+        },
+        padding: 20,
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `Doanh thu: ${context.raw.toLocaleString('vi-VN')} VND`;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Doanh thu (VND)" },
+        ticks: {
+          callback: function(value) {
+            return value.toLocaleString('vi-VN') + ' VND';
+          },
+        },
+        grid: {
+          display: false,
+        },
+      },
+      x: { 
+        title: { display: true, text: "Tháng" },
+        grid: {
+          display: false,
         },
       },
     },
@@ -363,6 +496,17 @@ function TrangChu() {
     <div className="page-container">
       <h1 className="page-title">Tiệm sách Trân Trân</h1>
       <div className="content-wrapper">
+        <div className="overview-stats">
+          <div className="stat-item">
+            <span className="stat-label">Tổng số sách hiện có:</span>
+            <span className="stat-value">{totalBooks}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Tổng số sách đã bán:</span>
+            <span className="stat-value">{totalSold}</span>
+          </div>
+        </div>
+
         <div className="overview-header">
           <h2 className="overview-title">Tổng quan</h2>
           <div className="date-selectors">
@@ -409,17 +553,6 @@ function TrangChu() {
           </div>
         )}
 
-        <div className="overview-stats">
-          <div className="stat-item">
-            <span className="stat-label">Tổng số sách hiện có:</span>
-            <span className="stat-value">{totalBooks}</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Tổng số sách đã bán:</span>
-            <span className="stat-value">{totalSold}</span>
-          </div>
-        </div>
-
         <div className="chart-container">
           <div className="chart-item">
             <div style={{ height: "400px", padding: "20px" }}>
@@ -446,6 +579,16 @@ function TrangChu() {
                   </p>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Biểu đồ doanh thu theo tháng */}
+          <div className="chart-item">
+            <div style={{ height: "400px", padding: "20px" }}>
+              <Line
+                data={monthlyRevenueChartData}
+                options={monthlyRevenueChartOptions}
+              />
             </div>
           </div>
         </div>
