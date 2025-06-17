@@ -83,9 +83,6 @@ function BaoCaoTon() {
                 </option>
               ))}
             </select>
-            {isUpdating && (
-              <span className="updating-indicator">Đang xuất báo cáo...</span>
-            )}
           </div>
           <div className="update-button-group">
             <button 
