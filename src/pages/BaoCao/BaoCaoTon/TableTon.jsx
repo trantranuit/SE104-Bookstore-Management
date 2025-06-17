@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel } from "@tanstack/react-table";
 import baoCaoTonService from "../../../services/baoCaoTonService";
 
@@ -86,14 +86,12 @@ const TableTon = forwardRef(({ month, year }, ref) => {
     },
   });
 
-  useEffect(() => {
-    if (month && year) {
-      fetchData();
-    }
-  }, [month, year, fetchData]);
+  // Loại bỏ useEffect tự động fetch dữ liệu khi month hoặc year thay đổi
+  // Giờ việc fetch dữ liệu sẽ chỉ được thực hiện khi gọi hàm refreshData từ parent component
 
   if (isLoading) return <div className="loading-container">Đang tải dữ liệu...</div>;
-  if (error) return <div className="error-container">{error}</div>;
+  if (error && data.length === 0) return <div className="error-container">{error}</div>;
+  if (data.length === 0) return <div className="empty-container">Vui lòng bấm nút "Xuất báo cáo" để xem báo cáo tồn</div>;
 
   return (
     <div className="bct-table-container">

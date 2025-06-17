@@ -11,43 +11,44 @@ function BaoCaoTon() {
   const tableRef = useRef();
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const years = [2024, 2025]; // Giới hạn theo dữ liệu mẫu
+  const years = [2024, 2025]; 
 
-  // Auto update on initial load
+  // Load initial data without auto-update
   useEffect(() => {
-    handleAutoUpdate(6, 2025); // Use default values for initial load
   }, []); // Empty dependency array for initial load only
 
-  const handleAutoUpdate = async (month, year) => {
+  // Đã loại bỏ function handleAutoUpdate vì không cần thiết nữa
+
+  const handleMonthChange = (e) => {
+    const newMonth = e.target.value;
+    setSelectedMonth(newMonth);
+    // Chỉ thay đổi state, không load dữ liệu
+  };
+
+  const handleYearChange = (e) => {
+    const newYear = e.target.value;
+    setSelectedYear(newYear);
+    // Chỉ thay đổi state, không load dữ liệu
+  };
+
+  const handleManualUpdate = async () => {
     try {
       setIsUpdating(true);
       
-      // Tự động cập nhật báo cáo tồn
-      await baoCaoTonService.updateBaoCaoTon(month, year);
+      // Cập nhật báo cáo tồn từ backend
+      await baoCaoTonService.updateBaoCaoTon(parseInt(selectedMonth, 10), parseInt(selectedYear, 10));
       
-      // Trigger refresh dữ liệu trong TableTon
+      // Sau khi cập nhật backend, tải dữ liệu mới
       if (tableRef.current) {
-        tableRef.current.refreshData();
+        await tableRef.current.refreshData();
       }
       
     } catch (error) {
-      console.error("Error auto updating báo cáo tồn:", error);
-      // Không hiển thị alert để không làm phiền user
+      console.error("Error updating báo cáo tồn:", error);
+      alert("Có lỗi xảy ra khi cập nhật báo cáo tồn!");
     } finally {
       setIsUpdating(false);
     }
-  };
-
-  const handleMonthChange = async (e) => {
-    const newMonth = e.target.value;
-    setSelectedMonth(newMonth);
-    await handleAutoUpdate(parseInt(newMonth, 10), parseInt(selectedYear, 10));
-  };
-
-  const handleYearChange = async (e) => {
-    const newYear = e.target.value;
-    setSelectedYear(newYear);
-    await handleAutoUpdate(parseInt(selectedMonth, 10), parseInt(newYear, 10));
   };
 
   return (
@@ -83,8 +84,17 @@ function BaoCaoTon() {
               ))}
             </select>
             {isUpdating && (
-              <span className="updating-indicator">Đang cập nhật...</span>
+              <span className="updating-indicator">Đang xuất báo cáo...</span>
             )}
+          </div>
+          <div className="update-button-group">
+            <button 
+              className="update-button"
+              onClick={handleManualUpdate}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Đang xuất báo cáo..." : "Xuất báo cáo"}
+            </button>
           </div>
         </div>
         <TableTon 
