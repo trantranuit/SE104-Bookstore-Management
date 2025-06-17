@@ -4,7 +4,7 @@ import userApi from "../../services/userApi";
 
 const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    ngayNhap: "",
+    ngayNhap: new Date().toISOString().split("T")[0], // Set default to today
     MaNguoiNhap: "",
     tenNguoiNhap: "",
   });

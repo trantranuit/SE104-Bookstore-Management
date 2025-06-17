@@ -99,10 +99,48 @@
 }
 
 .modal-actions-ctns button:last-child {
-  background-color: #6c747D;
+  background-color: #6c747d;
   color: #fff;
 }
 
 .modal-actions-ctns button:last-child:hover {
   background-color: #5d636b;
+}
+
+.pending-list-ctns {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.pending-item-ctns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.pending-info-ctns {
+  flex: 1;
+}
+
+.pending-actions-ctns {
+  display: flex;
+  gap: 8px;
+}
+
+.pending-actions-ctns button {
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pending-actions-ctns button:hover {
+  background: #e0e0e0;
 }

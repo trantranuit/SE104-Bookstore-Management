@@ -303,11 +303,15 @@ const NhapSach = () => {
 
   const handleSavePhieuNhap = async (formData) => {
     try {
-      if (!formData.ngayNhap || !formData.MaNguoiNhap) {
+      if (!formData.MaNguoiNhap) {
         throw new Error("Vui lòng điền đầy đủ thông tin!");
       }
 
-      const dateParts = formData.ngayNhap.split("-");
+      // Get today's date if no date is provided
+      const today = new Date();
+      const dateParts = (
+        formData.ngayNhap || today.toISOString().split("T")[0]
+      ).split("-");
       const formattedNgayNhap = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
 
       setPendingPhieuNhap({
@@ -346,6 +350,7 @@ const NhapSach = () => {
           let successCount = 0;
           let errorMessages = [];
 
+          // Lưu tất cả chi tiết một lúc
           for (let i = 0; i < allChiTiet.length; i++) {
             const chiTiet = allChiTiet[i];
             try {
@@ -364,6 +369,7 @@ const NhapSach = () => {
             }
           }
 
+          // Nếu có lỗi thì throw để catch bên ngoài xử lý
           if (errorMessages.length > 0) {
             throw new Error(errorMessages[0]);
           }
@@ -401,6 +407,7 @@ const NhapSach = () => {
           throw error;
         }
       } else {
+        // Chỉ thêm vào danh sách chờ, không lưu vào DB
         setPendingChiTiet((prev) => [...prev, newChiTiet]);
         resetForm();
         setNotification({
@@ -420,15 +427,7 @@ const NhapSach = () => {
     try {
       const soLuong = parseInt(formData.soLuong);
       const giaNhap = parseInt(formData.giaNhap);
-
-      if (!soLuong || !giaNhap || soLuong <= 0 || giaNhap <= 0) {
-        throw new Error("Vui lòng nhập số lượng và giá nhập hợp lệ!");
-      }
-
       const maCTNhapSach = parseInt(currentItem.maCTNhapSach);
-      if (isNaN(maCTNhapSach)) {
-        throw new Error("Mã chi tiết nhập sách không hợp lệ!");
-      }
 
       await phieuNhapSachApi.updateCTNhapSach(
         maCTNhapSach,
@@ -445,12 +444,21 @@ const NhapSach = () => {
       setIsEditModalOpen(false);
       setCurrentItem(null);
       await fetchData();
-    } catch (err) {
-      console.error("Lỗi khi sửa:", err);
-      setNotification({
-        message: `Lỗi khi cập nhật chi tiết nhập sách: ${err.message}`,
-        type: "error",
-      });
+    } catch (error) {
+      // Extract backend error message if available
+      if (error.response?.data) {
+        const errorMessage = Object.values(error.response.data)[0][0];
+        setNotification({
+          message: errorMessage,
+          type: "error",
+        });
+      } else {
+        // Fallback for non-backend errors
+        setNotification({
+          message: error.message,
+          type: "error",
+        });
+      }
     }
   };
 
@@ -469,51 +477,18 @@ const NhapSach = () => {
     }
   }, [filteredData, currentPage]);
 
-  const handleRemoveFilter = (filterType, filterValue) => {
-    // Create new filters object without the removed filter
-    const newFilters = { ...filters };
+  const handleDeletePending = (index) => {
+    setPendingChiTiet((prev) => prev.filter((_, i) => i !== index));
+    // setNotification({
+    //   message: "Đã xóa chi tiết nhập sách",
+    //   type: "success",
+    // });
+  };
 
-    if (filterType === "maPhieuNhap") {
-      newFilters.maPhieuNhap = filters.maPhieuNhap.filter(
-        (f) => f !== filterValue
-      );
-    } else if (filterType === "MaNguoiNhap") {
-      newFilters.MaNguoiNhap = filters.MaNguoiNhap.filter(
-        (f) => f !== filterValue
-      );
-    } else if (filterType === "ngayNhap") {
-      newFilters.ngayNhap = "";
-    }
-
-    // Apply all remaining active filters
-    let filteredResult = [...data];
-
-    // Apply Mã phiếu nhập filter if it exists
-    if (newFilters.maPhieuNhap.length > 0) {
-      filteredResult = filteredResult.filter((item) =>
-        newFilters.maPhieuNhap.includes(item.maPhieuNhap)
-      );
-    }
-
-    // Apply Người nhập filter if it exists
-    if (newFilters.MaNguoiNhap.length > 0) {
-      filteredResult = filteredResult.filter((item) =>
-        newFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
-      );
-    }
-
-    // Apply Ngày nhập filter if it exists
-    if (newFilters.ngayNhap) {
-      const filterDate = normalizeDate(newFilters.ngayNhap);
-      filteredResult = filteredResult.filter(
-        (item) => normalizeDate(item.ngayNhap) === filterDate
-      );
-    }
-
-    // Update filters and filtered data
-    setFilters(newFilters);
-    setFilteredData(filteredResult);
-    setCurrentPage(1); // Reset to first page when removing a filter
+  const handleEditPending = (index) => {
+    const chiTietToEdit = pendingChiTiet[index];
+    // Remove the item from pending list
+    setPendingChiTiet((prev) => prev.filter((_, i) => i !== index));
   };
 
   if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
@@ -577,7 +552,16 @@ const NhapSach = () => {
                 Mã PNS: {filter}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => handleRemoveFilter("maPhieuNhap", filter)}
+                  onClick={() => {
+                    setFilters((prev) => ({
+                      ...prev,
+                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
+                    }));
+                    setSelectedFilters((prev) => ({
+                      ...prev,
+                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
+                    }));
+                  }}
                 >
                   ×
                 </button>
@@ -588,7 +572,16 @@ const NhapSach = () => {
                 Người nhập: {filter}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => handleRemoveFilter("MaNguoiNhap", filter)}
+                  onClick={() => {
+                    setFilters((prev) => ({
+                      ...prev,
+                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
+                    }));
+                    setSelectedFilters((prev) => ({
+                      ...prev,
+                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
+                    }));
+                  }}
                 >
                   ×
                 </button>
@@ -599,7 +592,9 @@ const NhapSach = () => {
                 Ngày: {filters.ngayNhap}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => handleRemoveFilter("ngayNhap")}
+                  onClick={() => {
+                    setFilters((prev) => ({ ...prev, ngayNhap: "" }));
+                  }}
                 >
                   ×
                 </button>
@@ -734,6 +729,9 @@ const NhapSach = () => {
           isOpen={isModalChiTietOpen}
           onClose={handleCloseModalChiTiet}
           onSave={handleAddChiTiet}
+          pendingChiTiet={pendingChiTiet}
+          onDeletePending={handleDeletePending}
+          onEditPending={handleEditPending}
         />
       )}
       {isEditModalOpen && (
