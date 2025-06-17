@@ -125,129 +125,102 @@ const ModalChiTietNhapSach = ({
       soLuong: itemToEdit.soLuong.toString(),
       giaNhap: itemToEdit.giaNhap.toString(),
     }));
-    // Fetch full book info
+    // Fetch full book info to update UI
     fetchSachInfo(itemToEdit.maSach);
   };
 
-  const handleSaveEdit = () => {
-    // Check for empty fields
-    if (!formData.maSach || !formData.soLuong || !formData.giaNhap) {
-      setError("Vui lòng nhập đầy đủ thông tin!");
-      return;
-    }
-
-    // Check for duplicate mã sách (excluding current editing item)
-    const isDuplicate = pendingChiTiet.some(
-      (item, idx) => idx !== editingIndex && item.maSach === formData.maSach
-    );
-
-    if (isDuplicate) {
-      setError("Mã sách trùng. Vui lòng nhập mã sách khác");
-      return;
-    }
-
-    // Check for valid soLuong and giaNhap
-    const soLuong = parseInt(formData.soLuong);
-    const giaNhap = parseInt(formData.giaNhap);
-
-    if (soLuong <= 0 || giaNhap <= 0) {
-      setError("Số lượng và giá nhập phải lớn hơn 0!");
-      return;
-    }
-
-    const updatedChiTiet = {
-      maSach: formData.maSach,
-      soLuong: soLuong,
-      giaNhap: giaNhap,
-    };
-
-    setPendingChiTiet((prev) => {
-      const newList = [...prev];
-      newList[editingIndex] = updatedChiTiet;
-      return newList;
-    });
-
-    setEditingIndex(null);
-    setFormData({
-      maSach: "",
-      soLuong: "",
-      giaNhap: "",
-      tenSach: "",
-      theLoai: "",
-      tacGia: "",
-      nhaXuatBan: "",
-      namXuatBan: "",
-    });
-    setError(null);
-  };
-
-  const validateChiTiet = async (chiTiet) => {
-    if (!chiTiet.maSach || !chiTiet.soLuong || !chiTiet.giaNhap) {
-      throw new Error("Vui lòng nhập đầy đủ thông tin!");
-    }
-
-    const soLuong = parseInt(chiTiet.soLuong);
-    const giaNhap = parseInt(chiTiet.giaNhap);
-
-    if (soLuong <= 0) {
-      throw new Error("Số lượng nhập phải lớn hơn 0!");
-    }
-
-    // Validate with backend
+  const handleSaveEdit = async () => {
     try {
-      await phieuNhapSachApi.validateSoLuong(chiTiet.maSach, soLuong);
-    } catch (error) {
-      if (error.response?.data) {
-        throw new Error(Object.values(error.response.data)[0][0]);
-      }
-      throw error;
-    }
-
-    return { ...chiTiet, soLuong, giaNhap };
-  };
-
-  const validateSoLuong = async (maSach, soLuong) => {
-    try {
-      const thamso = await phieuNhapSachApi.getThamSo();
-      const sach = await phieuNhapSachApi.getSachById(maSach);
-
-      if (soLuong < thamso[0].SLNhapTT) {
-        throw new Error(`Số lượng nhập phải ≥ ${thamso[0].SLNhapTT}.`);
+      // Basic validation
+      if (!formData.maSach || !formData.soLuong || !formData.giaNhap) {
+        throw new Error("Vui lòng nhập đầy đủ thông tin!");
       }
 
-      if (sach.SLTon + soLuong > thamso[0].TonTD) {
-        throw new Error(
-          `Tồn của sách ${maSach}: ${sach.TenDauSach}, vượt quá tồn tối đa (${thamso[0].TonTD}).`
-        );
+      const soLuong = parseInt(formData.soLuong);
+      const giaNhap = parseInt(formData.giaNhap);
+
+      if (soLuong <= 0 || giaNhap <= 0) {
+        throw new Error("Số lượng và giá nhập phải lớn hơn 0!");
       }
 
-      return true;
-    } catch (error) {
-      throw error;
+      // Validate duplicate excluding current editing item
+      const isDuplicate = pendingChiTiet.some(
+        (item, idx) => idx !== editingIndex && item.maSach === formData.maSach
+      );
+      if (isDuplicate) {
+        throw new Error("Mã sách đã tồn tại trong danh sách!");
+      }
+
+      // Create a copy of the pending list
+      let newList = [...pendingChiTiet];
+
+      // Update the item at editingIndex with new values
+      newList[editingIndex] = {
+        ...newList[editingIndex],
+        maSach: formData.maSach,
+        soLuong: soLuong,
+        giaNhap: giaNhap,
+      };
+
+      // Call onEditPending to update the parent component's state
+      onEditPending([...newList]);
+
+      // Reset form and edit state
+      setEditingIndex(null);
+      setFormData({
+        maSach: "",
+        soLuong: "",
+        giaNhap: "",
+        tenSach: "",
+        theLoai: "",
+        tacGia: "",
+        nhaXuatBan: "",
+        namXuatBan: "",
+      });
+
+      setNotification({
+        message: "Cập nhật chi tiết thành công",
+        type: "success",
+      });
+    } catch (err) {
+      setNotification({
+        message: err.message,
+        type: "error",
+      });
     }
   };
 
   const handleSubmit = async (action) => {
     try {
       if (action === "continue") {
-        // For "continue" action, validate all fields
+        // Basic validation
         if (!formData.maSach || !formData.soLuong || !formData.giaNhap) {
           throw new Error("Vui lòng nhập đầy đủ thông tin!");
         }
 
-        // Add validation by trying to add to backend, it will return error if invalid
-        try {
-          await phieuNhapSachApi.addCTNhapSach(
-            "PN001", // Dummy value
-            formData.maSach,
-            parseInt(formData.soLuong),
-            parseInt(formData.giaNhap)
+        // Get tham số and sách info to validate tồn
+        const [thamSo, sachList] = await Promise.all([
+          phieuNhapSachApi.getThamSo(),
+          phieuNhapSachApi.getSach(),
+        ]);
+
+        const sach = sachList.find((s) => s.MaSach === formData.maSach);
+        if (!sach) {
+          throw new Error("Không tìm thấy thông tin sách!");
+        }
+
+        const soLuongNhap = parseInt(formData.soLuong);
+
+        // Check if adding soLuong would exceed TonTD
+        if (sach.SLTon + soLuongNhap > thamSo[0].TonTD) {
+          throw new Error(
+            `Tồn của sách ${formData.maSach}: ${sach.TenDauSach}, vượt quá tồn tối đa (${thamSo[0].TonTD}).`
           );
-        } catch (error) {
-          if (error.response?.data) {
-            throw new Error(Object.values(error.response.data)[0][0]);
-          }
-          throw error;
+        }
+
+        // Check minimum SLNhapTT
+        if (soLuongNhap < thamSo[0].SLNhapTT) {
+          throw new Error(`Số lượng nhập phải ≥ ${thamSo[0].SLNhapTT}.`);
         }
       }
 
@@ -262,14 +235,11 @@ const ModalChiTietNhapSach = ({
           nhaXuatBan: "",
           namXuatBan: "",
         });
-        setError(null);
       });
     } catch (err) {
-      // Show notification instead of setting error
       setNotification({
         message: err.message,
         type: "error",
-        duration: 3000,
       });
     }
   };
@@ -309,9 +279,13 @@ const ModalChiTietNhapSach = ({
                   {chiTiet.giaNhap}
                 </div>
                 <div className="pending-actions-ctns">
-                  <button onClick={() => handleEditClick(index)}>Sửa</button>
-                  {editingIndex === index && (
-                    <button onClick={handleSaveEdit}>Lưu</button>
+                  {editingIndex === index ? (
+                    <>
+                      <button onClick={() => handleSaveEdit()}>Lưu</button>
+                      <button onClick={() => setEditingIndex(null)}>Hủy</button>
+                    </>
+                  ) : (
+                    <button onClick={() => handleEditClick(index)}>Sửa</button>
                   )}
                   <button onClick={() => onDeletePending(index)}>×</button>
                 </div>
