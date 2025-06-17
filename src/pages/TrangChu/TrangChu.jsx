@@ -35,6 +35,7 @@ function TrangChu() {
   const [monthlySales, setMonthlySales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [noDataMessage, setNoDataMessage] = useState(null);
 
   const parseDate = (dateString) => {
     if (dateString && dateString.includes("/")) {
@@ -53,6 +54,7 @@ function TrangChu() {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      setNoDataMessage(null);
       try {
         const books = await trangChuApi.getAllBooks();
         console.log("Books data:", books);
@@ -75,12 +77,14 @@ function TrangChu() {
           return;
         }
 
+        // Calculate total sold across all time
         const totalSoldValue = cthoadons.reduce(
-          (sum, ct) => sum + Math.floor(ct.SLBan || 0), // Đảm bảo số nguyên
+          (sum, ct) => sum + (parseInt(ct.SLBan) || 0),
           0
         );
         setTotalSold(totalSoldValue);
 
+        // Calculate daily sales for selected month/year
         const daysInMonth = new Date(
           parseInt(applyYear),
           parseInt(applyMonth),
@@ -88,35 +92,38 @@ function TrangChu() {
         ).getDate();
         const dailySalesArray = Array(daysInMonth).fill(0);
 
-        let hasData = false;
+        // Group CTHoaDon by date
+        const salesByDate = {};
+
         cthoadons.forEach((ct) => {
           const hoadon = hoadons.find((hd) => hd.MaHD === ct.MaHD);
           if (hoadon) {
-            console.log(
-              "Processing MaHD:",
-              ct.MaHD,
-              "NgayLap:",
-              hoadon.NgayLap
-            );
             const date = parseDate(hoadon.NgayLap);
             if (
               !isNaN(date.getTime()) &&
               date.getMonth() + 1 === parseInt(applyMonth) &&
               date.getFullYear() === parseInt(applyYear)
             ) {
-              const day = date.getDate() - 1;
-              dailySalesArray[day] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
-              hasData = true;
+              const day = date.getDate();
+              salesByDate[day] = (salesByDate[day] || 0) + parseInt(ct.SLBan);
             }
           }
         });
+
+        // Fill the dailySalesArray with aggregated values
+        Object.entries(salesByDate).forEach(([day, total]) => {
+          dailySalesArray[parseInt(day) - 1] = total;
+        });
+
         console.log(
           `Daily Sales for ${applyMonth}/${applyYear}:`,
           dailySalesArray
         );
         setDailySales(dailySalesArray);
 
+        // Calculate monthly sales
         const monthlySalesArray = Array(12).fill(0);
+
         cthoadons.forEach((ct) => {
           const hoadon = hoadons.find((hd) => hd.MaHD === ct.MaHD);
           if (hoadon) {
@@ -125,17 +132,20 @@ function TrangChu() {
               !isNaN(date.getTime()) &&
               date.getFullYear() === parseInt(applyYear)
             ) {
-              monthlySalesArray[date.getMonth()] += Math.floor(ct.SLBan || 0); // Đảm bảo số nguyên
+              monthlySalesArray[date.getMonth()] += parseInt(ct.SLBan);
             }
           }
         });
+
         console.log(`Monthly Sales for ${applyYear}:`, monthlySalesArray);
         setMonthlySales(monthlySalesArray);
 
-        if (!hasData) {
-          setError(
-            `Không có dữ liệu bán hàng cho tháng ${applyMonth} năm ${applyYear}. Vui lòng chọn tháng 12/2024.`
+        if (Object.keys(salesByDate).length === 0) {
+          setNoDataMessage(
+            `Không có dữ liệu bán hàng vào tháng ${applyMonth} năm ${applyYear}`
           );
+          setDailySales(Array(daysInMonth).fill(0));
+          setMonthlySales(Array(12).fill(0));
         }
       } catch (err) {
         setError(`Lỗi: ${err.message}. Vui lòng kiểm tra console.`);
@@ -175,6 +185,11 @@ function TrangChu() {
       title: {
         display: true,
         text: `Biểu đồ số sách bán ra tháng ${applyMonth} năm ${applyYear}`,
+        font: {
+          size: 20,
+          weight: "bold",
+        },
+        padding: 20,
       },
     },
     scales: {
@@ -191,20 +206,7 @@ function TrangChu() {
   };
 
   const monthlyChartData = {
-    labels: [
-      "Tháng 1",
-      "Tháng 2",
-      "Tháng 3",
-      "Tháng 4",
-      "Tháng 5",
-      "Tháng 6",
-      "Tháng 7",
-      "Tháng 8",
-      "Tháng 9",
-      "Tháng 10",
-      "Tháng 11",
-      "Tháng 12",
-    ],
+    labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
     datasets: [
       {
         label: "Số sách bán ra theo tháng",
@@ -225,6 +227,11 @@ function TrangChu() {
       title: {
         display: true,
         text: `Biểu đồ số sách bán ra năm ${applyYear}`,
+        font: {
+          size: 20,
+          weight: "bold",
+        },
+        padding: 20,
       },
     },
     scales: {
@@ -282,6 +289,22 @@ function TrangChu() {
             </button>
           </div>
         </div>
+
+        {noDataMessage && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "20px",
+              color: "#666",
+              backgroundColor: "#f8f9fa",
+              borderRadius: "4px",
+              margin: "20px 0",
+            }}
+          >
+            {noDataMessage}
+          </div>
+        )}
+
         <div className="overview-stats">
           <div className="stat-item">
             <span className="stat-label">Tổng số sách hiện có:</span>

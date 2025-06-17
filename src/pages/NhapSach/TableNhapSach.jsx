@@ -10,8 +10,9 @@ const TableNhapSach = ({
   setCurrentPage,
   itemsPerPage,
 }) => {
-  // Tính toán các chỉ số cho pagination
+  const [pageInput, setPageInput] = useState(currentPage);
   const totalPages = Math.ceil(data.length / itemsPerPage);
+  // Tính toán các chỉ số cho pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = data.slice(startIndex, endIndex);
@@ -27,6 +28,25 @@ const TableNhapSach = ({
       setCurrentPage(currentPage - 1);
     }
   };
+
+  const handlePageInputChange = (e) => {
+    let value = e.target.value;
+    setPageInput(value);
+  };
+
+  const handlePageSubmit = (e) => {
+    e.preventDefault();
+    let pageNumber = parseInt(pageInput);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    } else {
+      setPageInput(currentPage);
+    }
+  };
+
+  useEffect(() => {
+    setPageInput(currentPage);
+  }, [currentPage]);
 
   return (
     <div className="table-container-tns">
@@ -91,9 +111,18 @@ const TableNhapSach = ({
         >
           ←
         </button>
-        <span className="nhap-sach-pagination-info">
-          Trang {currentPage}/{Math.max(1, totalPages)}
-        </span>
+        <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+          <span>Trang </span>
+          <input
+            type="number"
+            value={pageInput}
+            onChange={handlePageInputChange}
+            min="1"
+            max={totalPages}
+            className="nhap-sach-page-input"
+          />
+          <span>/{Math.max(1, totalPages)}</span>
+        </form>
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}

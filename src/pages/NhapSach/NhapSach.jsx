@@ -469,6 +469,53 @@ const NhapSach = () => {
     }
   }, [filteredData, currentPage]);
 
+  const handleRemoveFilter = (filterType, filterValue) => {
+    // Create new filters object without the removed filter
+    const newFilters = { ...filters };
+
+    if (filterType === "maPhieuNhap") {
+      newFilters.maPhieuNhap = filters.maPhieuNhap.filter(
+        (f) => f !== filterValue
+      );
+    } else if (filterType === "MaNguoiNhap") {
+      newFilters.MaNguoiNhap = filters.MaNguoiNhap.filter(
+        (f) => f !== filterValue
+      );
+    } else if (filterType === "ngayNhap") {
+      newFilters.ngayNhap = "";
+    }
+
+    // Apply all remaining active filters
+    let filteredResult = [...data];
+
+    // Apply Mã phiếu nhập filter if it exists
+    if (newFilters.maPhieuNhap.length > 0) {
+      filteredResult = filteredResult.filter((item) =>
+        newFilters.maPhieuNhap.includes(item.maPhieuNhap)
+      );
+    }
+
+    // Apply Người nhập filter if it exists
+    if (newFilters.MaNguoiNhap.length > 0) {
+      filteredResult = filteredResult.filter((item) =>
+        newFilters.MaNguoiNhap.includes(item.MaNguoiNhap)
+      );
+    }
+
+    // Apply Ngày nhập filter if it exists
+    if (newFilters.ngayNhap) {
+      const filterDate = normalizeDate(newFilters.ngayNhap);
+      filteredResult = filteredResult.filter(
+        (item) => normalizeDate(item.ngayNhap) === filterDate
+      );
+    }
+
+    // Update filters and filtered data
+    setFilters(newFilters);
+    setFilteredData(filteredResult);
+    setCurrentPage(1); // Reset to first page when removing a filter
+  };
+
   if (loading) return <div className="page-container">Đang tải dữ liệu...</div>;
 
   return (
@@ -530,16 +577,7 @@ const NhapSach = () => {
                 Mã PNS: {filter}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
-                    }));
-                    setSelectedFilters((prev) => ({
-                      ...prev,
-                      maPhieuNhap: prev.maPhieuNhap.filter((f) => f !== filter),
-                    }));
-                  }}
+                  onClick={() => handleRemoveFilter("maPhieuNhap", filter)}
                 >
                   ×
                 </button>
@@ -550,16 +588,7 @@ const NhapSach = () => {
                 Người nhập: {filter}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
-                    }));
-                    setSelectedFilters((prev) => ({
-                      ...prev,
-                      MaNguoiNhap: prev.MaNguoiNhap.filter((f) => f !== filter),
-                    }));
-                  }}
+                  onClick={() => handleRemoveFilter("MaNguoiNhap", filter)}
                 >
                   ×
                 </button>
@@ -570,9 +599,7 @@ const NhapSach = () => {
                 Ngày: {filters.ngayNhap}
                 <button
                   className="remove-filter-ns"
-                  onClick={() => {
-                    setFilters((prev) => ({ ...prev, ngayNhap: "" }));
-                  }}
+                  onClick={() => handleRemoveFilter("ngayNhap")}
                 >
                   ×
                 </button>
