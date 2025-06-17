@@ -93,6 +93,64 @@ const baoCaoTonService = {
       throw error;
     }
   },
+
+  getReportId: async (month, year) => {
+    try {
+      const formattedMonthYear = `${String(month).padStart(2, "0")}/${year}`;
+      const response = await axiosInstance.get(`${BASE_URL}/baocaoton/`);
+
+      if (response.data && Array.isArray(response.data)) {
+        const report = response.data.find(
+          (r) => r.Thang === formattedMonthYear
+        );
+        return report ? report.MaBCTon : null;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting report ID:", error);
+      return null;
+    }
+  },
+
+  exportExcel: async (bctonId) => {
+    try {
+      console.log(`Exporting inventory report to Excel for ID: ${bctonId}`);
+
+      // Remove "BCT" from the bctonId
+      const bctonIdInt = parseInt(bctonId.replace(/\D/g, ""), 10);
+
+      const response = await axiosInstance.get(
+        `${BASE_URL}/baocaoton/${bctonIdInt}/excel/`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      // Tạo URL cho file blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Tạo tên file với timestamp
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 19).replace(/:/g, "-");
+      link.setAttribute("download", `BaoCaoTon_${timestamp}.xlsx`);
+
+      // Thêm link vào DOM và click để download
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      console.log("Excel export completed successfully");
+      return true;
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      throw error;
+    }
+  },
 };
 
 export default baoCaoTonService;

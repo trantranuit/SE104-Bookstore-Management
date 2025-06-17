@@ -236,7 +236,7 @@
 }
 
 .book-table-ttm th:nth-child(2),
-.book-table-ttm td:nth-child(2){
+.book-table-ttm td:nth-child(2) {
     width: 10%;
 }
 
@@ -976,7 +976,7 @@ table tbody tr {
     margin-bottom: 1rem;
     margin-left: 1.4rem;
     margin-right: 1.4rem;
-    padding-right:1rem;
+    padding-right: 1rem;
 }
 
 .final-invoice-section-ttm .invoice-table-ttm {
@@ -991,7 +991,7 @@ table tbody tr {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); 
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1006,22 +1006,25 @@ table tbody tr {
     min-width: 350px;
     box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
     animation: fadeInUp 0.4s ease-out;
-    position: relative; /* Ensure it's positioned correctly */
+    position: relative;
+    /* Ensure it's positioned correctly */
 }
 
 .notification-content-ttm p {
-  margin-top: 0;
-  font-size: 1.5rem;
-font-weight: bold;
-  color: #1f1d1d;;
-  text-align: center;
-  margin-bottom: 15px;
+    margin-top: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f1d1d;
+    ;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .notification-actions-ttm {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .notification-actions-ttm .finalize-button-ttm {
@@ -1103,11 +1106,11 @@ font-weight: bold;
     background-color: #b6110b;
 }
 
-.noti-sua-ttm{
-    padding:2rem;
+.noti-sua-ttm {
+    padding: 2rem;
     padding-bottom: 1rem;
 }
 
-.left-info-ttm{
-    padding:1rem;
+.left-info-ttm {
+    padding: 1rem;
 }
