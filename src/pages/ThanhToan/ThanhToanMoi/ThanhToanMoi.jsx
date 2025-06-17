@@ -296,16 +296,14 @@ function ThanhToanMoi() {
 
     const displayedBooks = searchTerm
         ? filteredBooks
-        : books.slice((currentPage - 1) * booksPerPage, (currentPage - 1) * booksPerPage + booksPerPage);
+        : books.slice((currentPage - 1) * booksPerPage, currentPage * booksPerPage);
 
     useEffect(() => {
         const totalItems = searchTerm ? filteredBooks.length : books.length;
         const pages = Math.ceil(totalItems / booksPerPage);
         setTotalPages(pages);
-        if (currentPage > pages) {
-            setCurrentPage(1);
-        }
-    }, [searchTerm, filteredBooks.length, books.length, currentPage]);
+        // Bỏ điều kiện kiểm tra currentPage > pages
+    }, [searchTerm, filteredBooks.length, books.length]);
 
     const startIndex = (currentPage - 1) * booksPerPage + 1;
     const endIndex = Math.min((currentPage - 1) * booksPerPage + booksPerPage, (searchTerm ? filteredBooks : books).length);
@@ -812,7 +810,8 @@ function ThanhToanMoi() {
                     <button
                         className="pagination-button-ttm"
                         onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
+                        // disabled={currentPage === totalPages}
+                        disabled={endIndex === totalItems || totalItems === 0}
                     >
                         <FaCaretRight />
                     </button>
