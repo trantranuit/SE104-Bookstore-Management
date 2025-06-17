@@ -126,7 +126,7 @@
 
 .close-notification-btn-tdqd {
   padding: 0.5rem 1rem;
-  background-color: #6C757D;
+  background-color: #5b69ea;
   color: white;
   border: none;
   border-radius: 0.25rem;
@@ -137,5 +137,5 @@
 }
 
 .close-notification-btn-tdqd:hover {
-  background-color: #5d636b
+  background-color: #3947c5
 }
