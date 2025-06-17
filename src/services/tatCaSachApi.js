@@ -65,5 +65,15 @@ export const tatCaSachApi = {
             id: ts.id,
             TiLe: ts.TiLe
         }));
+    },
+
+    getTacGia: async () => {
+        try {
+            const response = await axiosInstance.get('/tacgia');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching tacgia:', error);
+            throw error;
+        }
     }
 };
