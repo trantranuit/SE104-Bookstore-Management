@@ -149,6 +149,23 @@
     /* Darker gray on hover */
 }
 
+.print-button-thd {
+    background-color: #28a745;
+    /* Green background for print button */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+.print-button-thd:hover {
+    background-color: #218838;
+    /* Darker green on hover */
+}
+
 .invoice-section-thd {
     background-color: #ffffff;
     /* White background */

@@ -20,6 +20,8 @@ function HoaDon() {
     const invoicesPerPage = 10;
     const [sortAscending, setSortAscending] = useState(false);
     const navigate = useNavigate();
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [showPdfModal, setShowPdfModal] = useState(false);
 
     const sortInvoices = (invoices) => {
         return [...invoices].sort((a, b) => {
@@ -124,6 +126,31 @@ function HoaDon() {
 
     const handleCloseModal = () => {
         setSelectedInvoiceIndex(null);
+    };
+
+    const handlePrintInvoice = async () => {
+        if (!selectedInvoice) return;
+        try {
+            const invoiceId = selectedInvoice.maHoaDon.replace('HD', '');
+            const response = await fetch(`http://localhost:8000/api/hoadon/${invoiceId}/export-pdf/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user'))?.token}`,
+                    'Content-Type': 'application/pdf',
+                },
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                setPdfUrl(url);
+                setShowPdfModal(true);
+            } else {
+                alert('Có lỗi khi in hóa đơn. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Error printing invoice:', error);
+            alert('Có lỗi khi in hóa đơn. Vui lòng thử lại.');
+        }
     };
 
     const handleDeleteInvoice = async () => {
@@ -429,7 +456,23 @@ function HoaDon() {
                             </p>
                         </div>
                         <div className="modal-actions-thd">
+                            <button className="print-button-thd" onClick={handlePrintInvoice}>In hóa đơn</button>
                             <button className="close-button-thd" onClick={handleCloseModal}>Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showPdfModal && pdfUrl && (
+                <div className="modal-thd" style={{zIndex: 9999}}>
+                    <div className="modal-content-thd" style={{width: '80vw', height: '90vh', padding: 0}}>
+                        <iframe
+                            src={pdfUrl}
+                            title="Xem trước hóa đơn"
+                            style={{width: '100%', height: '100%', border: 'none'}}
+                        />
+                        <div style={{textAlign: 'right', padding: 8}}>
+                            <button className="close-button-thd" onClick={() => { setShowPdfModal(false); window.URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }}>Đóng</button>
                         </div>
                     </div>
                 </div>
