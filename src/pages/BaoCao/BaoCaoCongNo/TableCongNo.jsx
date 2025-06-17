@@ -14,14 +14,19 @@ const TableCongNo = forwardRef(({ month, year }, ref) => {
       const reports = await baoCaoCongNoService.getBaoCaoCongNo(month, year);
       if (reports && reports.length > 0) {
         setData(reports);
+        // Get report ID after successfully fetching data
+        const reportId = await baoCaoCongNoService.getReportId(month, year);
+        return reportId; // Return report ID to parent
       } else {
         setData([]);
         setError(`Không có dữ liệu báo cáo công nợ cho tháng ${month}/${year}`);
+        return null;
       }
     } catch (error) {
       console.error("Error fetching data:", error);
       setError("Có lỗi xảy ra khi tải dữ liệu");
       setData([]);
+      return null;
     } finally {
       setIsLoading(false);
     }
