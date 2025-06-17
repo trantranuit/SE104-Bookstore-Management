@@ -1,39 +1,53 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import TableCongNo from "./TableCongNo";
 import baoCaoCongNoService from "../../../services/baoCaoCongNoService";
 import "../../../styles/PathStyles.css";
 import "./BaoCaoCongNo.css";
 
 function BaoCaoCongNo() {
-  const [selectedMonth, setSelectedMonth] = useState("1");
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("6");
+  const [selectedYear, setSelectedYear] = useState("2025");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const tableRef = useRef();
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const years = [2024, 2025];
 
-  const fetchData = async (month, year) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await baoCaoCongNoService.getBaoCaoCongNo(parseInt(month), parseInt(year));
-      setFilteredData(data);
-      if (!data.length) {
-        setError(`Không có dữ liệu báo cáo công nợ cho tháng ${month}/${year}`);
-      }
-    } catch (err) {
-      setError("Không thể tải dữ liệu báo cáo. Vui lòng thử lại.");
-      console.error("Error:", err);
-    } finally {
-      setLoading(false);
-    }
+  // Chỉ load data ban đầu mà không tự động fetch khi thay đổi tháng hoặc năm
+  useEffect(() => {
+  }, []); // Empty dependency array for initial load only
+
+  const handleMonthChange = (e) => {
+    const newMonth = e.target.value;
+    setSelectedMonth(newMonth);
+    // Chỉ thay đổi state, không load dữ liệu
   };
 
-  useEffect(() => {
-    fetchData(selectedMonth, selectedYear);
-  }, [selectedMonth, selectedYear]);
+  const handleYearChange = (e) => {
+    const newYear = e.target.value;
+    setSelectedYear(newYear);
+    // Chỉ thay đổi state, không load dữ liệu
+  };
+
+  const handleManualUpdate = async () => {
+    try {
+      setIsUpdating(true);
+      
+      // Cập nhật báo cáo công nợ từ backend
+      await baoCaoCongNoService.updateBaoCaoCongNo(parseInt(selectedMonth, 10), parseInt(selectedYear, 10));
+      
+      // Sau khi cập nhật backend, tải dữ liệu mới
+      if (tableRef.current) {
+        await tableRef.current.refreshData();
+      }
+      
+    } catch (error) {
+      console.error("Error updating báo cáo công nợ:", error);
+      alert("Có lỗi xảy ra khi cập nhật báo cáo công nợ!");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <div className="page-container">
@@ -44,7 +58,8 @@ function BaoCaoCongNo() {
             <h2>Tháng:</h2>
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
+              onChange={handleMonthChange}
+              disabled={isUpdating}
             >
               {months.map((month) => (
                 <option key={month} value={month}>
@@ -57,7 +72,8 @@ function BaoCaoCongNo() {
             <h2>Năm:</h2>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              onChange={handleYearChange}
+              disabled={isUpdating}
             >
               {years.map((year) => (
                 <option key={year} value={year}>
@@ -66,11 +82,21 @@ function BaoCaoCongNo() {
               ))}
             </select>
           </div>
+          <div className="update-button-group">
+            <button 
+              className="update-button"
+              onClick={handleManualUpdate}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Đang xuất báo cáo..." : "Xuất báo cáo"}
+            </button>
+          </div>
         </div>
-
-        {loading && <div className="loading-container">Đang tải dữ liệu...</div>}
-        {error && <div className="error-container">{error}</div>}
-        {!loading && !error && filteredData.length > 0 && <TableCongNo data={filteredData} />}
+        <TableCongNo
+          ref={tableRef}
+          month={parseInt(selectedMonth)} 
+          year={parseInt(selectedYear)} 
+        />
       </div>
     </div>
   );

@@ -36,19 +36,21 @@ function TatCaSach() {
     const [selectedPublishers, setSelectedPublishers] = useState([]);
     const [specificStocks, setSpecificStocks] = useState('');
     const [books, setBooks] = useState([]);
+    const [allAuthors, setAllAuthors] = useState([]); // Add new state
     const booksPerPage = 10;
 
     // Lấy dữ liệu từ API
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [sachList, dauSachList, tacGiaList, theLoaiList, ctNhapSachList, thamSoList] = await Promise.all([
+                const [sachList, dauSachList, tacGiaList, theLoaiList, ctNhapSachList, thamSoList, authorsList] = await Promise.all([
                     tatCaSachApi.fetchAllBooks(),
                     tatCaSachApi.fetchAllTitles(),
                     tatCaSachApi.fetchAllAuthors(),
                     tatCaSachApi.fetchAllCategories(),
                     tatCaSachApi.fetchAllCTNhapSach(),
-                    tatCaSachApi.fetchThamSo()
+                    tatCaSachApi.fetchThamSo(),
+                    tatCaSachApi.getTacGia() // Add new API call
                 ]);
 
                 const thamSo = thamSoList[0];
@@ -78,6 +80,7 @@ function TatCaSach() {
                     };
                 });
                 setBooks(booksData);
+                setAllAuthors(authorsList); // Store authors from API
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setBooks([]);
@@ -87,21 +90,21 @@ function TatCaSach() {
         fetchData();
     }, []);
 
-    const authors = [...new Set(books.map(book => book.tacGia).filter(Boolean))];
+    // Replace authors const with filtered API data
+    const filteredAuthors = allAuthors
+        .filter(author => author?.TenTG?.toLowerCase().includes(authorSearchTerm?.toLowerCase() || ''))
+        .sort((a, b) => {
+            if (!a || !b) return 0;
+            const isSelectedA = tempSelectedAuthors.includes(a.TenTG);
+            const isSelectedB = tempSelectedAuthors.includes(b.TenTG);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return a.TenTG.localeCompare(b.TenTG);
+        });
+
     const genres = [...new Set(books.map(book => book.theLoai).filter(Boolean))];
     const publishers = [...new Set(books.map(book => book.nhaXuatBan).filter(Boolean))];
     const years = [...new Set(books.map(book => book.namXuatBan).filter(Boolean))];
-
-    const filteredAuthors = authors
-        .filter(author => author?.toLowerCase().includes(authorSearchTerm?.toLowerCase() || ''))
-        .sort((a, b) => {
-            if (!a || !b) return 0;
-            const isSelectedA = tempSelectedAuthors.includes(a);
-            const isSelectedB = tempSelectedAuthors.includes(b);
-            if (isSelectedA && !isSelectedB) return -1;
-            if (!isSelectedA && isSelectedB) return 1;
-            return a.localeCompare(b);
-        });
 
     const filteredGenres = genres
         .filter(genre => genre.toLowerCase().includes(genreSearchTerm.toLowerCase()))
@@ -137,7 +140,13 @@ function TatCaSach() {
         book =>
             (book?.maSach?.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
                 book?.tenSach?.toLowerCase().includes(searchTerm?.toLowerCase() || '')) &&
-            (selectedAuthors.length === 0 || selectedAuthors.includes(book.tacGia)) &&
+            // Changed author filtering to check if any selected author is in book's author list
+            (selectedAuthors.length === 0 ||
+                selectedAuthors.some(selectedAuthor =>
+                    book.tacGia.split(', ').some(author =>
+                        author.toLowerCase().includes(selectedAuthor.toLowerCase())
+                    )
+                )) &&
             (selectedGenres.length === 0 || selectedGenres.includes(book.theLoai)) &&
             (selectedPublishers.length === 0 || selectedPublishers.includes(book.nhaXuatBan)) &&
             (selectedYears.length === 0 || selectedYears.includes(book.namXuatBan)) &&
@@ -162,9 +171,18 @@ function TatCaSach() {
     };
 
     const handleSelection = (item, setTempSelected) => {
-        setTempSelected(prev =>
-            prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
-        );
+        if (Array.isArray(item)) {
+            setTempSelected(item);
+        } else if (typeof item === 'object') {
+            // Handle author object from API
+            setTempSelected(prev =>
+                prev.includes(item.TenTG) ? prev.filter(i => i !== item.TenTG) : [...prev, item.TenTG]
+            );
+        } else {
+            setTempSelected(prev =>
+                prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+            );
+        }
     };
 
     const handlePublisherSelection = (publisher) => {
@@ -329,11 +347,11 @@ function TatCaSach() {
                             <div className="author-list-tcs">
                                 {filteredAuthors.map(author => (
                                     <div
-                                        key={author}
-                                        className={`author-item-tcs ${tempSelectedAuthors.includes(author) ? 'selected-tcs' : ''}`}
+                                        key={author.MaTG}
+                                        className={`author-item-tcs ${tempSelectedAuthors.includes(author.TenTG) ? 'selected-tcs' : ''}`}
                                         onClick={() => handleSelection(author, setTempSelectedAuthors)}
                                     >
-                                        {author}
+                                        {author.TenTG}
                                     </div>
                                 ))}
                             </div>
@@ -595,46 +613,46 @@ function TatCaSach() {
 
                 {/* Table of Books */}
                 <div className="book-table-block-container-tcs">
-                <div className="book-table-block-tcs">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Mã sách</th>
-                                <th>Mã đầu sách</th>
-                                <th>Tên sách</th>
-                                <th>Tác giả</th>
-                                <th>Thể loại</th>
-                                <th>NămXB</th>
-                                <th>Nhà xuất bản</th>
-                                <th>Tồn</th>
-                                <th>Đơn giá bán</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentBooks.map((book, index) => (
-                                <tr key={book.maSach}>
-                                    <td>{startIndex + index + 1}</td>
-                                    <td>{book.maSach}</td>
-                                    <td>{book.maDauSach}</td>
-                                    <td>{book.tenSach}</td>
-                                    <td>{book.tacGia}</td>
-                                    <td>{book.theLoai}</td>
-                                    <td>{book.namXuatBan}</td>
-                                    <td>{book.nhaXuatBan}</td>
-                                    <td>{book.soLuongTon}</td>
-                                    <td>
-                                        {new Intl.NumberFormat('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND'
-                                        }).format(book.donGiaBan).replace('₫', 'VNĐ')}
-                                    </td>
+                    <div className="book-table-block-tcs">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Mã sách</th>
+                                    <th>Mã đầu sách</th>
+                                    <th>Tên sách</th>
+                                    <th>Tác giả</th>
+                                    <th>Thể loại</th>
+                                    <th>NămXB</th>
+                                    <th>Nhà xuất bản</th>
+                                    <th>Tồn</th>
+                                    <th>Đơn giá bán</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                             {/* Pagination Buttons */}
+                            </thead>
+                            <tbody>
+                                {currentBooks.map((book, index) => (
+                                    <tr key={book.maSach}>
+                                        <td>{startIndex + index + 1}</td>
+                                        <td>{book.maSach}</td>
+                                        <td>{book.maDauSach}</td>
+                                        <td>{book.tenSach}</td>
+                                        <td>{book.tacGia}</td>
+                                        <td>{book.theLoai}</td>
+                                        <td>{book.namXuatBan}</td>
+                                        <td>{book.nhaXuatBan}</td>
+                                        <td>{book.soLuongTon}</td>
+                                        <td>
+                                            {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND'
+                                            }).format(book.donGiaBan).replace('₫', 'VNĐ')}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    {/* Pagination Buttons */}
                     <div className="pagination-buttons-tcs">
                         <button onClick={handlePreviousPage} disabled={currentPage === 1} className="pagination-buttons-tcs-button">
                             ←

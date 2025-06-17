@@ -135,20 +135,25 @@ const themSachApi = {
 
     // Thêm tác giả mới
     addAuthor: async (authorName) => {
-        const response = await axiosInstance.get("/tacgia/");
-        let maxMaTG = 0;
-        response.data.forEach(tg => {
-            const num = parseInt(tg.MaTG.replace('TG', ''), 10);
-            if (!isNaN(num) && num > maxMaTG) maxMaTG = num;
-        });
-        const newMaTG = 'TG' + (maxMaTG + 1).toString().padStart(3, '0');
+        try {
+            const response = await axiosInstance.get("/tacgia/");
+            let maxMaTG = 0;
+            response.data.forEach(tg => {
+                const num = parseInt(tg.MaTG.replace('TG', ''), 10);
+                if (!isNaN(num) && num > maxMaTG) maxMaTG = num;
+            });
+            const newMaTG = 'TG' + (maxMaTG + 1).toString().padStart(3, '0');
 
-        const payload = {
-            "TenTG_input": authorName
-        };
+            const payload = {
+                "TenTG": authorName,
+            };
 
-        const addResponse = await axiosInstance.post("/tacgia/", payload);
-        return addResponse.data;
+            const addResponse = await axiosInstance.post("/tacgia/", payload);
+            return addResponse.data;
+        } catch (error) {
+            console.error("Error adding author:", error);
+            throw error;
+        }
     },
 
     getNextBookId,

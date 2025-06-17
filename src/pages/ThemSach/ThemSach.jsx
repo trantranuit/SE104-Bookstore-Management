@@ -598,6 +598,7 @@ function ThemSach() {
                                     onClick={() => {
                                         if (newTacGia.trim()) {
                                             setShowConfirmAddAuthor(true);
+                                            setShowAddTacGiaInput(false); // Ẩn modal nhập
                                         }
                                     }}
                                     style={{ marginRight: '10px' }}
@@ -638,7 +639,10 @@ function ThemSach() {
                                 </button>
                                 <button
                                     className="cancel-button-tsm"
-                                    onClick={() => setShowConfirmAddAuthor(false)}
+                                    onClick={() => {
+                                        setShowConfirmAddAuthor(false);
+                                        setShowAddTacGiaInput(true); // Hiện lại modal nhập
+                                    }}
                                 >
                                     Không
                                 </button>
