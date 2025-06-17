@@ -8,6 +8,8 @@ function BaoCaoTon() {
   const [selectedMonth, setSelectedMonth] = useState("6");
   const [selectedYear, setSelectedYear] = useState("2025");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [reportId, setReportId] = useState(null);
   const tableRef = useRef();
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -38,6 +40,12 @@ function BaoCaoTon() {
       // Cập nhật báo cáo tồn từ backend
       await baoCaoTonService.updateBaoCaoTon(parseInt(selectedMonth, 10), parseInt(selectedYear, 10));
       
+      // Lấy ID báo cáo sau khi cập nhật
+      const id = await baoCaoTonService.getReportId(parseInt(selectedMonth, 10), parseInt(selectedYear, 10));
+      if (id) {
+        setReportId(id);
+      }
+      
       // Sau khi cập nhật backend, tải dữ liệu mới
       if (tableRef.current) {
         await tableRef.current.refreshData();
@@ -48,6 +56,23 @@ function BaoCaoTon() {
       alert("Có lỗi xảy ra khi cập nhật báo cáo tồn!");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (!reportId) {
+      alert("Vui lòng xuất báo cáo trước khi xuất Excel!");
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+      await baoCaoTonService.exportExcel(reportId);
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      alert("Có lỗi xảy ra khi xuất Excel!");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -91,6 +116,14 @@ function BaoCaoTon() {
               disabled={isUpdating}
             >
               {isUpdating ? "Đang xuất báo cáo..." : "Xuất báo cáo"}
+            </button>
+            <button 
+              className="update-button excel-button"
+              onClick={handleExportExcel}
+              disabled={isExporting || !reportId}
+              title={!reportId ? "Vui lòng xuất báo cáo trước" : "Xuất Excel"}
+            >
+              {isExporting ? "Đang xuất Excel..." : "Xuất Excel"}
             </button>
           </div>
         </div>

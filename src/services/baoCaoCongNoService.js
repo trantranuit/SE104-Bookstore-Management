@@ -95,6 +95,35 @@ const baoCaoCongNoService = {
     }
   },
 
+  getReportId: async (month, year) => {
+    try {
+      console.log(`Getting report ID for month ${month}, year ${year}`);
+
+      // Format month to match API (e.g., "01/2024")
+      const formattedMonth = month.toString().padStart(2, "0");
+      const formattedMonthYear = `${formattedMonth}/${year}`;
+
+      // Fetch reports from baocaocongno
+      const reportResponse = await axiosInstance.get(
+        `${BASE_URL}/baocaocongno/`
+      );
+
+      if (!reportResponse.data || !Array.isArray(reportResponse.data)) {
+        return null;
+      }
+
+      // Find report matching the selected month and year
+      const report = reportResponse.data.find(
+        (r) => r.Thang === formattedMonthYear
+      );
+
+      return report ? report.MaBCCN : null;
+    } catch (error) {
+      console.error("Error getting report ID:", error);
+      return null;
+    }
+  },
+
   updateBaoCaoCongNo: async (month, year) => {
     try {
       console.log(`Updating debt report for month ${month}, year ${year}`);
@@ -117,6 +146,44 @@ const baoCaoCongNoService = {
       } else {
         console.error("Error setting up request:", error.message);
       }
+      throw error;
+    }
+  },
+
+  exportExcel: async (reportId, month, year) => {
+    try {
+      console.log(`Exporting debt report to Excel for ID: ${reportId}`);
+
+      const reportIdNumber = reportId.replace(/\D/g, "");
+
+      const response = await axiosInstance.get(
+        `${BASE_URL}/baocaocongno/${reportIdNumber}/excel/`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      // Tạo URL cho file blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Tạo tên file với month/year
+      const formattedMonth = month.toString().padStart(2, "0");
+      link.setAttribute(
+        "download",
+        `BaoCaoCongNo_${formattedMonth}_${year}.xlsx`
+      );
+
+      // Download file
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
       throw error;
     }
   },

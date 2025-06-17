@@ -2,12 +2,10 @@
     display: flex;
     align-items: center;
     margin-bottom: 1.125rem;
-    /* 18px */
 }
 
 .form-row-tsm label {
     width: 7.5rem;
-    /* 120px */
     font-weight: 500;
     color: #333;
 }

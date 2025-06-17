@@ -8,6 +8,9 @@ function BaoCaoCongNo() {
   const [selectedMonth, setSelectedMonth] = useState("6");
   const [selectedYear, setSelectedYear] = useState("2025");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [reportId, setReportId] = useState(null);
+  const [isReportGenerated, setIsReportGenerated] = useState(false);
   const tableRef = useRef();
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -20,13 +23,17 @@ function BaoCaoCongNo() {
   const handleMonthChange = (e) => {
     const newMonth = e.target.value;
     setSelectedMonth(newMonth);
-    // Chỉ thay đổi state, không load dữ liệu
+    // Reset trạng thái khi thay đổi tháng
+    setIsReportGenerated(false);
+    setReportId(null);
   };
 
   const handleYearChange = (e) => {
     const newYear = e.target.value;
     setSelectedYear(newYear);
-    // Chỉ thay đổi state, không load dữ liệu
+    // Reset trạng thái khi thay đổi năm
+    setIsReportGenerated(false);
+    setReportId(null);
   };
 
   const handleManualUpdate = async () => {
@@ -36,16 +43,46 @@ function BaoCaoCongNo() {
       // Cập nhật báo cáo công nợ từ backend
       await baoCaoCongNoService.updateBaoCaoCongNo(parseInt(selectedMonth, 10), parseInt(selectedYear, 10));
       
-      // Sau khi cập nhật backend, tải dữ liệu mới
+      // Sau khi cập nhật backend, tải dữ liệu mới và lấy report ID
       if (tableRef.current) {
-        await tableRef.current.refreshData();
+        const newReportId = await tableRef.current.refreshData();
+        if (newReportId) {
+          setReportId(newReportId);
+          setIsReportGenerated(true); // Đánh dấu báo cáo đã được xuất
+        }
       }
+      
       
     } catch (error) {
       console.error("Error updating báo cáo công nợ:", error);
       alert("Có lỗi xảy ra khi cập nhật báo cáo công nợ!");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    // Kiểm tra xem báo cáo đã được xuất chưa
+    if (!isReportGenerated || !reportId) {
+      alert("Vui lòng xuất báo cáo trước khi xuất Excel!");
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+
+      // Use service method to export Excel with authentication
+      await baoCaoCongNoService.exportExcel(
+        reportId,
+        parseInt(selectedMonth, 10),
+        parseInt(selectedYear, 10)
+      );
+      
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      alert("Có lỗi xảy ra khi xuất Excel!");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -89,6 +126,14 @@ function BaoCaoCongNo() {
               disabled={isUpdating}
             >
               {isUpdating ? "Đang xuất báo cáo..." : "Xuất báo cáo"}
+            </button>
+            <button 
+              className={`update-button excel-button ${!isReportGenerated ? 'disabled' : ''}`}
+              onClick={handleExportExcel}
+              disabled={isExporting || !isReportGenerated}
+              title={!isReportGenerated ? "Vui lòng xuất báo cáo trước" : "Xuất file Excel"}
+            >
+              {isExporting ? "Đang xuất Excel..." : "Xuất Excel"}
             </button>
           </div>
         </div>
