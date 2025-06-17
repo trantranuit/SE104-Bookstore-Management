@@ -53,7 +53,6 @@ const trangChuApi = {
       throw error;
     }
   },
-
   getAllHoaDon: async () => {
     try {
       // No token headers required
@@ -65,6 +64,7 @@ const trangChuApi = {
       return response.data.map((hd) => ({
         MaHD: hd.MaHD,
         NgayLap: hd.NgayLap,
+        SoTienTra: hd.SoTienTra || 0, // Thêm tổng tiền của hóa đơn
       }));
     } catch (error) {
       console.error("Error fetching /hoadon/:", error.message);
