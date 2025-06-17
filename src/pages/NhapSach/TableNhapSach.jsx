@@ -3,36 +3,29 @@ import "./TableNhapSach.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
-const TableNhapSach = ({ data, onEdit }) => {
-  const [pagination, setPagination] = useState(() => {
-    const savedPagination = localStorage.getItem("nhapSachPagination");
-    return savedPagination
-      ? JSON.parse(savedPagination)
-      : { pageIndex: 0, pageSize: 10 };
-  });
+const TableNhapSach = ({
+  data,
+  onEdit,
+  currentPage,
+  setCurrentPage,
+  itemsPerPage,
+}) => {
+  // Tính toán các chỉ số cho pagination
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = data.slice(startIndex, endIndex);
 
-  useEffect(() => {
-    localStorage.setItem("nhapSachPagination", JSON.stringify(pagination));
-  }, [pagination]);
-
-  const pageCount = Math.ceil(data.length / pagination.pageSize);
-  const displayData = data.slice(
-    pagination.pageIndex * pagination.pageSize,
-    (pagination.pageIndex + 1) * pagination.pageSize
-  );
-
-  const nextPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: Math.min(prev.pageIndex + 1, pageCount - 1),
-    }));
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
-  const previousPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: Math.max(0, prev.pageIndex - 1),
-    }));
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   return (
@@ -56,18 +49,16 @@ const TableNhapSach = ({ data, onEdit }) => {
           </tr>
         </thead>
         <tbody>
-          {displayData.length === 0 ? (
+          {currentItems.length === 0 ? (
             <tr>
               <td colSpan="12" style={{ textAlign: "center" }}>
                 Không có dữ liệu
               </td>
             </tr>
           ) : (
-            displayData.map((item, index) => (
+            currentItems.map((item, index) => (
               <tr key={item.ctNhapId}>
-                <td>
-                  {pagination.pageIndex * pagination.pageSize + index + 1}
-                </td>
+                <td>{startIndex + index + 1}</td>
                 <td>{item.maPhieuNhap}</td>
                 <td>{item.ngayNhap}</td>
                 <td>{item.TenNguoiNhap}</td> {/* Hiển thị TenNguoiNhap */}
@@ -92,21 +83,20 @@ const TableNhapSach = ({ data, onEdit }) => {
           )}
         </tbody>
       </table>
-
       <div className="nhap-sach-pagination">
         <button
-          onClick={previousPage}
-          disabled={pagination.pageIndex === 0}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
           className="nhap-sach-pagination-button"
         >
           ←
         </button>
         <span className="nhap-sach-pagination-info">
-          Trang {pagination.pageIndex + 1} / {pageCount || 1}
+          Trang {currentPage}/{Math.max(1, totalPages)}
         </span>
         <button
-          onClick={nextPage}
-          disabled={pagination.pageIndex >= pageCount - 1}
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
           className="nhap-sach-pagination-button"
         >
           →
