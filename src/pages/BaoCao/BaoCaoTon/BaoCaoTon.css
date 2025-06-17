@@ -7,8 +7,9 @@
     margin: 0rem auto;
     background-color: white;
     border-radius: 0.5rem;
-    max-width: 600px;
+    max-width: 700px;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 .content-day h2 {
@@ -289,4 +290,59 @@
     width: 4rem; /* Tồn cuối */
     min-width: 5rem;
     max-width: 7rem;
+}
+
+/* Update Button Styles */
+.update-button-group {
+    display: flex;
+    align-items: center;
+}
+
+.update-button {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+    min-width: 100px;
+}
+
+.update-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+    transform: translateY(-1px);
+}
+
+.update-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+}
+
+.update-button:disabled {
+    background: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.update-button:disabled:hover {
+    background: #e0e0e0;
+    transform: none;
+}
+
+.empty-container {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1rem;
+    color: #666;
+    background-color: #f9f9f9;
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+    border: 1px dashed #ccc;
 }

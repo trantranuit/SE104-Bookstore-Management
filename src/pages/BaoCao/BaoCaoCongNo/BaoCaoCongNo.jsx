@@ -5,8 +5,8 @@ import "../../../styles/PathStyles.css";
 import "./BaoCaoCongNo.css";
 
 function BaoCaoCongNo() {
-  const [selectedMonth, setSelectedMonth] = useState("1");
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedMonth, setSelectedMonth] = useState("6");
+  const [selectedYear, setSelectedYear] = useState("2025");
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
