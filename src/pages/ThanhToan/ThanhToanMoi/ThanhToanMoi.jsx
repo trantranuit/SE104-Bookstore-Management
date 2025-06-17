@@ -33,6 +33,7 @@ function ThanhToanMoi() {
     });
     const [finalInvoice, setFinalInvoice] = useState(false);
     const [newInvoiceId, setNewInvoiceId] = useState(null);
+    const [savedInvoiceId, setSavedInvoiceId] = useState(null);
     const invoiceRef = useRef(null);
     const finalInvoiceRef = useRef(null);
     const [showNotification, setShowNotification] = useState(false);
@@ -505,6 +506,28 @@ function ThanhToanMoi() {
         }
     };
 
+    const handlePrintInvoice = async (savedInvoiceId) => {
+        if (!savedInvoiceId) {
+            console.error('No invoice ID available');
+            return;
+        }
+
+        try {
+            const pdfBlob = await thanhToanMoiApi.exportInvoicePDF(savedInvoiceId);
+            const pdfUrl = URL.createObjectURL(new Blob([pdfBlob], {type: 'application/pdf'}));
+            const printWindow = window.open(pdfUrl);
+
+            if (printWindow) {
+            printWindow.onload = () => {
+                printWindow.print();
+            };
+        }
+        } catch (error) {
+            console.error('Error printing invoice:', error);
+            alert('Có lỗi khi in hóa đơn!');
+        }
+    };
+
     const confirmSaveInvoice = async () => {
         try {
             const totalAmount = cart.reduce((sum, item) => sum + item.soLuongMua * item.donGia, 0);
@@ -566,6 +589,7 @@ function ThanhToanMoi() {
                 throw new Error('Phản hồi hóa đơn không hợp lệ');
             }
             const newInvoiceId = invoiceResponse.MaHD;
+            setSavedInvoiceId(newInvoiceId); // Lưu ID hóa đơn mới
 
             for (const item of cart) {
                 const ctHoaDon = {
@@ -664,7 +688,19 @@ function ThanhToanMoi() {
                     <div className="notification-content-ttm">
                         <p>Thanh toán thành công!</p>
                         <div className="notification-actions-ttm">
-                            <button className="close-button-ttm" onClick={handleCloseNotification}>Đóng</button>
+                            <button
+                                className="close-button-ttm"
+                                onClick={handlePrintInvoice(savedInvoiceId)}
+                                style={{ marginRight: '10px' }}
+                            >
+                                In hóa đơn
+                            </button>
+                            <button
+                                className="close-button-ttm"
+                                onClick={handleCloseNotification}
+                            >
+                                Đóng
+                            </button>
                         </div>
                     </div>
                 </div>

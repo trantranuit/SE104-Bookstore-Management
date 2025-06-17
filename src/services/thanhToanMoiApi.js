@@ -207,7 +207,7 @@ const thanhToanMoiApi = {
         const data = {
             MaHD_input: ctHoaDon.MaHD_input.replace(/^HD/, ''),
             MaSach_input: ctHoaDon.MaSach_input.replace(/^S/, ''),
-            
+
             SLBan: ctHoaDon.SLBan,
             GiaBan: parseFloat(ctHoaDon.GiaBan),
             ThanhTien: parseFloat(ctHoaDon.ThanhTien)
@@ -295,6 +295,24 @@ const thanhToanMoiApi = {
             TiLe: parseFloat(ts.TiLe),
             SDQD4: ts.SDQD4
         };
+    },
+
+    // Thêm method export PDF
+    exportInvoicePDF: async (invoiceId) => {
+        try {
+            const numericId = invoiceId.replace(/\D/g, '');
+            const response = await axiosInstance.get(`/api/hoadon/1/export-pdf/`, {
+                responseType: 'blob'
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error exporting PDF:', error);
+            if (error.response) {
+                const status = error.response.status;
+                const message = error.response.data?.detail || JSON.stringly(error.response.data);
+            }
+            throw error;
+        }
     }
 };
 
