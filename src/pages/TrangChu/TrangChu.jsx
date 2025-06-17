@@ -334,13 +334,7 @@ function TrangChu() {
 
   // Data cho biểu đồ top sách bán chạy
   const topBooksChartData = {
-    labels: topBooks.map((book) => {
-      // Rút gọn tên nếu quá dài
-      if (book.name.length > 25) {
-        return book.name.substring(0, 22) + "...";
-      }
-      return book.name;
-    }),
+    labels: topBooks.map((book) => book.name), // Hiển thị đầy đủ tên sách
     datasets: [
       {
         label: "Số lượng bán",
@@ -372,6 +366,10 @@ function TrangChu() {
           label: function (context) {
             return `Đã bán: ${context.raw} quyển`;
           },
+          title: function (context) {
+            // Hiển thị đầy đủ tên sách trong tooltip
+            return context[0].label;
+          },
         },
       },
     },
@@ -380,6 +378,37 @@ function TrangChu() {
         title: { display: true, text: "Tên sách" },
         grid: {
           display: false, // Bỏ đường kẻ lưới trục Y
+        },
+        ticks: {
+          // Cấu hình để hiển thị đầy đủ text
+          maxRotation: 0,
+          minRotation: 0,
+          font: {
+            size: 12,
+          },
+          // Tự động wrap text nếu quá dài
+          callback: function(value, index) {
+            const label = this.getLabelForValue(value);
+            if (label.length > 40) {
+              // Chia thành nhiều dòng nếu quá dài
+              const words = label.split(' ');
+              const lines = [];
+              let currentLine = '';
+              
+              words.forEach(word => {
+                if ((currentLine + word).length > 40) {
+                  if (currentLine) lines.push(currentLine.trim());
+                  currentLine = word + ' ';
+                } else {
+                  currentLine += word + ' ';
+                }
+              });
+              
+              if (currentLine) lines.push(currentLine.trim());
+              return lines;
+            }
+            return label;
+          },
         },
       },
       x: {
