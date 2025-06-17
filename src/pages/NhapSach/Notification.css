@@ -86,10 +86,10 @@
 }
 
 .close-btn-nons {
-  background-color: #5b69ea;
+  background-color: #888;
   color: #fff;
 }
 
 .close-btn-nons:hover {
-  background-color: #3947c5;
+  background-color: #555;
 }
