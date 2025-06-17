@@ -448,7 +448,7 @@ font-weight: bold;
 .close-modal-button-ttc {
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    background-color: #6C757D;
+    background-color: #5b69ea;
     color: white;
     border: none;
     border-radius: 0.25rem;
@@ -459,7 +459,7 @@ font-weight: bold;
 }
 
 .close-modal-button-ttc:hover {
-    background-color: #666666;
+    background-color: #3947c5;
     /* Darker blue on hover */
 }
 
