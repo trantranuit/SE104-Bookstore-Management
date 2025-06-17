@@ -1041,7 +1041,7 @@ font-weight: bold;
 .notification-actions-ttm .close-button-ttm {
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    background-color: #6C757D;
+    background-color: #5b69ea;
     color: white;
     border: none;
     border-radius: 0.25rem;
@@ -1052,7 +1052,7 @@ font-weight: bold;
 }
 
 .notification-actions-ttm .close-button-ttm:hover {
-    background-color: #666;
+    background-color: #3947c5;
 }
 
 .search-header-ttm {
@@ -1076,18 +1076,6 @@ font-weight: bold;
     background-color: '#0056b3';
 }
 
-.close-button-ttm {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #6C757D;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.2s;
-}
 
 .close-button-ttm:hover {
     background-color: #666;

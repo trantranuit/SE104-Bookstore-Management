@@ -46,7 +46,7 @@ export const mainMenuItems = [
                 cName: 'nav-text subnav-item'
             },
             {
-                title: 'Phiếu Thu Tiền',
+                title: 'Tạo Phiếu Thu Tiền',
                 path: '/thanhtoan/cu',
                 icon: <HiIcons.HiCalculator />,
                 cName: 'nav-text subnav-item'
