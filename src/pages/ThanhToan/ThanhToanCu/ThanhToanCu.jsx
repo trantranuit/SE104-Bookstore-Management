@@ -317,7 +317,7 @@ function ThanhToanCu() {
                         Danh Sách Các Phiếu Thu Tiền
                     </button>
                 </div>
-                <h2 className="receipt-subtitle-ttc">PHIẾU THU TIỀN TIỆM SÁCH TRÂN TRÂN</h2>
+                {/* <h2 className="receipt-subtitle-ttc">PHIẾU THU TIỀN TIỆM SÁCH TRÂN TRÂN</h2> */}
 
                 <div className="two-columns-ttc">
                     <div className="thanhtoan-left-ttc">

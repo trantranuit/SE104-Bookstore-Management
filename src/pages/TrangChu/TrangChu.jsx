@@ -508,7 +508,7 @@ function TrangChu() {
         </div>
 
         <div className="overview-header">
-          <h2 className="overview-title">Tổng quan</h2>
+          <h2 className="overview-title">Tổng Quan</h2>
           <div className="date-selectors">
             <select
               value={selectedMonth}
@@ -532,7 +532,7 @@ function TrangChu() {
                 </option>
               ))}
             </select>
-            <button onClick={handleApplyDate} style={{ padding: "8px 16px" }}>
+            <button onClick={handleApplyDate} className="ap-dung-trang-chu">
               Áp dụng
             </button>
           </div>

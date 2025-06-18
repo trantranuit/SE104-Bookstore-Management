@@ -42,8 +42,8 @@
 }
 
 .overview-title {
-  font-size: 20px;
-  color: #333;
+  font-size: 2rem;
+  color: #4880ff;
 }
 
 /* Stats container */
@@ -148,6 +148,26 @@ div:not(.overview-stats) > .stat-item > div {
   color: #666;
   font-style: italic;
   text-align: center;
+}
+
+.ap-dung-trang-chu {
+  /* background-color: #f1f4f9;
+ */
+  background-color:#ffffff;
+  color: #4880ff;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(115, 173, 239, 0.12);
+}
+
+.ap-dung-trang-chu:hover {
+  background-color: #5a92d6;
+  color: white
 }
 
 @media (min-width: 992px) {
