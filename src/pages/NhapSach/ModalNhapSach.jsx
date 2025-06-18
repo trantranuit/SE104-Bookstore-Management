@@ -3,8 +3,15 @@ import "./ModalNhapSach.css";
 import userApi from "../../services/userApi";
 
 const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
+  // Tính toán ngày hiện tại theo múi giờ Việt Nam
+  const getVNDate = () => {
+    const now = new Date();
+    now.setHours(now.getHours() + 7); // Convert to Vietnam timezone (UTC+7)
+    return now.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  };
+
   const [formData, setFormData] = useState({
-    ngayNhap: new Date().toISOString().split("T")[0], // Set default to today
+    ngayNhap: getVNDate(), // Set today's date in Vietnam timezone
     MaNguoiNhap: "",
     tenNguoiNhap: "",
   });
@@ -83,8 +90,8 @@ const ModalNhapSach = ({ isOpen, onClose, onSave }) => {
               type="date"
               name="ngayNhap"
               value={formData.ngayNhap}
-              onChange={handleChange}
-              required
+              readOnly
+              className="readonly-date"
             />
           </div>
           <div className="form-group-mns">

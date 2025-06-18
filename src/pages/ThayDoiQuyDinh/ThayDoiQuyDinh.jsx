@@ -40,10 +40,10 @@ const ThayDoiQuyDinh = () => {
           thamSo: "Số lượng tồn",
         },
         TiLe: { tenQuyDinh: "Tỷ lệ đơn giá bán", thamSo: "Tỷ lệ (%)" },
-        SDQD4: {
-          tenQuyDinh: "Số tiền thu không vượt quá nợ",
-          thamSo: "Điều kiện thu tiền",
-        },
+        // SDQD4: {
+        //   tenQuyDinh: "Số tiền thu không vượt quá nợ",
+        //   thamSo: "Điều kiện thu tiền",
+        // },
       };
 
       return Object.keys(rules).map((key) => ({
@@ -75,9 +75,10 @@ const ThayDoiQuyDinh = () => {
       } catch (err) {
         console.error("Lỗi chi tiết:", err.message);
         showNotification(
-          `Lỗi khi tải dữ liệu: ${err.message.includes("404")
-            ? "Không tìm thấy API. Vui lòng kiểm tra endpoint!"
-            : err.message.includes("401") || err.message.includes("token")
+          `Lỗi khi tải dữ liệu: ${
+            err.message.includes("404")
+              ? "Không tìm thấy API. Vui lòng kiểm tra endpoint!"
+              : err.message.includes("401") || err.message.includes("token")
               ? "Vui lòng đăng nhập hoặc kiểm tra token!"
               : err.message
           }`,
@@ -167,9 +168,10 @@ const ThayDoiQuyDinh = () => {
     } catch (err) {
       console.error("Lỗi chi tiết khi cập nhật:", err);
       showNotification(
-        `Lỗi khi cập nhật quy định: ${err.response?.status === 400
-          ? "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị nhập vào!"
-          : err.response?.status === 401
+        `Lỗi khi cập nhật quy định: ${
+          err.response?.status === 400
+            ? "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị nhập vào!"
+            : err.response?.status === 401
             ? "Vui lòng đăng nhập hoặc kiểm tra token!"
             : err.message
         }`,

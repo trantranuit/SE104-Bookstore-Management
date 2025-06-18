@@ -65,13 +65,13 @@ const TableNhapSach = ({
             <th>Năm xuất bản</th>
             <th>Giá nhập</th>
             <th>Số lượng</th>
-            <th>Thao tác</th>
+            {/* <th>Thao tác</th> */}
           </tr>
         </thead>
         <tbody>
           {currentItems.length === 0 ? (
             <tr>
-              <td colSpan="12" style={{ textAlign: "center" }}>
+              <td colSpan="11" style={{ textAlign: "center" }}>
                 Không có dữ liệu
               </td>
             </tr>
@@ -89,7 +89,7 @@ const TableNhapSach = ({
                 <td>{item.namXuatBan}</td>
                 <td>{item.giaNhap}</td>
                 <td>{item.soLuong}</td>
-                <td>
+                {/* <td>
                   <div className="nhap-sach-action-buttons-tns">
                     <FontAwesomeIcon
                       icon={faEdit}
@@ -97,7 +97,7 @@ const TableNhapSach = ({
                       onClick={() => onEdit(item)}
                     />
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))
           )}
