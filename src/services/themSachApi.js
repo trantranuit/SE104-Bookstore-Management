@@ -156,6 +156,65 @@ const themSachApi = {
         }
     },
 
+    getDauSachById: async (maDauSach) => {
+        try {
+            const response = await axiosInstance.get(`/dausach/${maDauSach}/`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching DauSach:', error);
+            throw error;
+        }
+    },
+
+    updateDauSach: async (data) => {
+        try {
+            const payload = {
+                TenSach: data.TenSach,
+                TenTheLoai_input: data.TheLoai,
+                TenTacGia_input: data.TenTacGia
+            };
+            const response = await axiosInstance.put(`/dausach/${data.MaDauSach}/`, payload);
+            return response.data;
+        } catch (error) {
+            console.error('Error updating DauSach:', error);
+            throw error;
+        }
+    },
+
+    updateBook: async (data) => {
+        const numericId = data.MaSach.replace(/^S/, '');
+        const response = await axiosInstance.patch(`/sach/${numericId}/`, {
+            TenNXB_input: data.NXB,
+            NamXB: data.NamXB
+        });
+        return response.data;
+    },
+
+    getBookById: async (maSach) => {
+        
+        try {
+            // Remove leading 'S' if present and remove leading zeros
+            const numericId = maSach.replace(/^S/, '');
+            console.log('Fetching book with ID:', numericId);
+            const response = await axiosInstance.get(`/sach/1/`);
+            if (response.data) {
+                const book = response.data;
+                return {
+                    MaSach: book.MaSach,
+                    MaDauSach: book.MaDauSach,
+                    TenDauSach: book.TenDauSach, 
+                    NXB: book.TenNXB,
+                    NamXB: book.NamXB,
+                    SLTon: book.SLTon
+                };
+            }
+            throw new Error('Book not found');
+        } catch (error) {
+            console.error('Error fetching book:', error);
+            throw error;
+        }
+    },
+
     getNextBookId,
 };
 

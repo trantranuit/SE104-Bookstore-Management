@@ -145,7 +145,7 @@
     gap: 0.375rem;
     /* 6px */
     /* padding: 0.25rem 0.1rem; */
-    padding-left:0.3rem;
+    padding-left: 0.3rem;
     /* 4px 8px */
     /* border: 0.063rem solid #ccc; */
     /* 1px */
@@ -251,22 +251,23 @@
 }
 
 .adds-button-tsm {
-          padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
     background: #007bff;
     color: #fff;
     margin-right: 0.625rem;
 
 }
+
 .cancel-button-tsm {
-      padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
     background: #dc3545;
     margin-left: 0.625rem;
     color: #fff;
@@ -368,4 +369,88 @@
         padding: 1.125rem 8vw 0.875rem 8vw;
         /* 18px 8vw 14px 8vw */
     }
+}
+
+.block-container-ts {
+    background: none;
+    padding: 0;
+    box-shadow: none;
+}
+
+.block-ts {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+}
+
+.block-title-ts {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.search-input-ts {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px;
+    margin-right: 10px;
+}
+
+.search-button-ts {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-button-ts:hover {
+    background-color: #0056b3;
+}
+
+.edit-form-ts {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.button-container-ts {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.save-button-ts,
+.cancel-button-ts {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-button-ts {
+    background-color: #28a745;
+    color: white;
+}
+
+.save-button-ts:hover {
+    background-color: #218838;
+}
+
+.cancel-button-ts {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-button-ts:hover {
+    background-color: #c82333;
 }
