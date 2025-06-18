@@ -105,6 +105,10 @@ function TatCaSach() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        setPageInput(currentPage);
+    }, [currentPage]);
+
     // Replace authors const with filtered API data
     const filteredAuthors = allAuthors
         .filter(author => author?.TenTG?.toLowerCase().includes(authorSearchTerm?.toLowerCase() || ''))
@@ -672,17 +676,17 @@ function TatCaSach() {
                         <button onClick={handlePreviousPage} disabled={currentPage === 1} className="pagination-buttons-tcs-button">
                             ←
                         </button>
-                                                <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
-                        <span>Trang </span>
-                        <input
-                            type="number"
-                            value={pageInput}
-                            onChange={handlePageInputChange}
-                            min="1"
-                            max={totalPages}
-                            className="nhap-sach-page-input"
-                        />
-                        <span>/{Math.max(1, totalPages)}</span>
+                        <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+                            <span>Trang </span>
+                            <input
+                                type="number"
+                                value={pageInput}
+                                onChange={handlePageInputChange}
+                                min="1"
+                                max={totalPages}
+                                className="nhap-sach-page-input"
+                            />
+                            <span>/{Math.max(1, totalPages)}</span>
                         </form>
                         <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-buttons-tcs-button">
                             →
