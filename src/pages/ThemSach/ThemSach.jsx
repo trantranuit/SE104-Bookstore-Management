@@ -65,7 +65,7 @@ function ThemSach() {
       setNewTacGia("");
       setShowConfirmAddAuthor(false);
       setShowAddTacGiaInput(false);
-      setMessage(`Đã thêm tác giả "${newAuthor.TenTG}" thành công!`);
+      setMessage("Đã thêm tác giả thành công!");
       setShowTacGiaDropdown(true);
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
@@ -785,6 +785,65 @@ function ThemSach() {
     }
   };
 
+  // Handle adding new author with proper state management
+  const handleAddNewAuthor = () => {
+    if (newTacGia.trim()) {
+      setShowConfirmAddAuthor(true);
+      setShowAddTacGiaInput(false);
+    }
+  };
+
+  const handleCancelAddAuthor = () => {
+    setShowAddTacGiaInput(false);
+    setNewTacGia("");
+  };
+
+  const handleConfirmAddAuthor = async () => {
+    if (
+      newTacGia.trim() &&
+      !allTacGia.some(
+        (tg) => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase()
+      )
+    ) {
+      await handleAddAuthorSuccess(newTacGia.trim());
+    }
+  };
+
+  const handleAuthorInputChange = (e) => {
+    setNewTacGia(e.target.value);
+  };
+
+  const handleResetAuthorForm = () => {
+    setNewTacGia("");
+    setShowAddTacGiaInput(false);
+    setShowConfirmAddAuthor(false);
+  };
+
+  const handleShowAddAuthorForm = () => {
+    setShowTacGiaDropdown(false);
+    setShowAddTacGiaInput(true);
+  };
+
+  const handleShowConfirmAuthor = () => {
+    if (newTacGia.trim()) {
+      setShowConfirmAddAuthor(true);
+      setShowAddTacGiaInput(false);
+    }
+  };
+
+  const handleAddAuthorToList = () => {
+    if (!newTacGia.trim()) {
+      setMessage("Vui lòng nhập tên tác giả!");
+      return;
+    }
+
+    if (!allTacGia.some(tg => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase())) {
+      handleAddAuthorSuccess(newTacGia.trim());
+    } else {
+      setMessage("Tác giả này đã tồn tại!");
+    }
+  };
+
   return (
     <div className="page-container">
       <h1 className="page-title">Thêm Sửa Sách</h1>
@@ -833,7 +892,7 @@ function ThemSach() {
                     <input
                       type="text"
                       value={newTacGia}
-                      onChange={(e) => setNewTacGia(e.target.value)}
+                      onChange={handleAuthorInputChange}
                       placeholder={tenTacGia.length === 0 ? "Chọn tác giả" : ""}
                       className="author-input-tsm"
                       onClick={() => setShowTacGiaDropdown(true)}
@@ -1138,8 +1197,7 @@ function ThemSach() {
                   <input
                     type="text"
                     placeholder="Nhập tên tác giả mới"
-                    value={newTacGia}
-                    onChange={(e) => setNewTacGia(e.target.value)}
+                    value={newTacGia}                    onChange={handleAuthorInputChange}
                     className="modal-input-tsm"
                     autoFocus
                   />
@@ -1147,22 +1205,14 @@ function ThemSach() {
                 <div className="modal-buttons-container-tsm">
                   <button
                     className="adds-button-tsm"
-                    onClick={() => {
-                      if (newTacGia.trim()) {
-                        setShowConfirmAddAuthor(true);
-                        setShowAddTacGiaInput(false);
-                      }
-                    }}
+                    onClick={handleAddNewAuthor}
                     style={{ marginRight: "10px" }}
                   >
                     Thêm
                   </button>
                   <button
                     className="cancel-button-tsm"
-                    onClick={() => {
-                      setShowAddTacGiaInput(false);
-                      setNewTacGia("");
-                    }}
+                    onClick={handleCancelAddAuthor}
                   >
                     Hủy
                   </button>
@@ -1180,18 +1230,7 @@ function ThemSach() {
                 <div className="modal-buttons-container-tsm">
                   <button
                     className="adds-button-tsm"
-                    onClick={() => {
-                      if (
-                        newTacGia.trim() &&
-                        !allTacGia.some(
-                          (tg) =>
-                            tg.TenTG.toLowerCase() ===
-                            newTacGia.trim().toLowerCase()
-                        )
-                      ) {
-                        handleAddAuthorSuccess(newTacGia.trim());
-                      }
-                    }}
+                    onClick={handleConfirmAddAuthor}
                     style={{ marginRight: "10px" }}
                   >
                     Có
@@ -1550,8 +1589,7 @@ function ThemSach() {
                     </div>
                     <input
                       type="text"
-                      value={newTacGia}
-                      onChange={(e) => setNewTacGia(e.target.value)}
+                      value={newTacGia}                      onChange={handleAuthorInputChange}
                       placeholder={
                         editDauSach.selectedAuthors.length === 0
                           ? "Chọn tác giả"
@@ -1782,7 +1820,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Năm Xuất Bản:</label>
+                <label>Năm Xuất Bản:</label>{" "}
                 <input
                   type="text"
                   value={editDauSach.namXuatBan}
@@ -1792,7 +1830,6 @@ function ThemSach() {
                       namXuatBan: e.target.value,
                     })
                   }
-                  placeholder="Nhập năm xuất bản"
                   disabled={!isEditingBook}
                 />
               </div>
@@ -2008,8 +2045,7 @@ function ThemSach() {
               <div className="add-form-container-tsm">
                 <input
                   type="text"
-                  value={newTacGia}
-                  onChange={(e) => setNewTacGia(e.target.value)}
+                  value={newTacGia}                  onChange={handleAuthorInputChange}
                   placeholder="Nhập tên tác giả mới"
                   className="form-input-tsm"
                   style={{ width: "90%", padding: "10px" }}
@@ -2191,7 +2227,7 @@ function ThemSach() {
                         type="text"
                         value={editPublisherName}
                         onChange={(e) => setEditPublisherName(e.target.value)}
-                        className="form-input-tsm"
+                                               className="form-input-tsm"
                         style={{
                           width: "50%",
                           padding: "10px",

@@ -1,22 +1,28 @@
 import axiosInstance from "./AxiosConfig";
 
-// Add or modify the method to get next book ID
-const getNextBookId = async () => {
-  const response = await axiosInstance.get("/sach/");
-  const books = response.data;
-  let maxId = 0;
-
-  books.forEach((book) => {
-    const numId = parseInt(book.MaSach.replace(/^S/, ""));
-    if (!isNaN(numId) && numId > maxId) {
-      maxId = numId;
-    }
-  });
-
-  return `S${(maxId + 1).toString().padStart(3, "0")}`;
+// Helper function to extract numeric ID
+const extractNumericId = (id, prefix) => {
+  if (!id) throw new Error("Invalid ID");
+  return id.replace(new RegExp(`^${prefix}0*`), "");
 };
 
 const themSachApi = {
+  // Get the next available book ID
+  getNextBookId: async () => {
+    const response = await axiosInstance.get("/sach/");
+    const books = response.data;
+    let maxId = 0;
+
+    books.forEach((book) => {
+      const numId = parseInt(extractNumericId(book.MaSach, "S"));
+      if (!isNaN(numId) && numId > maxId) {
+        maxId = numId;
+      }
+    });
+
+    return `S${(maxId + 1).toString().padStart(3, "0")}`;
+  },
+
   // Lấy tất cả sách
   getAllBooks: async (params = {}) => {
     const response = await axiosInstance.get("/sach/", { params });
@@ -37,112 +43,39 @@ const themSachApi = {
       MaDauSach: ds.MaDauSach,
       TenSach: ds.TenSach,
       TenTacGia: Array.isArray(ds.TenTacGia) ? ds.TenTacGia : [ds.TenTacGia],
-      TheLoai: ds.TenTheLoai, // Đổi tên trường cho đúng
+      TheLoai: ds.TenTheLoai,
     }));
   },
 
   // Thêm đầu sách mới
   addDauSach: async (data) => {
-    // Lấy danh sách đầu sách để tìm mã lớn nhất
     const response = await axiosInstance.get("/dausach/");
-    let maxMaDauSach = 0;
-    response.data.forEach((ds) => {
-      const num = parseInt(ds.MaDauSach.replace("DS", ""), 10);
-      if (!isNaN(num) && num > maxMaDauSach) maxMaDauSach = num;
-    });
-    const newMaDauSach = "DS" + (maxMaDauSach + 1).toString().padStart(3, "0");
+    const maxId = Math.max(...response.data.map(ds => 
+      parseInt(extractNumericId(ds.MaDauSach, "DS")) || 0
+    ));
 
     const payload = {
       TenSach: data.TenSach,
-      TenTheLoai_input: data.TheLoai[0].TenTheLoai, // Lấy tên thể loại từ object thể loại
-      TenTacGia_input: data.TenTacGia.map((tg) => tg.TenTG), // Chuyển đổi mảng object tác giả thành mảng tên tác giả
+      TenTheLoai_input: data.TheLoai[0].TenTheLoai,
+      TenTacGia_input: data.TenTacGia.map((tg) => tg.TenTG),
     };
 
     const addResponse = await axiosInstance.post("/dausach/", payload);
     return addResponse.data;
   },
 
-  // Thêm sách mới
-  addBook: async (data) => {
-    // data cần có TenDauSach (tên đầu sách) và MaDauSach
-    const payload = {
-      ...data,
-      TenDauSach_input: data.TenSach,
-      TenNXB_input: data.NhaXuatBan || data.NXB,
-      NamXB: data.NamXuatBan || data.NamXB,
-    };
-    // Đảm bảo các trường đúng tên
-    delete payload.NhaXuatBan;
-    delete payload.NamXuatBan;
-    delete payload.SoLuongTon;
-    const response = await axiosInstance.post("/sach/", payload);
-    return response.data;
-  },
-
-  // Lấy tất cả tác giả
+  // Author APIs
   getAllAuthors: async () => {
     const response = await axiosInstance.get("/tacgia/");
     return response.data;
   },
 
-  // Lấy tất cả thể loại
-  getAllGenres: async () => {
-    const response = await axiosInstance.get("/theloai/");
-    return response.data;
-  },
-
-  // Thêm thể loại mới
-  addGenre: async (genreName) => {
-    const response = await axiosInstance.get("/theloai/");
-    let maxMaTL = 0;
-    response.data.forEach((tl) => {
-      const num = parseInt(tl.MaTheLoai.replace("TL", ""), 10);
-      if (!isNaN(num) && num > maxMaTL) maxMaTL = num;
-    });
-    const newMaTL = "TL" + (maxMaTL + 1).toString().padStart(3, "0");
-
-    const payload = {
-      MaTheLoai: newMaTL,
-      TenTheLoai: genreName,
-    };
-    const addResponse = await axiosInstance.post("/theloai/", payload);
-    return addResponse.data;
-  },
-
-  // Lấy tất cả nhà xuất bản
-  getAllPublishers: async () => {
-    const response = await axiosInstance.get("/nxb/");
-    return response.data;
-  },
-
-  // Thêm nhà xuất bản mới
-  addPublisher: async (publisherName) => {
-    const response = await axiosInstance.get("/nxb/");
-    let maxMaNXB = 0;
-    response.data.forEach((nxb) => {
-      const num = parseInt(nxb.MaNXB.replace("NXB", ""), 10);
-      if (!isNaN(num) && num > maxMaNXB) maxMaNXB = num;
-    });
-    const newMaNXB = "NXB" + (maxMaNXB + 1).toString().padStart(3, "0");
-
-    const payload = {
-      MaNXB: newMaNXB,
-      TenNXB: publisherName,
-    };
-    const addResponse = await axiosInstance.post("/nxb/", payload);
-    return addResponse.data;
-  },
-
-  // Thêm tác giả mới
   addAuthor: async (authorName) => {
     try {
       const response = await axiosInstance.get("/tacgia/");
-      let maxMaTG = 0;
-      response.data.forEach((tg) => {
-        const num = parseInt(tg.MaTG.replace("TG", ""), 10);
-        if (!isNaN(num) && num > maxMaTG) maxMaTG = num;
-      });
-      const newMaTG = "TG" + (maxMaTG + 1).toString().padStart(3, "0");
+      const maxId = Math.max(...response.data.map(tg => 
+        parseInt(extractNumericId(tg.MaTG, "TG")) || 0
+      ));
 
       const payload = {
         TenTG: authorName,
@@ -156,45 +89,119 @@ const themSachApi = {
     }
   },
 
-  getDauSachById: async (maDauSach) => {
+  updateAuthor: async (authorId, newName) => {
     try {
-      if (!maDauSach) {
-        throw new Error("Mã đầu sách không hợp lệ");
-      }
-
-      // Nếu maDauSach bắt đầu bằng 'DS', loại bỏ tiền tố và các số 0 đứng đầu
-      const dauSachId = maDauSach.toString().replace(/^DS0*/, "");
-
-      // Kiểm tra nếu id rỗng hoặc không phải số
-      if (!dauSachId || isNaN(Number(dauSachId))) {
-        throw new Error("Mã đầu sách không hợp lệ");
-      }
-
-      console.log("Fetching DauSach with ID:", dauSachId);
-      const response = await axiosInstance.get(`/dausach/${dauSachId}/`);
+      const numericId = extractNumericId(authorId, "TG");
+      const response = await axiosInstance.put(`/tacgia/${numericId}/`, {
+        TenTG: newName,
+      });
       return response.data;
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        throw new Error("Không tìm thấy đầu sách với mã đã nhập");
-      }
-      console.error("Error fetching DauSach:", error);
+      console.error("Error updating author:", error);
       throw error;
     }
   },
 
-  updateDauSach: async (dauSachData) => {
-    const numericId = dauSachData.MaDauSach.toString().replace(/^DS/, "");
-    const payload = {
-      TenSach: dauSachData.TenSach,
-      TenTacGia_input: dauSachData.TenTacGia,
-      TenTheLoai_input: dauSachData.TheLoai,
-    };
-    const response = await axiosInstance.put(`/dausach/${numericId}/`, payload);
+  deleteAuthor: async (authorId) => {
+    try {
+      const numericId = extractNumericId(authorId, "TG");
+      await axiosInstance.delete(`/tacgia/${numericId}/`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting author:", error);
+      throw error;
+    }
+  },
+
+  // Genre APIs
+  getAllGenres: async () => {
+    const response = await axiosInstance.get("/theloai/");
     return response.data;
   },
 
+  addGenre: async (genreName) => {
+    const response = await axiosInstance.get("/theloai/");
+    const maxId = Math.max(...response.data.map(tl => 
+      parseInt(extractNumericId(tl.MaTheLoai, "TL")) || 0
+    ));
+
+    const payload = {
+      TenTheLoai: genreName,
+    };
+    const addResponse = await axiosInstance.post("/theloai/", payload);
+    return addResponse.data;
+  },
+
+  updateGenre: async (genreId, newName) => {
+    try {
+      const numericId = extractNumericId(genreId, "TL");
+      const response = await axiosInstance.put(`/theloai/${numericId}/`, {
+        TenTheLoai: newName,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating genre:", error);
+      throw error;
+    }
+  },
+
+  deleteGenre: async (genreId) => {
+    try {
+      const numericId = extractNumericId(genreId, "TL");
+      await axiosInstance.delete(`/theloai/${numericId}/`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting genre:", error);
+      throw error;
+    }
+  },
+
+  // Publisher APIs
+  getAllPublishers: async () => {
+    const response = await axiosInstance.get("/nxb/");
+    return response.data;
+  },
+
+  addPublisher: async (publisherName) => {
+    const response = await axiosInstance.get("/nxb/");
+    const maxId = Math.max(...response.data.map(nxb => 
+      parseInt(extractNumericId(nxb.MaNXB, "NXB")) || 0
+    ));
+
+    const payload = {
+      TenNXB: publisherName,
+    };
+    const addResponse = await axiosInstance.post("/nxb/", payload);
+    return addResponse.data;
+  },
+
+  updatePublisher: async (publisherId, newName) => {
+    try {
+      const numericId = extractNumericId(publisherId, "NXB");
+      const response = await axiosInstance.put(`/nxb/${numericId}/`, {
+        TenNXB: newName,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating publisher:", error);
+      throw error;
+    }
+  },
+
+  deletePublisher: async (publisherId) => {
+    try {
+      const numericId = extractNumericId(publisherId, "NXB");
+      await axiosInstance.delete(`/nxb/${numericId}/`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting publisher:", error);
+      throw error;
+    }
+  },
+
+  // Book APIs
   updateBook: async (data) => {
-    const numericId = data.MaSach.replace(/^S/, "");
+    const numericId = extractNumericId(data.MaSach, "S");
     const response = await axiosInstance.patch(`/sach/${numericId}/`, {
       TenNXB_input: data.NXB,
       NamXB: data.NamXB,
@@ -204,12 +211,7 @@ const themSachApi = {
 
   getBookById: async (maSach) => {
     try {
-      // Remove leading 'S' if present and remove leading zeros
-      const numericId = maSach.replace(/^S/, "").replace(/^0+/, "");
-      if (!numericId || isNaN(Number(numericId))) {
-        throw new Error("Mã sách không hợp lệ");
-      }
-
+      const numericId = extractNumericId(maSach, "S");
       console.log("Fetching book with ID:", numericId);
       const response = await axiosInstance.get(`/sach/${numericId}/`);
 
@@ -218,7 +220,6 @@ const themSachApi = {
       }
 
       const book = response.data;
-      // Đảm bảo trả về một đối tượng với các trường cần thiết, dùng giá trị mặc định nếu không có
       return {
         MaSach: book.MaSach || maSach,
         MaDauSach: book.MaDauSach || "",
@@ -235,62 +236,6 @@ const themSachApi = {
       throw error;
     }
   },
-
-  // Author APIs
-  updateAuthor: async (authorId, newName) => {
-    try {
-      // Remove TG prefix and leading zeros
-      const numericId = authorId.replace(/^TG0*/, "");
-      const response = await axiosInstance.put(`/tacgia/${numericId}/`, {
-        TenTG: newName,
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error updating author:", error);
-      throw error;
-    }
-  },
-
-  deleteAuthor: async (authorId) => {
-    try {
-      // Remove TG prefix and leading zeros
-      const numericId = authorId.replace(/^TG0*/, "");
-      const response = await axiosInstance.delete(`/tacgia/${numericId}/`);
-      return response.data;
-    } catch (error) {
-      console.error("Error deleting author:", error);
-      throw error;
-    }
-  },
-
-  // Publisher APIs
-  updatePublisher: async (publisherId, newName) => {
-    try {
-      // Remove NXB prefix and leading zeros
-      const numericId = publisherId.replace(/^NXB0*/, "");
-      const response = await axiosInstance.put(`/nxb/${numericId}/`, {
-        TenNXB: newName,
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error updating publisher:", error);
-      throw error;
-    }
-  },
-
-  deletePublisher: async (publisherId) => {
-    try {
-      // Remove NXB prefix and leading zeros
-      const numericId = publisherId.replace(/^NXB0*/, "");
-      const response = await axiosInstance.delete(`/nxb/${numericId}/`);
-      return response.data;
-    } catch (error) {
-      console.error("Error deleting publisher:", error);
-      throw error;
-    }
-  },
-
-  getNextBookId,
 };
 
 export default themSachApi;
