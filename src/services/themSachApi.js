@@ -158,9 +158,25 @@ const themSachApi = {
 
     getDauSachById: async (maDauSach) => {
         try {
-            const response = await axiosInstance.get(`/dausach/${maDauSach}/`);
+            if (!maDauSach) {
+                throw new Error('Mã đầu sách không hợp lệ');
+            }
+            
+            // Nếu maDauSach bắt đầu bằng 'DS', loại bỏ tiền tố và các số 0 đứng đầu
+            const dauSachId = maDauSach.toString().replace(/^DS0*/, '');
+            
+            // Kiểm tra nếu id rỗng hoặc không phải số
+            if (!dauSachId || isNaN(Number(dauSachId))) {
+                throw new Error('Mã đầu sách không hợp lệ');
+            }
+            
+            console.log('Fetching DauSach with ID:', dauSachId);
+            const response = await axiosInstance.get(`/dausach/${dauSachId}/`);
             return response.data;
         } catch (error) {
+            if (error.response && error.response.status === 404) {
+                throw new Error('Không tìm thấy đầu sách với mã đã nhập');
+            }
             console.error('Error fetching DauSach:', error);
             throw error;
         }
@@ -191,25 +207,34 @@ const themSachApi = {
     },
 
     getBookById: async (maSach) => {
-        
         try {
             // Remove leading 'S' if present and remove leading zeros
-            const numericId = maSach.replace(/^S/, '');
-            console.log('Fetching book with ID:', numericId);
-            const response = await axiosInstance.get(`/sach/1/`);
-            if (response.data) {
-                const book = response.data;
-                return {
-                    MaSach: book.MaSach,
-                    MaDauSach: book.MaDauSach,
-                    TenDauSach: book.TenDauSach, 
-                    NXB: book.TenNXB,
-                    NamXB: book.NamXB,
-                    SLTon: book.SLTon
-                };
+            const numericId = maSach.replace(/^S/, '').replace(/^0+/, '');
+            if (!numericId || isNaN(Number(numericId))) {
+                throw new Error('Mã sách không hợp lệ');
             }
-            throw new Error('Book not found');
+            
+            console.log('Fetching book with ID:', numericId);
+            const response = await axiosInstance.get(`/sach/${numericId}/`);
+            
+            if (!response.data) {
+                throw new Error('Không tìm thấy sách');
+            }
+            
+            const book = response.data;
+            // Đảm bảo trả về một đối tượng với các trường cần thiết, dùng giá trị mặc định nếu không có
+            return {
+                MaSach: book.MaSach || maSach,
+                MaDauSach: book.MaDauSach || '',
+                TenDauSach: book.TenDauSach || '', 
+                NXB: book.TenNXB || book.NXB || '',
+                NamXB: book.NamXB || '',
+                SLTon: book.SLTon || 0
+            };
         } catch (error) {
+            if (error.response && error.response.status === 404) {
+                throw new Error('Không tìm thấy sách với mã đã nhập');
+            }
             console.error('Error fetching book:', error);
             throw error;
         }

@@ -357,14 +357,46 @@ function ThemSach() {
                 }
             } else if (searchTerm.match(/^S\d{3}$/)) {
                 // Tìm kiếm theo mã sách
-                const book = await themSachApi.getBookById(searchTerm);
-                if (book) {
-                    const dauSach = await themSachApi.getDauSachById(book.MaDauSach);
-                    if (dauSach) {
-                        setEditDauSach({
-                            maDauSach: book.MaDauSach,
-                            tenSach: dauSach.TenSach,
-                            selectedAuthors: Array.isArray(dauSach.TenTacGia)
+                try {
+                    console.log('Searching for book with ID:', searchTerm);
+                    const book = await themSachApi.getBookById(searchTerm);
+                    
+                    if (!book) {
+                        alert('Không tìm thấy sách!');
+                        return;
+                    }
+                    
+                    console.log('Book found:', book);
+                    
+                    // Kiểm tra nếu không có MaDauSach
+                    if (!book.MaDauSach) {
+                        alert('Sách không có thông tin mã đầu sách!');
+                        return;
+                    }
+                    
+                    // Hiển thị thông tin cơ bản của sách ngay cả khi không có đầu sách
+                    // để người dùng vẫn có thể chỉnh sửa một số thông tin
+                    const bookInfo = {
+                        maDauSach: book.MaDauSach,
+                        tenSach: book.TenDauSach || 'Không có tên',
+                        selectedAuthors: [],
+                        selectedGenres: [],
+                        nhaXuatBan: book.NXB || '',
+                        namXuatBan: book.NamXB || '',
+                        maSach: book.MaSach
+                    };
+                    
+                    // Tiếp tục lấy thông tin đầu sách đầy đủ
+                    try {
+                        console.log('Fetching DauSach with ID:', book.MaDauSach);
+                        const dauSach = await themSachApi.getDauSachById(book.MaDauSach);
+                        
+                        if (dauSach) {
+                            console.log('DauSach found:', dauSach);
+                            
+                            // Cập nhật thông tin đầu sách nếu có
+                            bookInfo.tenSach = dauSach.TenSach;
+                            bookInfo.selectedAuthors = Array.isArray(dauSach.TenTacGia)
                                 ? dauSach.TenTacGia.map(tg => ({ 
                                     TenTG: tg, 
                                     MaTG: tg.MaTG || `TG${Math.random().toString().slice(2, 8)}` 
@@ -372,29 +404,34 @@ function ThemSach() {
                                 : [{ 
                                     TenTG: dauSach.TenTacGia, 
                                     MaTG: dauSach.MaTacGia || `TG${Math.random().toString().slice(2, 8)}` 
-                                }],
-                            selectedGenres: [{ 
+                                }];
+                            bookInfo.selectedGenres = [{ 
                                 TenTheLoai: dauSach.TenTheLoai, 
                                 MaTheLoai: dauSach.MaTheLoai || `TL${Math.random().toString().slice(2, 8)}` 
-                            }],
-                            nhaXuatBan: book.NXB,
-                            namXuatBan: book.NamXB,
-                            maSach: book.MaSach
-                        });
-                        setIsEditingBook(true); // Đang sửa sách
-                        setShowEditDauSach(true);
-                    } else {
-                        alert('Không tìm thấy đầu sách tương ứng!');
+                            }];
+                        } else {
+                            console.warn('DauSach not found but continuing with limited book info');
+                        }
+                    } catch (innerError) {
+                        console.error('Error getting DauSach:', innerError);
+                        // Chỉ hiển thị thông báo cảnh báo nhưng vẫn tiếp tục với thông tin sách giới hạn
+                        alert('Cảnh báo: Đã tìm thấy sách nhưng không thể lấy đầy đủ thông tin đầu sách. Một số thông tin có thể bị thiếu.');
                     }
-                } else {
-                    alert('Không tìm thấy sách!');
+                    
+                    // Luôn hiển thị form chỉnh sửa với thông tin có sẵn
+                    setEditDauSach(bookInfo);
+                    setIsEditingBook(true); // Đang sửa sách
+                    setShowEditDauSach(true);
+                } catch (bookError) {
+                    console.error('Error searching book:', bookError);
+                    alert('Không tìm thấy sách: ' + (bookError.message || 'Lỗi không xác định'));
                 }
             } else {
                 alert('Mã không hợp lệ! Vui lòng nhập DSxxx hoặc Sxxx');
             }
         } catch (error) {
             console.error('Error searching:', error);
-            alert('Có lỗi khi tìm kiếm: ' + (error.response?.data?.message || error.message));
+            alert('Có lỗi khi tìm kiếm: ' + (error.message || 'Lỗi không xác định'));
         }
     };
 
@@ -407,8 +444,13 @@ function ThemSach() {
     };
 
     const handleSearchSach = () => {
+        if (!dauSachSearchTerm.startsWith('S')) {
+            alert('Mã sách phải bắt đầu bằng S!');
+            return;
+        }
+        // Regex kiểm tra mã sách có đúng định dạng Sxxx (S và 3 số)
         if (!dauSachSearchTerm.match(/^S\d{3}$/)) {
-            alert('Mã sách không hợp lệ! Vui lòng nhập theo định dạng Sxxx');
+            alert('Mã sách không hợp lệ! Vui lòng nhập theo định dạng Sxxx (S và 3 số)');
             return;
         }
         handleSearch(dauSachSearchTerm);
@@ -977,7 +1019,7 @@ function ThemSach() {
                                 <label>Mã Đầu Sách:</label>
                                 <input 
                                     type="text" 
-                                    value={`DS${editDauSach.maDauSach.padStart(3, '0')}`} 
+                                    value={`${editDauSach.maDauSach.padStart(3, '0')}`} 
                                     disabled 
                                 />
                             </div>
