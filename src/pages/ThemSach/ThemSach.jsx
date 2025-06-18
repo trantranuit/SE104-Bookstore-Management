@@ -2213,7 +2213,7 @@ function ThemSach() {
                           >
                             Sửa
                           </button>
-                          <button
+                          {/* <button
                             className="cancel-button-tsm"
                             onClick={() => {
                               setPublisherToDelete(publisher);
@@ -2221,7 +2221,7 @@ function ThemSach() {
                             }}
                           >
                             Xóa
-                          </button>
+                          </button> */}
                         </>
                       )}
                     </div>
