@@ -50,11 +50,33 @@ function ThemSach() {
     nhaXuatBan: "",
     namXuatBan: "",
     maSach: "",
-    selectedNXB: [], // Initialize as empty array
+    selectedNXB: [],
   });
   const [showEditDauSach, setShowEditDauSach] = useState(false);
   const [dauSachSearchTerm, setDauSachSearchTerm] = useState("");
-  const [isEditingBook, setIsEditingBook] = useState(false); // Xác định đang sửa sách hay đầu sách
+  const [isEditingBook, setIsEditingBook] = useState(false);
+
+  // State cho quản lý thể loại
+  const [showGenreList, setShowGenreList] = useState(false);
+  const [editingGenre, setEditingGenre] = useState(null);
+  const [editGenreName, setEditGenreName] = useState("");
+  const [showGenreDeleteConfirm, setShowGenreDeleteConfirm] = useState(false);
+  const [genreToDelete, setGenreToDelete] = useState(null);
+
+  // State for authors list management
+  const [showAuthorList, setShowAuthorList] = useState(false);
+  const [editingAuthor, setEditingAuthor] = useState(null);
+  const [editAuthorName, setEditAuthorName] = useState("");
+  const [showAuthorDeleteConfirm, setShowAuthorDeleteConfirm] = useState(false);
+  const [authorToDelete, setAuthorToDelete] = useState(null);
+
+  // State for publishers list management
+  const [showPublisherList, setShowPublisherList] = useState(false);
+  const [editingPublisher, setEditingPublisher] = useState(null);
+  const [editPublisherName, setEditPublisherName] = useState("");
+  const [showPublisherDeleteConfirm, setShowPublisherDeleteConfirm] =
+    useState(false);
+  const [publisherToDelete, setPublisherToDelete] = useState(null);
 
   // Thêm tác giả mới
   const handleAddAuthorSuccess = async (newAuthorName) => {
@@ -81,33 +103,26 @@ function ThemSach() {
   useEffect(() => {
     async function fetchInit() {
       try {
-        // Get next book ID
         const nextBookId = await themSachApi.getNextBookId();
         setMaSachMoi(nextBookId);
 
-        // Lấy danh sách tác giả
         const authors = await themSachApi.getAllAuthors();
-        if (Array.isArray(authors)) {
-          setAllTacGia(authors);
-        } else {
+        if (Array.isArray(authors)) setAllTacGia(authors);
+        else {
           setAllTacGia([]);
           console.error("Authors data is not an array:", authors);
         }
 
-        // Lấy danh sách thể loại
         const genres = await themSachApi.getAllGenres();
-        if (Array.isArray(genres)) {
-          setAllTheLoai(genres);
-        } else {
+        if (Array.isArray(genres)) setAllTheLoai(genres);
+        else {
           setAllTheLoai([]);
           console.error("Genres data is not an array:", genres);
         }
 
-        // Lấy danh sách nhà xuất bản
         const publishers = await themSachApi.getAllPublishers();
-        if (Array.isArray(publishers)) {
-          setAllNXB(publishers);
-        } else {
+        if (Array.isArray(publishers)) setAllNXB(publishers);
+        else {
           setAllNXB([]);
           console.error("Publishers data is not an array:", publishers);
         }
@@ -126,7 +141,7 @@ function ThemSach() {
     try {
       const newGenre = await themSachApi.addGenre(newGenreName);
       setAllTheLoai([...allTheLoai, newGenre]);
-      setTheLoai([newGenre]); // Changed to only allow one selection
+      setTheLoai([newGenre]);
       setNewTheLoai("");
       setShowConfirmAddGenre(false);
       setShowAddTheLoaiInput(false);
@@ -176,7 +191,6 @@ function ThemSach() {
       return;
     }
 
-    // Validate năm xuất bản
     const namXB = parseInt(namXuatBan);
     if (isNaN(namXB) || namXB < 1900 || namXB > new Date().getFullYear()) {
       setMessage("Năm xuất bản không hợp lệ!");
@@ -186,7 +200,6 @@ function ThemSach() {
     setMessage("");
 
     try {
-      // Kiểm tra đầu sách tồn tại
       const dauSachList = await themSachApi.getAllDauSach();
       const existingDauSach = dauSachList.find((ds) => {
         const tenSachMatch =
@@ -208,7 +221,6 @@ function ThemSach() {
         setExistingDauSachData(existingDauSach);
         setShowConfirmExistingBook(true);
       } else {
-        // Hiện modal để xác nhận tạo đầu sách mới
         setShowCreateDauSach(true);
       }
     } catch (error) {
@@ -233,7 +245,7 @@ function ThemSach() {
       if (dauSachResult && dauSachResult.MaDauSach) {
         setMaDauSach(dauSachResult.MaDauSach);
         setShowCreateDauSach(false);
-        setShowBookForm(true); // Show form nhập thông tin sách
+        setShowBookForm(true);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -271,7 +283,6 @@ function ThemSach() {
       setShowBookForm(false);
       setShowSuccessMessage(true);
 
-      // Reset form sau 2 giây
       setTimeout(() => {
         setShowSuccessMessage(false);
         resetForm();
@@ -291,15 +302,14 @@ function ThemSach() {
     setTheLoai([]);
     setNhaXuatBan("");
     setNamXuatBan("");
-    setSelectedNXB([]); // Reset publisher selection
+    setSelectedNXB([]);
     setStep(1);
 
-    // Cập nhật mã sách mới
     try {
       const books = await themSachApi.getAllBooks();
       let maxMaSach = 0;
       books.forEach((book) => {
-        const num = parseInt(book.MaSach.replace("S", ""), 10);
+        const num = parseInt(extractNumericId(book.MaSach, "S"), 10);
         if (!isNaN(num) && num > maxMaSach) maxMaSach = num;
       });
       setMaSachMoi("S" + (maxMaSach + 1).toString().padStart(3, "0"));
@@ -321,9 +331,8 @@ function ThemSach() {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target))
         setShowTacGiaDropdown(false);
-      }
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setShowAddTacGiaInput(false);
         setNewTacGia("");
@@ -331,21 +340,17 @@ function ThemSach() {
       if (
         genreDropdownRef.current &&
         !genreDropdownRef.current.contains(event.target)
-      ) {
+      )
         setShowTheLoaiDropdown(false);
-      }
       if (
         nxbDropdownRef.current &&
         !nxbDropdownRef.current.contains(event.target)
-      ) {
+      )
         setShowNXBDropdown(false);
-      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Xử lý tìm kiếm sách hoặc đầu sách
@@ -357,12 +362,11 @@ function ThemSach() {
 
     try {
       if (searchTerm.startsWith("DS")) {
-        // Tìm kiếm theo mã đầu sách
-        const dauSachId = searchTerm.replace(/^DS0*/, ""); // Loại bỏ DS và số 0 đầu
+        const dauSachId = extractNumericId(searchTerm, "DS");
         const dauSach = await themSachApi.getDauSachById(dauSachId);
         if (dauSach) {
           setEditDauSach({
-            maDauSach: dauSach.MaDauSach,
+            maDauSach: `DS${dauSachId.padStart(3, "0")}`,
             tenSach: dauSach.TenSach,
             selectedAuthors: Array.isArray(dauSach.TenTacGia)
               ? dauSach.TenTacGia.map((tg) => ({
@@ -372,115 +376,84 @@ function ThemSach() {
               : [
                   {
                     TenTG: dauSach.TenTacGia,
-                    MaTG:
-                      dauSach.MaTacGia ||
-                      `TG${Math.random().toString().slice(2, 8)}`,
+                    MaTG: `TG${Math.random().toString().slice(2, 8)}`,
                   },
                 ],
             selectedGenres: [
               {
                 TenTheLoai: dauSach.TenTheLoai,
-                MaTheLoai:
-                  dauSach.MaTheLoai ||
-                  `TL${Math.random().toString().slice(2, 8)}`,
+                MaTheLoai: `TL${Math.random().toString().slice(2, 8)}`,
               },
             ],
             nhaXuatBan: "",
             namXuatBan: "",
             maSach: "",
-            selectedNXB: [], // Initialize empty array
+            selectedNXB: [],
           });
           setIsEditingBook(false);
           setShowEditDauSach(true);
-        } else {
-          alert("Không tìm thấy đầu sách!");
-        }
+        } else alert("Không tìm thấy đầu sách!");
       } else if (searchTerm.match(/^S\d{3}$/)) {
-        // Tìm kiếm theo mã sách
+        console.log("Searching for book with ID:", searchTerm);
+        const book = await themSachApi.getBookById(searchTerm);
+
+        if (!book) {
+          alert("Không tìm thấy sách!");
+          return;
+        }
+
+        const matchingPublisher = allNXB.find((nxb) => nxb.TenNXB === book.NXB);
+        const bookInfo = {
+          maDauSach: book.MaDauSach,
+          tenSach: book.TenDauSach || "Không có tên",
+          selectedAuthors: [],
+          selectedGenres: [],
+          nhaXuatBan: book.NXB || "",
+          namXuatBan: book.NamXB || "",
+          maSach: book.MaSach,
+          selectedNXB: matchingPublisher ? [matchingPublisher] : [],
+        };
+
         try {
-          console.log("Searching for book with ID:", searchTerm);
-          const book = await themSachApi.getBookById(searchTerm);
-
-          if (!book) {
-            alert("Không tìm thấy sách!");
-            return;
-          }
-
-          // Find matching publisher in allNXB
-          const matchingPublisher = allNXB.find(
-            (nxb) => nxb.TenNXB === book.NXB
+          console.log("Fetching DauSach with ID:", book.MaDauSach);
+          const dauSach = await themSachApi.getDauSachById(
+            extractNumericId(book.MaDauSach, "DS")
           );
-
-          const bookInfo = {
-            maDauSach: book.MaDauSach,
-            tenSach: book.TenDauSach || "Không có tên",
-            selectedAuthors: [],
-            selectedGenres: [],
-            nhaXuatBan: book.NXB || "",
-            namXuatBan: book.NamXB || "",
-            maSach: book.MaSach,
-            selectedNXB: matchingPublisher ? [matchingPublisher] : [], // Initialize with matching publisher
-          };
-
-          // Tiếp tục lấy thông tin đầu sách đầy đủ
-          try {
-            console.log("Fetching DauSach with ID:", book.MaDauSach);
-            const dauSach = await themSachApi.getDauSachById(book.MaDauSach);
-
-            if (dauSach) {
-              console.log("DauSach found:", dauSach);
-
-              // Cập nhật thông tin đầu sách nếu có
-              bookInfo.tenSach = dauSach.TenSach;
-              bookInfo.selectedAuthors = Array.isArray(dauSach.TenTacGia)
-                ? dauSach.TenTacGia.map((tg) => ({
-                    TenTG: tg,
-                    MaTG:
-                      tg.MaTG || `TG${Math.random().toString().slice(2, 8)}`,
-                  }))
-                : [
-                    {
-                      TenTG: dauSach.TenTacGia,
-                      MaTG:
-                        dauSach.MaTacGia ||
-                        `TG${Math.random().toString().slice(2, 8)}`,
-                    },
-                  ];
-              bookInfo.selectedGenres = [
-                {
-                  TenTheLoai: dauSach.TenTheLoai,
-                  MaTheLoai:
-                    dauSach.MaTheLoai ||
-                    `TL${Math.random().toString().slice(2, 8)}`,
-                },
-              ];
-            } else {
-              console.warn(
-                "DauSach not found but continuing with limited book info"
-              );
-            }
-          } catch (innerError) {
-            console.error("Error getting DauSach:", innerError);
-            // Chỉ hiển thị thông báo cảnh báo nhưng vẫn tiếp tục với thông tin sách giới hạn
-            alert(
-              "Cảnh báo: Đã tìm thấy sách nhưng không thể lấy đầy đủ thông tin đầu sách. Một số thông tin có thể bị thiếu."
+          if (dauSach) {
+            console.log("DauSach found:", dauSach);
+            bookInfo.tenSach = dauSach.TenSach;
+            bookInfo.selectedAuthors = Array.isArray(dauSach.TenTacGia)
+              ? dauSach.TenTacGia.map((tg) => ({
+                  TenTG: tg,
+                  MaTG: tg.MaTG || `TG${Math.random().toString().slice(2, 8)}`,
+                }))
+              : [
+                  {
+                    TenTG: dauSach.TenTacGia,
+                    MaTG: `TG${Math.random().toString().slice(2, 8)}`,
+                  },
+                ];
+            bookInfo.selectedGenres = [
+              {
+                TenTheLoai: dauSach.TenTheLoai,
+                MaTheLoai: `TL${Math.random().toString().slice(2, 8)}`,
+              },
+            ];
+          } else
+            console.warn(
+              "DauSach not found but continuing with limited book info"
             );
-          }
-
-          // Luôn hiển thị form chỉnh sửa với thông tin có sẵn
-          setEditDauSach(bookInfo);
-          setIsEditingBook(true); // Đang sửa sách
-          setShowEditDauSach(true);
-        } catch (bookError) {
-          console.error("Error searching book:", bookError);
+        } catch (innerError) {
+          console.error("Error getting DauSach:", innerError);
           alert(
-            "Không tìm thấy sách: " +
-              (bookError.message || "Lỗi không xác định")
+            "Cảnh báo: Đã tìm thấy sách nhưng không thể lấy đầy đủ thông tin đầu sách. Một số thông tin có thể bị thiếu."
           );
         }
-      } else {
-        alert("Mã không hợp lệ! Vui lòng nhập DSxxx hoặc Sxxx");
-      }
+
+        setEditDauSach(bookInfo);
+        setIsEditingBook(true);
+        setShowEditDauSach(true);
+      } else alert("Mã không hợp lệ! Vui lòng nhập DSxxx hoặc Sxxx");
     } catch (error) {
       console.error("Error searching:", error);
       alert("Có lỗi khi tìm kiếm: " + (error.message || "Lỗi không xác định"));
@@ -500,7 +473,6 @@ function ThemSach() {
       alert("Mã sách phải bắt đầu bằng S!");
       return;
     }
-    // Regex kiểm tra mã sách có đúng định dạng Sxxx (S và 3 số)
     if (!dauSachSearchTerm.match(/^S\d{3}$/)) {
       alert(
         "Mã sách không hợp lệ! Vui lòng nhập theo định dạng Sxxx (S và 3 số)"
@@ -518,7 +490,6 @@ function ThemSach() {
 
   const handleUpdateDauSach = async () => {
     try {
-      // Validate inputs
       if (
         !editDauSach.tenSach ||
         editDauSach.selectedAuthors.length === 0 ||
@@ -551,7 +522,7 @@ function ThemSach() {
         setIsUpdatingDauSach(false);
       } else {
         const updateData = {
-          MaDauSach: editDauSach.maDauSach,
+          MaDauSach: extractNumericId(editDauSach.maDauSach, "DS"),
           TenSach: editDauSach.tenSach,
           TenTacGia: editDauSach.selectedAuthors.map((author) => author.TenTG),
           TheLoai: editDauSach.selectedGenres[0].TenTheLoai,
@@ -584,28 +555,6 @@ function ThemSach() {
     }
   };
 
-  // State cho quản lý thể loại
-  const [showGenreList, setShowGenreList] = useState(false);
-  const [editingGenre, setEditingGenre] = useState(null);
-  const [editGenreName, setEditGenreName] = useState("");
-  const [showGenreDeleteConfirm, setShowGenreDeleteConfirm] = useState(false);
-  const [genreToDelete, setGenreToDelete] = useState(null);
-
-  // State for authors list management
-  const [showAuthorList, setShowAuthorList] = useState(false);
-  const [editingAuthor, setEditingAuthor] = useState(null);
-  const [editAuthorName, setEditAuthorName] = useState("");
-  const [showAuthorDeleteConfirm, setShowAuthorDeleteConfirm] = useState(false);
-  const [authorToDelete, setAuthorToDelete] = useState(null);
-
-  // State for publishers list management
-  const [showPublisherList, setShowPublisherList] = useState(false);
-  const [editingPublisher, setEditingPublisher] = useState(null);
-  const [editPublisherName, setEditPublisherName] = useState("");
-  const [showPublisherDeleteConfirm, setShowPublisherDeleteConfirm] =
-    useState(false);
-  const [publisherToDelete, setPublisherToDelete] = useState(null);
-
   // Genre handlers
   const handleAddGenreInList = async () => {
     try {
@@ -628,7 +577,10 @@ function ThemSach() {
         setMessage("Tên thể loại không được để trống!");
         return;
       }
-      await themSachApi.updateGenre(editingGenre.MaTheLoai, editGenreName);
+      await themSachApi.updateGenre(
+        extractNumericId(editingGenre.MaTheLoai, "TL"),
+        editGenreName
+      );
       const updatedGenres = allTheLoai.map((genre) =>
         genre.MaTheLoai === editingGenre.MaTheLoai
           ? { ...genre, TenTheLoai: editGenreName }
@@ -648,7 +600,9 @@ function ThemSach() {
 
   const handleDeleteGenre = async () => {
     try {
-      await themSachApi.deleteGenre(genreToDelete.MaTheLoai);
+      await themSachApi.deleteGenre(
+        extractNumericId(genreToDelete.MaTheLoai, "TL")
+      );
       setAllTheLoai(
         allTheLoai.filter(
           (genre) => genre.MaTheLoai !== genreToDelete.MaTheLoai
@@ -687,7 +641,10 @@ function ThemSach() {
         setMessage("Tên tác giả không được để trống!");
         return;
       }
-      await themSachApi.updateAuthor(editingAuthor.MaTG, editAuthorName);
+      await themSachApi.updateAuthor(
+        extractNumericId(editingAuthor.MaTG, "TG"),
+        editAuthorName
+      );
       const updatedAuthors = allTacGia.map((author) =>
         author.MaTG === editingAuthor.MaTG
           ? { ...author, TenTG: editAuthorName }
@@ -706,8 +663,11 @@ function ThemSach() {
   };
 
   const handleDeleteAuthor = async () => {
+    console.log("Deleting author with ID:", authorToDelete?.MaTG); // Debug
     try {
-      await themSachApi.deleteAuthor(authorToDelete.MaTG);
+      await themSachApi.deleteAuthor(
+        extractNumericId(authorToDelete.MaTG, "TG")
+      );
       setAllTacGia(
         allTacGia.filter((author) => author.MaTG !== authorToDelete.MaTG)
       );
@@ -745,7 +705,7 @@ function ThemSach() {
         return;
       }
       await themSachApi.updatePublisher(
-        editingPublisher.MaNXB,
+        extractNumericId(editingPublisher.MaNXB, "NXB"),
         editPublisherName
       );
       const updatedPublishers = allNXB.map((publisher) =>
@@ -768,7 +728,9 @@ function ThemSach() {
 
   const handleDeletePublisher = async () => {
     try {
-      await themSachApi.deletePublisher(publisherToDelete.MaNXB);
+      await themSachApi.deletePublisher(
+        extractNumericId(publisherToDelete.MaNXB, "NXB")
+      );
       setAllNXB(
         allNXB.filter(
           (publisher) => publisher.MaNXB !== publisherToDelete.MaNXB
@@ -809,9 +771,7 @@ function ThemSach() {
     }
   };
 
-  const handleAuthorInputChange = (e) => {
-    setNewTacGia(e.target.value);
-  };
+  const handleAuthorInputChange = (e) => setNewTacGia(e.target.value);
 
   const handleResetAuthorForm = () => {
     setNewTacGia("");
@@ -837,12 +797,18 @@ function ThemSach() {
       return;
     }
 
-    if (!allTacGia.some(tg => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase())) {
+    if (
+      !allTacGia.some(
+        (tg) => tg.TenTG.toLowerCase() === newTacGia.trim().toLowerCase()
+      )
+    ) {
       handleAddAuthorSuccess(newTacGia.trim());
-    } else {
-      setMessage("Tác giả này đã tồn tại!");
-    }
+    } else setMessage("Tác giả này đã tồn tại!");
   };
+
+  // Helper function to extract numeric ID
+  const extractNumericId = (id, prefix) =>
+    id.replace(new RegExp(`^${prefix}0*`), "");
 
   return (
     <div className="page-container">
@@ -878,11 +844,11 @@ function ThemSach() {
                           {author.TenTG}
                           <button
                             className="remove-author-chip-tsm"
-                            onClick={() => {
+                            onClick={() =>
                               setTenTacGia(
                                 tenTacGia.filter((_, i) => i !== index)
-                              );
-                            }}
+                              )
+                            }
                           >
                             ×
                           </button>
@@ -949,9 +915,9 @@ function ThemSach() {
                           {genre.TenTheLoai}
                           <button
                             className="remove-author-chip-tsm"
-                            onClick={() => {
-                              setTheLoai(theLoai.filter((_, i) => i !== index));
-                            }}
+                            onClick={() =>
+                              setTheLoai(theLoai.filter((_, i) => i !== index))
+                            }
                           >
                             ×
                           </button>
@@ -986,7 +952,7 @@ function ThemSach() {
                             key={idx}
                             className="dropdown-item-tsm"
                             onClick={() => {
-                              setTheLoai([tl]); // Changed to only allow one selection
+                              setTheLoai([tl]);
                               setNewTheLoai("");
                               setShowTheLoaiDropdown(false);
                             }}
@@ -1197,7 +1163,8 @@ function ThemSach() {
                   <input
                     type="text"
                     placeholder="Nhập tên tác giả mới"
-                    value={newTacGia}                    onChange={handleAuthorInputChange}
+                    value={newTacGia}
+                    onChange={handleAuthorInputChange}
                     className="modal-input-tsm"
                     autoFocus
                   />
@@ -1267,9 +1234,7 @@ function ThemSach() {
                 <div className="modal-buttons-container-tsm">
                   <button
                     onClick={() => {
-                      if (newTheLoai.trim()) {
-                        setShowConfirmAddGenre(true);
-                      }
+                      if (newTheLoai.trim()) setShowConfirmAddGenre(true);
                     }}
                     className="adds-button-tsm"
                   >
@@ -1305,9 +1270,8 @@ function ThemSach() {
                             tl.TenTheLoai.toLowerCase() ===
                             newTheLoai.trim().toLowerCase()
                         )
-                      ) {
+                      )
                         handleAddGenreSuccess(newTheLoai.trim());
-                      }
                     }}
                     className="adds-button-tsm"
                     style={{ marginRight: "10px" }}
@@ -1343,9 +1307,7 @@ function ThemSach() {
                 <div className="modal-buttons-container-tsm">
                   <button
                     onClick={() => {
-                      if (newNXB.trim()) {
-                        setShowConfirmAddPublisher(true);
-                      }
+                      if (newNXB.trim()) setShowConfirmAddPublisher(true);
                     }}
                     className="adds-button-tsm"
                   >
@@ -1381,9 +1343,8 @@ function ThemSach() {
                             nxb.TenNXB.toLowerCase() ===
                             newNXB.trim().toLowerCase()
                         )
-                      ) {
+                      )
                         handleAddPublisherSuccess(newNXB.trim());
-                      }
                     }}
                     className="adds-button-tsm"
                     style={{ marginRight: "10px" }}
@@ -1496,6 +1457,7 @@ function ThemSach() {
             </div>
           )}
         </div>
+
         {/* Block 2: Sửa Thông Tin Đầu Sách */}
         <div className="block-ts">
           <h2 className="block-title-ts">Sửa Thông Tin Sách - Đầu Sách</h2>
@@ -1530,11 +1492,7 @@ function ThemSach() {
               </h2>
               <div className="form-row-tsm">
                 <label>Mã Đầu Sách:</label>
-                <input
-                  type="text"
-                  value={`${editDauSach.maDauSach.padStart(3, "0")}`}
-                  disabled
-                />
+                <input type="text" value={editDauSach.maDauSach} disabled />
               </div>
               {isEditingBook && (
                 <div className="form-row-tsm">
@@ -1548,10 +1506,7 @@ function ThemSach() {
                   type="text"
                   value={editDauSach.tenSach}
                   onChange={(e) =>
-                    setEditDauSach({
-                      ...editDauSach,
-                      tenSach: e.target.value,
-                    })
+                    setEditDauSach({ ...editDauSach, tenSach: e.target.value })
                   }
                   disabled={isEditingBook}
                 />
@@ -1570,7 +1525,7 @@ function ThemSach() {
                           <button
                             className="remove-author-chip-tsm"
                             onClick={() => {
-                              if (!isEditingBook) {
+                              if (!isEditingBook)
                                 setEditDauSach({
                                   ...editDauSach,
                                   selectedAuthors:
@@ -1578,7 +1533,6 @@ function ThemSach() {
                                       (_, i) => i !== index
                                     ),
                                 });
-                              }
                             }}
                             disabled={isEditingBook}
                           >
@@ -1589,7 +1543,8 @@ function ThemSach() {
                     </div>
                     <input
                       type="text"
-                      value={newTacGia}                      onChange={handleAuthorInputChange}
+                      value={newTacGia}
+                      onChange={handleAuthorInputChange}
                       placeholder={
                         editDauSach.selectedAuthors.length === 0
                           ? "Chọn tác giả"
@@ -1660,7 +1615,7 @@ function ThemSach() {
                           <button
                             className="remove-author-chip-tsm"
                             onClick={() => {
-                              if (!isEditingBook) {
+                              if (!isEditingBook)
                                 setEditDauSach({
                                   ...editDauSach,
                                   selectedGenres:
@@ -1668,7 +1623,6 @@ function ThemSach() {
                                       (_, i) => i !== index
                                     ),
                                 });
-                              }
                             }}
                             disabled={isEditingBook}
                           >
@@ -1820,7 +1774,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Năm Xuất Bản:</label>{" "}
+                <label>Năm Xuất Bản:</label>
                 <input
                   type="text"
                   value={editDauSach.namXuatBan}
@@ -1853,6 +1807,7 @@ function ThemSach() {
                       nhaXuatBan: "",
                       namXuatBan: "",
                       maSach: "",
+                      selectedNXB: [],
                     });
                   }}
                 >
@@ -1861,7 +1816,8 @@ function ThemSach() {
               </div>
             </div>
           )}
-        </div>{" "}
+        </div>
+
         {/* Block Quản lý danh mục */}
         <div className="block-ts">
           <div className="block-title-ts">Quản lý danh mục</div>
@@ -1893,13 +1849,12 @@ function ThemSach() {
             </button>
           </div>
         </div>
+
         {/* Modal danh sách thể loại */}
         {showGenreList && (
           <div className="modal-overlay-them-sach-tsm">
             <div className="modal-them-sach-tsm" style={{ width: "600px" }}>
               <h2>Danh sách thể loại</h2>
-
-              {/* Form thêm thể loại */}
               <div className="add-form-container-tsm">
                 <input
                   type="text"
@@ -1916,8 +1871,6 @@ function ThemSach() {
                   Thêm
                 </button>
               </div>
-
-              {/* Danh sách thể loại */}
               <div
                 style={{
                   marginTop: "20px",
@@ -1997,9 +1950,7 @@ function ThemSach() {
                   </div>
                 ))}
               </div>
-
               {message && <div className="message-tsm">{message}</div>}
-
               <button
                 className="close-button-tsm"
                 onClick={() => setShowGenreList(false)}
@@ -2009,6 +1960,7 @@ function ThemSach() {
             </div>
           </div>
         )}
+
         {/* Modal xác nhận xóa thể loại */}
         {showGenreDeleteConfirm && (
           <div className="modal-overlay-them-sach-tsm">
@@ -2035,17 +1987,17 @@ function ThemSach() {
             </div>
           </div>
         )}
+
         {/* Modal danh sách tác giả */}
         {showAuthorList && (
           <div className="modal-overlay-them-sach-tsm">
             <div className="modal-them-sach-tsm" style={{ width: "600px" }}>
               <h2>Danh sách tác giả</h2>
-
-              {/* Form thêm tác giả */}
               <div className="add-form-container-tsm">
                 <input
                   type="text"
-                  value={newTacGia}                  onChange={handleAuthorInputChange}
+                  value={newTacGia}
+                  onChange={handleAuthorInputChange}
                   placeholder="Nhập tên tác giả mới"
                   className="form-input-tsm"
                   style={{ width: "90%", padding: "10px" }}
@@ -2057,8 +2009,6 @@ function ThemSach() {
                   Thêm
                 </button>
               </div>
-
-              {/* Danh sách tác giả */}
               <div
                 style={{
                   marginTop: "20px",
@@ -2138,9 +2088,7 @@ function ThemSach() {
                   </div>
                 ))}
               </div>
-
               {message && <div className="message-tsm">{message}</div>}
-
               <button
                 className="close-button-tsm"
                 onClick={() => setShowAuthorList(false)}
@@ -2150,13 +2098,14 @@ function ThemSach() {
             </div>
           </div>
         )}
+
         {/* Modal xác nhận xóa tác giả */}
         {showAuthorDeleteConfirm && (
           <div className="modal-overlay-them-sach-tsm">
             <div className="modal-them-sach-tsm">
               <h2>Xác nhận xóa</h2>
               <p>
-                Bạn có chắc chắn muốn xóa tác giả "{authorToDelete?.TenTG}" "?
+                Bạn có chắc chắn muốn xóa tác giả "{authorToDelete?.TenTG}"?
               </p>
               <div className="modal-buttons-container-tsm">
                 <button
@@ -2178,13 +2127,12 @@ function ThemSach() {
             </div>
           </div>
         )}
+
         {/* Modal danh sách nhà xuất bản */}
         {showPublisherList && (
           <div className="modal-overlay-them-sach-tsm">
             <div className="modal-them-sach-tsm" style={{ width: "600px" }}>
               <h2>Danh sách nhà xuất bản</h2>
-
-              {/* Form thêm nhà xuất bản */}
               <div className="add-form-container-tsm">
                 <input
                   type="text"
@@ -2201,8 +2149,6 @@ function ThemSach() {
                   Thêm
                 </button>
               </div>
-
-              {/* Danh sách nhà xuất bản */}
               <div
                 style={{
                   marginTop: "20px",
@@ -2227,7 +2173,7 @@ function ThemSach() {
                         type="text"
                         value={editPublisherName}
                         onChange={(e) => setEditPublisherName(e.target.value)}
-                                               className="form-input-tsm"
+                        className="form-input-tsm"
                         style={{
                           width: "50%",
                           padding: "10px",
@@ -2282,9 +2228,7 @@ function ThemSach() {
                   </div>
                 ))}
               </div>
-
               {message && <div className="message-tsm">{message}</div>}
-
               <button
                 className="close-button-tsm"
                 onClick={() => setShowPublisherList(false)}
@@ -2294,6 +2238,7 @@ function ThemSach() {
             </div>
           </div>
         )}
+
         {/* Modal xác nhận xóa nhà xuất bản */}
         {showPublisherDeleteConfirm && (
           <div className="modal-overlay-them-sach-tsm">
@@ -2301,8 +2246,7 @@ function ThemSach() {
               <h2>Xác nhận xóa</h2>
               <p>
                 Bạn có chắc chắn muốn xóa nhà xuất bản "
-                {publisherToDelete?.TenNXB}
-                "?
+                {publisherToDelete?.TenNXB}"?
               </p>
               <div className="modal-buttons-container-tsm">
                 <button
