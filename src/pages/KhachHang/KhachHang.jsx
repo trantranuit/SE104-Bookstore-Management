@@ -58,7 +58,7 @@ function KhachHang() {
         <div className="kh-action-bar">
           <input
             type="text"
-            placeholder="Tìm kiếm tên khách hàng hoặc số điện thoại..."
+            placeholder="Tìm kiếm Mã KH, tên hoặc số điện thoại..."
             className="kh-search-input"
             value={searchTerm}
             onChange={handleSearchChange}

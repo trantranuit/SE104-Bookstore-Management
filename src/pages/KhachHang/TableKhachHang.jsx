@@ -8,7 +8,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import customerService from "../../services/customerService";
 import "./KhachHang.css";
 
@@ -42,23 +42,27 @@ function TableKhachHang({
       setLoading(true);
       setError(null);
       try {
-        const data = await customerService.getAllCustomers(searchTerm);
+        const data = await customerService.getAllCustomers("");
         // Thêm chỉ số vào dữ liệu gốc để sử dụng cho cột No.
-        const transformedData = data
-          .map((customer, index) => ({
-            MaKhachHang: customer.MaKhachHang.toString(),
-            _index: index, // Thêm chỉ số gốc vào dữ liệu
-            name: customer.HoTen,
-            phone: customer.DienThoai,
-            email: customer.Email,
-            address: customer.DiaChi,
-            debtAmount: parseInt(customer.SoTienNo) || 0,
-          }))
-          .filter(
-            (customer) =>
-              customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              customer.phone.includes(searchTerm)
+        let transformedData = data.map((customer, index) => ({
+          MaKhachHang: customer.MaKhachHang.toString(),
+          _index: index, // Thêm chỉ số gốc vào dữ liệu
+          name: customer.HoTen,
+          phone: customer.DienThoai,
+          email: customer.Email,
+          address: customer.DiaChi,
+          debtAmount: parseInt(customer.SoTienNo) || 0,
+        }));
+        // Lọc tổng hợp theo searchTerm
+        if (searchTerm.trim()) {
+          const term = searchTerm.trim().toLowerCase();
+          transformedData = transformedData.filter(c =>
+            c.MaKhachHang.toLowerCase().includes(term) ||
+            c.MaKhachHang.replace(/^KH/, '').includes(term.replace(/^kh/, '')) ||
+            c.name.toLowerCase().includes(term) ||
+            c.phone.includes(term)
           );
+        }
         setCustomers(transformedData);
 
         const pageCount = Math.ceil(transformedData.length / pagination.pageSize);
@@ -111,13 +115,49 @@ function TableKhachHang({
               setIsModalOpen(true);
             }}
           />
-
+          <FontAwesomeIcon
+            icon={faTrash}
+            className="khachhang-delete-icon"
+            style={{ marginLeft: 6, color: '#e74c3c', cursor: 'pointer' }}
+            title="Xoá khách hàng"
+            onClick={() => handleDeleteCustomer(row.original.MaKhachHang)}
+          />
         </div>
       ),
     },
   ];
 
-  const handleDeleteCustomer = (MaKhachHang) => {
+  const canDeleteCustomer = async (customer) => {
+    try {
+      const customerDetail = await customerService.getCustomerById(customer.MaKhachHang.replace('KH', ''));
+      // Kiểm tra có hóa đơn không
+      if (customerDetail.hoadon && customerDetail.hoadon.length > 0) {
+        return { canDelete: false, reason: 'Không thể xóa khách hàng vì đã có hóa đơn liên quan.' };
+      }
+      // Kiểm tra có phiếu thu tiền không
+      if (customerDetail.phieuthutien_set && customerDetail.phieuthutien_set.length > 0) {
+        return { canDelete: false, reason: 'Không thể xóa khách hàng vì đã có phiếu thu tiền liên quan.' };
+      }
+      // Kiểm tra có chi tiết báo cáo công nợ không (nếu backend trả về)
+      if (customerDetail.ct_bccongno_set && customerDetail.ct_bccongno_set.length > 0) {
+        return { canDelete: false, reason: 'Không thể xóa khách hàng vì còn dòng công nợ liên quan trong báo cáo công nợ (CT_BCCongNo). Vui lòng liên hệ quản trị viên để xóa các dòng công nợ này trước.' };
+      }
+      return { canDelete: true, reason: '' };
+    } catch (error) {
+      return { canDelete: false, reason: 'Không thể kiểm tra điều kiện xóa.' };
+    }
+  };
+
+  const handleDeleteCustomer = async (MaKhachHang) => {
+    const customer = customers.find(c => c.MaKhachHang === MaKhachHang);
+    if (!customer) return;
+    setLoading(true);
+    const checkResult = await canDeleteCustomer(customer);
+    setLoading(false);
+    if (!checkResult.canDelete) {
+      setError(checkResult.reason);
+      return;
+    }
     setCustomerToDelete(MaKhachHang);
     setShowDeleteConfirmation(true);
   };
@@ -130,8 +170,22 @@ function TableKhachHang({
       setShowDeleteConfirmation(false);
       setCustomerToDelete(null);
       setRefreshTrigger((prev) => prev + 1);
+      setError(null);
     } catch (err) {
-      setError("Không thể xóa khách hàng. Vui lòng thử lại.");
+      // Xử lý lỗi RestrictedError trả về dạng HTML (Internal Server Error)
+      let errorMsg = "Không thể xóa khách hàng. Vui lòng thử lại.";
+      if (err?.response?.data) {
+        // Nếu trả về HTML có chứa 'RestrictedError' và 'CT_BCCongNo'
+        const dataStr = typeof err.response.data === 'string' ? err.response.data : '';
+        if (dataStr.includes('RestrictedError') && dataStr.includes('CT_BCCongNo')) {
+          errorMsg = 'Không thể xóa khách hàng vì còn dòng công nợ liên quan trong báo cáo công nợ (CT_BCCongNo). Vui lòng liên hệ quản trị viên để xóa các dòng công nợ này trước.';
+        } else if (dataStr.includes('RestrictedError') && dataStr.includes('HoaDon')) {
+          errorMsg = 'Không thể xóa khách hàng vì đã có hóa đơn liên quan.';
+        } else if (dataStr.includes('RestrictedError')) {
+          errorMsg = 'Không thể xóa khách hàng vì còn dữ liệu liên quan trong hệ thống.';
+        }
+      }
+      setError(errorMsg);
       console.error(err);
     } finally {
       setLoading(false);
@@ -189,10 +243,30 @@ function TableKhachHang({
     });
   }, [pagination, table]);
 
+  // Khi gặp lỗi không thể xoá khách hàng, ẩn modal xác nhận xoá
+  useEffect(() => {
+    if (error && error.toLowerCase().includes('không thể xóa khách hàng')) {
+      setShowDeleteConfirmation(false);
+    }
+  }, [error]);
+
   return (
     <div className="kh-table-container">
       {loading && <div className="loading-indicator">Đang tải...</div>}
-      {error && <div className="error-message">{error}</div>}
+      {error && error.toLowerCase().includes('không thể xóa khách hàng') ? (
+        <div className="cannot-delete-customer-alert cannot-delete-customer-alert-small">
+          {error}
+          <button
+            className="close-cannot-delete-alert"
+            onClick={() => setError(null)}
+            title="Đóng thông báo"
+          >
+            ×
+          </button>
+        </div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : null}
 
       <table className="khachhang-report-table">
         <thead>
