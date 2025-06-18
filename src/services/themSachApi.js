@@ -82,11 +82,9 @@ const themSachApi = {
 
   // Thêm sách mới
   addBook: async (data) => {
-    const numericId = extractNumericId(data.MaSach, "S");
     const payload = {
-      MaDauSach: extractNumericId(data.MaDauSach, "DS"),
-      TenDauSach: data.TenSach,
-      NXB: data.NXB,
+      TenDauSach_input: data.TenSach,
+      TenNXB_input: data.NXB,
       NamXB: data.NamXB,
       SLTon: data.SLTon,
     };
@@ -179,7 +177,7 @@ const themSachApi = {
   updateAuthor: async (authorId, newName) => {
     try {
       const numericIt = extractNumericId(authorId, "TG");
-      const numericId = extractNumericId(numericIt, "TL"); // Chỉ lấy phần số, bỏ tiền tố "TG" hoặc "TL"
+      const numericId = extractNumericId(numericIt, "TL");
       const response = await axiosInstance.put(`/tacgia/${numericId}/`, {
         TenTG: newName,
       });
@@ -196,7 +194,7 @@ const themSachApi = {
   deleteAuthor: async (authorId) => {
     try {
       const numericIt = extractNumericId(authorId, "TG");
-      const numericId = extractNumericId(numericIt, "TL"); // Chỉ lấy phần số, bỏ tiền tố "TG" hoặc "TL"
+      const numericId = extractNumericId(numericIt, "TL");
       console.log("Deleting author with numeric ID:", numericId); // Debug
       await axiosInstance.delete(`/tacgia/${numericId}/`);
       return true;
