@@ -1058,6 +1058,23 @@ table tbody tr {
     background-color: #666;
 }
 
+.notification-actions-ttm .print-button-ttm {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.notification-actions-ttm .print-button-ttm:hover {
+    background-color: #218838;
+}
+
 .search-header-ttm {
     display: flex;
     justify-content: flex-end;
