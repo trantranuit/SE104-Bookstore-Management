@@ -44,7 +44,7 @@
 }
 
 .nhap-sach-page-input {
-  width: 3rem;
+  width: 5rem;
   height: 1.5rem;
   padding: 0.5rem;
   padding-left: 0.8rem;
@@ -52,7 +52,7 @@
   text-align: center;
   border: 1px solid #e7e7e7;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 /* Media queries for smaller screens */
