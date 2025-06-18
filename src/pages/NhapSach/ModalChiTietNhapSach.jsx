@@ -211,10 +211,11 @@ const ModalChiTietNhapSach = ({
 
         const soLuongNhap = parseInt(formData.soLuong);
 
-        // Check if adding soLuong would exceed TonTD
-        if (sach.SLTon + soLuongNhap > thamSo[0].TonTD) {
+        // Check ONLY if the current inventory itself is already at or exceeding the limit
+        // We don't consider the new quantity being added when checking the limit
+        if (sach.SLTon >= thamSo[0].TonTD) {
           throw new Error(
-            `Tồn của sách ${formData.maSach}: ${sach.TenDauSach}, vượt quá tồn tối đa (${thamSo[0].TonTD}).`
+            `Sách ${formData.maSach}: ${sach.TenDauSach} đã đạt tồn tối đa (hiện tại: ${sach.SLTon}, giới hạn: ${thamSo[0].TonTD}).`
           );
         }
 
