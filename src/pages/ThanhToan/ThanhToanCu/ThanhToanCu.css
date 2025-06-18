@@ -418,7 +418,7 @@ input[type="date"].custom-input-ttc::-webkit-calendar-picker-indicator:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); 
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -433,16 +433,18 @@ input[type="date"].custom-input-ttc::-webkit-calendar-picker-indicator:hover {
     min-width: 350px;
     box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
     animation: fadeInUp 0.4s ease-out;
-    position: relative; /* Ensure it's positioned correctly */
+    position: relative;
+    /* Ensure it's positioned correctly */
 }
 
 .validation-modal-content-ttc p {
-  margin-top: 0;
-  font-size: 1.5rem;
-font-weight: bold;
-  color: #1f1d1d;;
-  text-align: center;
-  margin-bottom: 15px;
+    margin-top: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f1d1d;
+    ;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .close-modal-button-ttc {
@@ -492,16 +494,18 @@ font-weight: bold;
     min-width: 350px;
     box-shadow: 0 0.5rem 1.5rem rgba(90, 84, 84, 0.3);
     animation: fadeInUp 0.4s ease-out;
-    position: relative; /* Ensure it's positioned correctly */
+    position: relative;
+    /* Ensure it's positioned correctly */
 }
 
 .success-modal-content-ttc p {
-  margin-top: 0;
-  font-size: 1.5rem;
-font-weight: bold;
-  color: #1f1d1d;;
-  text-align: center;
-  margin-bottom: 15px;
+    margin-top: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f1d1d;
+    ;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 
@@ -555,7 +559,7 @@ font-weight: bold;
 .confirm-button-ttc,
 .close-modals-button-ttc,
 .close-modal-button-ttc {
-        padding: 0.8rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -578,4 +582,26 @@ font-weight: bold;
 
 .close-modals-button-ttc:hover {
     background-color: #c82333;
+}
+
+.pdf-modal-overlay-ttc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.pdf-modal-content-ttc {
+    background: white;
+    width: 80vw;
+    height: 90vh;
+    /* padding: 20px; */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }

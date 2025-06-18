@@ -38,6 +38,21 @@ function TatCaSach() {
     const [books, setBooks] = useState([]);
     const [allAuthors, setAllAuthors] = useState([]); // Add new state
     const booksPerPage = 10;
+    const [pageInput, setPageInput] = useState(currentPage);
+    const handlePageInputChange = (e) => {
+    let value = e.target.value;
+    setPageInput(value);
+    };
+
+    const handlePageSubmit = (e) => {
+    e.preventDefault();
+    let pageNumber = parseInt(pageInput);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        setCurrentPage(pageNumber);
+    } else {
+        setPageInput(currentPage);
+    }
+    };
 
     // Lấy dữ liệu từ API
     useEffect(() => {
@@ -656,9 +671,19 @@ function TatCaSach() {
                     <div className="pagination-buttons-tcs">
                         <button onClick={handlePreviousPage} disabled={currentPage === 1} className="pagination-buttons-tcs-button">
                             ←
-                        </button>                    <span className="pagination-info-tcs">
-                            Trang {currentPage}/{totalPages}
-                        </span>
+                        </button>
+                                                <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+                        <span>Trang </span>
+                        <input
+                            type="number"
+                            value={pageInput}
+                            onChange={handlePageInputChange}
+                            min="1"
+                            max={totalPages}
+                            className="nhap-sach-page-input"
+                        />
+                        <span>/{Math.max(1, totalPages)}</span>
+                        </form>
                         <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-buttons-tcs-button">
                             →
                         </button>

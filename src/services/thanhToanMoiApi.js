@@ -300,17 +300,17 @@ const thanhToanMoiApi = {
     // Thêm method export PDF
     exportInvoicePDF: async (invoiceId) => {
         try {
-            const numericId = invoiceId.replace(/\D/g, '');
-            const response = await axiosInstance.get(`/api/hoadon/1/export-pdf/`, {
-                responseType: 'blob'
+            const numericId = invoiceId.replace(/^HD/, '');
+            const response = await axiosInstance.get(`/hoadon/${numericId}/export-pdf/`, {
+                responseType: 'blob',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user'))?.token}`,
+                    'Content-Type': 'application/pdf',
+                }
             });
             return response.data;
         } catch (error) {
             console.error('Error exporting PDF:', error);
-            if (error.response) {
-                const status = error.response.status;
-                const message = error.response.data?.detail || JSON.stringly(error.response.data);
-            }
             throw error;
         }
     }

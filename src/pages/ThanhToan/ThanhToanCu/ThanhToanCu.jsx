@@ -25,7 +25,7 @@ function ThanhToanCu() {
     const [showValidationModal, setShowValidationModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showConfirmSaveModal, setShowConfirmSaveModal] = useState(false);
-    const [savedReceiptId, setSavedReceiptId] = useState('');
+    const [savedReceiptId, setSavedReceiptId] = useState(null);
     const [tienKhachTraError, setTienKhachTraError] = useState(false);
     const [tienKhachTraErrorMsg, setTienKhachTraErrorMsg] = useState('');
     const [customerData, setCustomerData] = useState([]);
@@ -40,6 +40,8 @@ function ThanhToanCu() {
     });
     const [employeeInfo, setEmployeeInfo] = useState({ id: '', name: '' });
     const [message, setMessage] = useState('');
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [showPdfModal, setShowPdfModal] = useState(false);
 
     const formatNumber = (value) => {
         if (!value && value !== 0) return '';
@@ -179,6 +181,42 @@ function ThanhToanCu() {
             });
         } catch {
             setEmployeeInfo({ id: value, name: '' });
+        }
+    };
+
+    const handlePrintPT = async () => {
+        if (!savedReceiptId) {
+            console.error('No receipt ID found');
+            return;
+        }
+
+        try {
+            const receiptId = savedReceiptId.toString().replace(/^PT/, '');
+            console.log('Printing receipt with ID:', receiptId); // Debug log
+
+            const response = await fetch(`http://localhost:8000/api/phieuthutien/${receiptId}/export-pdf/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user'))?.token}`,
+                    'Content-Type': 'application/pdf',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            setPdfUrl(url);
+            setShowPdfModal(true);
+        } catch (error) {
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                response: error.response
+            });
+            alert('Có lỗi khi in phiếu thu tiền. Vui lòng thử lại.');
         }
     };
 
@@ -423,12 +461,21 @@ function ThanhToanCu() {
                     <div className="success-modal-ttc">
                         <div className="success-modal-content-ttc">
                             <p>Phiếu thu tiền đã được lưu thành công!</p>
-                            <button
-                                className="close-modal-button-ttc"
-                                onClick={() => setShowSuccessModal(false)}
-                            >
-                                Đóng
-                            </button>
+                            <div className="modal-actions-ttc">
+                                <button
+                                    className="close-modal-button-ttc"
+                                    onClick={handlePrintPT}
+                                    style={{ marginRight: '10px' }}
+                                >
+                                    In phiếu thu
+                                </button>
+                                <button
+                                    className="close-modal-button-ttc"
+                                    onClick={() => setShowSuccessModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -449,6 +496,38 @@ function ThanhToanCu() {
                                     onClick={() => setShowConfirmSaveModal(false)}
                                 >
                                     Không
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showPdfModal && pdfUrl && (
+                    <div className="pdf-modal-overlay-ttc" onClick={(e) => {
+                        if (e.target.className === 'pdf-modal-overlay-ttc') {
+                            setShowPdfModal(false);
+                            window.URL.revokeObjectURL(pdfUrl);
+                            setPdfUrl(null);
+                        }
+                    }}>
+                        <div className="pdf-modal-content-ttc">
+                            <iframe
+                                src={pdfUrl}
+                                title="Receipt PDF"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 'none' }}
+                            />
+                            <div style={{ textAlign: 'right', padding: 8 }}>
+                                <button
+                                    className="close-modal-button-ttc"
+                                    onClick={() => {
+                                        setShowPdfModal(false);
+                                        window.URL.revokeObjectURL(pdfUrl);
+                                        setPdfUrl(null);
+                                    }}
+                                >
+                                    Đóng
                                 </button>
                             </div>
                         </div>

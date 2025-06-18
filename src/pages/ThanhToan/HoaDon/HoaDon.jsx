@@ -23,6 +23,22 @@ function HoaDon() {
     const [pdfUrl, setPdfUrl] = useState(null);
     const [showPdfModal, setShowPdfModal] = useState(false);
 
+        const [pageInput, setPageInput] = useState(currentPage);
+        const handlePageInputChange = (e) => {
+        let value = e.target.value;
+        setPageInput(value);
+      };
+    
+        const handlePageSubmit = (e) => {
+        e.preventDefault();
+        let pageNumber = parseInt(pageInput);
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+          setCurrentPage(pageNumber);
+        } else {
+          setPageInput(currentPage);
+        }
+      };
+
     const sortInvoices = (invoices) => {
         return [...invoices].sort((a, b) => {
             const idA = parseInt(a.maHoaDon.replace('HD', ''));
@@ -298,6 +314,16 @@ function HoaDon() {
 
     const selectedInvoice = selectedInvoiceIndex !== null ? filteredInvoices[selectedInvoiceIndex] : null;
 
+    // Add new handler for PDF modal backdrop click
+    const handlePdfModalClose = (e) => {
+        // Only close if clicking the backdrop (not the iframe)
+        if (e.target.classList.contains('modal-thd')) {
+            setShowPdfModal(false);
+            window.URL.revokeObjectURL(pdfUrl);
+            setPdfUrl(null);
+        }
+    };
+
     return (
         <div className="page-container">
             <h1 className="page-title">Danh Sách Các Hóa Đơn</h1>
@@ -312,71 +338,80 @@ function HoaDon() {
                     />
                 </div>
                 <div className="invoice-table-container-thd">
-                <table className="invoice-table-thd">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Mã Hóa Đơn</th>
-                            <th>Mã Nhân Viên</th>
-                            <th>Nhân Viên Lập</th>
-                            <th>Mã Khách Hàng</th>
-                            <th>Tên Khách Hàng</th>
-                            <th>Ngày Lập Hóa Đơn</th>
-                            <th>Số Tiền Khách Trả</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentInvoices.map((invoice, index) => (
-                            <tr key={invoice.maHoaDon}>
-                                <td>{(currentPage - 1) * invoicesPerPage + index + 1}</td>
-                                <td>{invoice.maHoaDon}</td>
-                                <td>{invoice.maNhanVien}</td>
-                                <td>{invoice.nhanVien}</td>
-                                <td>{invoice.maKhachHang}</td>
-                                <td>{invoice.tenKhachHang}</td>
-                                <td>{invoice.ngayLap}</td>
-                                <td>
-                                    {invoice.tienKhachTra !== undefined
-                                        ? Number(invoice.tienKhachTra).toLocaleString() + '  VNĐ'
-                                        : 'Chưa có'}
-                                </td>
-                                <td>
-                                    <div className="action-buttons-thd">
-                                    <FontAwesomeIcon
-                                        icon={faEdit}
-                                        className="action-button-thd"
-                                        onClick={() => handleViewInvoice(invoice.maHoaDon)}
-                                    />
-    
-                                   
-                                    </div>
-                                </td>
+                    <table className="invoice-table-thd">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Mã Hóa Đơn</th>
+                                <th>Mã Nhân Viên</th>
+                                <th>Nhân Viên Lập</th>
+                                <th>Mã Khách Hàng</th>
+                                <th>Tên Khách Hàng</th>
+                                <th>Ngày Lập Hóa Đơn</th>
+                                <th>Số Tiền Khách Trả</th>
+                                <th>Hành Động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {currentInvoices.map((invoice, index) => (
+                                <tr key={invoice.maHoaDon}>
+                                    <td>{(currentPage - 1) * invoicesPerPage + index + 1}</td>
+                                    <td>{invoice.maHoaDon}</td>
+                                    <td>{invoice.maNhanVien}</td>
+                                    <td>{invoice.nhanVien}</td>
+                                    <td>{invoice.maKhachHang}</td>
+                                    <td>{invoice.tenKhachHang}</td>
+                                    <td>{invoice.ngayLap}</td>
+                                    <td>
+                                        {invoice.tienKhachTra !== undefined
+                                            ? Number(invoice.tienKhachTra).toLocaleString() + '  VNĐ'
+                                            : 'Chưa có'}
+                                    </td>
+                                    <td>
+                                        <div className="action-buttons-thd">
+                                            <FontAwesomeIcon
+                                                icon={faEdit}
+                                                className="action-button-thd"
+                                                onClick={() => handleViewInvoice(invoice.maHoaDon)}
+                                            />
 
-                {/* Add pagination buttons */}
-                <div className="pagination-buttons-thd">
-                    <button
-                        onClick={handlePrevPage}
-                        disabled={currentPage === 1}
-                        className="pagination-buttons-thd-button"
-                    >
-                        ←
-                    </button>
-                    <span className="pagination-info-thd">
-                        Trang {currentPage} / {totalPages}
-                    </span>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
-                        className="pagination-buttons-thd-button"
-                    >
-                        →
-                    </button>
-                </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* Add pagination buttons */}
+                    <div className="pagination-buttons-thd">
+                        <button
+                            onClick={handlePrevPage}
+                            disabled={currentPage === 1}
+                            className="pagination-buttons-thd-button"
+                        >
+                            ←
+                        </button>
+                        <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+                        <span>Trang </span>
+                        <input
+                            type="number"
+                            value={pageInput}
+                            onChange={handlePageInputChange}
+                            min="1"
+                            max={totalPages}
+                            className="nhap-sach-page-input"
+                        />
+                        <span>/{Math.max(1, totalPages)}</span>
+                        </form>
+                        <button
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                            className="pagination-buttons-thd-button"
+                        >
+                            →
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -464,15 +499,24 @@ function HoaDon() {
             )}
 
             {showPdfModal && pdfUrl && (
-                <div className="modal-thd" style={{zIndex: 9999}}>
-                    <div className="modal-content-thd" style={{width: '80vw', height: '90vh', padding: 0}}>
+                <div className="modal-thd" style={{ zIndex: 9999 }} onClick={handlePdfModalClose}>
+                    <div className="modal-content-thd" style={{ width: '80vw', height: '90vh', padding: 0 }}>
                         <iframe
                             src={pdfUrl}
                             title="Xem trước hóa đơn"
-                            style={{width: '100%', height: '100%', border: 'none'}}
+                            style={{ width: '100%', height: '100%', border: 'none' }}
                         />
-                        <div style={{textAlign: 'right', padding: 8}}>
-                            <button className="close-button-thd" onClick={() => { setShowPdfModal(false); window.URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }}>Đóng</button>
+                        <div style={{ textAlign: 'right', padding: 8 }}>
+                            <button
+                                className="close-button-thd"
+                                onClick={() => {
+                                    setShowPdfModal(false);
+                                    window.URL.revokeObjectURL(pdfUrl);
+                                    setPdfUrl(null);
+                                }}
+                            >
+                                Đóng
+                            </button>
                         </div>
                     </div>
                 </div>

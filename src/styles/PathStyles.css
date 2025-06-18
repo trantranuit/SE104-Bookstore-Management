@@ -36,6 +36,25 @@
     padding: 1.25rem;
 }
 
+.nhap-sach-page-input-form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 0;
+}
+
+.nhap-sach-page-input {
+  width: 3rem;
+  height: 1.5rem;
+  padding: 0.5rem;
+  padding-left: 0.8rem;
+  padding-right: 0;
+  text-align: center;
+  border: 1px solid #e7e7e7;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
 /* Media queries for smaller screens */
 @media (max-width: 768px) {
     .page-container {

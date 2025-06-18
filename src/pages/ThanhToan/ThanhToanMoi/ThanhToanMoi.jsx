@@ -54,6 +54,8 @@ function ThanhToanMoi() {
         const year = today.getFullYear();
         return `${day}/${month}/${year}`;
     });
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [showPdfModal, setShowPdfModal] = useState(false);
 
     const formatNumber = (value) => {
         if (!value) return '';
@@ -506,25 +508,37 @@ function ThanhToanMoi() {
         }
     };
 
-    const handlePrintInvoice = async (savedInvoiceId) => {
-        if (!savedInvoiceId) {
-            console.error('No invoice ID available');
-            return;
-        }
+    const handlePrintInvoice = async () => {
+        if (!savedInvoiceId) return;
 
         try {
-            const pdfBlob = await thanhToanMoiApi.exportInvoicePDF(savedInvoiceId);
-            const pdfUrl = URL.createObjectURL(new Blob([pdfBlob], {type: 'application/pdf'}));
-            const printWindow = window.open(pdfUrl);
-
-            if (printWindow) {
-            printWindow.onload = () => {
-                printWindow.print();
-            };
-        }
+            const invoiceId = savedInvoiceId.replace('HD', '');
+            const response = await fetch(`http://localhost:8000/api/hoadon/${invoiceId}/export-pdf/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user'))?.token}`,
+                    'Content-Type': 'application/pdf',
+                },
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                setPdfUrl(url);
+                setShowPdfModal(true);
+            } else {
+                alert('Có lỗi khi in hóa đơn. Vui lòng thử lại.');
+            }
         } catch (error) {
             console.error('Error printing invoice:', error);
-            alert('Có lỗi khi in hóa đơn!');
+            alert('Có lỗi khi in hóa đơn. Vui lòng thử lại.');
+        }
+    };
+
+    // Add modal close handler
+    const handleCloseModal = (e) => {
+        if (e.target.classList.contains('pdf-modal-overlay')) {
+            setShowPdfModal(false);
+            setPdfUrl(null);
         }
     };
 
@@ -690,7 +704,7 @@ function ThanhToanMoi() {
                         <div className="notification-actions-ttm">
                             <button
                                 className="close-button-ttm"
-                                onClick={handlePrintInvoice(savedInvoiceId)}
+                                onClick={handlePrintInvoice}
                                 style={{ marginRight: '10px' }}
                             >
                                 In hóa đơn
@@ -767,6 +781,32 @@ function ThanhToanMoi() {
                                 onClick={() => setShowConfirmSaveModal(false)}
                             >
                                 Không
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showPdfModal && pdfUrl && (
+                <div className="notification-modal-ttm">
+                    <div className="notification-content-ttm" style={{ width: '80vw', height: '90vh', padding: 0 }}>
+                        <iframe
+                            src={pdfUrl}
+                            title="Invoice PDF"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 'none' }}
+                        />
+                        <div style={{ textAlign: 'right', padding: 8 }}>
+                            <button
+                                className="close-button-ttm"
+                                onClick={() => {
+                                    setShowPdfModal(false);
+                                    window.URL.revokeObjectURL(pdfUrl);
+                                    setPdfUrl(null);
+                                }}
+                            >
+                                Đóng
                             </button>
                         </div>
                     </div>
@@ -980,7 +1020,7 @@ function ThanhToanMoi() {
                             <p><strong>Họ và tên khách hàng:</strong> {customerInfo.name}</p>
                             <p><strong>Số điện thoại:</strong> {customerInfo.phone}</p>
                             <p><strong>Email:</strong> {customerInfo.email}</p>
-                            <p><strong>Số tiền nợ:</strong> {formatNumber(customerInfo.debt)}VNĐ</p>
+                            <p><strong>Số tiền nợ:</strong> {formatNumber(customerInfo.debt)} VNĐ</p>
                         </div>
                     </div>
                     <div className="actions-ttm">

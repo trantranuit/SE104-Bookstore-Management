@@ -13,7 +13,25 @@ function PhieuThuTien() {
     const [employeeData, setEmployeeData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [showPdfModal, setShowPdfModal] = useState(false);
 
+    const [pageInput, setPageInput] = useState(currentPage);
+    const handlePageInputChange = (e) => {
+    let value = e.target.value;
+    setPageInput(value);
+  };
+
+    const handlePageSubmit = (e) => {
+    e.preventDefault();
+    let pageNumber = parseInt(pageInput);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    } else {
+      setPageInput(currentPage);
+    }
+  };
+  
     useEffect(() => {
         // Fetch all receipts
         phieuThuTienApi.getAllReceipts()
@@ -33,6 +51,44 @@ function PhieuThuTien() {
         String(receipt.MaPhieuThu).toLowerCase().includes(searchTerm.toLowerCase()) ||
         (receipt.NgayThu || '').includes(searchTerm)
     );
+
+    //print
+    
+    const handlePrintPT = async () => {
+        if (!selectedReceiptId) {
+            console.error('No receipt ID found');
+            return;
+        }
+        
+        try {
+            const receiptId = selectedReceiptId.toString().replace(/^PT/, '');
+            console.log('Printing receipt with ID:', receiptId); // Debug log
+            
+            const response = await fetch(`http://localhost:8000/api/phieuthutien/${receiptId}/export-pdf/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user'))?.token}`,
+                    'Content-Type': 'application/pdf',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            setPdfUrl(url);
+            setShowPdfModal(true);
+        } catch (error) {
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                response: error.response
+            });
+            alert('Có lỗi khi in phiếu thu tiền. Vui lòng thử lại.');
+        }
+    };
 
     // Calculate pagination
     const totalPages = Math.ceil(filteredReceipts.length / itemsPerPage);
@@ -146,9 +202,19 @@ function PhieuThuTien() {
                     >
                         ←
                     </button>
-                    <span className="pagination-info-ptt">
-                        Trang {currentPage}/{totalPages}
-                    </span>
+                    {/* <span className="pagination-info-ptt"> */}
+                        <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+                        <span>Trang </span>
+                        <input
+                            type="number"
+                            value={pageInput}
+                            onChange={handlePageInputChange}
+                            min="1"
+                            max={totalPages}
+                            className="nhap-sach-page-input"
+                        />
+                        <span>/{Math.max(1, totalPages)}</span>
+                        </form>
                     <button 
                         onClick={handleNextPage} 
                         disabled={currentPage === totalPages}
@@ -201,7 +267,43 @@ function PhieuThuTien() {
                             </div>
                         </div>
                         <div className="modal-actions-ptt">
-                            <button className="close-button-ptt" onClick={handleCloseModal}>Đóng</button>
+                            <button className="close-button-ptt" onClick={handlePrintPT} style={{ marginRight: '20px', width: '150px' }}>
+                                In phiếu thu
+                            </button>
+                            <button className="close-button-ptt" onClick={handleCloseModal}>
+                                Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showPdfModal && pdfUrl && (
+                <div className="modal-ptt" onClick={(e) => {
+                    if (e.target.className === 'modal-ptt') {
+                        setShowPdfModal(false);
+                        window.URL.revokeObjectURL(pdfUrl);
+                        setPdfUrl(null);
+                    }
+                }}>
+                    <div className="modal-content-ptt" style={{ width: '80vw', height: '90vh', padding: 0 }}>
+                        <iframe
+                            src={pdfUrl}
+                            title="Receipt PDF"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 'none'}}
+                        />
+                        <div style={{ textAlign: 'right', padding: 8 }}>
+                            <button
+                                className="close-button-ptt"
+                                onClick={() => {
+                                    setShowPdfModal(false);
+                                    window.URL.revokeObjectURL(pdfUrl);
+                                    setPdfUrl(null);
+                                }}
+                            >
+                                Đóng
+                            </button>
                         </div>
                     </div>
                 </div>
