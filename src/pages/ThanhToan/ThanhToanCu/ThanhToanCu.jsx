@@ -463,7 +463,7 @@ function ThanhToanCu() {
                             <p>Phiếu thu tiền đã được lưu thành công!</p>
                             <div className="modal-actions-ttc">
                                 <button
-                                    className="close-modal-button-ttc"
+                                    className="print-modal-button-ttc"
                                     onClick={handlePrintPT}
                                     style={{ marginRight: '10px' }}
                                 >

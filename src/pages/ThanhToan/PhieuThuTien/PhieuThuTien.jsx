@@ -267,7 +267,7 @@ function PhieuThuTien() {
                             </div>
                         </div>
                         <div className="modal-actions-ptt">
-                            <button className="close-button-ptt" onClick={handlePrintPT} style={{ marginRight: '20px', width: '150px' }}>
+                            <button className="print-button-ptt" onClick={handlePrintPT} style={{ marginRight: '20px', width: '150px' }}>
                                 In phiếu thu
                             </button>
                             <button className="close-button-ptt" onClick={handleCloseModal}>

@@ -703,7 +703,7 @@ function ThanhToanMoi() {
                         <p>Thanh toán thành công!</p>
                         <div className="notification-actions-ttm">
                             <button
-                                className="close-button-ttm"
+                                className="print-button-ttm"
                                 onClick={handlePrintInvoice}
                                 style={{ marginRight: '10px' }}
                             >
