@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle, useCallback } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import baoCaoCongNoService from "../../../services/baoCaoCongNoService";
 
@@ -6,6 +6,7 @@ const TableCongNo = forwardRef(({ month, year }, ref) => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [pageInput, setPageInput] = useState(1);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -36,6 +37,7 @@ const TableCongNo = forwardRef(({ month, year }, ref) => {
   useImperativeHandle(ref, () => ({
     refreshData: fetchData
   }), [fetchData]);
+
   const columns = [
     {
       header: "No.",
@@ -89,6 +91,25 @@ const TableCongNo = forwardRef(({ month, year }, ref) => {
     },
   });
 
+  const pageIndex = table.getState().pagination.pageIndex;
+  useEffect(() => {
+    setPageInput(pageIndex + 1);
+  }, [pageIndex]);
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  const handlePageSubmit = (e) => {
+    e.preventDefault();
+    let pageNumber = parseInt(pageInput);
+    if (pageNumber >= 1 && pageNumber <= table.getPageCount()) {
+      table.setPageIndex(pageNumber - 1);
+    } else {
+      setPageInput(table.getState().pagination.pageIndex + 1);
+    }
+  };
+
   if (isLoading) return <div className="loading-container">Đang tải dữ liệu...</div>;
   if (error && data.length === 0) return <div className="error-container">{error}</div>;
   if (data.length === 0) return <div className="empty-container">Vui lòng bấm nút "Xuất báo cáo" để xem báo cáo công nợ</div>;
@@ -128,9 +149,18 @@ const TableCongNo = forwardRef(({ month, year }, ref) => {
           >
             ←
           </button>
-          <span className="pagination-info-bccn">
-            Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-          </span>
+          <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
+            <span>Trang </span>
+            <input
+              type="number"
+              value={pageInput}
+              onChange={handlePageInputChange}
+              min="1"
+              max={table.getPageCount()}
+              className="nhap-sach-page-input"
+            />
+            <span>/{Math.max(1, table.getPageCount())}</span>
+          </form>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
