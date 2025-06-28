@@ -300,19 +300,19 @@
 
 .invoice-table-thd th:nth-child(6),
 .invoice-table-thd td:nth-child(6) {
-    width: 20%;
+    width: 13%;
     /* Set width for the sixth column */
 }
 
 .invoice-table-thd th:nth-child(7),
 .invoice-table-thd td:nth-child(7) {
-    width: 10%;
+    width: 13%;
     /* Set width for the seventh column */
 }
 
 .invoice-table-thd th:nth-child(8),
 .invoice-table-thd td:nth-child(8) {
-    width: 10%;
+    width: 14%;
     /* Set width for the eighth column */
 }
 
@@ -606,4 +606,142 @@
 .action-button-thd:hover {
     color: #0056b3;
     /* Darker blue on hover */
+}
+
+.filter-button-hd {
+    padding: 0.8rem 1rem;
+    background-color: #4296f0;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.filter-button-hd.active-filter-ns {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+.filter-button-hd:hover {
+    background-color: #0056b3;
+}
+
+.modal-new-hd {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    width: 30rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.modal-overlay-hd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-title-new-hd {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin: 0;
+}
+
+
+
+
+
+.modal-buttons-hd {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0;
+    
+}
+
+.apply-button-hd,
+.cancel-button-new-hd,
+.close-button-new-hd {
+    padding: 1rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.apply-button-ns {
+    background-color: #28a745;
+    color: white;
+}
+
+.apply-button-hd:hover {
+    background-color: #218838;
+}
+
+.cancel-button-new-hd {
+    background-color: #ffc107;
+    color: black;
+}
+
+.cancel-button-new-hd:hover {
+    background-color: #e0a800;
+}
+
+.close-button-new-hd {
+    background-color: #dc3545;
+    color: white;
+}
+
+.close-button-new-hd:hover {
+    background-color: #c82333;
+}
+
+.active-filters-hd {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.active-filter-tag-hd {
+    background-color: #007bff;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.remove-filter-hd {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-filter-hd:hover {
+    color: #ccc;
 }

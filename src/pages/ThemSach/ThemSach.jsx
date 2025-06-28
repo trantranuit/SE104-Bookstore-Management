@@ -816,23 +816,25 @@ function ThemSach() {
       <div className="content-wrapper block-container-ts">
         {/* Block 1: Thêm sách mới */}
         <div className="block-ts">
-          <h2 className="block-title-ts">Thêm Sách Mới</h2>
+          <h2 className="block-title-ts">Thêm sách mới</h2>
           {!showBookForm && !showSuccessMessage && (
             <div>
+              {/* <div className="form-row-tsm">
+                { <label>Mã Sách Mới:</label>
+                <input type="text" value={maSachMoi} disabled /> }
+              </div> */}
               <div className="form-row-tsm">
-                <label>Mã Sách Mới:</label>
-                <input type="text" value={maSachMoi} disabled />
-              </div>
-              <div className="form-row-tsm">
-                <label>Tên Sách:</label>
+                <label>Tên sách:</label>
                 <input
                   type="text"
                   value={tenSach}
                   onChange={(e) => setTenSach(e.target.value)}
+                  placeholder={tenTacGia.length === 0 ? "Nhập tên sách mới" : ""}
+                  style={{ backgroundColor: 'white' }}
                 />
               </div>
               <div className="form-row-tsm">
-                <label>Tên Tác Giả:</label>
+                <label>Tên tác giả:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={dropdownRef}
@@ -862,6 +864,7 @@ function ThemSach() {
                       placeholder={tenTacGia.length === 0 ? "Chọn tác giả" : ""}
                       className="author-input-tsm"
                       onClick={() => setShowTacGiaDropdown(true)}
+                      style={{ backgroundColor: 'white' }}
                     />
                   </div>
                   {showTacGiaDropdown && (
@@ -903,7 +906,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Thể Loại:</label>
+                <label>Thể loại:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={genreDropdownRef}
@@ -931,6 +934,7 @@ function ThemSach() {
                       placeholder={theLoai.length === 0 ? "Chọn thể loại" : ""}
                       className="author-input-tsm"
                       onClick={() => setShowTheLoaiDropdown(true)}
+                      style={{ backgroundColor: 'white' }}
                     />
                   </div>
                   {showTheLoaiDropdown && (
@@ -974,7 +978,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Nhà Xuất Bản:</label>
+                <label>Nhà xuất bản:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={nxbDropdownRef}
@@ -1005,6 +1009,7 @@ function ThemSach() {
                       }
                       className="author-input-tsm"
                       onClick={() => setShowNXBDropdown(true)}
+                      style={{ backgroundColor: 'white' }}
                     />
                   </div>
                   {showNXBDropdown && (
@@ -1047,12 +1052,13 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Năm Xuất Bản:</label>
+                <label>Năm xuất bản:</label>
                 <input
                   type="text"
                   value={namXuatBan}
                   onChange={(e) => setNamXuatBan(e.target.value)}
                   placeholder="Nhập năm xuất bản"
+                  style={{ backgroundColor: 'white' }}
                 />
               </div>
               {message && (
@@ -1066,7 +1072,7 @@ function ThemSach() {
                 </div>
               )}
               <button className="button-tsm" onClick={handleSubmit}>
-                Thêm Sách
+                Thêm sách
               </button>
             </div>
           )}
@@ -1075,18 +1081,18 @@ function ThemSach() {
           {showCreateDauSach && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm">
-                <h2>Thông Tin Đầu Sách Mới</h2>
+                <h2>Thông tin đầu sách mới</h2>
                 <div
                   className="modal-them-sach-container-tsm"
                   style={{ marginBottom: "20px" }}
                 >
-                  <div>Tên Sách: {tenSach}</div>
+                  <div>Tên sách: {tenSach}</div>
                   <div>
-                    Tên Tác Giả:{" "}
+                    Tên tác giả:{" "}
                     {tenTacGia.map((author) => author.TenTG).join(", ")}
                   </div>
                   <div>
-                    Thể Loại:{" "}
+                    Thể loại:{" "}
                     {theLoai.map((genre) => genre.TenTheLoai).join(", ")}
                   </div>
                 </div>
@@ -1112,23 +1118,23 @@ function ThemSach() {
           {showBookForm && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm">
-                <h2>Thông Tin Sách Mới</h2>
+                <h2>Thông tin sách mới</h2>
                 <div
                   className="modal-them-sach-container-tsm"
                   style={{ marginBottom: "20px" }}
                 >
-                  <div>Mã Sách: {maSachMoi}</div>
-                  <div>Tên Sách: {tenSach}</div>
+                  <div>Mã sách: {maSachMoi}</div>
+                  <div>Tên sách: {tenSach}</div>
                   <div>
-                    Tác Giả:{" "}
+                    Tác giả:{" "}
                     {tenTacGia.map((author) => author.TenTG).join(", ")}
                   </div>
                   <div>
-                    Thể Loại:{" "}
+                    Thể loại:{" "}
                     {theLoai.map((genre) => genre.TenTheLoai).join(", ")}
                   </div>
-                  <div>Nhà Xuất Bản: {nhaXuatBan}</div>
-                  <div>Năm Xuất Bản: {namXuatBan}</div>
+                  <div>Nhà xuất bản: {nhaXuatBan}</div>
+                  <div>Năm xuất bản: {namXuatBan}</div>
                 </div>
                 <div className="modal-buttons-container-tsm">
                   <button className="adds-button-tsm" onClick={handleSaveBook}>
@@ -1149,7 +1155,7 @@ function ThemSach() {
           {showSuccessMessage && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="success-modal-tsm">
-                <h2>Thêm Sách Thành Công!</h2>
+                <h2>Thêm sách thành công!</h2>
               </div>
             </div>
           )}
@@ -1158,7 +1164,7 @@ function ThemSach() {
           {showAddTacGiaInput && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm" ref={modalRef}>
-                <h2>Thêm Tác Giả Mới</h2>
+                <h2>Thêm tác giả mới</h2>
                 <div className="modal-content-tsm">
                   <input
                     type="text"
@@ -1166,6 +1172,7 @@ function ThemSach() {
                     value={newTacGia}
                     onChange={handleAuthorInputChange}
                     className="modal-input-tsm"
+                    style={{ backgroundColor: 'white' }}
                     autoFocus
                   />
                 </div>
@@ -1220,7 +1227,7 @@ function ThemSach() {
           {showAddTheLoaiInput && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm" ref={modalRef}>
-                <h2>Thêm Thể Loại Mới</h2>
+                <h2>Thêm thể loại mới</h2>
                 <div className="modal-content-tsm">
                   <input
                     type="text"
@@ -1293,7 +1300,7 @@ function ThemSach() {
           {showAddNXBInput && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm">
-                <h2>Thêm Nhà Xuất Bản Mới</h2>
+                <h2>Thêm nhà xuất bản mới</h2>
                 <div className="modal-content-tsm">
                   <input
                     type="text"
@@ -1366,7 +1373,7 @@ function ThemSach() {
           {showConfirmExistingBook && (
             <div className="modal-overlay-them-sach-tsm">
               <div className="modal-them-sach-tsm">
-                <h2>Thêm Sách Mới</h2>
+                <h2>Thêm sách mới</h2>
                 <p>
                   Đầu sách đã tồn tại, bạn có muốn thêm sách mới với đầu sách
                   này không?
@@ -1399,7 +1406,7 @@ function ThemSach() {
             <div className="modal-overlay-them-sach-tsm">
               <div className="success-modal-tsm">
                 <div className="success-icon">✓</div>
-                <h2>Thêm Sách Thành Công!</h2>
+                <h2>Thêm sách thành công!</h2>
                 <p>Sách đã được thêm vào đầu sách hiện có.</p>
               </div>
             </div>
@@ -1410,7 +1417,7 @@ function ThemSach() {
             <div className="modal-overlay-them-sach-tsm">
               <div className="error-modal-tsm">
                 <h2>Lỗi!</h2>
-                <p>Sách với thông tin này đã tồn tại. Vui lòng kiểm tra lại.</p>
+                <p>Sách với thông tin này đã tồn tại. Vui lòng kiểm tra lại!</p>
                 <button
                   className="close-error-modal-tsm"
                   onClick={() => setShowBookExistsError(false)}
@@ -1426,7 +1433,7 @@ function ThemSach() {
             <div className="modal-overlay-them-sach-tsm">
               <div className="success-modal-tsm">
                 <div className="success-icon">✓</div>
-                <h2>Cập Nhật Thành Công!</h2>
+                <h2>Cập Nnật thành công!</h2>
                 <p>
                   {isUpdatingDauSach ? "Thông tin đầu sách" : "Thông tin sách"}{" "}
                   đã được cập nhật.
@@ -1460,7 +1467,7 @@ function ThemSach() {
 
         {/* Block 2: Sửa Thông Tin Đầu Sách */}
         <div className="block-ts">
-          <h2 className="block-title-ts">Sửa Thông Tin Sách - Đầu Sách</h2>
+          <h2 className="block-title-ts">Sửa thông tin sách - đầu sách</h2>
           <div className="search-block-ts">
             <input
               type="text"
@@ -1485,24 +1492,25 @@ function ThemSach() {
 
           {showEditDauSach && (
             <div className="edit-form-ts">
-              <h2>
+              <h2 style={{marginBottom: '1.5rem'}}>
                 {isEditingBook
-                  ? "Sửa Thông Tin Sách"
-                  : "Sửa Thông Tin Đầu Sách"}
+                  ? "Sửa thông tin sách"
+                  : "Sửa thông tin đầu sách"}
               </h2>
               <div className="form-row-tsm">
-                <label>Mã Đầu Sách:</label>
+                <label>Mã đầu sách:</label>
                 <input type="text" value={editDauSach.maDauSach} disabled />
               </div>
               {isEditingBook && (
                 <div className="form-row-tsm">
-                  <label>Mã Sách:</label>
+                  <label>Mã sách:</label>
                   <input type="text" value={editDauSach.maSach} disabled />
                 </div>
               )}
               <div className="form-row-tsm">
-                <label>Tên Sách:</label>
+                <label>Tên sách:</label>
                 <input
+                
                   type="text"
                   value={editDauSach.tenSach}
                   onChange={(e) =>
@@ -1512,7 +1520,7 @@ function ThemSach() {
                 />
               </div>
               <div className="form-row-tsm">
-                <label>Tác Giả:</label>
+                <label>Tác giả:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={dropdownRef}
@@ -1542,6 +1550,7 @@ function ThemSach() {
                       ))}
                     </div>
                     <input
+                  
                       type="text"
                       value={newTacGia}
                       onChange={handleAuthorInputChange}
@@ -1602,7 +1611,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Thể Loại:</label>
+                <label>Thể loại:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={genreDropdownRef}
@@ -1632,6 +1641,7 @@ function ThemSach() {
                       ))}
                     </div>
                     <input
+                      
                       type="text"
                       value={newTheLoai}
                       onChange={(e) => setNewTheLoai(e.target.value)}
@@ -1692,7 +1702,7 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Nhà Xuất Bản:</label>
+                <label>Nhà xuất bản:</label>
                 <div
                   style={{ position: "relative", width: "100%" }}
                   ref={nxbDropdownRef}
@@ -1718,18 +1728,15 @@ function ThemSach() {
                       ))}
                     </div>
                     <input
+                    style={{ backgroundColor: 'white' }}
                       type="text"
                       value={newNXB}
                       onChange={(e) => setNewNXB(e.target.value)}
-                      placeholder={
-                        editDauSach.selectedNXB.length === 0
-                          ? "Chọn nhà xuất bản"
-                          : ""
-                      }
+                    
                       className="author-input-tsm"
                       onClick={() => setShowNXBDropdown(true)}
                       disabled={!isEditingBook}
-                    />
+                      />
                   </div>
                   {showNXBDropdown && isEditingBook && (
                     <div className="dropdown-container-tsm">
@@ -1774,8 +1781,9 @@ function ThemSach() {
                 </div>
               </div>
               <div className="form-row-tsm">
-                <label>Năm Xuất Bản:</label>
+                <label>Năm xuất bản:</label>
                 <input
+                style={{ backgroundColor: 'white' }}
                   type="text"
                   value={editDauSach.namXuatBan}
                   onChange={(e) =>

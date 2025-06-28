@@ -298,7 +298,7 @@
     font-size: 0.8rem;
 }
 
-.modal-buttons-ns {
+.modal-buttons-hd {
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -306,9 +306,9 @@
     
 }
 
-.apply-button-ns,
-.cancel-button-new-ns,
-.close-button-new-ns {
+.apply-button-hd,
+.cancel-button-new-hd,
+.close-button-new-hd {
     padding: 1rem 1rem;
     border: none;
     border-radius: 0.5rem;
@@ -316,30 +316,30 @@
     font-size: 0.8rem;
 }
 
-.apply-button-ns {
+.apply-button-hd {
     background-color: #28a745;
     color: white;
 }
 
-.apply-button-ns:hover {
+.apply-button-hd:hover {
     background-color: #218838;
 }
 
-.cancel-button-new-ns {
+.cancel-button-new-hd {
     background-color: #ffc107;
     color: black;
 }
 
-.cancel-button-new-ns:hover {
+.cancel-button-new-hd:hover {
     background-color: #e0a800;
 }
 
-.close-button-new-ns {
+.close-button-new-hd {
     background-color: #dc3545;
     color: white;
 }
 
-.close-button-new-ns:hover {
+.close-button-new-hd:hover {
     background-color: #c82333;
 }
 

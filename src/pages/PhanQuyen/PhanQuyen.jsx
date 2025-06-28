@@ -3,6 +3,7 @@ import '../../styles/PathStyles.css';
 import './PhanQuyen.css';
 import { FaEdit, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { getUsers, addUser, updateUser } from '../../services/phanQuyen';
+import { getAllUsers, searchUser, addRole } from "../../services/phanQuyen";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,6 +11,8 @@ function PhanQuyen() {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+    const [isAddRoleModalOpen, setIsAddRoleModalOpen] = useState(false);
+    const [newRoleName, setNewRoleName] = useState("");
     const [newUser, setNewUser] = useState({ first_name: '', last_name: '', gioiTinh: '', role: '' });
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
     const [editUser, setEditUser] = useState(null);
@@ -61,15 +64,16 @@ function PhanQuyen() {
     };
 
     // Lấy danh sách người dùng từ API
+    const fetchUsers = async () => {
+        try {
+            const userData = await getUsers();
+            setUsers(userData);
+        } catch (error) {
+            setMessage(error.message);
+        }
+    };
+
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const userData = await getUsers();
-                setUsers(userData);
-            } catch (error) {
-                setMessage(error.message);
-            }
-        };
         fetchUsers();
     }, []);
 
@@ -247,21 +251,21 @@ function PhanQuyen() {
                         value={newUser.first_name}
                         onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
                     />
-                    <label>Giới Tính</label>
+                    <label>Giới tính</label>
                     <select
                         value={newUser.gioiTinh}
                         onChange={(e) => setNewUser({ ...newUser, gioiTinh: e.target.value })}
                     >
-                        <option value="">Chọn Giới Tính</option>
+                        <option value="">Chọn giới tính</option>
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
                     </select>
-                    <label>Vai Trò</label>
+                    <label>Vai trò</label>
                     <select
                         value={newUser.role}
                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                     >
-                        <option value="">Chọn Vai Trò</option>
+                        <option value="">Chọn vai trò</option>
                         <option value="NguoiNhap">Kho</option>
                         <option value="NguoiThu">Thu Ngân</option>
                         <option value="QuanLi">Quản Lý</option>
@@ -316,6 +320,19 @@ function PhanQuyen() {
         );
     };
 
+    const handleAddRole = async () => {
+        try {
+            await addRole(newRoleName);
+            setIsAddRoleModalOpen(false);
+            setNewRoleName("");
+            setMessage("Đã thêm vai trò thành công, vui lòng chọn cấu hình quyền cho vai trò mới ở phần Cấu Hình Quyền!");
+            fetchUsers(); // Refresh the user list
+        } catch (error) {
+            console.error("Error adding role:", error);
+            alert(error.message);
+        }
+    };
+
     // Pagination calculation
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -330,6 +347,7 @@ function PhanQuyen() {
         <div className="page-container">
             <h1 className="page-title">Phân Quyền</h1>
             <div className="content-wrapper content-wrapper-pq">
+                {/* Notification Modal for all messages */}
                 {message && (
                     <div style={{
                         position: 'fixed',
@@ -385,78 +403,85 @@ function PhanQuyen() {
                                 setIsAddUserModalOpen(true);
                             }}
                         >
-                            + Thêm Người Dùng
+                            + Thêm người dùng
+                        </button>
+                        <button
+                            className="add-user-button-pq"
+                            onClick={() => setIsAddRoleModalOpen(true)}
+                            style={{ marginLeft: '10px', minWidth: '10rem' }}
+                        >
+                            + Thêm vai trò
                         </button>
                     </div>
                     <div className="user-table-container-pq">
-                    <table className="user-table-pq">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Username</th>
-                                <th>Họ</th>
-                                <th>Tên</th>
-                                <th>Giới Tính</th>
-                                <th>Email</th>
-                                <th>Vai Trò</th>
-                                <th>Trạng Thái</th>
-                                <th>Hành Động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentUsers.map((user, index) => (
-                                <tr key={user.id}>
-                                    <td>{(currentPage - 1) * usersPerPage + index + 1}</td>
-                                    <td>{user.username}</td>
-                                    <td>{user.last_name}</td>
-                                    <td>{user.first_name}</td>
-                                    <td>{user.gioiTinh}</td>
-                                    <td>{user.email}</td>
-                                    <td>{roleMapping[user.role] || user.role}</td>
-                                    <td>
-                                        <span className={`status-badge-pq ${user.is_active ? 'active' : 'inactive'}`}>
-                                            {user.is_active ? 'Đang hoạt động' : 'Không hoạt động'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div className="action-buttons-pq">
-                                                                                                    <FontAwesomeIcon
-                                            icon={faEdit}
-                                            className="icon-button-pq" onClick={() => handleEditUser(user)}/>
-                                        </div>
-                                    </td>
+                        <table className="user-table-pq">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Username</th>
+                                    <th>Họ</th>
+                                    <th>Tên</th>
+                                    <th>Giới tính</th>
+                                    <th>Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {filteredUsers.length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '20px' }}>
-                            Không tìm thấy người dùng nào.
+                            </thead>
+                            <tbody>
+                                {currentUsers.map((user, index) => (
+                                    <tr key={user.id}>
+                                        <td>{(currentPage - 1) * usersPerPage + index + 1}</td>
+                                        <td>{user.username}</td>
+                                        <td>{user.last_name}</td>
+                                        <td>{user.first_name}</td>
+                                        <td>{user.gioiTinh}</td>
+                                        <td>{user.email}</td>
+                                        <td>{roleMapping[user.role] || user.role}</td>
+                                        <td>
+                                            <span className={`status-badge-pq ${user.is_active ? 'active' : 'inactive'}`}>
+                                                {user.is_active ? 'Đang hoạt động' : 'Không hoạt động'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div className="action-buttons-pq">
+                                                <FontAwesomeIcon
+                                                    icon={faEdit}
+                                                    className="icon-button-pq" onClick={() => handleEditUser(user)} />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {filteredUsers.length === 0 && (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                Không tìm thấy người dùng nào.
+                            </div>
+                        )}
+
+                        {/* Pagination controls */}
+                        <div className="pagination-container-pq">
+                            <button
+                                className="pagination-nav-button-pq"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                ←
+                            </button>
+
+                            <div className="pagination-info-pq">
+                                Trang {currentPage}/{totalPages}
+                            </div>
+
+                            <button
+                                className="pagination-nav-button-pq"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                →
+                            </button>
                         </div>
-                    )}
-
-                    {/* Pagination controls */}
-                    <div className="pagination-container-pq">
-                        <button
-                            className="pagination-nav-button-pq"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            ←
-                        </button>
-
-                        <div className="pagination-info-pq">
-                            Trang {currentPage}/{totalPages}
-                        </div>
-
-                        <button
-                            className="pagination-nav-button-pq"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            →
-                        </button>
-                    </div>
                     </div>
                 </div>
 
@@ -491,12 +516,12 @@ function PhanQuyen() {
                                         value={editUser.first_name || ''}
                                         onChange={e => setEditUser({ ...editUser, first_name: e.target.value })}
                                     />
-                                    <label>Giới Tính</label>
+                                    <label>Giới tính</label>
                                     <select
                                         value={editUser.gioiTinh || ''}
                                         onChange={e => setEditUser({ ...editUser, gioiTinh: e.target.value })}
                                     >
-                                        <option value="">Chọn Giới Tính</option>
+                                        <option value="">Chọn giới tính</option>
                                         <option value="Nam">Nam</option>
                                         <option value="Nữ">Nữ</option>
                                     </select>
@@ -510,13 +535,13 @@ function PhanQuyen() {
                                         value={editUser.role || ''}
                                         onChange={e => setEditUser({ ...editUser, role: e.target.value })}
                                     >
-                                        <option value="">Chọn Vai Trò</option>
+                                        <option value="">Chọn vai trò</option>
                                         <option value="NguoiNhap">Kho</option>
                                         <option value="NguoiThu">Thu Ngân</option>
                                         <option value="QuanLi">Quản Lý</option>
                                         <option value="Admin">Admin</option>
                                     </select>
-                                    <label>Trạng Thái</label>
+                                    <label>Trạng thái</label>
                                     <select
                                         value={editUser.is_active}
                                         onChange={e => setEditUser({ ...editUser, is_active: e.target.value === 'true' })}
@@ -544,7 +569,7 @@ function PhanQuyen() {
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            {showEditPassword ? <FaEyeSlash /> : <FaEye 
+                                            {showEditPassword ? <FaEyeSlash /> : <FaEye
                                             />}
                                         </button>
                                     </div>
@@ -558,6 +583,49 @@ function PhanQuyen() {
                                     setEditUserPassword('');
                                     setShowEditPassword(false);
                                 }}>Hủy</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Add Role Modal */}
+                {isAddRoleModalOpen && (
+                    <div className="modal-overlay-pq open">
+                        <div
+                            className="modal-pq"
+                            style={{
+                                maxWidth: '400px',
+                                width: '90%',
+                                height: '100px',
+                                minHeight: '14rem',
+                                overflow: 'auto'
+                            }}
+                        >
+                            <h2 className="modal-title-pq">Thêm vai trò mới</h2>
+                            <input
+                                type="text"
+                                placeholder="Nhập tên vai trò"
+                                value={newRoleName}
+                                onChange={(e) => setNewRoleName(e.target.value)}
+                                style={{
+                                    padding: '10px',
+                                    width: '100%',
+                                    height: '3rem',
+                                    boxSizing: 'border-box',
+                                    borderRadius: '0.3rem',
+                                }}
+                            />
+                            <div className="modal-buttons-pq">
+                                <button className="apply-button-pq" onClick={handleAddRole} disabled={!newRoleName.trim()}
+                                style={{ height: "2.5rem", padding: "0.3rem 1.5rem" }}>
+                                    Lưu
+                                </button>
+                                <button className="cancel-button-pq" style={{ height: "2.5rem", padding: "0.3rem 1.5rem" }} onClick={() => {
+                                    setIsAddRoleModalOpen(false);
+                                    setNewRoleName("");
+                                }}>
+                                    Hủy
+                                </button>
                             </div>
                         </div>
                     </div>

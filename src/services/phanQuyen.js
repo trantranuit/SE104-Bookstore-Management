@@ -107,3 +107,15 @@ export const deactivateUser = async (id) => {
         throw new Error(error.response?.data?.detail || 'Lỗi khi vô hiệu hóa người dùng');
     }
 };
+
+// Hàm thêm vai trò mới
+export const addRole = async (roleName) => {
+    try {
+        const response = await axiosInstance.post("/groups/", {
+            "name": roleName
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.detail || 'Lỗi khi thêm vai trò mới');
+    }
+};

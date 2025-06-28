@@ -275,7 +275,7 @@ input[type="date"].input-ttc {
 }
 
 .input-ma {
-    border: 2px solid #007bff;
+    /* border: 2px solid #007bff; */
     /* Default blue border */
     transition: all 0.3s ease;
     /* Smooth transition for hover and focus effects */
@@ -309,7 +309,7 @@ input[type="date"].input-ttc {
 .input-ma,
 .custom-input,
 input[type="date"].custom-input-ttc {
-    background-color: #f9f9f9;
+    background-color: white;
     /* Light background */
     color: #333;
     /* Dark text */
@@ -338,7 +338,7 @@ input[type="date"].custom-input-ttc {
 input[type="date"].custom-input-ttc:hover {
     border-color: #007bff;
     /* Blue border on hover */
-    background-color: #f0f8ff;
+    background-color: white;
     /* Slightly brighter background on hover */
 }
 
@@ -352,7 +352,7 @@ input[type="date"].custom-input-ttc:focus {
 }
 
 input[type="date"].custom-input-ttc {
-    background-color: #f9f9f9;
+    background-color: white;
     /* Light background */
     color: #333;
     /* Dark text */

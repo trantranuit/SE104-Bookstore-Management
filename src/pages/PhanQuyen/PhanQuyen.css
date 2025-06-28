@@ -392,14 +392,6 @@
   z-index: 1000;
 }
 
-.modal-pq {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 500px;
-  max-width: 90%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
 .modal-title-pq {
   margin-top: 0;
@@ -651,21 +643,6 @@
     text-align: center;
 }
 
-.modal-pq {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
-    padding: 2rem 2.5rem;
-    width: 50rem;
-    /* 70rem -> 50rem (giảm để hợp lý hơn với hệ thống rem) */
-    min-height: 20rem;
-    /* 30rem -> 20rem */
-    max-height: 50rem;
-    /* 80vh -> 50rem */
-    overflow-y: auto;
-    text-align: center;
-}
-
 .modal-content-pq {
     text-align: left;
     width: 100%;
@@ -710,6 +687,18 @@
     padding: 2rem 2.5rem;
     width: 50rem;
     min-height: 20rem;
+    max-height: 50rem;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.modal-role-pq {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 2rem 2.5rem;
+    width: 50rem;
+    min-height: 10rem;
     max-height: 50rem;
     overflow-y: auto;
     text-align: center;

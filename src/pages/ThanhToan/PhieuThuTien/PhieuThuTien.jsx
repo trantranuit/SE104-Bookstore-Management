@@ -47,10 +47,44 @@ function PhieuThuTien() {
             .catch(() => setEmployeeData([]));
     }, []);
 
-    const filteredReceipts = receipts.filter(receipt =>
-        String(receipt.MaPhieuThu).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (receipt.NgayThu || '').includes(searchTerm)
-    );
+    // State cho modal lọc mã khách hàng
+    const [showFilterMaKHModal, setShowFilterMaKHModal] = useState(false);
+    const [filterMaKHInput, setFilterMaKHInput] = useState('');
+    const [filterMaKHArr, setFilterMaKHArr] = useState([]);
+
+    // State cho modal lọc mã nhân viên
+    const [showFilterMaNVModal, setShowFilterMaNVModal] = useState(false);
+    const [filterMaNVInput, setFilterMaNVInput] = useState('');
+    const [filterMaNVArr, setFilterMaNVArr] = useState([]);
+
+    // State cho modal lọc số tiền trả
+    const [showFilterSoTienModal, setShowFilterSoTienModal] = useState(false);
+    const [filterSoTienInput, setFilterSoTienInput] = useState('');
+    const [filterSoTienArr, setFilterSoTienArr] = useState([]);
+    const [filterSoTienRange, setFilterSoTienRange] = useState({ min: '', max: '' });
+
+    // Lọc receipts theo searchTerm, mã khách hàng, mã nhân viên, số tiền trả
+    const filteredReceipts = receipts.filter(receipt => {
+        // Lọc theo searchTerm
+        const matchSearch = (
+            String(receipt.MaPhieuThu).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (receipt.NgayThu || '').includes(searchTerm)
+        );
+        // Lọc theo mã khách hàng
+        const matchMaKH = filterMaKHArr.length === 0 || filterMaKHArr.includes(String(receipt.MaKH));
+        // Lọc theo mã nhân viên
+        const matchMaNV = filterMaNVArr.length === 0 || filterMaNVArr.includes(formatEmployeeId(receipt.NguoiThu));
+        // Lọc theo số tiền trả
+        let matchSoTien = true;
+        const soTien = Number(receipt.SoTienThu) || 0;
+        if (filterSoTienArr.length > 0) {
+            matchSoTien = filterSoTienArr.includes(soTien);
+        }
+        if (filterSoTienRange.min !== '' && filterSoTienRange.max !== '') {
+            matchSoTien = matchSoTien && soTien >= Number(filterSoTienRange.min) && soTien <= Number(filterSoTienRange.max);
+        }
+        return matchSearch && matchMaKH && matchMaNV && matchSoTien;
+    });
 
     //print
     
@@ -142,28 +176,215 @@ function PhieuThuTien() {
 
     return (
         <div className="page-container">
-            <h1 className="page-title">Danh Sách Phiếu Thu Tiền</h1>            <div className="content-wrapper">
-                <div className="search-filter-block-ptt">
+            <h1 className="page-title">Danh Sách Phiếu Thu Tiền</h1>
+            <div className="content-wrapper">
+                <div className="search-filter-block-ptt" style={{ display: 'flex', alignItems: 'center', gap: 8}}>
                     <input
                         type="text"
-                        placeholder="Tìm kiếm phiếu thu tiền..."
+                        placeholder="Tìm kiếm phiếu thu tiền theo ngày nhập ..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{  height: "3rem", borderRadius: "0.4rem", padding: "1.2rem" }}
                     />
+                    <button
+                        className="filter-button-ptt "
+                        onClick={() => setShowFilterMaKHModal(true)}
+                    >
+                        Lọc theo mã khách hàng
+                    </button>
+                    <button
+                        className="filter-button-ptt "
+                        onClick={() => setShowFilterMaNVModal(true)}
+                    >
+                        Lọc theo mã nhân viên
+                    </button>
+                    <button
+                        className="filter-button-ptt "
+                        onClick={() => setShowFilterSoTienModal(true)}
+                    >
+                        Lọc theo số tiền trả
+                    </button>
                 </div>
-                <div className="receipt-table-container-ptt">
+                {/* Modal lọc mã khách hàng */}
+                {showFilterMaKHModal && (
+                    <div className="modal-overlay-ptt">
+                        <div className="modal-new-ptt">
+                            <h3 className="modal-title-new-ptt">Lọc theo mã khách hàng</h3>
+                            <input
+                                className="modal-ptt-filter-input"
+                                type="text"
+                                placeholder="Nhập các mã khách hàng, cách nhau bởi dấu phẩy"
+                                value={filterMaKHInput}
+                                onChange={e => setFilterMaKHInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem" }}
+                            />
+                            <div className="modal-buttons-ptt">
+                                <button
+                                    className="apply-button-ptt"
+                                    onClick={() => {
+                                        setFilterMaKHArr(
+                                            filterMaKHInput
+                                                .split(',')
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
+                                        setShowFilterMaKHModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-ptt"
+                                    onClick={() => {
+                                        setFilterMaKHArr([]);
+                                        setFilterMaKHInput('');
+                                        setShowFilterMaKHModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-ptt"
+                                    onClick={() => setShowFilterMaKHModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Modal lọc mã nhân viên */}
+                {showFilterMaNVModal && (
+                    <div className="modal-overlay-ptt">
+                        <div className="modal-new-ptt">
+                            <h3 className="modal-title-new-ptt">Lọc theo mã nhân viên</h3>
+                            <input
+                                className="modal-ptt-filter-input"
+                                type="text"
+                                placeholder="Nhập các mã nhân viên, cách nhau bởi dấu phẩy (VD: NV001,NV002)"
+                                value={filterMaNVInput}
+                                onChange={e => setFilterMaNVInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem" }}
+                            />
+                            <div className="modal-buttons-ptt">
+                                <button
+                                    className="apply-button-ptt"
+                                    onClick={() => {
+                                        setFilterMaNVArr(
+                                            filterMaNVInput
+                                                .split(',')
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
+                                        setShowFilterMaNVModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-ptt"
+                                    onClick={() => {
+                                        setFilterMaNVArr([]);
+                                        setFilterMaNVInput('');
+                                        setShowFilterMaNVModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-ptt"
+                                    onClick={() => setShowFilterMaNVModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Modal lọc số tiền trả */}
+                {showFilterSoTienModal && (
+                    <div className="modal-overlay-ptt">
+                        <div className="modal-new-ptt">
+                            <h2 className="modal-title-new-ptt">Lọc theo số tiền trả</h2>
+                            <h3>Nhập khoảng số tiền trả </h3>
+                            <input
+                                className="modal-ptt-filter-input"
+                                type="text"
+                                placeholder="Nhập các số tiền, cách nhau bởi dấu phẩy (VD: 10000,20000)"
+                                value={filterSoTienInput}
+                                onChange={e => setFilterSoTienInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem", marginBottom: 8 }}
+                            />
+                            <h3>Nhập cụ thể số tiền trả</h3>
+                            <div style={{ width: '100%', display: 'flex', gap: 8, marginBottom: 8 }}>
+                                
+                                <input
+                                    className="modal-ptt-filter-input"
+                                    type="number"
+                                    placeholder="Từ"
+                                    value={filterSoTienRange.min}
+                                    onChange={e => setFilterSoTienRange(r => ({ ...r, min: e.target.value }))}
+                                    style={{ flex: 1, height: "2.5rem", borderRadius: "0.4rem", paddingLeft: "0.6rem" }}
+                                />
+                                
+                                <input
+                                    className="modal-ptt-filter-input"
+                                    type="number"
+                                    placeholder="Đến"
+                                    value={filterSoTienRange.max}
+                                    onChange={e => setFilterSoTienRange(r => ({ ...r, max: e.target.value }))}
+                                    style={{ flex: 1, height: "2.5rem", borderRadius: "0.4rem", paddingLeft: "0.6rem" }}
+                                />
+                            </div>
+                            <div className="modal-buttons-ptt">
+                                <button
+                                    className="apply-button-ptt"
+                                    onClick={() => {
+                                        setFilterSoTienArr(
+                                            filterSoTienInput
+                                                .split(',')
+                                                .map(s => Number(s.trim()))
+                                                .filter(v => !isNaN(v) && v !== '')
+                                        );
+                                        setShowFilterSoTienModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-ptt"
+                                    onClick={() => {
+                                        setFilterSoTienArr([]);
+                                        setFilterSoTienInput('');
+                                        setFilterSoTienRange({ min: '', max: '' });
+                                        setShowFilterSoTienModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-ptt"
+                                    onClick={() => setShowFilterSoTienModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div className="receipt-table-container-ptt" style={{ paddingBottom: '2rem' }}>
                     <table className="receipt-table-ptt">
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Mã Phiếu Thu</th>
-                                <th>Mã Nhân Viên</th>
-                                <th>Tên Nhân Viên</th>
-                                <th>Mã Khách Hàng</th>
-                                <th>Tên Khách Hàng</th>
-                                <th>Ngày Lập</th>
-                                <th>Số Tiền Trả</th>
-                                <th>Hành Động</th>
+                                <th>Mã phiếu thu</th>
+                                <th>Mã nhân viên</th>
+                                <th>Tên nhân viên</th>
+                                <th>Mã khách hàng</th>
+                                <th>Tên khách hàng</th>
+                                <th>Ngày lập</th>
+                                <th>Số tiền trả</th>
+                                <th>Xem chi tiết</th>
                             </tr>
                         </thead>
                         <tbody>

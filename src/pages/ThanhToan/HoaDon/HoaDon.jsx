@@ -23,21 +23,21 @@ function HoaDon() {
     const [pdfUrl, setPdfUrl] = useState(null);
     const [showPdfModal, setShowPdfModal] = useState(false);
 
-        const [pageInput, setPageInput] = useState(currentPage);
-        const handlePageInputChange = (e) => {
+    const [pageInput, setPageInput] = useState(currentPage);
+    const handlePageInputChange = (e) => {
         let value = e.target.value;
         setPageInput(value);
-      };
-    
-        const handlePageSubmit = (e) => {
+    };
+
+    const handlePageSubmit = (e) => {
         e.preventDefault();
         let pageNumber = parseInt(pageInput);
         if (pageNumber >= 1 && pageNumber <= totalPages) {
-          setCurrentPage(pageNumber);
+            setCurrentPage(pageNumber);
         } else {
-          setPageInput(currentPage);
+            setPageInput(currentPage);
         }
-      };
+    };
 
     const sortInvoices = (invoices) => {
         return [...invoices].sort((a, b) => {
@@ -112,10 +112,38 @@ function HoaDon() {
         fetchInvoices();
     }, [showDeleteSuccess]);
 
-    const filteredInvoices = invoices.filter(invoice =>
-        invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        invoice.ngayLap.includes(searchTerm)
-    );
+    // Add new state for filter modals
+    // State cho modal lọc mã khách hàng
+    const [showFilterMaKHModal, setShowFilterMaKHModal] = useState(false);
+    const [filterMaKHInput, setFilterMaKHInput] = useState('');
+    const [filterMaKHArr, setFilterMaKHArr] = useState([]);
+
+    // State cho modal lọc mã sách
+    const [showFilterMaSachModal, setShowFilterMaSachModal] = useState(false);
+    const [filterMaSachInput, setFilterMaSachInput] = useState('');
+    const [filterMaSachArr, setFilterMaSachArr] = useState([]);
+
+    // State cho modal lọc mã nhân viên
+    const [showFilterMaNVModal, setShowFilterMaNVModal] = useState(false);
+    const [filterMaNVInput, setFilterMaNVInput] = useState('');
+    const [filterMaNVArr, setFilterMaNVArr] = useState([]);
+
+    // Lọc hóa đơn theo searchTerm, mã khách hàng, mã sách, mã nhân viên
+    const filteredInvoices = invoices.filter(invoice => {
+        // Lọc theo searchTerm
+        const matchSearch = (
+            invoice.maHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            invoice.ngayLap.includes(searchTerm)
+        );
+        // Lọc theo mã khách hàng
+        const matchMaKH = filterMaKHArr.length === 0 || filterMaKHArr.includes(invoice.maKhachHang);
+        // Lọc theo mã sách
+        const matchMaSach = filterMaSachArr.length === 0 ||
+            invoice.danhSachSach.some(sach => filterMaSachArr.includes(String(sach.maSach)));
+        // Lọc theo mã nhân viên
+        const matchMaNV = filterMaNVArr.length === 0 || filterMaNVArr.includes(invoice.maNhanVien);
+        return matchSearch && matchMaKH && matchMaSach && matchMaNV;
+    });
 
     // Add pagination calculations
     const indexOfLastInvoice = currentPage * invoicesPerPage;
@@ -328,28 +356,194 @@ function HoaDon() {
         <div className="page-container">
             <h1 className="page-title">Danh Sách Các Hóa Đơn</h1>
             <div className="content-wrapper">
-                <div className="search-section-thd">
+                <div className="search-section-thd" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <input
                         type="text"
                         className="search-bar-thd"
                         placeholder="Tìm kiếm hóa đơn theo mã hoặc ngày lập..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ flex: 1 }}
                     />
+                    {/* Nút lọc theo mã khách hàng */}
+                    <button
+                        className="filter-button-hd"
+                        onClick={() => setShowFilterMaKHModal(true)}
+                    >
+                        Lọc theo mã khách
+                    </button>
+                    {/* Nút lọc theo mã sách */}
+                    <button
+                        className="filter-button-hd"
+                        onClick={() => setShowFilterMaSachModal(true)}
+                    >
+                        Lọc theo mã sách
+                    </button>
+                    {/* Nút lọc theo mã nhân viên */}
+                    <button
+                        className="filter-button-hd"
+                        onClick={() => setShowFilterMaNVModal(true)}
+                    >
+                        Lọc theo mã nhân viên
+                    </button>
                 </div>
-                <div className="invoice-table-container-thd">
+                {/* Modal lọc mã khách hàng */}
+                {showFilterMaKHModal && (
+                    <div className="modal-overlay-hd">
+                        <div className="modal-new-hd">
+                            <h3 className="modal-title-new-hd">Lọc theo mã khách hàng</h3>
+                            <input
+                                className="modal-hd-filter-input"
+                                type="text"
+                                placeholder="Nhập các mã khách hàng, cách nhau bởi dấu phẩy"
+                                value={filterMaKHInput}
+                                onChange={e => setFilterMaKHInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem" }}
+                            />
+                            <div className="modal-buttons-hd">
+                                <button
+                                    className="apply-button-hd"
+                                    onClick={() => {
+                                        setFilterMaKHArr(
+                                            filterMaKHInput
+                                                .split(',')
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
+                                        setShowFilterMaKHModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-hd"
+                                    onClick={() => {
+                                        setFilterMaKHArr([]);
+                                        setFilterMaKHInput('');
+                                        setShowFilterMaKHModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-hd"
+                                    onClick={() => setShowFilterMaKHModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Modal lọc mã sách */}
+                {showFilterMaSachModal && (
+                    <div className="modal-overlay-hd">
+                        <div className="modal-new-hd">
+                            <h3 className="modal-new-title-hd">Lọc theo mã sách</h3>
+                            <input
+                                className="modal-hd-filter-input"
+                                type="text"
+                                placeholder="Nhập các mã sách, cách nhau bởi dấu phẩy"
+                                value={filterMaSachInput}
+                                onChange={e => setFilterMaSachInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem" }}
+                            />
+                            <div className="modal-buttons-hd">
+                                <button
+                                    className="apply-button-hd"
+                                    onClick={() => {
+                                        setFilterMaSachArr(
+                                            filterMaSachInput
+                                                .split(',')
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
+                                        setShowFilterMaSachModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-hd"
+                                    onClick={() => {
+                                        setFilterMaSachArr([]);
+                                        setFilterMaSachInput('');
+                                        setShowFilterMaSachModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-hd"
+                                    onClick={() => setShowFilterMaSachModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Modal lọc mã nhân viên */}
+                {showFilterMaNVModal && (
+                    <div className="modal-overlay-hd">
+                        <div className="modal-new-hd">
+                            <h3 className="modal-title-new-hd">Lọc theo mã nhân viên</h3>
+                            <input
+                                className="modal-hd-filter-input"
+                                type="text"
+                                placeholder="Nhập các mã nhân viên, cách nhau bởi dấu phẩy"
+                                value={filterMaNVInput}
+                                onChange={e => setFilterMaNVInput(e.target.value)}
+                                style={{ height: "3rem", padding: "0.6rem", borderRadius: "0.4rem" }}
+                            />
+                            <div className="modal-buttons-hd">
+                                <button
+                                    className="apply-button-hd"
+                                    onClick={() => {
+                                        setFilterMaNVArr(
+                                            filterMaNVInput
+                                                .split(',')
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
+                                        setShowFilterMaNVModal(false);
+                                    }}
+                                >
+                                    Áp dụng
+                                </button>
+                                <button
+                                    className="cancel-button-new-hd"
+                                    onClick={() => {
+                                        setFilterMaNVArr([]);
+                                        setFilterMaNVInput('');
+                                        setShowFilterMaNVModal(false);
+                                    }}
+                                >
+                                    Hủy áp dụng
+                                </button>
+                                <button
+                                    className="close-button-new-hd"
+                                    onClick={() => setShowFilterMaNVModal(false)}
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div className="invoice-table-container-thd" style={{paddingBottom: '2rem'}}>
                     <table className="invoice-table-thd">
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Mã Hóa Đơn</th>
-                                <th>Mã Nhân Viên</th>
-                                <th>Nhân Viên Lập</th>
-                                <th>Mã Khách Hàng</th>
-                                <th>Tên Khách Hàng</th>
-                                <th>Ngày Lập Hóa Đơn</th>
-                                <th>Số Tiền Khách Trả</th>
-                                <th>Hành Động</th>
+                                <th>Mã hóa dơn</th>
+                                <th>Mã nhân viên</th>
+                                <th>Nhân viên lập</th>
+                                <th>Mã khách hàng</th>
+                                <th>Tên khách hàng</th>
+                                <th>Ngày lập hóa đơn</th>
+                                <th>Số tiền khách trả</th>
+                                <th>Xem chi tiết</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -393,16 +587,16 @@ function HoaDon() {
                             ←
                         </button>
                         <form onSubmit={handlePageSubmit} className="nhap-sach-page-input-form">
-                        <span>Trang </span>
-                        <input
-                            type="number"
-                            value={pageInput}
-                            onChange={handlePageInputChange}
-                            min="1"
-                            max={totalPages}
-                            className="nhap-sach-page-input"
-                        />
-                        <span>/{Math.max(1, totalPages)}</span>
+                            <span>Trang </span>
+                            <input
+                                type="number"
+                                value={pageInput}
+                                onChange={handlePageInputChange}
+                                min="1"
+                                max={totalPages}
+                                className="nhap-sach-page-input"
+                            />
+                            <span>/{Math.max(1, totalPages)}</span>
                         </form>
                         <button
                             onClick={handleNextPage}
